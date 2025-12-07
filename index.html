@@ -178,7 +178,7 @@
         /* Theme Toggle */
         .theme-toggle {
             position: fixed;
-            top: 1.5rem;
+            top: 5rem;
             right: 1.5rem;
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
@@ -197,6 +197,282 @@
         }
         
         .theme-toggle:hover {
+        /* Navigation Menu */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            z-index: 10001;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        body.twitch-theme .nav-menu {
+            background: rgba(14, 14, 16, 0.95);
+            border-bottom-color: var(--twitch-primary);
+            box-shadow: 0 2px 30px rgba(145, 70, 255, 0.2);
+        }
+        
+        .nav-btn {
+            background: transparent;
+            border: 2px solid transparent;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: var(--text-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+            color: var(--primary);
+        }
+        
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        body.twitch-theme .nav-btn:hover {
+            background: rgba(145, 70, 255, 0.2);
+            color: var(--twitch-accent);
+        }
+        
+        body.twitch-theme .nav-btn.active {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-secondary));
+            box-shadow: 0 4px 20px rgba(145, 70, 255, 0.4);
+        }
+        
+        .nav-btn .nav-icon {
+            margin-right: 0.4rem;
+        }
+        
+        /* Pages */
+        .page {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            padding-top: 80px;
+            min-height: 100vh;
+        }
+        
+        .page.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Page À Propos */
+        .about-page {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--white) 100%);
+        }
+        
+        .about-content {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .about-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            margin: 0 auto 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 10px 40px rgba(37, 99, 235, 0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        body.twitch-theme .about-avatar {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-accent));
+            box-shadow: 0 10px 40px rgba(145, 70, 255, 0.4);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .about-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .about-text {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        body.twitch-theme .stat-card {
+            background: var(--twitch-surface);
+            box-shadow: 0 4px 20px rgba(145, 70, 255, 0.1);
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        body.twitch-theme .stat-number {
+            color: var(--twitch-accent);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Page Contact */
+        .contact-page {
+            background: linear-gradient(180deg, var(--white) 0%, var(--bg-light) 100%);
+        }
+        
+        .contact-content {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+        
+        .contact-title {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .contact-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .contact-form {
+            background: var(--white);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        
+        body.twitch-theme .contact-form {
+            background: var(--twitch-surface);
+            box-shadow: 0 10px 40px rgba(145, 70, 255, 0.15);
+            border: 1px solid rgba(145, 70, 255, 0.2);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 2px solid rgba(0,0,0,0.1);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: var(--bg-light);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        body.twitch-theme .form-input {
+            background: var(--twitch-dark);
+            border-color: rgba(145, 70, 255, 0.3);
+            color: var(--twitch-text);
+        }
+        
+        body.twitch-theme .form-input:focus {
+            border-color: var(--twitch-accent);
+            box-shadow: 0 0 0 3px rgba(0, 255, 170, 0.1);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        body.twitch-theme .form-submit {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-secondary));
+        }
+        
+        body.twitch-theme .form-submit:hover {
+            box-shadow: 0 6px 25px rgba(145, 70, 255, 0.4);
+        }
+        
+
             background: rgba(145, 70, 255, 0.2);
             border-color: rgba(145, 70, 255, 0.3);
             color: var(--twitch-primary);
@@ -483,7 +759,13 @@
     </style>
 </head>
 <body>
-    <section class="hero">
+    <nav class="nav-menu">
+        <button class="nav-btn active" data-page="home"><span class="nav-icon">🏠</span>Accueil</button>
+        <button class="nav-btn" data-page="about"><span class="nav-icon">✨</span>À Propos</button>
+        <button class="nav-btn" data-page="contact"><span class="nav-icon">💌</span>Contact</button>
+    </nav>
+
+    <section class="hero page active" id="page-home">
         <button class="theme-toggle" id="theme-toggle">
             <span class="pixel">◈</span>
             <span class="label">Mode Twitch</span>
@@ -531,6 +813,60 @@
         </footer>
     </section>
     
+    <section class="page about-page" id="page-about">
+        <div class="about-content">
+            <div class="about-avatar">🦒</div>
+            <h2 class="about-title">À Propos de Nous</h2>
+            <p class="about-text">
+                Bienvenue dans notre espace créatif ! Nous sommes une communauté passionnée 
+                qui croit en la puissance de la collaboration. Chaque idée compte, 
+                chaque voix est entendue, et ensemble, nous créons quelque chose de magique.
+            </p>
+            <p class="about-text">
+                Cette expérience est née de l'envie de connecter les gens à travers l'art, 
+                la technologie et le jeu. Que tu sois ici pour te détendre, jouer, 
+                ou simplement explorer, tu fais partie de l'aventure ! 🌟
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">Possibilités</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">💜</div>
+                    <div class="stat-label">Communauté</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Créativité</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <section class="page contact-page" id="page-contact">
+        <div class="contact-content">
+            <h2 class="contact-title">💌 Contactez-nous</h2>
+            <p class="contact-subtitle">Une idée ? Une suggestion ? On veut tout savoir !</p>
+            <div>
+                <div class="form-group">
+                    <label class="form-label">Votre nom</label>
+                    <input type="text" class="form-input" placeholder="Comment vous appelez-vous ?" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" placeholder="votre@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message</label>
+                    <textarea class="form-input form-textarea" placeholder="Partagez vos idées, suggestions ou juste dites bonjour ! 👋" required></textarea>
+                </div>
+                <button type="submit" class="form-submit">✨ Envoyer le message</button>
+            </div>
+        </div>
+    </section>
+
+    
     <audio id="music-audio" src="#" preload="auto" crossorigin="anonymous"></audio>
     
     <audio id="ambient-music" src="#" preload="auto" loop></audio>
@@ -542,6 +878,45 @@
     </div>
     
     <script>
+        // Navigation entre pages
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const pages = document.querySelectorAll('.page');
+        
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetPage = btn.dataset.page;
+                
+                // Update buttons
+                navBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Update pages with animation
+                pages.forEach(page => {
+                    if(page.id === 'page-' + targetPage) {
+                        page.classList.add('active');
+                    } else {
+                        page.classList.remove('active');
+                    }
+                });
+                
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+        
+        // Form submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('.form-submit');
+            btn.textContent = '✅ Message envoyé !';
+            btn.style.background = '#10B981';
+            setTimeout(() => {
+                btn.textContent = '✨ Envoyer le message';
+                btn.style.background = '';
+                e.target.reset();
+            }, 2000);
+        }
+        
         // Mini-Jeu 2D
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
