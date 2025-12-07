@@ -111,7 +111,8 @@
             color: #666;
             font-size: 0.8rem;
         }
-    </style>
+    
+@keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-30px); } 60% { transform: translateY(-15px); } }</style>
 </head>
 <body>
     <div class="header">
@@ -191,5 +192,6 @@ document.getElementById('start-button').addEventListener('click', () => {
     document.getElementById('game-status').textContent = 'Jeu en cours...';
 });
 </script>
-</body>
+
+<script>const chaosZone = document.getElementById('chaos-zone'); chaosZone.style.animation = 'bounce 2s infinite';</script></body>
 </html>
