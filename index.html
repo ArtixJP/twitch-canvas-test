@@ -349,15 +349,115 @@ body {
 }
 
 :root{--cosy-warm:#f4a261;--cosy-cream:#fef3e2;--cosy-brown:#8b5a2b;--cosy-soft-pink:#f8e1d4;--cosy-green:#a7c4a0;--cosy-bg:#1a1612;--cosy-card:#2a2218;--cosy-glow:rgba(244,162,97,0.15)}.cosy-layout{background:linear-gradient(180deg,var(--cosy-bg) 0%,#1f1a15 100%)}.cosy-welcome-card{position:relative;background:var(--cosy-card);border-radius:20px;padding:3rem;text-align:center;border:1px solid rgba(244,162,97,0.2);overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3)}.cosy-glow{position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,var(--cosy-glow) 0%,transparent 50%);animation:cosy-pulse 4s ease-in-out infinite}.cosy-icon{font-size:4rem;margin-bottom:1rem;animation:cosy-float 3s ease-in-out infinite}.cosy-title{font-size:1.8rem;color:var(--cosy-warm);margin-bottom:0.75rem;font-weight:600}.cosy-description{color:var(--cosy-cream);opacity:0.85;font-size:1.1rem;max-width:400px;margin:0 auto 2rem;line-height:1.7}.cosy-btn{display:inline-flex;align-items:center;gap:0.75rem;padding:1rem 2rem;font-size:1.2rem;font-weight:600;color:var(--cosy-bg);background:linear-gradient(135deg,var(--cosy-warm) 0%,#e76f51 100%);border:none;border-radius:50px;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(244,162,97,0.3)}.cosy-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(244,162,97,0.4)}.cosy-message{margin-top:1.5rem;padding:1rem;border-radius:12px;background:rgba(167,196,160,0.15);color:var(--cosy-green);font-size:1rem;opacity:0;transition:opacity 0.5s ease}.cosy-message.visible{opacity:1}.cosy-features{display:flex;justify-content:center;gap:1.5rem;margin-top:2rem;flex-wrap:wrap}.cosy-feature{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;background:var(--cosy-card);border-radius:30px;border:1px solid rgba(244,162,97,0.15);transition:all 0.3s ease}.cosy-feature:hover{border-color:var(--cosy-warm);transform:translateY(-2px)}.feature-icon{font-size:1.3rem}.feature-text{color:var(--cosy-cream);font-size:0.9rem}.cosy-sidebar-card{background:var(--cosy-card);border-radius:16px;padding:1.5rem;border:1px solid rgba(244,162,97,0.15)}.sidebar-title{color:var(--cosy-warm);font-size:1rem;margin-bottom:0.75rem}.sidebar-text{color:var(--cosy-cream);opacity:0.8;font-size:0.9rem;line-height:1.6}.cosy-list{list-style:none;color:var(--cosy-cream);opacity:0.8;font-size:0.9rem}.cosy-list li{padding:0.4rem 0;padding-left:1.2rem;position:relative}.cosy-list li::before{content:'✨';position:absolute;left:0;font-size:0.7rem}#zone-header{background:linear-gradient(180deg,#1f1a15 0%,var(--cosy-bg) 100%);border-bottom:1px solid rgba(244,162,97,0.2)}#zone-header h1{color:var(--cosy-warm)}#zone-footer{background:#1f1a15;border-top:1px solid rgba(244,162,97,0.2);color:var(--cosy-cream)}@keyframes cosy-pulse{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:0.8;transform:scale(1.1)}}@keyframes cosy-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* Twitch-style rétro-gaming chaleureux */
+@import url();
+
+/* Accent rétro sur les titres */
+#zone-header h1 {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 1.2rem;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+    animation: glow-pulse 3s ease-in-out infinite;
+}
+
+@keyframes glow-pulse {
+    0%, 100% { filter: drop-shadow(0 0 8px rgba(145, 71, 255, 0.4)); }
+    50% { filter: drop-shadow(0 0 16px rgba(145, 71, 255, 0.7)); }
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-top: 0.5rem;
+    letter-spacing: 0.02em;
+}
+
+h2.cosy-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.85rem;
+    color: var(--secondary);
+    letter-spacing: 0.05em;
+}
+
+p.cosy-description {
+    color: var(--text);
+    font-size: 1rem;
+    line-height: 1.7;
+    padding: 1rem;
+    background: var(--primary-soft);
+    border-left: 3px solid var(--primary);
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+/* Sidebar style */
+h3.sidebar-title {
+    font-family: 'Press Start 2P', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    letter-spacing: 0.03em;
+}
+
+p.sidebar-text {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    padding: 0.75rem;
+    background: rgba(145, 71, 255, 0.08);
+    border-radius: var(--radius);
+    border: 1px dashed var(--border);
+}
+
+/* Footer rétro */
+#zone-footer p {
+    font-size: 0.8rem;
+}
+
+.retro-blink {
+    animation: blink-cursor 1s step-end infinite;
+    color: var(--primary);
+    font-weight: bold;
+}
+
+@keyframes blink-cursor {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+/* Bouton Press Start amélioré */
+.big-hello-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.big-hello-btn::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    transform: rotate(45deg);
+    animation: shine 3s infinite;
+}
+
+@keyframes shine {
+    0% { transform: translateX(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) rotate(45deg); }
+}
   </style>
  </head>
  <body>
   <header id="zone-header">
    <h1>
-    Bienvenue dans notre espace cosy ☕
+    Bienvenue, aventurier ! 🎮✨
    </h1>
    <p class="subtitle">
-    Un espace chaleureux pour partager et créer ensemble 🌙
+    Ton QG gaming où chaque niveau se joue ensemble · Pas de pression, que du fun 💜
    </p>
   </header>
   <div class="main-layout cosy-layout">
@@ -369,17 +469,17 @@ body {
       🏠
      </div>
      <h2 class="cosy-title">
-      Notre petit coin douillet
+      🕹️ Zone de confort activée
      </h2>
      <p class="cosy-description">
-      Installez-vous confortablement, prenez une tasse de thé et profitez de ce moment avec nous.
+      Ici, on apprend à son rythme, on pose toutes les questions (même les "bêtes"), et on célèbre chaque petite victoire. Que tu sois noob ou pro, t'es chez toi.
      </p>
      <button class="cosy-btn" id="hello-btn">
       <span class="btn-icon">
        👋
       </span>
       <span class="btn-text">
-       Dire coucou
+       Press Start 🎮
       </span>
      </button>
      <div class="cosy-message" id="cosy-message">
@@ -415,10 +515,10 @@ body {
    <aside id="zone-sidebar">
     <div class="cosy-sidebar-card">
      <h3 class="sidebar-title">
-      🌿 Moment zen
+      📡 Signal stable
      </h3>
      <p class="sidebar-text">
-      Respire, tu es au bon endroit.
+      Connexion établie. Tu fais partie de l'équipe maintenant.
      </p>
     </div>
     <div class="cosy-sidebar-card">
@@ -441,7 +541,10 @@ body {
   </div>
   <footer id="zone-footer">
    <p>
-    Créé avec 💛 sur Twitch · Nourri par notre communauté bienveillante
+    Crafté avec 💜 sur Twitch · Level up ensemble depuis 2024 ·
+    <span class="retro-blink">
+     _
+    </span>
    </p>
   </footer>
   <script>
