@@ -122,6 +122,8 @@ code {
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s ease;
     margin-top: 1rem;
+    position: relative;
+    overflow: hidden;
 }
 
 .fun-button:hover {
@@ -131,6 +133,22 @@ code {
 
 .fun-button:active {
     transform: scale(0.95);
+}
+
+.fun-button::after {
+    content: '🤪';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2rem;
+    animation: bounce 0.6s infinite alternate;
+}
+
+/* Animation */
+@keyframes bounce {
+    0% { transform: translate(-50%, -50%) translateY(0); }
+    100% { transform: translate(-50%, -50%) translateY(-10px); }
 }
 
 /* Responsive */
@@ -157,14 +175,26 @@ code {
     <p>Cette page évolue en temps réel grâce aux suggestions du chat Twitch.</p>
     <p>Tapez <code>!idea</code> suivi de votre idée pour proposer un changement !</p>
     <button id="fun-button" class="fun-button">Cliquez-moi pour une surprise ! 🎉</button>
+    <button id="joke-button" class="joke-button">Faites-moi rire ! 😂</button>
+    <p id="joke-output" class="joke-output"></p>
 </div>
 <script>
 // [BLOCKED: potentially dangerous]
         alert('🎈 Vous avez trouvé le bouton magique ! Continuez à proposer vos idées !');
     });
+    
+// [BLOCKED: potentially dangerous]
+        const jokes = [
+            "Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ? Parce que sinon ils tombent dans le bateau !",
+            "Quel est le comble pour un électricien ? De ne pas être au courant !",
+            "Pourquoi les fantômes sont-ils de si mauvais menteurs ? Parce qu'on peut lire à travers eux !"
+        ];
+        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
+        document.getElementById('joke-output').textContent = randomJoke;
+    });
 </script>
 <style>
-    .fun-button {
+    .fun-button, .joke-button {
         background-color: #ffcc00;
         color: #333;
         border: none;
@@ -173,10 +203,16 @@ code {
         font-size: 16px;
         cursor: pointer;
         transition: transform 0.2s;
+        margin: 5px;
     }
-    .fun-button:hover {
+    .fun-button:hover, .joke-button:hover {
         transform: scale(1.1);
         background-color: #ffd700;
+    }
+    .joke-output {
+        margin-top: 15px;
+        font-style: italic;
+        color: #555;
     }
 </style>
         </main>
@@ -232,7 +268,12 @@ funnyButton.onmouseout = () => {
     funnyButton.style.transform = 'scale(1)';
 };
 funnyButton.onclick = () => {
-    alert('Tu es trop rapide ! 😄');
+    funnyButton.style.backgroundColor = '#FF9900';
+    funnyButton.textContent = 'Trop rapide ! 😄';
+    setTimeout(() => {
+        funnyButton.style.backgroundColor = '#FFCC00';
+        funnyButton.textContent = 'Clique moi si tu peux ! 😂';
+    }, 1000);
 };
 
 const zoneContent = document.getElementById('zone-content');
