@@ -404,11 +404,11 @@
                 <p style="color: var(--text-secondary);">Évite les astéroïdes et collecte les étoiles !</p>
                 <button class="btn btn-primary">▶️ Jouer</button>
             </div>
-            <div class="card game-card coming-soon">
+            <div class="card game-card"puzzle')">
                 <div class="game-card-icon">🧩</div>
                 <h3>Puzzle Mania</h3>
-                <p style="color: var(--text-secondary);">Bientôt disponible...</p>
-                <button class="btn btn-primary" disabled>🔒 À venir</button>
+                <p style="color: var(--text-secondary);">Réorganise les tuiles pour reconstituer l'image !</p>
+                <button class="btn btn-primary">▶️ Jouer</button>
             </div>
         </div>
         <div id="game-area" style="display: none;">
@@ -569,6 +569,10 @@
             document.getElementById('game-title').textContent = '🚀 Space Runner';
             document.getElementById('game-instructions').textContent = 'Flèches ↑ ↓ pour bouger, évite les astéroïdes';
             initSpaceGame();
+        } else if (type === 'puzzle') {
+            document.getElementById('game-title').textContent = '🧩 Puzzle Mania';
+            document.getElementById('game-instructions').textContent = 'Clique sur une tuile adjacente au vide pour la déplacer';
+            initPuzzleGame();
         }
     }
     
@@ -731,6 +735,149 @@
         if (gameLoop) cancelAnimationFrame(gameLoop);
         if (currentGame === 'giraffe') initGiraffeGame();
         else if (currentGame === 'space') initSpaceGame();
+        else if (currentGame === 'puzzle') initPuzzleGame();
+    });
+    
+    // Puzzle Game
+    let puzzleGrid = [];
+    let emptyPos = { row: 2, col: 2 };
+    const puzzleSize = 3;
+    const tileSize = 90;
+    const puzzleColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F'];
+    
+    function initPuzzleGame() {
+        score = 0;
+        document.getElementById('score').textContent = '0';
+        puzzleGrid = [];
+        let num = 1;
+        for (let r = 0; r < puzzleSize; r++) {
+            puzzleGrid[r] = [];
+            for (let c = 0; c < puzzleSize; c++) {
+                if (r === puzzleSize - 1 && c === puzzleSize - 1) {
+                    puzzleGrid[r][c] = 0;
+                } else {
+                    puzzleGrid[r][c] = num++;
+                }
+            }
+        }
+        emptyPos = { row: 2, col: 2 };
+        
+        // Mélanger le puzzle
+        for (let i = 0; i < 100; i++) {
+            const moves = getValidMoves();
+            const randomMove = moves[Math.floor(Math.random() * moves.length)];
+            swapTiles(randomMove.row, randomMove.col);
+        }
+        
+        canvas.onclick = handlePuzzleClick;
+        drawPuzzle();
+    }
+    
+    function getValidMoves() {
+        const moves = [];
+        const dirs = [{r: -1, c: 0}, {r: 1, c: 0}, {r: 0, c: -1}, {r: 0, c: 1}];
+        dirs.forEach(d => {
+            const nr = emptyPos.row + d.r;
+            const nc = emptyPos.col + d.c;
+            if (nr >= 0 && nr < puzzleSize && nc >= 0 && nc < puzzleSize) {
+                moves.push({row: nr, col: nc});
+            }
+        });
+        return moves;
+    }
+    
+    function swapTiles(row, col) {
+        puzzleGrid[emptyPos.row][emptyPos.col] = puzzleGrid[row][col];
+        puzzleGrid[row][col] = 0;
+        emptyPos = { row, col };
+    }
+    
+    function handlePuzzleClick(e) {
+        if (currentGame !== 'puzzle') return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        const offsetX = (600 - puzzleSize * tileSize) / 2;
+        const offsetY = (300 - puzzleSize * tileSize) / 2;
+        const col = Math.floor((x - offsetX) / tileSize);
+        const row = Math.floor((y - offsetY) / tileSize);
+        
+        if (row >= 0 && row < puzzleSize && col >= 0 && col < puzzleSize) {
+            const isAdjacent = (Math.abs(row - emptyPos.row) === 1 && col === emptyPos.col) ||
+                              (Math.abs(col - emptyPos.col) === 1 && row === emptyPos.row);
+            if (isAdjacent) {
+                swapTiles(row, col);
+                score++;
+                document.getElementById('score').textContent = score;
+                document.getElementById('coin-sound').currentTime = 0;
+                document.getElementById('coin-sound').play().catch(() => {});
+                drawPuzzle();
+                
+                if (checkWin()) {
+                    setTimeout(() => {
+                        ctx.fillStyle = 'rgba(0,0,0,0.8)';
+                        ctx.fillRect(0, 0, 600, 300);
+                        ctx.fillStyle = '#00FF00';
+                        ctx.font = 'bold 32px Inter';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('🎉 BRAVO ! Puzzle résolu !', 300, 140);
+                        ctx.font = '20px Inter';
+                        ctx.fillText('Mouvements: ' + score, 300, 180);
+                        ctx.textAlign = 'left';
+                    }, 100);
+                }
+            }
+        }
+    }
+    
+    function checkWin() {
+        let num = 1;
+        for (let r = 0; r < puzzleSize; r++) {
+            for (let c = 0; c < puzzleSize; c++) {
+                if (r === puzzleSize - 1 && c === puzzleSize - 1) {
+                    if (puzzleGrid[r][c] !== 0) return false;
+                } else {
+                    if (puzzleGrid[r][c] !== num++) return false;
+                }
+            }
+        }
+        return true;
+    }
+    
+    function drawPuzzle() {
+// [BLOCKED: potentially dangerous]
+        ctx.fillStyle = isTwitch ? '#1a1a2e' : '#f0f0f0';
+        ctx.fillRect(0, 0, 600, 300);
+        
+        const offsetX = (600 - puzzleSize * tileSize) / 2;
+        const offsetY = (300 - puzzleSize * tileSize) / 2;
+        
+        for (let r = 0; r < puzzleSize; r++) {
+            for (let c = 0; c < puzzleSize; c++) {
+                const val = puzzleGrid[r][c];
+                const x = offsetX + c * tileSize;
+                const y = offsetY + r * tileSize;
+                
+                if (val !== 0) {
+                    ctx.fillStyle = isTwitch ? puzzleColors[(val - 1) % puzzleColors.length] : puzzleColors[(val - 1) % puzzleColors.length];
+                    ctx.fillRect(x + 2, y + 2, tileSize - 4, tileSize - 4);
+                    ctx.strokeStyle = isTwitch ? '#9146FF' : '#333';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(x + 2, y + 2, tileSize - 4, tileSize - 4);
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 36px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(val, x + tileSize / 2, y + tileSize / 2);
+                } else {
+                    ctx.fillStyle = isTwitch ? '#0a0a15' : '#ccc';
+                    ctx.fillRect(x + 2, y + 2, tileSize - 4, tileSize - 4);
+                }
+            }
+        }
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
     });
     </script>
 </body>
