@@ -197,6 +197,141 @@
         }
         
         .theme-toggle:hover {
+        /* Games Page */
+        .games-page {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--white) 100%);
+        }
+        
+        .games-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .games-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        body.twitch-theme .games-title {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .games-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .game-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
+        }
+        
+        body.twitch-theme .game-card {
+            background: var(--twitch-surface);
+            box-shadow: 0 8px 30px rgba(145, 70, 255, 0.1);
+        }
+        
+        body.twitch-theme .game-card:hover {
+            border-color: var(--twitch-accent);
+            box-shadow: 0 12px 40px rgba(145, 70, 255, 0.3);
+        }
+        
+        .game-card.coming-soon {
+            opacity: 0.6;
+        }
+        
+        .game-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .game-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .game-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .game-launch-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .game-launch-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        .game-launch-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        body.twitch-theme .game-launch-btn {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-secondary));
+        }
+        
+        .back-to-games {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-games:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        body.twitch-theme .back-to-games {
+            border-color: var(--twitch-accent);
+            color: var(--twitch-accent);
+        }
+        
+        body.twitch-theme .back-to-games:hover {
+            background: var(--twitch-accent);
+            color: var(--twitch-dark);
+        }
+        
         /* Navigation Menu */
         .nav-menu {
             position: fixed;
@@ -764,6 +899,7 @@
     <nav class="nav-menu">
         <button class="nav-btn active" data-page="home"><span class="nav-icon">🏠</span>Accueil</button>
         <button class="nav-btn" data-page="about"><span class="nav-icon">✨</span>À Propos</button>
+        <button class="nav-btn" data-page="games"><span class="nav-icon">🎮</span>Jeux</button>
         <button class="nav-btn" data-page="contact"><span class="nav-icon">💌</span>Contact</button>
     </nav>
 
@@ -783,13 +919,7 @@
                 <span>Célébrer ensemble</span>
             </button>
             
-            <div class="mini-game-container">
-                <h2 class="game-title">🦒 Mini-Jeu : La Girafe aux Étoiles !</h2>
-                <p class="game-instructions">Utilise les flèches ← → ou A/D pour bouger, ESPACE pour sauter</p>
-                <canvas id="game-canvas" width="600" height="300"></canvas>
-                <div class="game-score">Score: <span id="score">0</span> ⭐</div>
-                <button class="game-restart" id="restart-btn">🔄 Recommencer</button>
-            </div>
+            
             
             <div class="features">
                 <div class="feature">
@@ -846,6 +976,43 @@
         </div>
     </section>
     
+    <section class="page games-page" id="page-games">
+        <div class="games-content">
+            <h2 class="games-title">🎮 Arcade des Jeux</h2>
+            <p class="games-subtitle">Choisis ton aventure !</p>
+            <div class="games-grid">
+                <div class="game-card" id="giraffe-game-card">
+                    <div class="game-card-icon">🦒</div>
+                    <h3>La Girafe aux Étoiles</h3>
+                    <p>Aide la girafe à collecter toutes les étoiles !</p>
+                    <button class="game-launch-btn">▶️ Jouer</button>
+                </div>
+                <div class="game-card coming-soon">
+                    <div class="game-card-icon">🚀</div>
+                    <h3>Space Runner</h3>
+                    <p>Bientôt disponible...</p>
+                    <button class="game-launch-btn" disabled>🔒 À venir</button>
+                </div>
+                <div class="game-card coming-soon">
+                    <div class="game-card-icon">🧩</div>
+                    <h3>Puzzle Mania</h3>
+                    <p>Bientôt disponible...</p>
+                    <button class="game-launch-btn" disabled>🔒 À venir</button>
+                </div>
+            </div>
+            <div class="game-container" id="active-game-container" style="display: none;">
+                <button class="back-to-games">← Retour aux jeux</button>
+                <div class="mini-game-container">
+                    <h2 class="game-title">🦒 Mini-Jeu : La Girafe aux Étoiles !</h2>
+                    <p class="game-instructions">Utilise les flèches ← → ou A/D pour bouger, ESPACE pour sauter</p>
+                    <canvas id="game-canvas" width="600" height="300"></canvas>
+                    <div class="game-score">Score: <span id="score">0</span> ⭐</div>
+                    <button class="game-restart" id="restart-btn">🔄 Recommencer</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <section class="page contact-page" id="page-contact" style="display: none !important;">
         <div class="contact-content">
             <h2 class="contact-title">💌 Contactez-nous</h2>
@@ -880,6 +1047,18 @@
     </div>
     
     <script>
+        // Game launcher functions
+        function launchGiraffeGame() {
+            document.querySelector('.games-grid').style.display = 'none';
+            document.getElementById('active-game-container').style.display = 'block';
+            initGame();
+        }
+        
+        function backToGamesList() {
+            document.querySelector('.games-grid').style.display = 'grid';
+            document.getElementById('active-game-container').style.display = 'none';
+        }
+        
         // Navigation entre pages
         const navBtns = document.querySelectorAll('.nav-btn');
         const pages = document.querySelectorAll('.page');
