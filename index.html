@@ -404,11 +404,11 @@
                 <p style="color: var(--text-secondary);">Évite les astéroïdes et collecte les étoiles !</p>
                 <button class="btn btn-primary">▶️ Jouer</button>
             </div>
-            <div class="card game-card coming-soon">
+            <div class="card game-card"puzzle')">
                 <div class="game-card-icon">🧩</div>
                 <h3>Puzzle Mania</h3>
-                <p style="color: var(--text-secondary);">Bientôt disponible...</p>
-                <button class="btn btn-primary" disabled>🔒 À venir</button>
+                <p style="color: var(--text-secondary);">Remets les tuiles dans l'ordre !</p>
+                <button class="btn btn-primary">▶️ Jouer</button>
             </div>
         </div>
         <div id="game-area" style="display: none;">
@@ -569,6 +569,10 @@
             document.getElementById('game-title').textContent = '🚀 Space Runner';
             document.getElementById('game-instructions').textContent = 'Flèches ↑ ↓ pour bouger, évite les astéroïdes';
             initSpaceGame();
+        } else if (type === 'puzzle') {
+            document.getElementById('game-title').textContent = '🧩 Puzzle Mania';
+            document.getElementById('game-instructions').textContent = 'Clique sur une tuile adjacente au vide pour la déplacer';
+            initPuzzleGame();
         }
     }
     
@@ -729,8 +733,177 @@
     document.addEventListener('keyup', e => keys[e.key] = false);
     document.getElementById('restart-btn').addEventListener('click', () => {
         if (gameLoop) cancelAnimationFrame(gameLoop);
+        canvas.onclick = null;
         if (currentGame === 'giraffe') initGiraffeGame();
         else if (currentGame === 'space') initSpaceGame();
+        else if (currentGame === 'puzzle') initPuzzleGame();
+    });
+    // Puzzle Game
+    let puzzleGrid = [];
+    let emptyPos = { row: 3, col: 3 };
+    const puzzleSize = 4;
+    const tileSize = 70;
+    const puzzleColors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8B500', '#00CED1', '#FF69B4', '#32CD32', '#FF8C00'];
+    let puzzleMoves = 0;
+    let puzzleSolved = false;
+    
+    function initPuzzleGame() {
+        puzzleMoves = 0;
+        puzzleSolved = false;
+        document.getElementById('score').textContent = '0';
+        
+        // Créer grille ordonnée
+        puzzleGrid = [];
+        for (let i = 0; i < puzzleSize * puzzleSize - 1; i++) {
+            puzzleGrid.push(i + 1);
+        }
+        puzzleGrid.push(0); // Case vide
+        emptyPos = { row: 3, col: 3 };
+        
+        // Mélanger (avec mouvements valides pour garantir solution)
+        for (let i = 0; i < 100; i++) {
+            const moves = getValidMoves();
+            const randomMove = moves[Math.floor(Math.random() * moves.length)];
+            swapTiles(randomMove.row, randomMove.col);
+        }
+        
+        drawPuzzle();
+        
+        // Ajouter listener de clic
+        canvas.onclick = handlePuzzleClick;
+    }
+    
+    function getValidMoves() {
+        const moves = [];
+        const dirs = [{dr: -1, dc: 0}, {dr: 1, dc: 0}, {dr: 0, dc: -1}, {dr: 0, dc: 1}];
+        dirs.forEach(d => {
+            const nr = emptyPos.row + d.dr;
+            const nc = emptyPos.col + d.dc;
+            if (nr >= 0 && nr < puzzleSize && nc >= 0 && nc < puzzleSize) {
+                moves.push({row: nr, col: nc});
+            }
+        });
+        return moves;
+    }
+    
+    function swapTiles(row, col) {
+        const emptyIdx = emptyPos.row * puzzleSize + emptyPos.col;
+        const tileIdx = row * puzzleSize + col;
+        [puzzleGrid[emptyIdx], puzzleGrid[tileIdx]] = [puzzleGrid[tileIdx], puzzleGrid[emptyIdx]];
+        emptyPos = { row, col };
+    }
+    
+    function handlePuzzleClick(e) {
+        if (puzzleSolved) return;
+        
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const offsetX = (600 - puzzleSize * tileSize) / 2;
+        const offsetY = (300 - puzzleSize * tileSize) / 2;
+        
+        const col = Math.floor((x - offsetX) / tileSize);
+        const row = Math.floor((y - offsetY) / tileSize);
+        
+        if (row >= 0 && row < puzzleSize && col >= 0 && col < puzzleSize) {
+            // Vérifier si adjacent à la case vide
+            const isAdjacent = (Math.abs(row - emptyPos.row) + Math.abs(col - emptyPos.col)) === 1;
+            if (isAdjacent) {
+                swapTiles(row, col);
+                puzzleMoves++;
+                document.getElementById('score').textContent = puzzleMoves;
+                document.getElementById('coin-sound').currentTime = 0;
+                document.getElementById('coin-sound').play().catch(() => {});
+                drawPuzzle();
+                checkWin();
+            }
+        }
+    }
+    
+    function checkWin() {
+        for (let i = 0; i < puzzleSize * puzzleSize - 1; i++) {
+            if (puzzleGrid[i] !== i + 1) return;
+        }
+        puzzleSolved = true;
+        setTimeout(() => {
+            ctx.fillStyle = 'rgba(0,0,0,0.85)';
+            ctx.fillRect(0, 0, 600, 300);
+            ctx.fillStyle = '#00FF88';
+            ctx.font = 'bold 36px Inter';
+            ctx.textAlign = 'center';
+            ctx.fillText('🎉 PUZZLE RÉSOLU !', 300, 130);
+            ctx.fillStyle = '#fff';
+            ctx.font = '22px Inter';
+            ctx.fillText('En ' + puzzleMoves + ' mouvements', 300, 175);
+            ctx.font = '16px Inter';
+            ctx.fillText('Clique sur Recommencer pour rejouer', 300, 220);
+            ctx.textAlign = 'left';
+        }, 300);
+    }
+    
+    function drawPuzzle() {
+// [BLOCKED: potentially dangerous]
+        ctx.fillStyle = isTwitch ? '#18181B' : '#f0f4f8';
+        ctx.fillRect(0, 0, 600, 300);
+        
+        const offsetX = (600 - puzzleSize * tileSize) / 2;
+        const offsetY = (300 - puzzleSize * tileSize) / 2;
+        
+        for (let row = 0; row < puzzleSize; row++) {
+            for (let col = 0; col < puzzleSize; col++) {
+                const idx = row * puzzleSize + col;
+                const value = puzzleGrid[idx];
+                const x = offsetX + col * tileSize;
+                const y = offsetY + row * tileSize;
+                
+                if (value !== 0) {
+                    // Tuile colorée
+                    const gradient = ctx.createLinearGradient(x, y, x + tileSize, y + tileSize);
+                    gradient.addColorStop(0, puzzleColors[value - 1]);
+                    gradient.addColorStop(1, shadeColor(puzzleColors[value - 1], -20));
+                    
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.roundRect(x + 2, y + 2, tileSize - 4, tileSize - 4, 8);
+                    ctx.fill();
+                    
+                    // Ombre
+                    ctx.fillStyle = 'rgba(0,0,0,0.2)';
+                    ctx.beginPath();
+                    ctx.roundRect(x + 4, y + tileSize - 10, tileSize - 8, 6, 3);
+                    ctx.fill();
+                    
+                    // Numéro
+                    ctx.fillStyle = '#fff';
+                    ctx.font = 'bold 24px Inter';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.shadowColor = 'rgba(0,0,0,0.3)';
+                    ctx.shadowBlur = 3;
+                    ctx.fillText(value, x + tileSize/2, y + tileSize/2);
+                    ctx.shadowBlur = 0;
+                } else {
+                    // Case vide
+                    ctx.fillStyle = isTwitch ? '#0E0E10' : '#ddd';
+                    ctx.beginPath();
+                    ctx.roundRect(x + 2, y + 2, tileSize - 4, tileSize - 4, 8);
+                    ctx.fill();
+                }
+            }
+        }
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'alphabetic';
+    }
+    
+    function shadeColor(color, percent) {
+        const num = parseInt(color.replace('#', ''), 16);
+        const amt = Math.round(2.55 * percent);
+        const R = (num >> 16) + amt;
+        const G = (num >> 8 & 0x00FF) + amt;
+        const B = (num & 0x0000FF) + amt;
+        return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
     });
     </script>
 </body>
