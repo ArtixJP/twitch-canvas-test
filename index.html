@@ -51,30 +51,50 @@
             color: #999999;
         }
     </style>
-<link rel='stylesheet' href="#" /></head>
+<link rel='stylesheet' href="#" />
+    <style>
+        .button-animation {
+            font-size: 1.2rem;
+            margin: 0 0.2rem;
+        }
+        #play-music-button:active {
+            transform: scale(0.95);
+        }
+    </style></head>
 <body>
     <h1>Bienvenue sur notre plateforme</h1>
     <p>Un espace pour des idées et collaborations.</p>
-    <button id="play-music-button"><span id='button-animation' class='animate__animated' style='display:none;'>🎶</span><span id='button-animation' class='animate__animated' style='display:none;'>🎶</span><span id='button-animation' class='animate__animated' style='display:none;'>🎶</span>Jouer une musique !</button>
+    <button id="play-music-button"><span class='button-animation animate__animated' style='display:none;'>🎶</span><span class='button-animation animate__animated' style='display:none;'>🎵</span><span class='button-animation animate__animated' style='display:none;'>🎶</span> Jouer une musique !</button>
     <footer>
         <p>&copy; 2023 Projet Collaboratif</p>
     </footer>
     <audio id="music-audio" src="#" preload="auto"></audio>
     <script>
         document.getElementById('play-music-button').addEventListener('click', () => {
-            document.getElementById('music-audio').play();
+            const audio = document.getElementById('music-audio');
+            const animations = document.querySelectorAll('.button-animation');
+            
+            // Jouer le son
+            audio.play().catch(e => console.log('Audio play failed:', e));
+            
+            // Animer les notes de musique
+            animations.forEach((anim, index) => {
+                setTimeout(() => {
+                    anim.style.display = 'inline';
+                    anim.classList.add('animate__bounceIn');
+                    
+                    // Faire disparaître après l'animation
+                    setTimeout(() => {
+                        anim.classList.remove('animate__bounceIn');
+                        anim.classList.add('animate__fadeOut');
+                        setTimeout(() => {
+                            anim.style.display = 'none';
+                            anim.classList.remove('animate__fadeOut');
+                        }, 500);
+                    }, 1000 + index * 200);
+                }, index * 200);
+            });
         });
-            
-            
-            
-            
-    document.getElementById('play-music-button').addEventListener('click', () => {
-            const animation = document.getElementById('button-animation'); const audio = document.getElementById('music-audio');
-            audio.play();animation.style.display = 'inline'; animation.classList.add('animate__bounce'); setTimeout(() => animation.classList.remove('animate__bounce'), 1000);
-            const animation = document.getElementById('button-animation');
-            animation.style.display = 'inline';
-            animation.classList.add('animate__bounce');
-            setTimeout(() => animation.classList.remove('animate__bounce'), 1000);
-        });</script>
+    </script>
 </body>
 </html>
