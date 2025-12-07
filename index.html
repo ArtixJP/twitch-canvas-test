@@ -134,7 +134,7 @@
     <div style="background: red; width: 33.33%; height: 100%;"></div>
 </div>
             <div class="chaos-content"><p style='color: #aaa;'>🕹️ Bienvenue dans le monde 3D ! Utilisez les flèches pour contrôler la caméra et découvrir l'univers cubique.</p>
-<div id="game-zone" style="margin-top: 2rem; text-align: center;"><div id="three-js-canvas" style="width: 400px; height: 300px; margin: 2rem auto; border: 1px solid #e94560;"></div>
+<p id='game-status' style='color: #e94560; font-size: 1.2rem;'>Jeu arrêté</p><div id="game-zone" style="margin-top: 2rem; text-align: center;"><div id="three-js-canvas" style="width: 400px; height: 300px; margin: 2rem auto; border: 1px solid #e94560;"></div>
     
     
     
@@ -219,5 +219,23 @@ function animate() {
 }
 
 animate();
-</script><p style='text-align: center; color: #aaa;'>Utilisez les touches fléchées pour déplacer le carré ! Objectif : ne pas le laisser sortir du canvas.</p><script>document.addEventListener('keydown', (event) => { if(event.key === 'ArrowRight') { player.x += 10; } else if(event.key === 'ArrowLeft') { player.x -= 10; } });</script></body>
+</script><p style='text-align: center; color: #aaa;'>Utilisez les touches fléchées pour déplacer le carré ! Objectif : ne pas le laisser sortir du canvas.</p><script></script><script>
+let isGameActive = false;
+document.getElementById('blue-button').addEventListener('click', () => {
+    isGameActive = !isGameActive;
+    if (isGameActive) {
+        document.getElementById('game-status').textContent = 'Jeu en cours...';
+    } else {
+        document.getElementById('game-status').textContent = 'Jeu arrêté';
+    }
+});
+document.addEventListener('keydown', (event) => {
+    if (!isGameActive) return;
+    if(event.key === 'ArrowRight') {
+        player.x += 10;
+    } else if(event.key === 'ArrowLeft') {
+        player.x -= 10;
+    }
+});
+</script></body>
 </html>
