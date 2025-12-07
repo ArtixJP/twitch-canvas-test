@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitch Versus Code</title>
     <style id="zone-styles">
-/* Variables */
 :root {
     --primary: #9146ff;
     --secondary: #00ff7f;
     --bg: #0e0e10;
     --text: #efeff1;
     --card-bg: #18181b;
+    --fun-button-bg: #ffcc00;
+    --fun-button-hover: #ffb300;
 }
 
-/* Base */
-* { box-sizing: border-box; margin: 0; padding: 0; }
+/* Variables */
+* { box-sizing: border-box; margin: 0; }
 
 body {
     font-family: 'Segoe UI', system-ui, sans-serif;
@@ -110,6 +111,28 @@ code {
     margin-bottom: 0.5rem;
 }
 
+/* Fun Button */
+.fun-button {
+    background: var(--fun-button-bg);
+    color: var(--bg);
+    border: none;
+    border-radius: 25px;
+    padding: 0.75rem 1.5rem;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+    margin-top: 1rem;
+}
+
+.fun-button:hover {
+    background: var(--fun-button-hover);
+    transform: scale(1.05);
+}
+
+.fun-button:active {
+    transform: scale(0.95);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
     .main-layout {
@@ -129,154 +152,32 @@ code {
     
     <div class="main-layout">
         <main id="zone-content">
-<section class="cozy-welcome">
-    <div class="greeting">
-        <span class="wave">🌙</span>
-        <h1>Bienvenue, voyageur.</h1>
-    </div>
-    
-    <p class="intro-text">
-        Ici, on construit quelque chose ensemble.<br>
-        Pas de plan, pas de deadline — juste le chat, le stream, et nos idées.
-    </p>
-    
-    <div class="cozy-divider">✦</div>
-    
-    <div class="how-it-works">
-        <h2>Tu fais partie de l'aventure</h2>
-        <p>Chaque élément de cette page peut naître d'une idée du chat.</p>
-        <div class="command-box">
-            <code>!idea</code> <span class="command-desc">ton idée ici</span>
-        </div>
-    </div>
-    
-    <div class="cozy-note">
-        <p>🕯️ C'est un espace doux.<br>
-        On expérimente, on rate parfois, on recommence.<br>
-        <em>Et c'est très bien comme ça.</em></p>
-    </div>
-    
-    <div class="presence-hint">
-        <span class="dot"></span>
-        <span>On crée en ce moment même</span>
-    </div>
-</section>
-
+<div class="welcome-box">
+    <h2>Bienvenue ! 👋</h2>
+    <p>Cette page évolue en temps réel grâce aux suggestions du chat Twitch.</p>
+    <p>Tapez <code>!idea</code> suivi de votre idée pour proposer un changement !</p>
+    <button id="fun-button" class="fun-button">Cliquez-moi pour une surprise ! 🎉</button>
+</div>
+<script>
+// [BLOCKED: potentially dangerous]
+        alert('🎈 Vous avez trouvé le bouton magique ! Continuez à proposer vos idées !');
+    });
+</script>
 <style>
-.cozy-welcome {
-    max-width: 540px;
-    margin: 3rem auto;
-    padding: 2rem;
-    text-align: center;
-    font-family: 'Georgia', serif;
-    color: #4a4a4a;
-    line-height: 1.9;
-}
-
-.greeting {
-    margin-bottom: 2rem;
-}
-
-.wave {
-    font-size: 2rem;
-    display: block;
-    margin-bottom: 1rem;
-    animation: gentle-glow 3s ease-in-out infinite;
-}
-
-@keyframes gentle-glow {
-    0%, 100% { opacity: 0.7; }
-    50% { opacity: 1; }
-}
-
-.greeting h1 {
-    font-size: 1.8rem;
-    font-weight: normal;
-    color: #5c5048;
-    margin: 0;
-}
-
-.intro-text {
-    font-size: 1.05rem;
-    color: #6b6058;
-}
-
-.cozy-divider {
-    color: #d4c4a8;
-    margin: 2.5rem 0;
-    font-size: 0.8rem;
-}
-
-.how-it-works h2 {
-    font-size: 1.1rem;
-    font-weight: normal;
-    color: #7a6b5d;
-    margin-bottom: 1rem;
-}
-
-.how-it-works > p {
-    color: #8a7b6d;
-    font-size: 0.95rem;
-}
-
-.command-box {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: #faf8f5;
-    border-radius: 8px;
-    display: inline-block;
-}
-
-.command-box code {
-    background: #6b5b4f;
-    color: #faf6f0;
-    padding: 0.3rem 0.5rem;
-    border-radius: 4px;
-    font-family: monospace;
-    font-size: 0.9rem;
-}
-
-.command-desc {
-    color: #a99b8d;
-    font-style: italic;
-    margin-left: 0.5rem;
-}
-
-.cozy-note {
-    background: #fdfbf8;
-    padding: 1.5rem 2rem;
-    border-radius: 16px;
-    margin: 2.5rem 0;
-    border: 1px solid #ebe4da;
-}
-
-.cozy-note p {
-    margin: 0;
-    color: #6b5b4f;
-    font-size: 0.95rem;
-}
-
-.presence-hint {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #a99b8d;
-    font-size: 0.85rem;
-    margin-top: 1.5rem;
-}
-
-.dot {
-    width: 6px;
-    height: 6px;
-    background: #b8a990;
-    border-radius: 50%;
-    animation: pulse 2s ease-in-out infinite;
-}
-
-@keyframes pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 1; }
-}
+    .fun-button {
+        background-color: #ffcc00;
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+    .fun-button:hover {
+        transform: scale(1.1);
+        background-color: #ffd700;
+    }
 </style>
         </main>
         
@@ -310,6 +211,32 @@ document.querySelectorAll('#zone-content > *').forEach((el, i) => {
         el.style.transform = 'translateY(0)';
     }, i * 100);
 });
+
+// Création d'un bouton rigolo
+const funnyButton = document.createElement('button');
+funnyButton.textContent = 'Clique moi si tu peux ! 😂';
+funnyButton.style.backgroundColor = '#FFCC00';
+funnyButton.style.color = '#333';
+funnyButton.style.border = 'none';
+funnyButton.style.borderRadius = '12px';
+funnyButton.style.padding = '10px 20px';
+funnyButton.style.fontSize = '16px';
+funnyButton.style.cursor = 'pointer';
+funnyButton.style.marginTop = '20px';
+funnyButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+funnyButton.onmouseover = () => {
+    funnyButton.style.transform = 'scale(1.1)';
+    funnyButton.style.transition = 'transform 0.2s ease';
+};
+funnyButton.onmouseout = () => {
+    funnyButton.style.transform = 'scale(1)';
+};
+funnyButton.onclick = () => {
+    alert('Tu es trop rapide ! 😄');
+};
+
+const zoneContent = document.getElementById('zone-content');
+if (zoneContent) zoneContent.appendChild(funnyButton);
 
 console.log('🎮 Twitch Versus Code loaded!');
     </script>
