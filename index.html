@@ -60,6 +60,25 @@
         #play-music-button:active {
             transform: scale(0.95);
         }
+        #play-music-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        #play-music-button::after {
+            content: '🪙';
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: all 0.5s ease;
+        }
+        #play-music-button.coin-collected::after {
+            opacity: 1;
+            transform: translate(-50%, -150%) scale(1.5);
+        }
     </style></head>
 <body>
     <h1>Bienvenue sur notre plateforme</h1>
@@ -68,19 +87,42 @@
     <footer>
         <p>&copy; 2023 Projet Collaboratif</p>
     </footer>
-    <audio id="music-audio" src="#" preload="auto"></audio>
+    <audio id="music-audio" src="#" preload="auto" crossorigin="anonymous"></audio>
     <script>
         document.getElementById('play-music-button').addEventListener('click', () => {
             const audio = document.getElementById('music-audio');
             const animations = document.querySelectorAll('.button-animation');
+            const button = document.getElementById('play-music-button');
+            
+            // Cloner l'audio pour permettre les clics rapides
+            const audioClone = audio.cloneNode();
             
             // Jouer le son
-            audio.play().catch(e => console.log('Audio play failed:', e));
+            audioClone.play().catch(e => {
+                console.log('Audio play failed:', e);
+                // Fallback: essayer avec l'audio original
+                audio.currentTime = 0;
+                audio.play().catch(err => console.log('Fallback audio failed:', err));
+            });
             
-            // Animer les notes de musique
+            // Effet visuel sur le bouton
+            button.style.transform = 'scale(1.1)';
+            setTimeout(() => {
+                button.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Effet pièce collectée
+            button.classList.add('coin-collected');
+            setTimeout(() => {
+                button.classList.remove('coin-collected');
+            }, 500);
+            
+            // Animer les notes de musique avec des couleurs aléatoires
+            const colors = ['#FFD700', '#FF69B4', '#00CED1', '#32CD32', '#FF6347'];
             animations.forEach((anim, index) => {
                 setTimeout(() => {
                     anim.style.display = 'inline';
+                    anim.style.color = colors[Math.floor(Math.random() * colors.length)];
                     anim.classList.add('animate__bounceIn');
                     
                     // Faire disparaître après l'animation
