@@ -5,160 +5,214 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitch Versus Code</title>
     <style id="zone-styles">
+/* Variables - Palette douce et cosy */
 :root {
     --primary: #9146ff;
-    --secondary: #00ff7f;
-    --bg: #0e0e10;
-    --text: #efeff1;
-    --card-bg: #18181b;
-    --fun-button-bg: #ffcc00;
-    --fun-button-hover: #ffb300;
+    --primary-soft: #a970ff;
+    --secondary: #f0a6ca;
+    --accent: #b8d4e3;
+    --bg: #1a1a2e;
+    --bg-soft: #16213e;
+    --text: #edf2f4;
+    --text-muted: #a8b2c1;
+    --card-bg: #1f1f38;
+    --card-border: rgba(145, 70, 255, 0.2);
+    --glow: rgba(145, 70, 255, 0.15);
 }
 
-/* Variables */
-* { box-sizing: border-box; margin: 0; }
+/* Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
     font-family: 'Segoe UI', system-ui, sans-serif;
-    background: var(--bg);
+    background: linear-gradient(145deg, var(--bg) 0%, var(--bg-soft) 100%);
     color: var(--text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    line-height: 1.7;
 }
 
-/* Layout */
+/* Animations douces */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes softPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+
+/* Header minimal et accueillant */
 #zone-header {
-    background: linear-gradient(135deg, var(--primary), #772ce8);
-    padding: 2rem;
-    text-align: center;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
+    padding: 1.5rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    animation: fadeIn 0.6s ease-out;
 }
 
 #zone-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--text);
+}
+
+#zone-header .logo {
+    font-size: 1.8rem;
+    animation: float 3s ease-in-out infinite;
 }
 
 .subtitle {
-    opacity: 0.9;
-    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    font-weight: 300;
 }
 
-.main-layout {
-    display: flex;
-    flex: 1;
-    gap: 1rem;
-    padding: 1rem;
-    max-width: 1400px;
-    margin: 0 auto;
-    width: 100%;
-}
-
+/* Contenu principal */
 #zone-content {
     flex: 1;
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.5rem;
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    width: 100%;
+    animation: fadeIn 0.8s ease-out 0.2s both;
 }
 
-#zone-sidebar {
-    width: 280px;
+/* Cartes et boîtes */
+.welcome-box, .article-card {
     background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.5rem;
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 20px var(--glow);
+    transition: all 0.3s ease;
 }
 
+.welcome-box:hover, .article-card:hover {
+    border-color: var(--primary-soft);
+    box-shadow: 0 8px 30px var(--glow);
+    transform: translateY(-2px);
+}
+
+.welcome-box h2, .article-card h3 {
+    color: var(--secondary);
+    font-weight: 500;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.welcome-box p, .article-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    margin-bottom: 0.75rem;
+}
+
+/* Éléments interactifs */
+.interactive-btn {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-soft) 100%);
+    color: var(--text);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.interactive-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(145, 70, 255, 0.4);
+}
+
+.tip-box {
+    background: rgba(145, 70, 255, 0.1);
+    border-left: 3px solid var(--primary-soft);
+    padding: 1rem 1.25rem;
+    border-radius: 0 8px 8px 0;
+    margin: 1rem 0;
+}
+
+.tip-box span {
+    animation: softPulse 2s ease-in-out infinite;
+}
+
+/* Footer rassurant */
 #zone-footer {
     background: var(--card-bg);
-    padding: 1rem;
-    text-align: center;
-    opacity: 0.7;
-}
-
-/* Components */
-.welcome-box {
-    background: linear-gradient(135deg, rgba(145, 70, 255, 0.2), rgba(0, 255, 127, 0.1));
-    border: 1px solid var(--primary);
-    border-radius: 8px;
+    border-top: 1px solid var(--card-border);
     padding: 1.5rem;
+    text-align: center;
+    animation: fadeIn 0.8s ease-out 0.4s both;
 }
 
-.welcome-box h2 {
+#zone-footer a {
+    color: var(--primary-soft);
+    text-decoration: none;
+    margin: 0 0.75rem;
+    font-size: 0.85rem;
+    transition: color 0.2s ease;
+}
+
+#zone-footer a:hover {
     color: var(--secondary);
-    margin-bottom: 1rem;
 }
 
-.welcome-box p {
-    margin-bottom: 0.5rem;
-    line-height: 1.6;
+#zone-footer p {
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
 }
 
+/* Code inline */
 code {
-    background: var(--primary);
+    background: rgba(145, 70, 255, 0.2);
     padding: 0.2rem 0.5rem;
     border-radius: 4px;
-    font-family: monospace;
-}
-
-.stats-box {
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    padding: 1rem;
-}
-
-.stats-box h3 {
-    color: var(--primary);
-    margin-bottom: 0.5rem;
-}
-
-/* Fun Button */
-.fun-button {
-    background: var(--fun-button-bg);
-    color: var(--bg);
-    border: none;
-    border-radius: 25px;
-    padding: 0.75rem 1.5rem;
-    font-size: 1.2rem;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease;
-    margin-top: 1rem;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-}
-
-.fun-button:hover {
-    background: var(--fun-button-hover);
-    transform: scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.fun-button:active {
-    transform: scale(0.95);
-}
-
-.fun-button::after {
-    content: '🤪';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 2rem;
-    animation: bounce 0.6s infinite alternate;
-}
-
-/* Animation */
-@keyframes bounce {
-    0% { transform: translate(-50%, -50%) translateY(0); }
-    100% { transform: translate(-50%, -50%) translateY(-10px); }
+    font-family: 'Fira Code', monospace;
+    font-size: 0.85em;
+    color: var(--accent);
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .main-layout {
-        flex-direction: column;
+    #zone-header {
+        padding: 1rem;
     }
-    #zone-sidebar {
+    
+    #zone-header h1 {
+        font-size: 1.2rem;
+    }
+    
+    #zone-content {
+        margin: 1rem;
+        padding: 1rem;
+    }
+    
+    .welcome-box, .article-card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .welcome-box, .article-card {
+        padding: 1.25rem;
+        border-radius: 12px;
+    }
+    
+    .interactive-btn {
         width: 100%;
     }
 }
@@ -166,69 +220,75 @@ code {
 </head>
 <body>
     <header id="zone-header">
-<h1>🎮 Twitch Versus Code</h1>
-<p class="subtitle">La page que VOUS construisez en direct !</p>
+<div class="header-container">
+    <div class="logo-wrapper">
+        <span class="logo-icon">✨</span>
+    </div>
+    <h1>Bienvenue, ami·e</h1>
+    <p class="subtitle">Ton espace créatif commence ici</p>
+    <nav class="nav-minimal">
+        <a href="#explorer" class="nav-link">Explorer</a>
+        <span class="nav-separator">·</span>
+        <a href="#creer" class="nav-link">Créer</a>
+        <span class="nav-separator">·</span>
+        <a href="#aide" class="nav-link">Aide</a>
+    </nav>
+</div>
     </header>
     
     <div class="main-layout">
         <main id="zone-content">
-<div class="welcome-box">
-    <h2>Bienvenue ! 👋</h2>
-    <p>Cette page évolue en temps réel grâce aux suggestions du chat Twitch.</p>
-    <p>Tapez <code>!idea</code> suivi de votre idée pour proposer un changement !</p>
-    <button id="fun-button" class="fun-button">Cliquez-moi pour une surprise ! 🎉</button>
-    <button id="joke-button" class="joke-button">Faites-moi rire ! 😂</button>
-    <button id="dance-button" class="dance-button">Dansez avec moi ! 💃🕺</button>
-    <p id="joke-output" class="joke-output"></p>
-    <p id="dance-output" class="dance-output"></p>
-</div>
-<script>
-// [BLOCKED: potentially dangerous]
-        alert('🎈 Vous avez trouvé le bouton magique ! Continuez à proposer vos idées !');
-    });
+<section class="hero-welcome">
+    <div class="welcome-card">
+        <span class="wave-emoji">👋</span>
+        <h1>Bienvenue, ami·e !</h1>
+        <p class="subtitle">Tu viens d'arriver dans un espace un peu spécial...</p>
+    </div>
+</section>
 
-// [BLOCKED: potentially dangerous]
-        const jokes = [
-            "Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ? Parce que sinon ils tombent dans le bateau !",
-            "Quel est le comble pour un électricien ? De ne pas être au courant !",
-            "Pourquoi les fantômes sont-ils de si mauvais menteurs ? Parce qu'on peut lire à travers eux !"
-        ];
-        const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
-        document.getElementById('joke-output').textContent = randomJoke;
-    });
+<section class="intro-section">
+    <article class="info-card">
+        <div class="card-icon">✨</div>
+        <h2>C'est quoi ici ?</h2>
+        <p>Cette page est <strong>vivante</strong>. Elle évolue en temps réel grâce aux idées du chat Twitch. Oui, toi aussi tu peux la transformer !</p>
+    </article>
+    
+    <article class="info-card">
+        <div class="card-icon">💬</div>
+        <h2>Comment participer ?</h2>
+        <p>C'est simple et sans prise de tête :</p>
+        <div class="command-box">
+            <code>!idea</code> <span>+ ton idée géniale</span>
+        </div>
+        <p class="example-text">Exemple : <em>!idea ajouter un mode sombre</em></p>
+    </article>
+    
+    <article class="info-card">
+        <div class="card-icon">🌱</div>
+        <h2>Pas de stress</h2>
+        <p>Il n'y a pas de mauvaise idée ici. On explore, on teste, on s'amuse ensemble. Prends ton temps pour observer ou lance-toi directement !</p>
+    </article>
+</section>
 
-// [BLOCKED: potentially dangerous]
-        const danceMessages = [
-            "🕺 Vous dansez comme une étoile !",
-            "💃 La fête commence avec vous !",
-            "🎶 Faites tourner la musique et dansez !"
-        ];
-        const randomDance = danceMessages[Math.floor(Math.random() * danceMessages.length)];
-        document.getElementById('dance-output').textContent = randomDance;
-    });
-</script>
-<style>
-    .fun-button, .joke-button, .dance-button {
-        background-color: #ffcc00;
-        color: #333;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: transform 0.2s;
-        margin: 5px;
-    }
-    .fun-button:hover, .joke-button:hover, .dance-button:hover {
-        transform: scale(1.1);
-        background-color: #ffd700;
-    }
-    .joke-output, .dance-output {
-        margin-top: 15px;
-        font-style: italic;
-        color: #555;
-    }
-</style>
+<section class="interactive-zone">
+    <div class="mood-check">
+        <p>Comment tu te sens en arrivant ?</p>
+        <div class="mood-buttons">
+            <button class="mood-btn" data-mood="curious" title="Curieux·se">🤔</button>
+            <button class="mood-btn" data-mood="excited" title="Excité·e">🤩</button>
+            <button class="mood-btn" data-mood="chill" title="Tranquille">😌</button>
+            <button class="mood-btn" data-mood="shy" title="Timide">🙈</button>
+        </div>
+        <p class="mood-response"></p>
+    </div>
+</section>
+
+<section class="tips-section">
+    <details class="tip-accordion">
+        <summary>💡 Petit conseil pour bien commencer</summary>
+        <p>Reste un moment, observe comment la page change, et quand tu te sens prêt·e, propose ta première idée. On est tous passés par là !</p>
+    </details>
+</section>
         </main>
         
         <aside id="zone-sidebar">
@@ -240,7 +300,124 @@ code {
     </div>
     
     <footer id="zone-footer">
-<p>Créé en live sur Twitch • Propulsé par l'IA</p>
+<div class="footer-container">
+  <div class="footer-links">
+    <a href="#aide" class="footer-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+      </svg>
+      Aide
+    </a>
+    <a href="#confidentialite" class="footer-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+      </svg>
+      Confidentialité
+    </a>
+    <a href="#contact" class="footer-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+      Contact
+    </a>
+  </div>
+  
+  <div class="footer-credits">
+    <p class="made-with">
+      Fait avec <span class="heart" aria-label="amour">♥</span> en live sur 
+      <a href="#" target="_blank" rel="noopener" class="twitch-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
+        </svg>
+        Twitch
+      </a>
+    </p>
+    <p class="powered-by">Propulsé par l'IA • Une expérience pensée pour vous</p>
+  </div>
+  
+  <div class="footer-copyright">
+    <p>© 2024 — Votre aventure commence ici ✨</p>
+  </div>
+</div>
+
+<style>
+  footer {
+    background: linear-gradient(to top, rgba(139, 115, 176, 0.1), transparent);
+    border-top: 1px solid rgba(139, 115, 176, 0.2);
+    padding: 2rem 1.5rem;
+    margin-top: auto;
+  }
+  
+  .footer-container {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+  }
+  
+  .footer-link {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #a89bb8;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+  }
+  
+  .footer-link:hover {
+    color: #c9b8e0;
+  }
+  
+  .footer-credits {
+    margin-bottom: 1rem;
+  }
+  
+  .made-with, .powered-by {
+    color: #8b7aa0;
+    font-size: 0.85rem;
+    margin: 0.3rem 0;
+  }
+  
+  .heart {
+    color: #e88a9e;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+  }
+  
+  .twitch-link {
+    color: #9b7ad6;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  
+  .twitch-link:hover {
+    color: #b99af0;
+  }
+  
+  .footer-copyright p {
+    color: #6b5a7a;
+    font-size: 0.8rem;
+    margin: 0;
+  }
+</style>
     </footer>
     
     <script>
@@ -261,42 +438,6 @@ document.querySelectorAll('#zone-content > *').forEach((el, i) => {
         el.style.transform = 'translateY(0)';
     }, i * 100);
 });
-
-// Création d'un bouton rigolo
-const funnyButton = document.createElement('button');
-funnyButton.textContent = 'Clique moi si tu peux ! 😂';
-funnyButton.style.backgroundColor = '#FFCC00';
-funnyButton.style.color = '#333';
-funnyButton.style.border = 'none';
-funnyButton.style.borderRadius = '12px';
-funnyButton.style.padding = '10px 20px';
-funnyButton.style.fontSize = '16px';
-funnyButton.style.cursor = 'pointer';
-funnyButton.style.marginTop = '20px';
-funnyButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
-funnyButton.style.transition = 'background-color 0.3s, transform 0.2s ease';
-
-// Effet de survol
-funnyButton.onmouseover = () => {
-    funnyButton.style.transform = 'scale(1.1)';
-};
-funnyButton.onmouseout = () => {
-    funnyButton.style.transform = 'scale(1)';
-};
-
-// Interactivité amusante
-funnyButton.onclick = () => {
-    funnyButton.style.backgroundColor = '#FF9900';
-    funnyButton.textContent = 'Trop rapide ! 😄';
-    setTimeout(() => {
-        funnyButton.style.backgroundColor = '#FFCC00';
-        funnyButton.textContent = 'Clique moi si tu peux ! 😂';
-    }, 1000);
-};
-
-// Ajout du bouton dans le contenu
-const zoneContent = document.getElementById('zone-content');
-if (zoneContent) zoneContent.appendChild(funnyButton);
 
 console.log('🎮 Twitch Versus Code loaded!');
     </script>
