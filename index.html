@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head><audio id="music-audio" src="#" preload="auto"></audio>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Élégante</title>
@@ -17,33 +17,33 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background-color: #ffffff;
+            background-color: #f0f0f0;
             color: #333333;
             text-align: center;
         }
         h1 {
-            font-size: 2rem;
+            font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: #333333;
+            color: #007bff;
         }
         p {
-            font-size: 1rem;
+            font-size: 1.25rem;
             margin-bottom: 2rem;
             color: #666666;
         }
         button {
-            background-color: #007bff;
+            background-color: #28a745;
             color: white;
             border: none;
             border-radius: 4px;
-            padding: 0.75rem 1.5rem;
+            padding: 1rem 2rem;
             font-size: 1rem;
             cursor: pointer;
             transition: background-color 0.3s;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #218838;
         }
         footer {
             margin-top: 2rem;
@@ -55,14 +55,15 @@
 <body>
     <h1>Bienvenue sur notre plateforme</h1>
     <p>Un espace pour des idées et collaborations.</p>
-    <button id="start-button">Commencer</button><button id="music-button" style="background-color: #007bff; color: white; border: none; border-radius: 4px; padding: 0.75rem 1.5rem; font-size: 1rem; cursor: pointer; transition: background-color 0.3s; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);">Jouer une musique</button>
+    <button id="play-music-button">Jouer une musique</button>
     <footer>
         <p>&copy; 2023 Projet Collaboratif</p>
     </footer>
-    <audio id="coin-audio" src="#" preload="auto"></audio><script>
-        document.getElementById('start-button').addEventListener('click', () => {
-            alert('Merci de participer !');
+    <audio id="music-audio" src="#" preload="auto"></audio>
+    <script>
+        document.getElementById('play-music-button').addEventListener('click', () => {
+            document.getElementById('music-audio').play();
         });
-    document.querySelector('#music-button').addEventListener('click', () => { document.getElementById('music-audio').play(); });</script>
+    </script>
 </body>
 </html>
