@@ -94,15 +94,13 @@
             const animations = document.querySelectorAll('.button-animation');
             const button = document.getElementById('play-music-button');
             
-            // Cloner l'audio pour permettre les clics rapides
-            const audioClone = audio.cloneNode();
-            
-            // Jouer le son
-            audioClone.play().catch(e => {
+            // Jouer le son directement
+            audio.currentTime = 0;
+            audio.play().catch(e => {
                 console.log('Audio play failed:', e);
-                // Fallback: essayer avec l'audio original
-                audio.currentTime = 0;
-                audio.play().catch(err => console.log('Fallback audio failed:', err));
+                // Fallback: créer un nouvel audio element
+                const newAudio = new Audio('https://www.myinstants.com/media/sounds/super-mario-coin-sound.mp3');
+                newAudio.play().catch(err => console.log('New audio failed:', err));
             });
             
             // Effet visuel sur le bouton
