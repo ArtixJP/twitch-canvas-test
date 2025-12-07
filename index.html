@@ -19,6 +19,8 @@
     --border: #2f2f35;
     --radius: 8px;
     --transition: 0.2s ease;
+    --red: #e91916;
+    --red-dark: #b81412;
 }
 
 /* Base */
@@ -140,6 +142,78 @@ body {
     letter-spacing: -0.02em;
 }
 
+/* Counter Section */
+.counter-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Counter Button - Rouge */
+.counter-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 6px 25px rgba(233, 25, 22, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.counter-btn:hover {
+    transform: scale(1.05) translateY(-3px);
+    box-shadow: 0 10px 35px rgba(233, 25, 22, 0.5);
+}
+
+.counter-btn:active {
+    transform: scale(0.95);
+}
+
+.counter-icon {
+    font-size: 1.5rem;
+}
+
+.counter-text {
+    letter-spacing: -0.01em;
+}
+
+/* Counter Display */
+.counter-display {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-card);
+    border: 2px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1.5rem;
+    transition: border-color 0.3s ease, transform 0.2s ease;
+}
+
+.counter-display.pulse {
+    border-color: var(--red);
+    transform: scale(1.05);
+}
+
+.counter-label {
+    font-size: 1rem;
+    color: var(--text-muted);
+}
+
+.counter-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--red);
+    min-width: 3ch;
+    text-align: center;
+}
+
 /* Story Box */
 .story-box {
     background: var(--bg-card);
@@ -254,6 +328,11 @@ body {
     .btn-icon {
         font-size: 2rem;
     }
+    
+    .counter-btn {
+        padding: 0.75rem 1.5rem;
+        font-size: 1rem;
+    }
 }
     </style>
 </head>
@@ -270,6 +349,17 @@ body {
         <span class="btn-icon">👋</span>
         <span class="btn-text">Bonjour vous !</span>
     </button>
+    
+    <div class="counter-section">
+        <button class="counter-btn" id="counter-btn">
+            <span class="counter-icon">🔥</span>
+            <span class="counter-text">Incrémenter</span>
+        </button>
+        <div class="counter-display" id="counter-display">
+            <span class="counter-label">Compteur :</span>
+            <span class="counter-value" id="counter-value">0</span>
+        </div>
+    </div>
     
     <div class="story-box" id="story-box">
         <p class="story-text" id="story-text"></p>
@@ -312,11 +402,15 @@ const stories = [
 ];
 
 let storyIndex = 0;
+let counter = 0;
 
 // Sélection des éléments
 const helloBtn = document.getElementById('hello-btn');
 const storyBox = document.getElementById('story-box');
 const storyText = document.getElementById('story-text');
+const counterBtn = document.getElementById('counter-btn');
+const counterValue = document.getElementById('counter-value');
+const counterDisplay = document.getElementById('counter-display');
 
 // Fonction pour afficher une histoire
 function tellStory() {
@@ -334,9 +428,26 @@ function tellStory() {
     storyIndex = (storyIndex + 1) % stories.length;
 }
 
-// Écouter le clic sur le bouton
+// Fonction pour incrémenter le compteur
+function incrementCounter() {
+    counter++;
+    counterValue.textContent = counter;
+    
+    // Animation pulse sur le display
+    counterDisplay.classList.add('pulse');
+    setTimeout(() => {
+        counterDisplay.classList.remove('pulse');
+    }, 200);
+}
+
+// Écouter le clic sur le bouton hello
 if (helloBtn) {
     helloBtn.addEventListener('click', tellStory);
+}
+
+// Écouter le clic sur le bouton compteur
+if (counterBtn) {
+    counterBtn.addEventListener('click', incrementCounter);
 }
 
 console.log('🎮 Twitch Versus Code loaded!');
