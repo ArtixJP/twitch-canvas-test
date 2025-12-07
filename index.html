@@ -5,147 +5,316 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitch Versus Code</title>
     <style id="zone-styles">
-/* Variables */
+/* Variables - Palette chaleureuse et sobre */
 :root {
-    --primary: #9146ff;
-    --secondary: #00ff7f;
+    --primary: #9147ff;
+    --primary-soft: rgba(145, 71, 255, 0.15);
+    --secondary: #bf94ff;
+    --accent: #f0a868;
     --bg: #0e0e10;
+    --bg-elevated: #18181b;
+    --bg-card: #1f1f23;
     --text: #efeff1;
-    --card-bg: #18181b;
+    --text-muted: #adadb8;
+    --border: #2f2f35;
+    --radius: 8px;
+    --transition: 0.2s ease;
 }
 
 /* Base */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
     background: var(--bg);
     color: var(--text);
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    line-height: 1.5;
 }
 
-/* Layout */
+/* Header - Minimal et accueillant */
 #zone-header {
-    background: linear-gradient(135deg, var(--primary), #772ce8);
-    padding: 2rem;
+    background: var(--bg-elevated);
+    padding: 1.5rem 2rem;
     text-align: center;
+    border-bottom: 1px solid var(--border);
 }
 
 #zone-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    letter-spacing: -0.02em;
 }
 
 .subtitle {
-    opacity: 0.9;
-    font-size: 1.1rem;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
 }
 
+/* Layout */
 .main-layout {
     display: flex;
     flex: 1;
-    gap: 1rem;
-    padding: 1rem;
-    max-width: 1400px;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    max-width: 1200px;
     margin: 0 auto;
     width: 100%;
 }
 
 #zone-content {
     flex: 1;
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
 }
 
 #zone-sidebar {
-    width: 280px;
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 1.5rem;
+    width: 240px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
 }
 
 #zone-footer {
-    background: var(--card-bg);
+    background: var(--bg-elevated);
     padding: 1rem;
     text-align: center;
-    opacity: 0.7;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
 }
 
-/* Components */
+/* Welcome Box */
 .welcome-box {
-    background: linear-gradient(135deg, rgba(145, 70, 255, 0.2), rgba(0, 255, 127, 0.1));
-    border: 1px solid var(--primary);
-    border-radius: 8px;
-    padding: 1.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 2rem;
 }
 
 .welcome-box h2 {
-    color: var(--secondary);
-    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text);
 }
 
-.welcome-box p {
-    margin-bottom: 0.5rem;
-    line-height: 1.6;
+.welcome-text {
+    color: var(--text-muted);
+    margin-bottom: 1.25rem;
+}
+
+.command-hint {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--primary-soft);
+    padding: 1rem;
+    border-radius: var(--radius);
+}
+
+.command-icon {
+    font-size: 1.25rem;
+}
+
+.command-hint p {
+    color: var(--text);
+    font-size: 0.9rem;
 }
 
 code {
     background: var(--primary);
-    padding: 0.2rem 0.5rem;
+    color: white;
+    padding: 0.15rem 0.4rem;
     border-radius: 4px;
-    font-family: monospace;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85em;
 }
 
+/* Feature Cards */
+.feature-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.feature-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    text-align: center;
+    transition: border-color var(--transition), transform var(--transition);
+}
+
+.feature-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-2px);
+}
+
+.feature-icon {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.75rem;
+}
+
+.feature-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.feature-card p {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* Sidebar */
 .stats-box {
-    border: 1px solid var(--primary);
-    border-radius: 8px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     padding: 1rem;
 }
 
-.stats-box h3 {
-    color: var(--primary);
-    margin-bottom: 0.5rem;
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.stat-icon {
+    font-size: 1.25rem;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.stat-value {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.live-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #eb0400;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 /* Responsive */
 @media (max-width: 768px) {
     .main-layout {
         flex-direction: column;
+        padding: 1rem;
     }
+    
     #zone-sidebar {
         width: 100%;
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+    
+    .stats-box, .live-indicator {
+        flex: 1;
+        min-width: 140px;
+    }
+    
+    .feature-cards {
+        grid-template-columns: 1fr;
     }
 }
     </style>
 </head>
 <body>
     <header id="zone-header">
-<h1>🎮 Twitch Versus Code</h1>
-<p class="subtitle">La page que VOUS construisez en direct !</p>
+<h1>Twitch Versus Code</h1>
+<p class="subtitle">Expérience collaborative en direct</p>
     </header>
     
     <div class="main-layout">
         <main id="zone-content">
 <div class="welcome-box">
-    <h2>Bienvenue ! 👋</h2>
-    <p>Cette page évolue en temps réel grâce aux suggestions du chat Twitch.</p>
-    <p>Tapez <code>!idea</code> suivi de votre idée pour proposer un changement !</p>
+    <h2>Bienvenue</h2>
+    <p class="welcome-text">Cette page évolue en temps réel grâce à vos suggestions.</p>
+    <div class="command-hint">
+        <span class="command-icon">💬</span>
+        <p>Tapez <code>!idea</code> suivi de votre idée pour participer</p>
+    </div>
+</div>
+
+<div class="feature-cards">
+    <div class="feature-card">
+        <span class="feature-icon">🎨</span>
+        <h3>Créez</h3>
+        <p>Proposez vos idées</p>
+    </div>
+    <div class="feature-card">
+        <span class="feature-icon">🤝</span>
+        <h3>Collaborez</h3>
+        <p>Construisez ensemble</p>
+    </div>
+    <div class="feature-card">
+        <span class="feature-icon">✨</span>
+        <h3>Évoluez</h3>
+        <p>Voyez le résultat</p>
+    </div>
 </div>
         </main>
         
         <aside id="zone-sidebar">
 <div class="stats-box">
-    <h3>📊 Stats</h3>
-    <p>Visiteurs: <span id="visitor-count">0</span></p>
+    <div class="stat-item">
+        <span class="stat-icon">👥</span>
+        <div class="stat-info">
+            <span class="stat-label">Visiteurs</span>
+            <span id="visitor-count" class="stat-value">0</span>
+        </div>
+    </div>
+</div>
+
+<div class="live-indicator">
+    <span class="live-dot"></span>
+    <span>En direct</span>
 </div>
         </aside>
     </div>
     
     <footer id="zone-footer">
-<p>Créé en live sur Twitch • Propulsé par l'IA</p>
+<p>Créé en live sur Twitch · Propulsé par l'IA</p>
     </footer>
     
     <script>
