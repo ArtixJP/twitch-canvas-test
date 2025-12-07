@@ -262,18 +262,20 @@
         
         /* Pages */
         .page {
-            display: none;
+            display: none !important;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.4s ease, transform 0.4s ease;
             padding-top: 80px;
             min-height: 100vh;
+            visibility: hidden;
         }
         
         .page.active {
-            display: block;
+            display: block !important;
             opacity: 1;
             transform: translateY(0);
+            visibility: visible;
         }
         
         /* Page À Propos */
@@ -765,7 +767,7 @@
         <button class="nav-btn" data-page="contact"><span class="nav-icon">💌</span>Contact</button>
     </nav>
 
-    <section class="hero page active" id="page-home">
+    <section class="page active" id="page-home">
         <button class="theme-toggle" id="theme-toggle">
             <span class="pixel">◈</span>
             <span class="label">Mode Twitch</span>
@@ -813,7 +815,7 @@
         </footer>
     </section>
     
-    <section class="page about-page" id="page-about">
+    <section class="page about-page" id="page-about" style="display: none !important;">
         <div class="about-content">
             <div class="about-avatar">🦒</div>
             <h2 class="about-title">À Propos de Nous</h2>
@@ -844,7 +846,7 @@
         </div>
     </section>
     
-    <section class="page contact-page" id="page-contact">
+    <section class="page contact-page" id="page-contact" style="display: none !important;">
         <div class="contact-content">
             <h2 class="contact-title">💌 Contactez-nous</h2>
             <p class="contact-subtitle">Une idée ? Une suggestion ? On veut tout savoir !</p>
@@ -890,14 +892,19 @@
                 navBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 
-                // Update pages with animation
+                // Update pages with animation - hide all first
                 pages.forEach(page => {
-                    if(page.id === 'page-' + targetPage) {
-                        page.classList.add('active');
-                    } else {
-                        page.classList.remove('active');
-                    }
+                    page.classList.remove('active');
+                    page.style.display = 'none';
                 });
+                
+                // Show target page
+                const targetEl = document.getElementById('page-' + targetPage);
+                if(targetEl) {
+                    targetEl.style.display = 'block';
+                    // Small delay for CSS transition
+                    setTimeout(() => targetEl.classList.add('active'), 10);
+                }
                 
                 // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
