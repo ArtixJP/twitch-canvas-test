@@ -197,6 +197,152 @@
         }
         
         .theme-toggle:hover {
+        /* Games Page */
+        .games-page {
+            background: linear-gradient(135deg, var(--bg-light) 0%, var(--white) 100%);
+        }
+        
+        .games-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        
+        .games-title {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        body.twitch-theme .games-title {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .games-subtitle {
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+        }
+        
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .game-card {
+            background: var(--white);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 12px 40px rgba(37, 99, 235, 0.15);
+        }
+        
+        body.twitch-theme .game-card {
+            background: var(--twitch-surface);
+            box-shadow: 0 8px 30px rgba(145, 70, 255, 0.1);
+        }
+        
+        body.twitch-theme .game-card:hover {
+            border-color: var(--twitch-accent);
+            box-shadow: 0 12px 40px rgba(145, 70, 255, 0.3);
+        }
+        
+        .game-card.coming-soon {
+            opacity: 0.6;
+        }
+        
+        #space-game-container {
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        body.twitch-theme #space-canvas {
+            background: #0a0a15 !important;
+            border-color: var(--twitch-primary);
+            box-shadow: 0 0 20px rgba(145, 70, 255, 0.4);
+        }
+        
+        .game-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+        
+        .game-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .game-card p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .game-launch-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .game-launch-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+        
+        .game-launch-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        body.twitch-theme .game-launch-btn {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-secondary));
+        }
+        
+        .back-to-games {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .back-to-games:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        body.twitch-theme .back-to-games {
+            border-color: var(--twitch-accent);
+            color: var(--twitch-accent);
+        }
+        
+        body.twitch-theme .back-to-games:hover {
+            background: var(--twitch-accent);
+            color: var(--twitch-dark);
+        }
+        
         /* Navigation Menu */
         .nav-menu {
             position: fixed;
@@ -213,7 +359,6 @@
             box-shadow: 0 2px 20px rgba(0,0,0,0.1);
             border-bottom: 1px solid rgba(0,0,0,0.05);
         }
-    } 
         
         body.twitch-theme .nav-menu {
             background: rgba(14, 14, 16, 0.95);
@@ -263,18 +408,20 @@
         
         /* Pages */
         .page {
-            display: none;
+            display: none !important;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.4s ease, transform 0.4s ease;
             padding-top: 80px;
             min-height: 100vh;
+            visibility: hidden;
         }
         
         .page.active {
-            display: block;
+            display: block !important;
             opacity: 1;
             transform: translateY(0);
+            visibility: visible;
         }
         
         /* Page À Propos */
@@ -471,6 +618,12 @@
         
         body.twitch-theme .form-submit:hover {
             box-shadow: 0 6px 25px rgba(145, 70, 255, 0.4);
+        }
+        
+
+            background: rgba(145, 70, 255, 0.2);
+            border-color: rgba(145, 70, 255, 0.3);
+            color: var(--twitch-primary);
         }
         
         body.twitch-theme .theme-toggle {
@@ -757,10 +910,11 @@
     <nav class="nav-menu">
         <button class="nav-btn active" data-page="home"><span class="nav-icon">🏠</span>Accueil</button>
         <button class="nav-btn" data-page="about"><span class="nav-icon">✨</span>À Propos</button>
+        <button class="nav-btn" data-page="games"><span class="nav-icon">🎮</span>Jeux</button>
         <button class="nav-btn" data-page="contact"><span class="nav-icon">💌</span>Contact</button>
     </nav>
 
-    <section class="hero page active" id="page-home">
+    <section class="page active" id="page-home">
         <button class="theme-toggle" id="theme-toggle">
             <span class="pixel">◈</span>
             <span class="label">Mode Twitch</span>
@@ -776,13 +930,7 @@
                 <span>Célébrer ensemble</span>
             </button>
             
-            <div class="mini-game-container">
-                <h2 class="game-title">🦒 Mini-Jeu : La Girafe aux Étoiles !</h2>
-                <p class="game-instructions">Utilise les flèches ← → ou A/D pour bouger, ESPACE pour sauter</p>
-                <canvas id="game-canvas" width="600" height="300"></canvas>
-                <div class="game-score">Score: <span id="score">0</span> ⭐</div>
-                <button class="game-restart" id="restart-btn">🔄 Recommencer</button>
-            </div>
+            
             
             <div class="features">
                 <div class="feature">
@@ -808,7 +956,7 @@
         </footer>
     </section>
     
-    <section class="page about-page" id="page-about">
+    <section class="page about-page" id="page-about" style="display: none !important;">
         <div class="about-content">
             <div class="about-avatar">🦒</div>
             <h2 class="about-title">À Propos de Nous</h2>
@@ -839,7 +987,54 @@
         </div>
     </section>
     
-    <section class="page contact-page" id="page-contact">
+    <section class="page games-page" id="page-games">
+        <div class="games-content">
+            <h2 class="games-title">🎮 Arcade des Jeux</h2>
+            <p class="games-subtitle">Choisis ton aventure !</p>
+            <div class="games-grid">
+                <div class="game-card" id="giraffe-game-card">
+                    <div class="game-card-icon">🦒</div>
+                    <h3>La Girafe aux Étoiles</h3>
+                    <p>Aide la girafe à collecter toutes les étoiles !</p>
+                    <button class="game-launch-btn">▶️ Jouer</button>
+                </div>
+                <div class="game-card" id="space-game-card">
+                    <div class="game-card-icon">🚀</div>
+                    <h3>Space Runner</h3>
+                    <p>Évite les astéroïdes et collecte les étoiles !</p>
+                    <button class="game-launch-btn">▶️ Jouer</button>
+                </div>
+                <div class="game-card coming-soon">
+                    <div class="game-card-icon">🧩</div>
+                    <h3>Puzzle Mania</h3>
+                    <p>Bientôt disponible...</p>
+                    <button class="game-launch-btn" disabled>🔒 À venir</button>
+                </div>
+            </div>
+            <div class="game-container" id="active-game-container" style="display: none;">
+            <div class="game-container" id="space-game-container" style="display: none;">
+                <button class="back-to-games">← Retour aux jeux</button>
+                <div class="mini-game-container">
+                    <h2 class="game-title">🚀 Space Runner : Aventure Cosmique !</h2>
+                    <p class="game-instructions">Utilise ↑ ↓ ou W/S pour bouger, évite les astéroïdes ☄️</p>
+                    <canvas id="space-canvas" width="600" height="300"></canvas>
+                    <div class="game-score">Distance: <span id="space-score">0</span> 🌟</div>
+                    <button class="game-restart" id="space-restart-btn">🔄 Recommencer</button>
+                </div>
+            </div>
+                <button class="back-to-games">← Retour aux jeux</button>
+                <div class="mini-game-container">
+                    <h2 class="game-title">🦒 Mini-Jeu : La Girafe aux Étoiles !</h2>
+                    <p class="game-instructions">Utilise les flèches ← → ou A/D pour bouger, ESPACE pour sauter</p>
+                    <canvas id="game-canvas" width="600" height="300"></canvas>
+                    <div class="game-score">Score: <span id="score">0</span> ⭐</div>
+                    <button class="game-restart" id="restart-btn">🔄 Recommencer</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="page contact-page" id="page-contact" style="display: none !important;">
         <div class="contact-content">
             <h2 class="contact-title">💌 Contactez-nous</h2>
             <p class="contact-subtitle">Une idée ? Une suggestion ? On veut tout savoir !</p>
@@ -873,6 +1068,20 @@
     </div>
     
     <script>
+        // Game launcher functions
+        function launchGiraffeGame() {
+            document.querySelector('.games-grid').style.display = 'none';
+            document.getElementById('active-game-container').style.display = 'block';
+            initGame();
+        }
+        
+        function backToGamesList() {
+            document.querySelector('.games-grid').style.display = 'grid';
+            document.getElementById('active-game-container').style.display = 'none';
+            document.getElementById('space-game-container').style.display = 'none';
+            if(spaceLoop) cancelAnimationFrame(spaceLoop);
+        }
+        
         // Navigation entre pages
         const navBtns = document.querySelectorAll('.nav-btn');
         const pages = document.querySelectorAll('.page');
@@ -885,14 +1094,19 @@
                 navBtns.forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 
-                // Update pages with animation
+                // Update pages with animation - hide all first
                 pages.forEach(page => {
-                    if(page.id === 'page-' + targetPage) {
-                        page.classList.add('active');
-                    } else {
-                        page.classList.remove('active');
-                    }
+                    page.classList.remove('active');
+                    page.style.display = 'none';
                 });
+                
+                // Show target page
+                const targetEl = document.getElementById('page-' + targetPage);
+                if(targetEl) {
+                    targetEl.style.display = 'block';
+                    // Small delay for CSS transition
+                    setTimeout(() => targetEl.classList.add('active'), 10);
+                }
                 
                 // Scroll to top
                 window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1261,6 +1475,158 @@
         initGame();
         gameLoopFn();
         
+        // Snake Classic Game
+        let snakeCanvas, snakeCtx, snakeScore, snakeLoop, snakeGameOver;
+        let snake = [];
+        let snakeDir = { x: 1, y: 0 };
+        let nextDir = { x: 1, y: 0 };
+        let apple = { x: 10, y: 10 };
+        const gridSize = 20;
+        const tileCount = 20;
+        
+        function initSnakeGame() {
+            snakeCanvas = document.getElementById('snake-canvas');
+            snakeCtx = snakeCanvas.getContext('2d');
+            snakeScore = 0;
+            snakeGameOver = false;
+            snake = [{x: 10, y: 10}, {x: 9, y: 10}, {x: 8, y: 10}];
+            snakeDir = { x: 1, y: 0 };
+            nextDir = { x: 1, y: 0 };
+            spawnApple();
+            document.getElementById('snake-score').textContent = '0';
+            if(snakeLoop) clearInterval(snakeLoop);
+            snakeLoop = setInterval(snakeGameLoop, 120);
+        }
+        
+        function spawnApple() {
+            do {
+                apple.x = Math.floor(Math.random() * tileCount);
+                apple.y = Math.floor(Math.random() * tileCount);
+            } while(snake.some(s => s.x === apple.x && s.y === apple.y));
+        }
+        
+        function snakeGameLoop() {
+            if(snakeGameOver) return;
+            updateSnake();
+            drawSnake();
+        }
+        
+        function updateSnake() {
+            snakeDir = { ...nextDir };
+            const head = { x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y };
+            
+            // Murs = game over
+            if(head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
+                snakeGameOver = true;
+                clearInterval(snakeLoop);
+                drawSnake();
+                return;
+            }
+            
+            // Collision avec soi-même
+            if(snake.some(s => s.x === head.x && s.y === head.y)) {
+                snakeGameOver = true;
+                clearInterval(snakeLoop);
+                drawSnake();
+                return;
+            }
+            
+            snake.unshift(head);
+            
+            // Manger la pomme
+            if(head.x === apple.x && head.y === apple.y) {
+                snakeScore += 10;
+                document.getElementById('snake-score').textContent = snakeScore;
+                spawnApple();
+                const coinSound = document.getElementById('music-audio');
+                coinSound.currentTime = 0;
+                coinSound.play().catch(()=>{});
+            } else {
+                snake.pop();
+            }
+        }
+        
+        function drawSnake() {
+// [BLOCKED: potentially dangerous]
+            
+            // Background
+            snakeCtx.fillStyle = isTwitch ? '#0a0a15' : '#1a1a2e';
+            snakeCtx.fillRect(0, 0, 400, 400);
+            
+            // Grille subtile
+            snakeCtx.strokeStyle = 'rgba(255,255,255,0.05)';
+            for(let i = 0; i < tileCount; i++) {
+                snakeCtx.beginPath();
+                snakeCtx.moveTo(i * gridSize, 0);
+                snakeCtx.lineTo(i * gridSize, 400);
+                snakeCtx.moveTo(0, i * gridSize);
+                snakeCtx.lineTo(400, i * gridSize);
+                snakeCtx.stroke();
+            }
+            
+            // Pomme
+            snakeCtx.font = '18px Arial';
+            snakeCtx.fillText('🍎', apple.x * gridSize + 2, apple.y * gridSize + 17);
+            
+            // Serpent
+            snake.forEach((segment, i) => {
+                const isHead = i === 0;
+                if(isHead) {
+                    snakeCtx.fillStyle = isTwitch ? '#00FFAA' : '#4ade80';
+                } else {
+                    const fade = 1 - (i / snake.length) * 0.5;
+                    snakeCtx.fillStyle = isTwitch ? `rgba(145, 70, 255, ${fade})` : `rgba(74, 222, 128, ${fade})`;
+                }
+                snakeCtx.fillRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2);
+                
+                if(isHead) {
+                    // Yeux
+                    snakeCtx.fillStyle = '#000';
+                    const eyeOffsetX = snakeDir.x * 3;
+                    const eyeOffsetY = snakeDir.y * 3;
+                    snakeCtx.beginPath();
+                    snakeCtx.arc(segment.x * gridSize + 7 + eyeOffsetX, segment.y * gridSize + 8 + eyeOffsetY, 2, 0, Math.PI * 2);
+                    snakeCtx.arc(segment.x * gridSize + 13 + eyeOffsetX, segment.y * gridSize + 8 + eyeOffsetY, 2, 0, Math.PI * 2);
+                    snakeCtx.fill();
+                }
+            });
+            
+            if(snakeGameOver) {
+                snakeCtx.fillStyle = 'rgba(0,0,0,0.8)';
+                snakeCtx.fillRect(0, 0, 400, 400);
+                snakeCtx.fillStyle = '#fff';
+                snakeCtx.font = 'bold 32px Inter';
+                snakeCtx.textAlign = 'center';
+                snakeCtx.fillText('🐍 GAME OVER', 200, 180);
+                snakeCtx.font = '20px Inter';
+                snakeCtx.fillText('Score: ' + snakeScore, 200, 220);
+                snakeCtx.textAlign = 'left';
+            }
+        }
+        
+        document.addEventListener('keydown', e => {
+            if((e.key === 'ArrowUp' || e.key === 'z' || e.key === 'w') && snakeDir.y !== 1) nextDir = { x: 0, y: -1 };
+            if((e.key === 'ArrowDown' || e.key === 's') && snakeDir.y !== -1) nextDir = { x: 0, y: 1 };
+            if((e.key === 'ArrowLeft' || e.key === 'q' || e.key === 'a') && snakeDir.x !== 1) nextDir = { x: -1, y: 0 };
+            if((e.key === 'ArrowRight' || e.key === 'd') && snakeDir.x !== -1) nextDir = { x: 1, y: 0 };
+        });
+        
+        document.getElementById('snake-restart-btn')?.addEventListener('click', initSnakeGame);
+        
+        // Launch Snake Game button
+// [BLOCKED: potentially dangerous]
+            document.querySelector('.games-grid').style.display = 'none';
+            document.getElementById('snake-game-container').style.display = 'block';
+            initSnakeGame();
+        });
+        
+        // Back from Snake Game
+// [BLOCKED: potentially dangerous]
+            document.getElementById('snake-game-container').style.display = 'none';
+            document.querySelector('.games-grid').style.display = 'grid';
+            if(snakeLoop) clearInterval(snakeLoop);
+        });
+        
         // Music Player
         const ambientMusic = document.getElementById('ambient-music');
         const playerToggle = document.getElementById('player-toggle');
@@ -1344,7 +1710,8 @@
                     
                     setTimeout(() => note.remove(), 3000);
                 }, i * 100);
-            };
+            }
+        });
     </script>
 </body>
 </html>
