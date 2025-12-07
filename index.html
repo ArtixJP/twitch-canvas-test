@@ -89,89 +89,82 @@ body {
     border-top: 1px solid var(--border);
 }
 
-/* Welcome Box */
-.welcome-box {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 2rem;
+/* Story Container */
+.story-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 2rem;
 }
 
-.welcome-box h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--text);
-}
-
-.welcome-text {
-    color: var(--text-muted);
-    margin-bottom: 1.25rem;
-}
-
-.command-hint {
+/* Big Hello Button */
+.big-hello-btn {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    background: var(--primary-soft);
-    padding: 1rem;
-    border-radius: var(--radius);
-}
-
-.command-icon {
-    font-size: 1.25rem;
-}
-
-.command-hint p {
-    color: var(--text);
-    font-size: 0.9rem;
-}
-
-code {
-    background: var(--primary);
-    color: white;
-    padding: 0.15rem 0.4rem;
-    border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.85em;
-}
-
-/* Feature Cards */
-.feature-cards {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
     gap: 1rem;
+    padding: 1.5rem 3rem;
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 8px 30px rgba(145, 71, 255, 0.4);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.feature-card {
+.big-hello-btn:hover {
+    transform: scale(1.08) translateY(-4px);
+    box-shadow: 0 12px 40px rgba(145, 71, 255, 0.6);
+}
+
+.big-hello-btn:active {
+    transform: scale(0.98);
+}
+
+.btn-icon {
+    font-size: 2.5rem;
+    animation: wave 1.5s ease-in-out infinite;
+}
+
+@keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    75% { transform: rotate(-20deg); }
+}
+
+.btn-text {
+    letter-spacing: -0.02em;
+}
+
+/* Story Box */
+.story-box {
     background: var(--bg-card);
-    border: 1px solid var(--border);
+    border: 2px solid var(--border);
     border-radius: var(--radius);
-    padding: 1.5rem;
-    text-align: center;
-    transition: border-color var(--transition), transform var(--transition);
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    min-height: 120px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease, border-color 0.3s ease;
 }
 
-.feature-card:hover {
+.story-box.visible {
+    opacity: 1;
+    transform: translateY(0);
     border-color: var(--primary);
-    transform: translateY(-2px);
 }
 
-.feature-icon {
-    font-size: 1.5rem;
-    display: block;
-    margin-bottom: 0.75rem;
-}
-
-.feature-card h3 {
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.feature-card p {
-    color: var(--text-muted);
-    font-size: 0.85rem;
+.story-text {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: var(--text);
+    text-align: center;
 }
 
 /* Sidebar */
@@ -253,8 +246,13 @@ code {
         min-width: 140px;
     }
     
-    .feature-cards {
-        grid-template-columns: 1fr;
+    .big-hello-btn {
+        padding: 1rem 2rem;
+        font-size: 1.5rem;
+    }
+    
+    .btn-icon {
+        font-size: 2rem;
     }
 }
     </style>
@@ -267,30 +265,14 @@ code {
     
     <div class="main-layout">
         <main id="zone-content">
-<div class="welcome-box">
-    <h2>Bienvenue</h2>
-    <p class="welcome-text">Cette page évolue en temps réel grâce à vos suggestions.</p>
-    <div class="command-hint">
-        <span class="command-icon">💬</span>
-        <p>Tapez <code>!idea</code> suivi de votre idée pour participer</p>
-    </div>
-</div>
-
-<div class="feature-cards">
-    <div class="feature-card">
-        <span class="feature-icon">🎨</span>
-        <h3>Créez</h3>
-        <p>Proposez vos idées</p>
-    </div>
-    <div class="feature-card">
-        <span class="feature-icon">🤝</span>
-        <h3>Collaborez</h3>
-        <p>Construisez ensemble</p>
-    </div>
-    <div class="feature-card">
-        <span class="feature-icon">✨</span>
-        <h3>Évoluez</h3>
-        <p>Voyez le résultat</p>
+<div class="story-container">
+    <button class="big-hello-btn" id="hello-btn">
+        <span class="btn-icon">👋</span>
+        <span class="btn-text">Bonjour vous !</span>
+    </button>
+    
+    <div class="story-box" id="story-box">
+        <p class="story-text" id="story-text"></p>
     </div>
 </div>
         </main>
@@ -320,21 +302,42 @@ code {
     <script>
 // Twitch Versus Code - Script principal
 
-// Compteur de visiteurs (simulé)
-let visitors = Math.floor(Math.random() * 100) + 50;
-const visitorEl = document.getElementById('visitor-count');
-if (visitorEl) visitorEl.textContent = visitors;
+// Petites histoires à raconter
+const stories = [
+    "Il était une fois un petit pixel perdu dans l'immensité de l'écran. Il cherchait ses amis, les autres pixels, pour former ensemble une belle image. Après un long voyage à travers les lignes de code, il les retrouva enfin... et ensemble, ils créèrent cette page ! ✨",
+    "Un développeur fatigué tapait du code à 3h du matin. Soudain, son café se mit à parler : 'Tu sais, je suis fier de toi.' Le dev sourit, but une gorgée, et termina son projet. Parfois, la magie existe dans les petites choses. ☕",
+    "Dans un royaume lointain appelé 'Internet', vivait un bouton très timide. Personne ne cliquait jamais sur lui. Un jour, VOUS êtes arrivé(e) et avez cliqué. Le bouton fut si heureux qu'il décida de vous raconter cette histoire ! 💜",
+    "On raconte que chaque clic génère une petite étincelle de joie quelque part dans le monde. Vous venez d'en créer une ! Quelqu'un, quelque part, sourit grâce à vous. Merci d'être là. 🌟",
+    "Un chat marchait sur un clavier. Par accident, il écrivit le plus beau poème du monde. Malheureusement, personne ne l'a sauvegardé. Mais vous savez quoi ? Ce moment avec vous est bien plus précieux qu'un poème. 🐱"
+];
 
-// Animation d'entrée
-document.querySelectorAll('#zone-content > *').forEach((el, i) => {
-    el.style.opacity = '0';
-    el.style.transform = 'translateY(20px)';
+let storyIndex = 0;
+
+// Sélection des éléments
+const helloBtn = document.getElementById('hello-btn');
+const storyBox = document.getElementById('story-box');
+const storyText = document.getElementById('story-text');
+
+// Fonction pour afficher une histoire
+function tellStory() {
+    // Animation du bouton
+    helloBtn.style.transform = 'scale(0.95)';
     setTimeout(() => {
-        el.style.transition = 'all 0.5s ease';
-        el.style.opacity = '1';
-        el.style.transform = 'translateY(0)';
-    }, i * 100);
-});
+        helloBtn.style.transform = '';
+    }, 150);
+    
+    // Afficher l'histoire
+    storyText.textContent = stories[storyIndex];
+    storyBox.classList.add('visible');
+    
+    // Passer à l'histoire suivante pour le prochain clic
+    storyIndex = (storyIndex + 1) % stories.length;
+}
+
+// Écouter le clic sur le bouton
+if (helloBtn) {
+    helloBtn.addEventListener('click', tellStory);
+}
 
 console.log('🎮 Twitch Versus Code loaded!');
     </script>
