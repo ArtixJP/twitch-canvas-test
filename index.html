@@ -987,11 +987,11 @@
                     <p>Aide la girafe à collecter toutes les étoiles !</p>
                     <button class="game-launch-btn">▶️ Jouer</button>
                 </div>
-                <div class="game-card coming-soon">
+                <div class="game-card" id="space-game-card">
                     <div class="game-card-icon">🚀</div>
                     <h3>Space Runner</h3>
-                    <p>Bientôt disponible...</p>
-                    <button class="game-launch-btn" disabled>🔒 À venir</button>
+                    <p>Évite les astéroïdes et collecte les étoiles !</p>
+                    <button class="game-launch-btn">▶️ Jouer</button>
                 </div>
                 <div class="game-card coming-soon">
                     <div class="game-card-icon">🧩</div>
@@ -1001,6 +1001,16 @@
                 </div>
             </div>
             <div class="game-container" id="active-game-container" style="display: none;">
+            <div class="game-container" id="space-game-container" style="display: none;">
+                <button class="back-to-games">← Retour aux jeux</button>
+                <div class="mini-game-container">
+                    <h2 class="game-title">🚀 Space Runner : Aventure Cosmique !</h2>
+                    <p class="game-instructions">Utilise ↑ ↓ ou W/S pour bouger, évite les astéroïdes ☄️</p>
+                    <canvas id="space-canvas" width="600" height="300"></canvas>
+                    <div class="game-score">Distance: <span id="space-score">0</span> 🌟</div>
+                    <button class="game-restart" id="space-restart-btn">🔄 Recommencer</button>
+                </div>
+            </div>
                 <button class="back-to-games">← Retour aux jeux</button>
                 <div class="mini-game-container">
                     <h2 class="game-title">🦒 Mini-Jeu : La Girafe aux Étoiles !</h2>
@@ -1057,6 +1067,8 @@
         function backToGamesList() {
             document.querySelector('.games-grid').style.display = 'grid';
             document.getElementById('active-game-container').style.display = 'none';
+            document.getElementById('space-game-container').style.display = 'none';
+            if(spaceLoop) cancelAnimationFrame(spaceLoop);
         }
         
         // Navigation entre pages
@@ -1451,6 +1463,182 @@
         // Start game
         initGame();
         gameLoopFn();
+        
+        // Space Runner Game
+        let spaceCanvas, spaceCtx, spaceScore, spaceLoop, spaceGameOver;
+        
+        function launchSpaceGame() {
+            document.querySelector('.games-grid').style.display = 'none';
+            document.getElementById('space-game-container').style.display = 'block';
+            initSpaceGame();
+        }
+        
+        const ship = { x: 80, y: 150, width: 40, height: 25, vy: 0 };
+        let asteroids = [];
+        let spaceStars = [];
+        let spaceBgStars = [];
+        const spaceKeys = { up: false, down: false };
+        
+        function initSpaceGame() {
+            spaceCanvas = document.getElementById('space-canvas');
+            spaceCtx = spaceCanvas.getContext('2d');
+            spaceScore = 0;
+            spaceGameOver = false;
+            ship.y = 150;
+            ship.vy = 0;
+            asteroids = [];
+            spaceStars = [];
+            spaceBgStars = [];
+            document.getElementById('space-score').textContent = '0';
+            for(let i = 0; i < 50; i++) spaceBgStars.push({x: Math.random()*600, y: Math.random()*300, s: Math.random()*2+1});
+            if(spaceLoop) cancelAnimationFrame(spaceLoop);
+            spaceGameLoop();
+        }
+        
+        function spaceGameLoop() {
+            if(spaceGameOver) return;
+            updateSpace();
+            drawSpace();
+            spaceLoop = requestAnimationFrame(spaceGameLoop);
+        }
+        
+        function updateSpace() {
+            if(spaceKeys.up) ship.vy = -5;
+            else if(spaceKeys.down) ship.vy = 5;
+            else ship.vy *= 0.9;
+            ship.y += ship.vy;
+            if(ship.y < 10) ship.y = 10;
+            if(ship.y > 265) ship.y = 265;
+            
+            spaceScore++;
+            document.getElementById('space-score').textContent = Math.floor(spaceScore/10);
+            
+            if(Math.random() < 0.02) asteroids.push({x: 620, y: Math.random()*260+20, r: Math.random()*20+15, speed: Math.random()*3+3, rot: 0});
+            if(Math.random() < 0.03) spaceStars.push({x: 620, y: Math.random()*280+10, speed: Math.random()*2+4});
+            
+            asteroids.forEach(a => { a.x -= a.speed; a.rot += 0.05; });
+            asteroids = asteroids.filter(a => a.x > -50);
+            
+            spaceStars.forEach(s => s.x -= s.speed);
+            spaceStars = spaceStars.filter(s => s.x > -20);
+            
+            spaceBgStars.forEach(s => { s.x -= 1; if(s.x < 0) s.x = 600; });
+            
+            asteroids.forEach(a => {
+                const dx = (ship.x + 20) - a.x;
+                const dy = (ship.y + 12) - a.y;
+                if(Math.sqrt(dx*dx + dy*dy) < a.r + 15) {
+                    spaceGameOver = true;
+                    drawSpace();
+                }
+            });
+            
+            spaceStars = spaceStars.filter(s => {
+                const dx = (ship.x + 20) - s.x;
+                const dy = (ship.y + 12) - s.y;
+                if(Math.sqrt(dx*dx + dy*dy) < 25) {
+                    spaceScore += 100;
+                    const coinSound = document.getElementById('music-audio');
+                    coinSound.currentTime = 0;
+                    coinSound.play().catch(()=>{});
+                    return false;
+                }
+                return true;
+            });
+        }
+        
+        function drawSpace() {
+// [BLOCKED: potentially dangerous]
+            spaceCtx.fillStyle = isTwitch ? '#0a0a15' : '#0f0f2d';
+            spaceCtx.fillRect(0, 0, 600, 300);
+            
+            spaceBgStars.forEach(s => {
+                spaceCtx.fillStyle = `rgba(255,255,255,${0.3+s.s*0.2})`;
+                spaceCtx.beginPath();
+                spaceCtx.arc(s.x, s.y, s.s, 0, Math.PI*2);
+                spaceCtx.fill();
+            });
+            
+            spaceStars.forEach(s => {
+                spaceCtx.fillStyle = isTwitch ? '#00FFAA' : '#FFD700';
+                spaceCtx.shadowColor = isTwitch ? '#00FFAA' : '#FFD700';
+                spaceCtx.shadowBlur = 10;
+                spaceCtx.font = '20px Arial';
+                spaceCtx.fillText('⭐', s.x-10, s.y+7);
+                spaceCtx.shadowBlur = 0;
+            });
+            
+            asteroids.forEach(a => {
+                spaceCtx.save();
+                spaceCtx.translate(a.x, a.y);
+                spaceCtx.rotate(a.rot);
+                spaceCtx.fillStyle = '#666';
+                spaceCtx.beginPath();
+                for(let i = 0; i < 8; i++) {
+                    const angle = (i/8) * Math.PI * 2;
+                    const r = a.r * (0.8 + Math.sin(i*3)*0.2);
+                    spaceCtx.lineTo(Math.cos(angle)*r, Math.sin(angle)*r);
+                }
+                spaceCtx.closePath();
+                spaceCtx.fill();
+                spaceCtx.fillStyle = '#888';
+                spaceCtx.beginPath();
+                spaceCtx.arc(-a.r*0.3, -a.r*0.2, a.r*0.2, 0, Math.PI*2);
+                spaceCtx.arc(a.r*0.2, a.r*0.3, a.r*0.15, 0, Math.PI*2);
+                spaceCtx.fill();
+                spaceCtx.restore();
+            });
+            
+            spaceCtx.fillStyle = isTwitch ? '#9146FF' : '#3498db';
+            spaceCtx.beginPath();
+            spaceCtx.moveTo(ship.x, ship.y + 12);
+            spaceCtx.lineTo(ship.x + 40, ship.y + 12);
+            spaceCtx.lineTo(ship.x + 30, ship.y);
+            spaceCtx.lineTo(ship.x + 10, ship.y);
+            spaceCtx.closePath();
+            spaceCtx.fill();
+            spaceCtx.beginPath();
+            spaceCtx.moveTo(ship.x, ship.y + 12);
+            spaceCtx.lineTo(ship.x + 40, ship.y + 12);
+            spaceCtx.lineTo(ship.x + 30, ship.y + 25);
+            spaceCtx.lineTo(ship.x + 10, ship.y + 25);
+            spaceCtx.closePath();
+            spaceCtx.fill();
+            spaceCtx.fillStyle = isTwitch ? '#00FFAA' : '#2ecc71';
+            spaceCtx.beginPath();
+            spaceCtx.ellipse(ship.x + 28, ship.y + 12, 8, 5, 0, 0, Math.PI*2);
+            spaceCtx.fill();
+            spaceCtx.fillStyle = '#f39c12';
+            spaceCtx.beginPath();
+            const flameLen = 10 + Math.random()*8;
+            spaceCtx.moveTo(ship.x + 5, ship.y + 8);
+            spaceCtx.lineTo(ship.x - flameLen, ship.y + 12);
+            spaceCtx.lineTo(ship.x + 5, ship.y + 16);
+            spaceCtx.fill();
+            
+            if(spaceGameOver) {
+                spaceCtx.fillStyle = 'rgba(0,0,0,0.7)';
+                spaceCtx.fillRect(0, 0, 600, 300);
+                spaceCtx.fillStyle = '#fff';
+                spaceCtx.font = 'bold 36px Inter';
+                spaceCtx.textAlign = 'center';
+                spaceCtx.fillText('💥 GAME OVER', 300, 140);
+                spaceCtx.font = '20px Inter';
+                spaceCtx.fillText('Score: ' + Math.floor(spaceScore/10), 300, 180);
+                spaceCtx.textAlign = 'left';
+            }
+        }
+        
+        document.addEventListener('keydown', e => {
+            if(e.key === 'ArrowUp' || e.key === 'w') spaceKeys.up = true;
+            if(e.key === 'ArrowDown' || e.key === 's') spaceKeys.down = true;
+        });
+        document.addEventListener('keyup', e => {
+            if(e.key === 'ArrowUp' || e.key === 'w') spaceKeys.up = false;
+            if(e.key === 'ArrowDown' || e.key === 's') spaceKeys.down = false;
+        });
+        
+        document.getElementById('space-restart-btn')?.addEventListener('click', initSpaceGame);
         
         // Music Player
         const ambientMusic = document.getElementById('ambient-music');
