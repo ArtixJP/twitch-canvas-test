@@ -51,11 +51,11 @@
             color: #999999;
         }
     </style>
-</head>
+<link rel='stylesheet' href="#" /></head>
 <body>
     <h1>Bienvenue sur notre plateforme</h1>
     <p>Un espace pour des idées et collaborations.</p>
-    <button id="play-music-button">Jouer une musique</button>
+    <button id="play-music-button"><span id='button-animation' class='animate__animated' style='display:none;'>🎶</span>Jouer une musique !</button>
     <footer>
         <p>&copy; 2023 Projet Collaboratif</p>
     </footer>
@@ -64,6 +64,10 @@
         document.getElementById('play-music-button').addEventListener('click', () => {
             document.getElementById('music-audio').play();
         });
+            const animation = document.getElementById('button-animation');
+            animation.style.display = 'inline';
+            animation.classList.add('animate__bounce');
+            setTimeout(() => animation.classList.remove('animate__bounce'), 1000);
     </script>
 </body>
 </html>
