@@ -1,5 +1,152 @@
 <!DOCTYPE html>
-<html>
-<head><title>Loading...</title></head>
-<body><h1>🌀 Initializing...</h1></body>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌀 Emergent Canvas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e8e8e8;
+            overflow-x: hidden;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-bottom: 2px solid #e94560;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #e94560, #0f3460, #e94560);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient-shift 3s linear infinite;
+        }
+        
+        @keyframes gradient-shift {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .status-bar {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1rem;
+            font-size: 0.9rem;
+            color: #888;
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Zone de chaos - libre modification */
+        #chaos-zone {
+            background: rgba(233, 69, 96, 0.1);
+            border: 2px dashed #e94560;
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 300px;
+            margin: 2rem 0;
+            position: relative;
+        }
+        
+        #chaos-zone::before {
+            content: "🌀 CHAOS ZONE - Libre création";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: #1a1a2e;
+            padding: 0 10px;
+            font-size: 0.8rem;
+            color: #e94560;
+        }
+        
+        .chaos-content {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .chaos-content p {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+        
+        .info-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .info-section h2 {
+            color: #e94560;
+            margin-bottom: 1rem;
+        }
+        
+        .info-section p {
+            line-height: 1.6;
+            color: #ccc;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>✨ Emergent Canvas ✨</h1>
+        <p>Une expérience de création collaborative</p>
+    </div>
+    
+    <div class="status-bar">
+        <span>🎭 Mode: Democracy</span>
+        <span>🔄 Cycles: 0</span>
+        <span>⏱️ Démarré</span>
+    </div>
+    
+    <div class="main-content">
+        <!-- LLM-EDIT-START -->
+        <div id="chaos-zone">
+            <div class="chaos-content">
+                <p>🎨 Cette zone attend vos idées créatives...</p>
+                <p>Proposez une idée dans le backlog !</p>
+            </div>
+        </div>
+        <!-- LLM-EDIT-END -->
+        
+        <div class="info-section">
+            <h2>📋 Comment participer ?</h2>
+            <p>
+                Visitez le <strong>/backlog</strong> pour proposer des idées.
+                Votez pour vos idées préférées.
+                L'IA modifiera cette page selon les demandes les plus populaires.
+            </p>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Twitch Emergent Coding • Expérience d'intelligence collective</p>
+    </div>
+</body>
 </html>
