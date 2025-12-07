@@ -134,7 +134,7 @@
     <div style="background: red; width: 33.33%; height: 100%;"></div>
 </div>
             <div class="chaos-content"><p style='color: #aaa;'>🕹️ Bienvenue dans le monde 3D ! Utilisez les flèches pour contrôler la caméra et découvrir l'univers cubique.</p>
-<p id='game-status' style='color: #e94560; font-size: 1.2rem;'>Jeu arrêté</p><div id="game-zone" style="margin-top: 2rem; text-align: center;"><div id="three-js-canvas" style="width: 400px; height: 300px; margin: 2rem auto; border: 1px solid #e94560;"></div>
+<p id='game-status' style='color: #e94560; font-size: 1.2rem;'>🔄 Jeu arrêté. Cliquez pour commencer !</p><div id="game-zone" style="margin-top: 2rem; text-align: center;"><button id='start-button' style='display: block; margin: 2rem auto; padding: 1rem 2rem; background-color: #28a745; color: white; border: none; border-radius: 5px; font-size: 1.2rem; cursor: pointer;'>Démarrer le jeu</button><div id="three-js-canvas" style="width: 400px; height: 300px; margin: 2rem auto; border: 1px solid #e94560;"></div>
     
     
     
@@ -170,7 +170,7 @@ button.addEventListener('click', () => {
 });
 </script>
 <script>
-const canvas = document.getElementById('gameCanvas');
+const canvas = document.getElementById('three-js-canvas');
 const ctx = canvas.getContext('2d');
 let gameInterval;
 let player = { x: 50, y: 50, size: 20 };
@@ -237,5 +237,5 @@ document.addEventListener('keydown', (event) => {
         player.x -= 10;
     }
 });
-</script></body>
+</script><script>// [BLOCKED: potentially dangerous]</script><script>document.getElementById('start-button').addEventListener('click', () => { isGameActive = true; document.getElementById('game-status').textContent = 'Jeu en cours...'; });</script><script>document.addEventListener('keydown', (event) => { if (!isGameActive) return; if (event.key === 'ArrowRight') { player.x += playerSpeed * 100; } else if (event.key === 'ArrowLeft') { player.x -= playerSpeed * 100; } });</script></body>
 </html>
