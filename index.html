@@ -50,7 +50,33 @@
             text-shadow: 0 0 40px rgba(145, 70, 255, 0.3);
         }
         
-        body.twitch-theme .music-button {
+        body.twitch-theme .relaxing-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.8;
+            max-width: 500px;
+            margin: 0 auto 2.5rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.03) 0%, rgba(37, 99, 235, 0.08) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(37, 99, 235, 0.1);
+            animation: breathe 6s ease-in-out infinite;
+            opacity: 0.9;
+        }
+        
+        body.twitch-theme .relaxing-text {
+            background: linear-gradient(135deg, rgba(145, 70, 255, 0.1) 0%, rgba(0, 255, 170, 0.05) 100%);
+            border-color: rgba(145, 70, 255, 0.2);
+            color: rgba(239, 239, 241, 0.8);
+        }
+        
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 0.9; }
+            50% { transform: scale(1.02); opacity: 1; }
+        }
+        
+        .music-button {
             background: linear-gradient(135deg, var(--twitch-primary) 0%, var(--twitch-secondary) 100%);
             box-shadow: 0 0 20px rgba(145, 70, 255, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
             border: 1px solid rgba(0, 255, 170, 0.2);
@@ -384,6 +410,8 @@
         <div class="container">
             <h1>Expérience Collaborative</h1>
             <p class="subtitle">Où les idées se rencontrent et les créations prennent vie ensemble</p>
+            
+            <p class="relaxing-text">✨ Respire profondément... Laisse tes pensées flotter comme des nuages. Ici, le temps ralentit et chaque instant devient précieux. Tu es exactement là où tu dois être. ✨</p>
             
             <button class="music-button" id="play-music-button">
                 <span class="icon">🎵</span>
