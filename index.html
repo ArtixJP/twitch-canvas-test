@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style id="zone-styles">
-/* Variables - Palette chaleureuse et sobre */
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   Cosy Twitch Experience
+  </title>
+  <style id="zone-styles">
+   /* Variables - Palette chaleureuse et sobre */
 :root {
     --primary: #9147ff;
     --primary-soft: rgba(145, 71, 255, 0.15);
@@ -334,63 +336,60 @@ body {
         font-size: 1rem;
     }
 }
-    </style>
-</head>
-<body>
-    <header id="zone-header">
-<h1>Twitch Versus Code</h1>
-<p class="subtitle">Expérience collaborative en direct</p>
-    </header>
-    
-    <div class="main-layout">
-        <main id="zone-content">
-<div class="story-container">
-    <button class="big-hello-btn" id="hello-btn">
-        <span class="btn-icon">👋</span>
-        <span class="btn-text">Bonjour vous !</span>
-    </button>
-    
-    <div class="counter-section">
-        <button class="counter-btn" id="counter-btn">
-            <span class="counter-icon">🔥</span>
-            <span class="counter-text">Incrémenter</span>
-        </button>
-        <div class="counter-display" id="counter-display">
-            <span class="counter-label">Compteur :</span>
-            <span class="counter-value" id="counter-value">0</span>
-        </div>
-    </div>
-    
-    <div class="story-box" id="story-box">
-        <p class="story-text" id="story-text"></p>
-    </div>
-</div>
-        </main>
-        
-        <aside id="zone-sidebar">
-<div class="stats-box">
-    <div class="stat-item">
-        <span class="stat-icon">👥</span>
-        <div class="stat-info">
-            <span class="stat-label">Visiteurs</span>
-            <span id="visitor-count" class="stat-value">0</span>
-        </div>
-    </div>
-</div>
 
-<div class="live-indicator">
-    <span class="live-dot"></span>
-    <span>En direct</span>
-</div>
-        </aside>
+.story-box {
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
+}
+  </style>
+ </head>
+ <body>
+  <header id="zone-header">
+   <h1>
+    Bienvenue dans notre espace cosy
+   </h1>
+   <p class="subtitle">
+    Un espace chaleureux pour partager et créer ensemble
+   </p>
+  </header>
+  <div class="main-layout">
+   <main id="zone-content">
+    <div class="story-container">
+     <button class="big-hello-btn" id="hello-btn">
+      <button class="big-hello-btn" id="hello-btn">
+       <span class="btn-icon">
+        👋
+       </span>
+       <span class="btn-text">
+        Coucou et bienvenue !
+       </span>
+      </button>
+     </button>
+     <div class="story-box" id="story-box">
+      <div class="story-box" id="story-box">
+       <p class="story-text" id="story-text">
+        Partageons des histoires et des moments ensemble.
+       </p>
+      </div>
+     </div>
     </div>
-    
-    <footer id="zone-footer">
-<p>Créé en live sur Twitch · Propulsé par l'IA</p>
-    </footer>
-    
-    <script>
-// Twitch Versus Code - Script principal
+   </main>
+   <aside id="zone-sidebar">
+   </aside>
+  </div>
+  <footer id="zone-footer">
+   <p>
+    Créé avec amour sur Twitch · Nourri par notre communauté
+   </p>
+  </footer>
+  <script>
+   // Twitch Versus Code - Script principal
 
 // Petites histoires à raconter
 const stories = [
@@ -451,6 +450,18 @@ if (counterBtn) {
 }
 
 console.log('🎮 Twitch Versus Code loaded!');
-    </script>
-</body>
+  </script>
+ </body>
+ <style>
+  body {
+        background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
+    }
+
+    .story-box {
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: var(--radius);
+        padding: 2rem;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+ </style>
 </html>
