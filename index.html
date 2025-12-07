@@ -233,31 +233,391 @@
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
 }
+   /* Navigation Menu */
+.main-menu {
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 25px;
+    padding: 0.5rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+body.twitch-mode .main-menu {
+    background: rgba(31, 31, 35, 0.8);
+    border: 1px solid #9333ea;
+}
+
+.main-menu ul {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.menu-item {
+    text-decoration: none;
+    color: inherit;
+    padding: 0.7rem 1.5rem;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.menu-item:hover::before {
+    width: 100px;
+    height: 100px;
+}
+
+.menu-item.active {
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+body.twitch-mode .menu-item {
+    text-transform: uppercase;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.9rem;
+}
+
+body.twitch-mode .menu-item.active {
+    background: #9333ea;
+    box-shadow: 0 0 20px #9333ea;
+}
+
+/* Pages */
+.page {
+    display: none;
+    animation: pageTransition 0.5s ease;
+}
+
+.page.active {
+    display: block;
+}
+
+@keyframes pageTransition {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Games Page */
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.game-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+body.twitch-mode .game-card {
+    background: rgba(31, 31, 35, 0.8);
+    border: 1px solid #9333ea;
+}
+
+.game-card:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+body.twitch-mode .game-card:hover {
+    box-shadow: 0 0 30px #9333ea;
+    border-color: #bf94ff;
+}
+
+.game-card h3 {
+    margin-bottom: 0.5rem;
+    font-size: 1.3rem;
+}
+
+.game-card p {
+    opacity: 0.7;
+    font-size: 0.9rem;
+}
+
+/* About Page */
+.about-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.glowing-text {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(147, 51, 234, 0.5); }
+    50% { text-shadow: 0 0 40px rgba(147, 51, 234, 0.8); }
+}
+
+.stats {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3rem;
+    flex-wrap: wrap;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 2rem;
+    min-width: 120px;
+}
+
+body.twitch-mode .stat-card {
+    background: rgba(147, 51, 234, 0.1);
+    border: 1px solid #9333ea;
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: #9333ea;
+}
+
+body.warm-mode .stat-card h3 {
+    color: #667eea;
+}
+
+/* Gallery Page */
+.art-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.art-piece {
+    height: 250px;
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.art-piece:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+#art1 {
+    background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #4facfe);
+    background-size: 400% 400%;
+    animation: gradient 10s ease infinite;
+}
+
+#art2 {
+    background: #000;
+    box-shadow: inset 0 0 50px rgba(147, 51, 234, 0.5);
+}
+
+#art3 {
+    background: repeating-conic-gradient(from 0deg at 50% 50%, #9333ea 0deg, #ec4899 60deg, #06b6d4 120deg, #9333ea 180deg);
+    animation: spin 20s linear infinite;
+}
+
+#art4 {
+    background: radial-gradient(circle at 50% 50%, #fff 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, #9333ea 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, #ec4899 0%, transparent 50%),
+                #0e0e10;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
   </style>
 </head>
 <body class="warm-mode">
 <div class="pixels" id="pixelContainer">
 </div>
 <div class="container">
+<nav class="main-menu">
+<ul>
+<li>
+<a class="menu-item active" data-page="home" href="#">
+       🏠 Accueil
+      </a>
+</li>
+<li>
+<a class="menu-item" data-page="games" href="#">
+       🎮 Jeux
+      </a>
+</li>
+<li>
+<a class="menu-item" data-page="about" href="#">
+       ✨ À propos
+      </a>
+</li>
+<li>
+<a class="menu-item" data-page="gallery" href="#">
+       🎨 Galerie
+      </a>
+</li>
+</ul>
+</nav>
+<div class="page-content">
+<!-- Page Accueil -->
+<div class="page active" id="home">
 <h1>
-    Hello World
-   </h1>
+      Hello World
+     </h1>
 <p class="subtitle">
-    Bienvenue dans cet espace digital
-   </p>
+      Bienvenue dans cet espace digital
+     </p>
 <button class="theme-toggle" onclick="toggleTheme()">
-    Changer de dimension
-   </button>
-<div id="gameContainer" style="display: none; margin-top: 2rem;">
-<canvas height="400" id="snakeCanvas" style="border: 2px solid #9333ea; background: #1a1a1d; box-shadow: 0 0 30px rgba(147, 51, 234, 0.5);" width="400">
+      Changer de dimension
+     </button>
+</div>
+<!-- Page Jeux -->
+<div class="page" id="games">
+<h1>
+      Zone de Jeux
+     </h1>
+<p class="subtitle">
+      Choisissez votre aventure pixelisée
+     </p>
+<div class="games-grid">
+<div class="game-card" onclick="showGame('snake')">
+<h3>
+        🐍 Snake Néon
+       </h3>
+<p>
+        Le classique revisité
+       </p>
+</div>
+<div class="game-card" onclick="showGame('pong')">
+<h3>
+        🏓 Cyber Pong
+       </h3>
+<p>
+        Défi rétro-futuriste
+       </p>
+</div>
+<div class="game-card" onclick="showGame('particles')">
+<h3>
+        ✨ Particules
+       </h3>
+<p>
+        Créez votre galaxie
+       </p>
+</div>
+</div>
+<div id="gameContainer">
+<canvas height="400" id="snakeCanvas" style="border: 2px solid #9333ea; background: #1a1a1d; box-shadow: 0 0 30px rgba(147, 51, 234, 0.5); display: none;" width="400">
+</canvas>
+<canvas height="400" id="pongCanvas" style="border: 2px solid #ec4899; background: #1a1a1d; box-shadow: 0 0 30px rgba(236, 72, 153, 0.5); display: none;" width="600">
+</canvas>
+<canvas height="400" id="particlesCanvas" style="border: 2px solid #06b6d4; background: #000; box-shadow: 0 0 30px rgba(6, 182, 212, 0.5); display: none;" width="600">
 </canvas>
 <div id="gameControls" style="margin-top: 1rem;">
 <p style="color: #bf94ff; font-family: 'Orbitron', monospace; font-size: 0.9rem;">
-      ↑↓←→ pour jouer | Score:
-      <span id="score">
-       0
-      </span>
+<span id="gameInstructions">
+         Sélectionnez un jeu
+        </span>
+        | Score:
+        <span id="score">
+         0
+        </span>
 </p>
+</div>
+</div>
+</div>
+<!-- Page À propos -->
+<div class="page" id="about">
+<h1>
+      À propos
+     </h1>
+<div class="about-content">
+<p class="glowing-text">
+       Cet espace est une expérience collaborative en temps réel
+      </p>
+<p>
+       Chaque pixel raconte une histoire, chaque ligne de code est une aventure.
+      </p>
+<div class="stats">
+<div class="stat-card">
+<h3>
+         ∞
+        </h3>
+<p>
+         Possibilités
+        </p>
+</div>
+<div class="stat-card">
+<h3>
+         42
+        </h3>
+<p>
+         Réponses
+        </p>
+</div>
+<div class="stat-card">
+<h3>
+         1337
+        </h3>
+<p>
+         Lignes de magie
+        </p>
+</div>
+</div>
+</div>
+</div>
+<!-- Page Galerie -->
+<div class="page" id="gallery">
+<h1>
+      Galerie Digitale
+     </h1>
+<p class="subtitle">
+      Art génératif et créations algorithmiques
+     </p>
+<div class="art-grid">
+<div class="art-piece" id="art1">
+</div>
+<div class="art-piece" id="art2">
+</div>
+<div class="art-piece" id="art3">
+</div>
+<div class="art-piece" id="art4">
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -483,6 +843,231 @@ window.toggleTheme = function() {
         clearInterval(gameInterval);
     }
 };
+  </script>
+<script>
+   // Navigation entre pages
+const menuItems = document.querySelectorAll('.menu-item');
+const pages = document.querySelectorAll('.page');
+
+menuItems.forEach(item => {
+    item.addEventListener('click', (e) => {
+        e.preventDefault();
+        const targetPage = item.dataset.page;
+        
+        // Update active menu
+        menuItems.forEach(mi => mi.classList.remove('active'));
+        item.classList.add('active');
+        
+        // Show target page
+        pages.forEach(page => {
+            page.classList.remove('active');
+            if (page.id === targetPage) {
+                page.classList.add('active');
+            }
+        });
+        
+        // Reset games when leaving games page
+        if (targetPage !== 'games') {
+            document.querySelectorAll('#gameContainer canvas').forEach(canvas => {
+                canvas.style.display = 'none';
+            });
+        }
+    });
+});
+
+// Game selector
+let currentGame = null;
+
+function showGame(game) {
+    // Hide all canvases
+    document.getElementById('snakeCanvas').style.display = 'none';
+    document.getElementById('pongCanvas').style.display = 'none';
+    document.getElementById('particlesCanvas').style.display = 'none';
+    
+    currentGame = game;
+    
+    switch(game) {
+        case 'snake':
+            document.getElementById('snakeCanvas').style.display = 'block';
+            document.getElementById('gameInstructions').textContent = '↑↓←→ pour jouer';
+            break;
+        case 'pong':
+            document.getElementById('pongCanvas').style.display = 'block';
+            document.getElementById('gameInstructions').textContent = 'W/S et ↑/↓ pour jouer';
+            initPong();
+            break;
+        case 'particles':
+            document.getElementById('particlesCanvas').style.display = 'block';
+            document.getElementById('gameInstructions').textContent = 'Cliquez pour créer des particules';
+            initParticles();
+            break;
+    }
+}
+
+// Pong Game
+let pongRunning = false;
+const pongCanvas = document.getElementById('pongCanvas');
+const pongCtx = pongCanvas.getContext('2d');
+let paddle1Y = 150, paddle2Y = 150;
+let ballX = 300, ballY = 200, ballDX = 4, ballDY = 3;
+let pongScore1 = 0, pongScore2 = 0;
+
+function initPong() {
+    if (!pongRunning) {
+        pongRunning = true;
+        pongGameLoop();
+    }
+}
+
+function pongGameLoop() {
+    if (!pongRunning || currentGame !== 'pong') return;
+    
+    // Clear
+    pongCtx.fillStyle = '#1a1a1d';
+    pongCtx.fillRect(0, 0, 600, 400);
+    
+    // Draw paddles
+    pongCtx.fillStyle = '#ec4899';
+    pongCtx.shadowBlur = 10;
+    pongCtx.shadowColor = '#ec4899';
+    pongCtx.fillRect(20, paddle1Y, 10, 100);
+    pongCtx.fillRect(570, paddle2Y, 10, 100);
+    
+    // Draw ball
+    pongCtx.beginPath();
+    pongCtx.arc(ballX, ballY, 10, 0, Math.PI * 2);
+    pongCtx.fill();
+    
+    // Move ball
+    ballX += ballDX;
+    ballY += ballDY;
+    
+    // Ball collision with top/bottom
+    if (ballY <= 10 || ballY >= 390) ballDY = -ballDY;
+    
+    // Ball collision with paddles
+    if (ballX <= 40 && ballY >= paddle1Y && ballY <= paddle1Y + 100 && ballDX < 0) {
+        ballDX = -ballDX * 1.1;
+    }
+    if (ballX >= 560 && ballY >= paddle2Y && ballY <= paddle2Y + 100 && ballDX > 0) {
+        ballDX = -ballDX * 1.1;
+    }
+    
+    // Score
+    if (ballX < 0) {
+        pongScore2++;
+        ballX = 300;
+        ballY = 200;
+        ballDX = 4;
+        ballDY = 3;
+    }
+    if (ballX > 600) {
+        pongScore1++;
+        ballX = 300;
+        ballY = 200;
+        ballDX = -4;
+        ballDY = 3;
+    }
+    
+    // Simple AI
+    if (ballY > paddle2Y + 50) paddle2Y += 3;
+    if (ballY < paddle2Y + 50) paddle2Y -= 3;
+    
+    // Draw center line
+    pongCtx.strokeStyle = '#9333ea';
+    pongCtx.setLineDash([5, 15]);
+    pongCtx.beginPath();
+    pongCtx.moveTo(300, 0);
+    pongCtx.lineTo(300, 400);
+    pongCtx.stroke();
+    
+    // Update score
+    document.getElementById('score').textContent = pongScore1 + ' - ' + pongScore2;
+    
+    requestAnimationFrame(pongGameLoop);
+}
+
+// Pong controls
+const keys = {};
+document.addEventListener('keydown', (e) => {
+    keys[e.key] = true;
+    if (currentGame === 'pong') {
+        if (keys['w'] || keys['W']) paddle1Y = Math.max(0, paddle1Y - 20);
+        if (keys['s'] || keys['S']) paddle1Y = Math.min(300, paddle1Y + 20);
+    }
+});
+
+document.addEventListener('keyup', (e) => {
+    keys[e.key] = false;
+});
+
+// Particles System
+const particlesCanvas = document.getElementById('particlesCanvas');
+const particlesCtx = particlesCanvas.getContext('2d');
+let particles = [];
+
+function initParticles() {
+    particlesCanvas.addEventListener('click', createParticleExplosion);
+    animateParticles();
+}
+
+function createParticleExplosion(e) {
+    const rect = particlesCanvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    for (let i = 0; i < 30; i++) {
+        particles.push({
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 8,
+            vy: (Math.random() - 0.5) * 8,
+            size: Math.random() * 3 + 1,
+            color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+            life: 1
+        });
+    }
+}
+
+function animateParticles() {
+    if (currentGame !== 'particles') return;
+    
+    particlesCtx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+    particlesCtx.fillRect(0, 0, 600, 400);
+    
+    particles = particles.filter(p => p.life > 0);
+    
+    particles.forEach(p => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.1; // gravity
+        p.life -= 0.01;
+        
+        particlesCtx.fillStyle = p.color;
+        particlesCtx.globalAlpha = p.life;
+        particlesCtx.beginPath();
+        particlesCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        particlesCtx.fill();
+    });
+    
+    particlesCtx.globalAlpha = 1;
+    
+    requestAnimationFrame(animateParticles);
+}
+
+// Art gallery animations
+setInterval(() => {
+    if (document.getElementById('gallery').classList.contains('active')) {
+        const art2 = document.getElementById('art2');
+        const ctx = document.createElement('canvas').getContext('2d');
+        // Create dynamic art in art2
+        art2.style.background = `radial-gradient(circle at ${Math.random() * 100}% ${Math.random() * 100}%, 
+            rgba(147, 51, 234, ${Math.random()}), 
+            rgba(236, 72, 153, ${Math.random()}), 
+            rgba(6, 182, 212, ${Math.random()}), 
+            #000)`;
+    }
+}, 2000);
   </script>
 </body>
 </html>
