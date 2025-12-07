@@ -135,7 +135,7 @@
 </div>
             <div class="chaos-content">
 <div id="game-zone" style="margin-top: 2rem; text-align: center;"><div id="three-js-canvas" style="width: 400px; height: 300px; margin: 2rem auto; border: 1px solid #e94560;"></div>
-    <canvas id="gameCanvas" width="400" height="300" style="border: 1px solid #e94560;"></canvas>
+    <canvas id="gameCanvas" width="400" height="300" style="border: 1px solid #e94560;"></canvas><p style='color: #aaa;'>Utilisez les flèches gauche et droite pour déplacer le carré. Évitez qu'il ne sorte du canvas !</p>
     <button id="start-button" style="display: block; margin: 1rem auto; padding: 0.5rem 1rem; background-color: #e94560; color: white; border: none; border-radius: 5px;">Démarrer le jeu</button>
     <p id="game-status" style="color: #aaa;"></p>
 </div>
@@ -219,5 +219,5 @@ function animate() {
 }
 
 animate();
-</script></body>
+</script><p style='text-align: center; color: #aaa;'>Utilisez les touches fléchées pour déplacer le carré ! Objectif : ne pas le laisser sortir du canvas.</p><script>document.addEventListener('keydown', (event) => { if(event.key === 'ArrowRight') { player.x += 10; } else if(event.key === 'ArrowLeft') { player.x -= 10; } });</script></body>
 </html>
