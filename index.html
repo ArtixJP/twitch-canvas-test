@@ -3,150 +3,275 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌀 Emergent Canvas</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: #e8e8e8;
-            overflow-x: hidden;
-        }
-        
-        .header {
-            text-align: center;
-            padding: 2rem;
-            background: rgba(0, 0, 0, 0.3);
-            border-bottom: 2px solid #e94560;
-        }
-        
-        .header h1 {
-            font-size: 2.5rem;
-            background: linear-gradient(90deg, #e94560, #0f3460, #e94560);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: gradient-shift 3s linear infinite;
-        }
-        
-        @keyframes gradient-shift {
-            0% { background-position: 0% center; }
-            100% { background-position: 200% center; }
-        }
-        
-        .status-bar {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            padding: 1rem;
-            font-size: 0.9rem;
-            color: #888;
-        }
-        
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        /* Zone de chaos - libre modification */
-        #chaos-zone {
-            background: rgba(233, 69, 96, 0.1);
-            border: 2px dashed #e94560;
-            border-radius: 12px;
-            padding: 2rem;
-            min-height: 300px;
-            margin: 2rem 0;
-            position: relative;
-        }
-        
-        #chaos-zone::before {
-            content: "🌀 CHAOS ZONE - Libre création";
-            position: absolute;
-            top: -12px;
-            left: 20px;
-            background: #1a1a2e;
-            padding: 0 10px;
-            font-size: 0.8rem;
-            color: #e94560;
-        }
-        
-        .chaos-content {
-            text-align: center;
-            padding: 3rem;
-        }
-        
-        .chaos-content p {
-            font-size: 1.2rem;
-            color: #aaa;
-            margin-bottom: 1rem;
-        }
-        
-        .info-section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .info-section h2 {
-            color: #e94560;
-            margin-bottom: 1rem;
-        }
-        
-        .info-section p {
-            line-height: 1.6;
-            color: #ccc;
-        }
-        
-        .footer {
-            text-align: center;
-            padding: 2rem;
-            color: #666;
-            font-size: 0.8rem;
-        }
+    <title>Twitch Versus Code</title>
+    <style id="zone-styles">
+/* Variables */
+:root {
+    --primary: #9146ff;
+    --secondary: #00ff7f;
+    --bg: #0e0e10;
+    --text: #efeff1;
+    --card-bg: #18181b;
+}
+
+/* Base */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Layout */
+#zone-header {
+    background: linear-gradient(135deg, var(--primary), #772ce8);
+    padding: 2rem;
+    text-align: center;
+}
+
+#zone-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    opacity: 0.9;
+    font-size: 1.1rem;
+}
+
+.main-layout {
+    display: flex;
+    flex: 1;
+    gap: 1rem;
+    padding: 1rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+#zone-content {
+    flex: 1;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+#zone-sidebar {
+    width: 280px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+
+#zone-footer {
+    background: var(--card-bg);
+    padding: 1rem;
+    text-align: center;
+    opacity: 0.7;
+}
+
+/* Components */
+.welcome-box {
+    background: linear-gradient(135deg, rgba(145, 70, 255, 0.2), rgba(0, 255, 127, 0.1));
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    padding: 1.5rem;
+}
+
+.welcome-box h2 {
+    color: var(--secondary);
+    margin-bottom: 1rem;
+}
+
+.welcome-box p {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+}
+
+code {
+    background: var(--primary);
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-family: monospace;
+}
+
+.stats-box {
+    border: 1px solid var(--primary);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+.stats-box h3 {
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-layout {
+        flex-direction: column;
+    }
+    #zone-sidebar {
+        width: 100%;
+    }
+}
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>✨ Emergent Canvas ✨</h1>
-        <p>Une expérience de création collaborative</p>
+    <header id="zone-header">
+<h1>🎮 Twitch Versus Code</h1>
+<p class="subtitle">La page que VOUS construisez en direct !</p>
+    </header>
+    
+    <div class="main-layout">
+        <main id="zone-content">
+<section class="cozy-welcome">
+    <div class="greeting">
+        <span class="wave">✨</span>
+        <h1>Salut, toi.</h1>
     </div>
     
-    <div class="status-bar">
-        <span>🎭 Mode: Democracy</span>
-        <span>🔄 Cycles: 0</span>
-        <span>⏱️ Démarré</span>
+    <p class="intro-text">
+        Tu viens d'arriver dans un petit coin du web qu'on construit ensemble, 
+        <em>en direct</em>, au fil des idées du chat.
+    </p>
+    
+    <div class="cozy-divider">~ ~ ~</div>
+    
+    <div class="how-it-works">
+        <h2>Comment ça marche ?</h2>
+        <p>C'est simple : tu proposes, on crée.</p>
+        <p class="command-hint">
+            Tape <code>!idea</code> + ton idée dans le chat<br>
+            <span class="example">ex: !idea ajouter un mode sombre</span>
+        </p>
     </div>
     
-    <div class="main-content">
-        <!-- LLM-EDIT-START -->
-        <div id="chaos-zone">
-            <div class="chaos-content">
-                <p>🎨 Cette zone attend vos idées créatives...</p>
-                <p>Proposez une idée dans le backlog !</p>
-            </div>
-        </div>
-        <!-- LLM-EDIT-END -->
+    <div class="cozy-note">
+        <p>🕯️ Pas de pression, pas de règles compliquées.<br>
+        Juste nous, le chat, et ce qu'on imagine ensemble.</p>
+    </div>
+    
+    <p class="soft-cta">Installe-toi confortablement. On t'attendait.</p>
+</section>
+
+<style>
+.cozy-welcome {
+    max-width: 600px;
+    margin: 2rem auto;
+    padding: 2.5rem;
+    text-align: center;
+    font-family: 'Georgia', serif;
+    color: #3d3d3d;
+    line-height: 1.8;
+}
+
+.greeting {
+    margin-bottom: 1.5rem;
+}
+
+.wave {
+    font-size: 1.5rem;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.greeting h1 {
+    font-size: 2rem;
+    font-weight: normal;
+    color: #5c4d3d;
+    margin: 0;
+}
+
+.intro-text {
+    font-size: 1.1rem;
+    color: #6b5b4f;
+}
+
+.cozy-divider {
+    color: #c4a77d;
+    margin: 2rem 0;
+    letter-spacing: 0.5em;
+}
+
+.how-it-works h2 {
+    font-size: 1.2rem;
+    font-weight: normal;
+    color: #7d6b5d;
+    margin-bottom: 0.5rem;
+}
+
+.command-hint code {
+    background: #f5f0e8;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    color: #8b5e3c;
+    font-family: monospace;
+}
+
+.example {
+    font-size: 0.85rem;
+    color: #a89a8c;
+    font-style: italic;
+}
+
+.cozy-note {
+    background: linear-gradient(135deg, #faf6f0 0%, #f5ede3 100%);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 2rem 0;
+    border: 1px solid #e8dfd3;
+}
+
+.cozy-note p {
+    margin: 0;
+    color: #6b5b4f;
+}
+
+.soft-cta {
+    font-style: italic;
+    color: #9b8b7b;
+    margin-top: 2rem;
+}
+</style>
+        </main>
         
-        <div class="info-section">
-            <h2>📋 Comment participer ?</h2>
-            <p>
-                Visitez le <strong>/backlog</strong> pour proposer des idées.
-                Votez pour vos idées préférées.
-                L'IA modifiera cette page selon les demandes les plus populaires.
-            </p>
-        </div>
+        <aside id="zone-sidebar">
+<div class="stats-box">
+    <h3>📊 Stats</h3>
+    <p>Visiteurs: <span id="visitor-count">0</span></p>
+</div>
+        </aside>
     </div>
     
-    <div class="footer">
-        <p>Twitch Emergent Coding • Expérience d'intelligence collective</p>
-    </div>
+    <footer id="zone-footer">
+<p>Créé en live sur Twitch • Propulsé par l'IA</p>
+    </footer>
+    
+    <script>
+// Twitch Versus Code - Script principal
+
+// Compteur de visiteurs (simulé)
+let visitors = Math.floor(Math.random() * 100) + 50;
+const visitorEl = document.getElementById('visitor-count');
+if (visitorEl) visitorEl.textContent = visitors;
+
+// Animation d'entrée
+document.querySelectorAll('#zone-content > *').forEach((el, i) => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    setTimeout(() => {
+        el.style.transition = 'all 0.5s ease';
+        el.style.opacity = '1';
+        el.style.transform = 'translateY(0)';
+    }, i * 100);
+});
+
+console.log('🎮 Twitch Versus Code loaded!');
+    </script>
 </body>
 </html>
