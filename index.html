@@ -500,7 +500,7 @@
             </button>
             
             <div class="mini-game-container">
-                <h2 class="game-title">🎮 Mini-Jeu : Attrape les Étoiles !</h2>
+                <h2 class="game-title">🦒 Mini-Jeu : La Girafe aux Étoiles !</h2>
                 <p class="game-instructions">Utilise les flèches ← → ou A/D pour bouger, ESPACE pour sauter</p>
                 <canvas id="game-canvas" width="600" height="300"></canvas>
                 <div class="game-score">Score: <span id="score">0</span> ⭐</div>
@@ -553,9 +553,9 @@
         
         const player = {
             x: 50,
-            y: 200,
-            width: 30,
-            height: 40,
+            y: 190,
+            width: 35,
+            height: 55,
             velocityX: 0,
             velocityY: 0,
             onGround: false,
@@ -609,34 +609,129 @@
         
         function drawPlayer() {
 // [BLOCKED: potentially dangerous]
-            ctx.fillStyle = isTwitch ? '#9146FF' : player.color;
+            const giraffeYellow = isTwitch ? '#FFB347' : '#F4D03F';
+            const giraffeSpots = isTwitch ? '#9146FF' : '#B7950B';
+            const eyeDir = player.velocityX > 0 ? 1 : player.velocityX < 0 ? -1 : 0;
             
-            // Corps
+            // Corps de la girafe
+            ctx.fillStyle = giraffeYellow;
             ctx.beginPath();
-            ctx.roundRect(player.x, player.y, player.width, player.height, 8);
+            ctx.ellipse(player.x + 15, player.y + 32, 12, 10, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Yeux
+            // Pattes
+            ctx.fillStyle = giraffeYellow;
+            ctx.fillRect(player.x + 5, player.y + 38, 5, 12);
+            ctx.fillRect(player.x + 20, player.y + 38, 5, 12);
+            // Sabots
+            ctx.fillStyle = '#5D4E37';
+            ctx.fillRect(player.x + 5, player.y + 47, 5, 3);
+            ctx.fillRect(player.x + 20, player.y + 47, 5, 3);
+            
+            // Long cou
+            ctx.fillStyle = giraffeYellow;
+            ctx.beginPath();
+            ctx.moveTo(player.x + 8, player.y + 28);
+            ctx.quadraticCurveTo(player.x + 5, player.y + 10, player.x + 12, player.y - 5);
+            ctx.lineTo(player.x + 22, player.y - 5);
+            ctx.quadraticCurveTo(player.x + 25, player.y + 10, player.x + 22, player.y + 28);
+            ctx.fill();
+            
+            // Tête
+            ctx.beginPath();
+            ctx.ellipse(player.x + 17, player.y - 10, 10, 8, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Petites cornes (ossicones)
+            ctx.fillStyle = giraffeYellow;
+            ctx.fillRect(player.x + 10, player.y - 22, 3, 8);
+            ctx.fillRect(player.x + 21, player.y - 22, 3, 8);
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.arc(player.x + 11.5, player.y - 23, 3, 0, Math.PI * 2);
+            ctx.arc(player.x + 22.5, player.y - 23, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Oreilles
+            ctx.fillStyle = giraffeYellow;
+            ctx.beginPath();
+            ctx.ellipse(player.x + 6, player.y - 12, 4, 6, -0.3, 0, Math.PI * 2);
+            ctx.ellipse(player.x + 28, player.y - 12, 4, 6, 0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Taches sur le cou
+            ctx.fillStyle = giraffeSpots;
+            ctx.beginPath();
+            ctx.ellipse(player.x + 12, player.y + 5, 4, 3, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(player.x + 18, player.y + 15, 3, 4, -0.2, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(player.x + 14, player.y + 25, 3, 2, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Taches sur le corps
+            ctx.beginPath();
+            ctx.ellipse(player.x + 10, player.y + 32, 4, 3, 0.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(player.x + 20, player.y + 34, 3, 4, -0.3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Yeux mignons
             ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(player.x + 10, player.y + 12, 6, 0, Math.PI * 2);
-            ctx.arc(player.x + 22, player.y + 12, 6, 0, Math.PI * 2);
+            ctx.ellipse(player.x + 12, player.y - 10, 4, 5, 0, 0, Math.PI * 2);
+            ctx.ellipse(player.x + 22, player.y - 10, 4, 5, 0, 0, Math.PI * 2);
             ctx.fill();
             
-            // Pupilles (suivent le mouvement)
-            ctx.fillStyle = '#333';
-            const eyeDir = player.velocityX > 0 ? 2 : player.velocityX < 0 ? -2 : 0;
+            // Pupilles
+            ctx.fillStyle = '#1a1a2e';
             ctx.beginPath();
-            ctx.arc(player.x + 10 + eyeDir, player.y + 12, 3, 0, Math.PI * 2);
-            ctx.arc(player.x + 22 + eyeDir, player.y + 12, 3, 0, Math.PI * 2);
+            ctx.arc(player.x + 12 + eyeDir, player.y - 10, 2, 0, Math.PI * 2);
+            ctx.arc(player.x + 22 + eyeDir, player.y - 10, 2, 0, Math.PI * 2);
             ctx.fill();
             
-            // Sourire
-            ctx.strokeStyle = '#333';
-            ctx.lineWidth = 2;
+            // Reflets dans les yeux
+            ctx.fillStyle = 'white';
             ctx.beginPath();
-            ctx.arc(player.x + 15, player.y + 25, 8, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.arc(player.x + 11, player.y - 11, 1, 0, Math.PI * 2);
+            ctx.arc(player.x + 21, player.y - 11, 1, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Museau
+            ctx.fillStyle = '#E8C872';
+            ctx.beginPath();
+            ctx.ellipse(player.x + 17, player.y - 5, 5, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Narines
+            ctx.fillStyle = '#5D4E37';
+            ctx.beginPath();
+            ctx.ellipse(player.x + 15, player.y - 5, 1, 1.5, 0, 0, Math.PI * 2);
+            ctx.ellipse(player.x + 19, player.y - 5, 1, 1.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Petit sourire
+            ctx.strokeStyle = '#5D4E37';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.arc(player.x + 17, player.y - 3, 3, 0.1 * Math.PI, 0.9 * Math.PI);
             ctx.stroke();
+            
+            // Queue
+            ctx.strokeStyle = giraffeYellow;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(player.x + 25, player.y + 30);
+            ctx.quadraticCurveTo(player.x + 35, player.y + 35 + Math.sin(Date.now()/200) * 3, player.x + 32, player.y + 42);
+            ctx.stroke();
+            // Touffe au bout
+            ctx.fillStyle = '#8B4513';
+            ctx.beginPath();
+            ctx.ellipse(player.x + 32, player.y + 44 + Math.sin(Date.now()/200) * 3, 4, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
         }
         
         function drawStar(star) {
