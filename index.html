@@ -322,6 +322,87 @@
             }
         }
         
+        .mini-game-container {
+            margin: 3rem auto;
+            padding: 2rem;
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.05) 0%, rgba(37, 99, 235, 0.1) 100%);
+            border-radius: 20px;
+            border: 2px solid rgba(37, 99, 235, 0.2);
+            max-width: 650px;
+        }
+        
+        body.twitch-theme .mini-game-container {
+            background: linear-gradient(135deg, rgba(145, 70, 255, 0.15) 0%, rgba(0, 255, 170, 0.1) 100%);
+            border-color: var(--twitch-primary);
+            box-shadow: 0 0 30px rgba(145, 70, 255, 0.3);
+        }
+        
+        .game-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+        
+        body.twitch-theme .game-title {
+            color: var(--twitch-accent);
+            text-shadow: 0 0 10px rgba(0, 255, 170, 0.5);
+        }
+        
+        .game-instructions {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+        
+        #game-canvas {
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8AA 70%, #5D4E37 70%, #5D4E37 100%);
+            border-radius: 12px;
+            display: block;
+            margin: 0 auto;
+            border: 3px solid rgba(0,0,0,0.2);
+            max-width: 100%;
+        }
+        
+        body.twitch-theme #game-canvas {
+            background: linear-gradient(180deg, #1a1a2e 0%, #16213e 70%, #0f0f23 70%, #0f0f23 100%);
+            border-color: var(--twitch-primary);
+            box-shadow: 0 0 20px rgba(145, 70, 255, 0.4);
+        }
+        
+        .game-score {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            color: var(--primary);
+        }
+        
+        body.twitch-theme .game-score {
+            color: var(--twitch-accent);
+        }
+        
+        .game-restart {
+            margin-top: 1rem;
+            padding: 0.6rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .game-restart:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        body.twitch-theme .game-restart {
+            background: linear-gradient(135deg, var(--twitch-primary), var(--twitch-secondary));
+            box-shadow: 0 0 15px rgba(145, 70, 255, 0.4);
+        }
+        
         .features {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -418,6 +499,14 @@
                 <span>Célébrer ensemble</span>
             </button>
             
+            <div class="mini-game-container">
+                <h2 class="game-title">🎮 Mini-Jeu : Attrape les Étoiles !</h2>
+                <p class="game-instructions">Utilise les flèches ← → ou A/D pour bouger, ESPACE pour sauter</p>
+                <canvas id="game-canvas" width="600" height="300"></canvas>
+                <div class="game-score">Score: <span id="score">0</span> ⭐</div>
+                <button class="game-restart" id="restart-btn">🔄 Recommencer</button>
+            </div>
+            
             <div class="features">
                 <div class="feature">
                     <div class="feature-icon">🤝</div>
@@ -453,6 +542,260 @@
     </div>
     
     <script>
+        // Mini-Jeu 2D
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+        const scoreEl = document.getElementById('score');
+        const restartBtn = document.getElementById('restart-btn');
+        
+        let score = 0;
+        let gameLoop;
+        
+        const player = {
+            x: 50,
+            y: 200,
+            width: 30,
+            height: 40,
+            velocityX: 0,
+            velocityY: 0,
+            onGround: false,
+            color: '#FF6B6B',
+            eyeOffset: 0
+        };
+        
+        const gravity = 0.5;
+        const jumpForce = -12;
+        const moveSpeed = 5;
+        const groundY = 210;
+        
+        let stars = [];
+        let particles = [];
+        
+        const keys = { left: false, right: false, jump: false };
+        
+        function spawnStar() {
+            stars.push({
+                x: Math.random() * (canvas.width - 40) + 20,
+                y: Math.random() * 120 + 50,
+                size: 15,
+                rotation: 0,
+                bobOffset: Math.random() * Math.PI * 2
+            });
+        }
+        
+        function spawnParticles(x, y, color) {
+            for(let i = 0; i < 8; i++) {
+                particles.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: (Math.random() - 0.5) * 8,
+                    life: 30,
+                    color
+                });
+            }
+        }
+        
+        function initGame() {
+            score = 0;
+            scoreEl.textContent = '0';
+            player.x = 50;
+            player.y = 200;
+            player.velocityX = 0;
+            player.velocityY = 0;
+            stars = [];
+            particles = [];
+            for(let i = 0; i < 5; i++) spawnStar();
+        }
+        
+        function drawPlayer() {
+// [BLOCKED: potentially dangerous]
+            ctx.fillStyle = isTwitch ? '#9146FF' : player.color;
+            
+            // Corps
+            ctx.beginPath();
+            ctx.roundRect(player.x, player.y, player.width, player.height, 8);
+            ctx.fill();
+            
+            // Yeux
+            ctx.fillStyle = 'white';
+            ctx.beginPath();
+            ctx.arc(player.x + 10, player.y + 12, 6, 0, Math.PI * 2);
+            ctx.arc(player.x + 22, player.y + 12, 6, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Pupilles (suivent le mouvement)
+            ctx.fillStyle = '#333';
+            const eyeDir = player.velocityX > 0 ? 2 : player.velocityX < 0 ? -2 : 0;
+            ctx.beginPath();
+            ctx.arc(player.x + 10 + eyeDir, player.y + 12, 3, 0, Math.PI * 2);
+            ctx.arc(player.x + 22 + eyeDir, player.y + 12, 3, 0, Math.PI * 2);
+            ctx.fill();
+            
+            // Sourire
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.arc(player.x + 15, player.y + 25, 8, 0.1 * Math.PI, 0.9 * Math.PI);
+            ctx.stroke();
+        }
+        
+        function drawStar(star) {
+// [BLOCKED: potentially dangerous]
+            const bobY = Math.sin(Date.now() / 300 + star.bobOffset) * 5;
+            
+            ctx.save();
+            ctx.translate(star.x, star.y + bobY);
+            ctx.rotate(star.rotation);
+            
+            ctx.fillStyle = isTwitch ? '#00FFAA' : '#FFD700';
+            ctx.shadowColor = isTwitch ? '#00FFAA' : '#FFD700';
+            ctx.shadowBlur = 15;
+            
+            // Dessiner étoile
+            ctx.beginPath();
+            for(let i = 0; i < 5; i++) {
+                const angle = (i * 4 * Math.PI / 5) - Math.PI / 2;
+                const r = i === 0 ? star.size : star.size;
+                ctx.lineTo(Math.cos(angle) * r, Math.sin(angle) * r);
+                const innerAngle = angle + Math.PI / 5;
+                ctx.lineTo(Math.cos(innerAngle) * (star.size / 2), Math.sin(innerAngle) * (star.size / 2));
+            }
+            ctx.closePath();
+            ctx.fill();
+            
+            ctx.restore();
+            star.rotation += 0.02;
+        }
+        
+        function update() {
+            // Mouvement horizontal
+            if(keys.left) player.velocityX = -moveSpeed;
+            else if(keys.right) player.velocityX = moveSpeed;
+            else player.velocityX *= 0.8;
+            
+            // Saut
+            if(keys.jump && player.onGround) {
+                player.velocityY = jumpForce;
+                player.onGround = false;
+            }
+            
+            // Gravité
+            player.velocityY += gravity;
+            
+            // Mise à jour position
+            player.x += player.velocityX;
+            player.y += player.velocityY;
+            
+            // Limites
+            if(player.x < 0) player.x = 0;
+            if(player.x > canvas.width - player.width) player.x = canvas.width - player.width;
+            
+            // Sol
+            if(player.y >= groundY) {
+                player.y = groundY;
+                player.velocityY = 0;
+                player.onGround = true;
+            }
+            
+            // Collision étoiles
+            stars = stars.filter(star => {
+                const dx = (player.x + player.width/2) - star.x;
+                const dy = (player.y + player.height/2) - star.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                if(dist < 35) {
+                    score++;
+                    scoreEl.textContent = score;
+// [BLOCKED: potentially dangerous]
+                    // Son
+                    const coinSound = document.getElementById('music-audio');
+                    coinSound.currentTime = 0;
+                    coinSound.play().catch(()=>{});
+                    return false;
+                }
+                return true;
+            });
+            
+            // Respawn étoiles
+            if(stars.length < 5 && Math.random() < 0.02) spawnStar();
+            
+            // Particles
+            particles = particles.filter(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                return p.life > 0;
+            });
+        }
+        
+        function draw() {
+// [BLOCKED: potentially dangerous]
+            
+            // Clear
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Background
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            if(isTwitch) {
+                gradient.addColorStop(0, '#1a1a2e');
+                gradient.addColorStop(0.7, '#16213e');
+                gradient.addColorStop(0.7, '#0f0f23');
+                gradient.addColorStop(1, '#0f0f23');
+            } else {
+                gradient.addColorStop(0, '#87CEEB');
+                gradient.addColorStop(0.7, '#98D8AA');
+                gradient.addColorStop(0.7, '#5D4E37');
+                gradient.addColorStop(1, '#5D4E37');
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Herbe/Sol
+            ctx.fillStyle = isTwitch ? '#1a0a2e' : '#4a7c3f';
+            ctx.fillRect(0, groundY + player.height, canvas.width, 50);
+            
+            // Étoiles
+            stars.forEach(drawStar);
+            
+            // Particles
+            particles.forEach(p => {
+                ctx.globalAlpha = p.life / 30;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 4, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            ctx.globalAlpha = 1;
+            
+            // Player
+            drawPlayer();
+        }
+        
+        function gameLoopFn() {
+            update();
+            draw();
+            gameLoop = requestAnimationFrame(gameLoopFn);
+        }
+        
+        // Controls
+        document.addEventListener('keydown', e => {
+            if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = true;
+            if(e.key === 'ArrowRight' || e.key === 'd') keys.right = true;
+            if(e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w') { keys.jump = true; e.preventDefault(); }
+        });
+        
+        document.addEventListener('keyup', e => {
+            if(e.key === 'ArrowLeft' || e.key === 'a') keys.left = false;
+            if(e.key === 'ArrowRight' || e.key === 'd') keys.right = false;
+            if(e.key === ' ' || e.key === 'ArrowUp' || e.key === 'w') keys.jump = false;
+        });
+        
+        restartBtn.addEventListener('click', initGame);
+        
+        // Start game
+        initGame();
+        gameLoopFn();
+        
         // Music Player
         const ambientMusic = document.getElementById('ambient-music');
         const playerToggle = document.getElementById('player-toggle');
