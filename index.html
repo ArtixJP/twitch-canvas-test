@@ -4,10 +4,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Hello World - Mode Dual</title>
+<title>
+   Hello World - Mode Dual
+  </title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;700&amp;family=Orbitron:wght@400;900&amp;display=swap" rel="stylesheet"/>
 <style>
-        * {
+   * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -217,17 +219,50 @@
             90% { opacity: 1; }
             100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
-    </style>
+   #snakeCanvas {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+#gameContainer {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+  </style>
 </head>
 <body class="warm-mode">
-<div class="pixels" id="pixelContainer"></div>
+<div class="pixels" id="pixelContainer">
+</div>
 <div class="container">
-<h1>Hello World</h1>
-<p class="subtitle">Bienvenue dans cet espace digital</p>
-<button class="theme-toggle" onclick="toggleTheme()">Changer de dimension</button>
+<h1>
+    Hello World
+   </h1>
+<p class="subtitle">
+    Bienvenue dans cet espace digital
+   </p>
+<button class="theme-toggle" onclick="toggleTheme()">
+    Changer de dimension
+   </button>
+<div id="gameContainer" style="display: none; margin-top: 2rem;">
+<canvas height="400" id="snakeCanvas" style="border: 2px solid #9333ea; background: #1a1a1d; box-shadow: 0 0 30px rgba(147, 51, 234, 0.5);" width="400">
+</canvas>
+<div id="gameControls" style="margin-top: 1rem;">
+<p style="color: #bf94ff; font-family: 'Orbitron', monospace; font-size: 0.9rem;">
+      ↑↓←→ pour jouer | Score:
+      <span id="score">
+       0
+      </span>
+</p>
+</div>
+</div>
 </div>
 <script>
-        let currentMode = 'warm';
+   let currentMode = 'warm';
         
         function toggleTheme() {
             const body = document.body;
@@ -287,6 +322,167 @@
                 konamiIndex = 0;
             }
         });
-    </script>
+  </script>
+<script>
+   // Mini-jeu Snake
+let snake = [{x: 200, y: 200}];
+let dx = 20;
+let dy = 0;
+let foodX, foodY;
+let score = 0;
+let gameRunning = false;
+let gameInterval;
+
+const canvas = document.getElementById('snakeCanvas');
+const ctx = canvas.getContext('2d');
+
+function initGame() {
+    snake = [{x: 200, y: 200}];
+    dx = 20;
+    dy = 0;
+    score = 0;
+    document.getElementById('score').textContent = score;
+    generateFood();
+    gameRunning = true;
+}
+
+function generateFood() {
+    foodX = Math.floor(Math.random() * 20) * 20;
+    foodY = Math.floor(Math.random() * 20) * 20;
+}
+
+function drawSnakePart(snakePart) {
+    ctx.fillStyle = '#9333ea';
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#9333ea';
+    ctx.fillRect(snakePart.x, snakePart.y, 18, 18);
+    ctx.shadowBlur = 0;
+}
+
+function drawSnake() {
+    snake.forEach(drawSnakePart);
+}
+
+function drawFood() {
+    ctx.fillStyle = '#ec4899';
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = '#ec4899';
+    ctx.fillRect(foodX, foodY, 18, 18);
+    ctx.shadowBlur = 0;
+}
+
+function moveSnake() {
+    const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+    
+    // Wrap around edges
+    if (head.x < 0) head.x = 380;
+    if (head.x >= 400) head.x = 0;
+    if (head.y < 0) head.y = 380;
+    if (head.y >= 400) head.y = 0;
+    
+    snake.unshift(head);
+    
+    const didEatFood = snake[0].x === foodX && snake[0].y === foodY;
+    if (didEatFood) {
+        score += 10;
+        document.getElementById('score').textContent = score;
+        generateFood();
+        
+        // Effet visuel quand on mange
+        canvas.style.boxShadow = '0 0 50px rgba(236, 72, 153, 0.8)';
+        setTimeout(() => {
+            canvas.style.boxShadow = '0 0 30px rgba(147, 51, 234, 0.5)';
+        }, 200);
+    } else {
+        snake.pop();
+    }
+}
+
+function clearCanvas() {
+    ctx.fillStyle = '#1a1a1d';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function checkCollision() {
+    for (let i = 4; i < snake.length; i++) {
+        if (snake[i].x === snake[0].x && snake[i].y === snake[0].y) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function gameLoop() {
+    if (checkCollision()) {
+        gameRunning = false;
+        clearInterval(gameInterval);
+        ctx.fillStyle = '#bf94ff';
+        ctx.font = '30px Orbitron';
+        ctx.textAlign = 'center';
+        ctx.fillText('GAME OVER', 200, 200);
+        ctx.font = '16px Orbitron';
+        ctx.fillText('Press SPACE to restart', 200, 240);
+        return;
+    }
+    
+    clearCanvas();
+    drawFood();
+    moveSnake();
+    drawSnake();
+}
+
+// Contrôles
+document.addEventListener('keydown', (e) => {
+    if (!gameRunning && e.code === 'Space') {
+        initGame();
+        gameInterval = setInterval(gameLoop, 100);
+        return;
+    }
+    
+    if (!gameRunning) return;
+    
+    const goingUp = dy === -20;
+    const goingDown = dy === 20;
+    const goingRight = dx === 20;
+    const goingLeft = dx === -20;
+    
+    if (e.key === 'ArrowLeft' && !goingRight) {
+        dx = -20;
+        dy = 0;
+    }
+    if (e.key === 'ArrowUp' && !goingDown) {
+        dx = 0;
+        dy = -20;
+    }
+    if (e.key === 'ArrowRight' && !goingLeft) {
+        dx = 20;
+        dy = 0;
+    }
+    if (e.key === 'ArrowDown' && !goingUp) {
+        dx = 0;
+        dy = 20;
+    }
+});
+
+// Intégration avec le changement de thème
+const originalToggleTheme = window.toggleTheme;
+window.toggleTheme = function() {
+    originalToggleTheme();
+    const gameContainer = document.getElementById('gameContainer');
+    if (currentMode === 'twitch') {
+        gameContainer.style.display = 'block';
+        if (!gameRunning) {
+            ctx.fillStyle = '#bf94ff';
+            ctx.font = '20px Orbitron';
+            ctx.textAlign = 'center';
+            ctx.fillText('Press SPACE to start', 200, 200);
+        }
+    } else {
+        gameContainer.style.display = 'none';
+        gameRunning = false;
+        clearInterval(gameInterval);
+    }
+};
+  </script>
 </body>
 </html>
