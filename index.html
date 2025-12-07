@@ -706,200 +706,28 @@ body {
     font-size: 1.75rem;
   }
 }
+
+.hello-world {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--primary);
+    animation: blink 1s ease-in-out infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
   </style>
  </head>
  <body>
-  <header id="zone-header">
-   <h1>
-    Nexus
-    <span class="brand-dot">
-     .
-    </span>
-    AI
-   </h1>
-   <p class="subtitle">
-    Plateforme intelligente pour créateurs ambitieux
-   </p>
-  </header>
-  <div class="main-layout modern-layout">
-   <main id="zone-content">
-    <div class="hero-card">
-     <div class="hero-badge">
-      ✨ Nouveau
-     </div>
-     <h2 class="hero-title">
-      Bienvenue dans le futur
-     </h2>
-     <p class="hero-description">
-      Une expérience simplifiée, des outils puissants. Construisez, créez et innovez sans limites.
-     </p>
-     <button class="primary-btn" id="hello-btn">
-      <span>
-       Commencer
-      </span>
-      <svg fill="none" height="16" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24" width="16">
-       <path d="M5 12h14M12 5l7 7-7 7">
-       </path>
-      </svg>
-     </button>
-    </div>
-    <div class="features-grid">
-     <div class="feature-card">
-      <div class="feature-icon">
-       ⚡
-      </div>
-      <h3>
-       Rapide
-      </h3>
-      <p>
-       Performance optimisée
-      </p>
-     </div>
-     <div class="feature-card">
-      <div class="feature-icon">
-       🔒
-      </div>
-      <h3>
-       Sécurisé
-      </h3>
-      <p>
-       Données protégées
-      </p>
-     </div>
-     <div class="feature-card">
-      <div class="feature-icon">
-       🎯
-      </div>
-      <h3>
-       Précis
-      </h3>
-      <p>
-       Résultats fiables
-      </p>
-     </div>
-    </div>
-   </main>
-   <aside id="zone-sidebar">
-    <div class="sidebar-card">
-     <div class="status-indicator">
-     </div>
-     <span class="status-text">
-      Système opérationnel
-     </span>
-    </div>
-    <div class="sidebar-card">
-     <h3>
-      Ressources
-     </h3>
-     <ul class="sidebar-list">
-      <li>
-       <a href="#">
-        Documentation
-       </a>
-      </li>
-      <li>
-       <a href="#">
-        Tutoriels
-       </a>
-      </li>
-      <li>
-       <a href="#">
-        Communauté
-       </a>
-      </li>
-     </ul>
-    </div>
-   </aside>
+  <div class="hello-world">
+   Hello World
   </div>
-  <footer id="zone-footer">
-   <div class="footer-content">
-    <span>
-     © 2024 Nexus.AI
-    </span>
-    <span class="footer-sep">
-     ·
-    </span>
-    <span>
-     Construit avec passion
-    </span>
-   </div>
-  </footer>
-  <script>
-   // Twitch Versus Code - Script principal
-
-// Petites histoires à raconter
-const stories = [
-    "Il était une fois un petit pixel perdu dans l'immensité de l'écran. Il cherchait ses amis, les autres pixels, pour former ensemble une belle image. Après un long voyage à travers les lignes de code, il les retrouva enfin... et ensemble, ils créèrent cette page ! ✨",
-    "Un développeur fatigué tapait du code à 3h du matin. Soudain, son café se mit à parler : 'Tu sais, je suis fier de toi.' Le dev sourit, but une gorgée, et termina son projet. Parfois, la magie existe dans les petites choses. ☕",
-    "Dans un royaume lointain appelé 'Internet', vivait un bouton très timide. Personne ne cliquait jamais sur lui. Un jour, VOUS êtes arrivé(e) et avez cliqué. Le bouton fut si heureux qu'il décida de vous raconter cette histoire ! 💜",
-    "On raconte que chaque clic génère une petite étincelle de joie quelque part dans le monde. Vous venez d'en créer une ! Quelqu'un, quelque part, sourit grâce à vous. Merci d'être là. 🌟",
-    "Un chat marchait sur un clavier. Par accident, il écrivit le plus beau poème du monde. Malheureusement, personne ne l'a sauvegardé. Mais vous savez quoi ? Ce moment avec vous est bien plus précieux qu'un poème. 🐱"
-];
-
-let storyIndex = 0;
-let counter = 0;
-
-// Sélection des éléments
-const helloBtn = document.getElementById('hello-btn');
-const storyBox = document.getElementById('story-box');
-const storyText = document.getElementById('story-text');
-const counterBtn = document.getElementById('counter-btn');
-const counterValue = document.getElementById('counter-value');
-const counterDisplay = document.getElementById('counter-display');
-
-// Fonction pour afficher une histoire
-function tellStory() {
-    // Animation du bouton
-    helloBtn.style.transform = 'scale(0.95)';
-    setTimeout(() => {
-        helloBtn.style.transform = '';
-    }, 150);
-    
-    // Afficher l'histoire
-    storyText.textContent = stories[storyIndex];
-    storyBox.classList.add('visible');
-    
-    // Passer à l'histoire suivante pour le prochain clic
-    storyIndex = (storyIndex + 1) % stories.length;
-}
-
-// Fonction pour incrémenter le compteur
-function incrementCounter() {
-    counter++;
-    counterValue.textContent = counter;
-    
-    // Animation pulse sur le display
-    counterDisplay.classList.add('pulse');
-    setTimeout(() => {
-        counterDisplay.classList.remove('pulse');
-    }, 200);
-}
-
-// Écouter le clic sur le bouton hello
-if (helloBtn) {
-    helloBtn.addEventListener('click', tellStory);
-}
-
-// Écouter le clic sur le bouton compteur
-if (counterBtn) {
-    counterBtn.addEventListener('click', incrementCounter);
-}
-
-console.log('🎮 Twitch Versus Code loaded!');
-  </script>
-  <script>
-// [BLOCKED: potentially dangerous]
-  </script>
-  <script>
-// [BLOCKED: potentially dangerous]
-// [BLOCKED: potentially dangerous]
-  this.style.pointerEvents = 'none';
-  setTimeout(() => {
-// [BLOCKED: potentially dangerous]
-    this.style.background = '#22c55e';
-  }, 1000);
-});
-  </script>
  </body>
  <style>
   body {
