@@ -131,111 +131,151 @@ code {
         <main id="zone-content">
 <section class="cozy-welcome">
     <div class="greeting">
-        <span class="wave">✨</span>
-        <h1>Salut, toi.</h1>
+        <span class="wave">🌙</span>
+        <h1>Bienvenue, voyageur.</h1>
     </div>
     
     <p class="intro-text">
-        Tu viens d'arriver dans un petit coin du web qu'on construit ensemble, 
-        <em>en direct</em>, au fil des idées du chat.
+        Ici, on construit quelque chose ensemble.<br>
+        Pas de plan, pas de deadline — juste le chat, le stream, et nos idées.
     </p>
     
-    <div class="cozy-divider">~ ~ ~</div>
+    <div class="cozy-divider">✦</div>
     
     <div class="how-it-works">
-        <h2>Comment ça marche ?</h2>
-        <p>C'est simple : tu proposes, on crée.</p>
-        <p class="command-hint">
-            Tape <code>!idea</code> + ton idée dans le chat<br>
-            <span class="example">ex: !idea ajouter un mode sombre</span>
-        </p>
+        <h2>Tu fais partie de l'aventure</h2>
+        <p>Chaque élément de cette page peut naître d'une idée du chat.</p>
+        <div class="command-box">
+            <code>!idea</code> <span class="command-desc">ton idée ici</span>
+        </div>
     </div>
     
     <div class="cozy-note">
-        <p>🕯️ Pas de pression, pas de règles compliquées.<br>
-        Juste nous, le chat, et ce qu'on imagine ensemble.</p>
+        <p>🕯️ C'est un espace doux.<br>
+        On expérimente, on rate parfois, on recommence.<br>
+        <em>Et c'est très bien comme ça.</em></p>
     </div>
     
-    <p class="soft-cta">Installe-toi confortablement. On t'attendait.</p>
+    <div class="presence-hint">
+        <span class="dot"></span>
+        <span>On crée en ce moment même</span>
+    </div>
 </section>
 
 <style>
 .cozy-welcome {
-    max-width: 600px;
-    margin: 2rem auto;
-    padding: 2.5rem;
+    max-width: 540px;
+    margin: 3rem auto;
+    padding: 2rem;
     text-align: center;
     font-family: 'Georgia', serif;
-    color: #3d3d3d;
-    line-height: 1.8;
+    color: #4a4a4a;
+    line-height: 1.9;
 }
 
 .greeting {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
 }
 
 .wave {
-    font-size: 1.5rem;
+    font-size: 2rem;
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
+    animation: gentle-glow 3s ease-in-out infinite;
+}
+
+@keyframes gentle-glow {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
 }
 
 .greeting h1 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: normal;
-    color: #5c4d3d;
+    color: #5c5048;
     margin: 0;
 }
 
 .intro-text {
-    font-size: 1.1rem;
-    color: #6b5b4f;
+    font-size: 1.05rem;
+    color: #6b6058;
 }
 
 .cozy-divider {
-    color: #c4a77d;
-    margin: 2rem 0;
-    letter-spacing: 0.5em;
+    color: #d4c4a8;
+    margin: 2.5rem 0;
+    font-size: 0.8rem;
 }
 
 .how-it-works h2 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: normal;
-    color: #7d6b5d;
-    margin-bottom: 0.5rem;
+    color: #7a6b5d;
+    margin-bottom: 1rem;
 }
 
-.command-hint code {
-    background: #f5f0e8;
-    padding: 0.3rem 0.6rem;
+.how-it-works > p {
+    color: #8a7b6d;
+    font-size: 0.95rem;
+}
+
+.command-box {
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #faf8f5;
+    border-radius: 8px;
+    display: inline-block;
+}
+
+.command-box code {
+    background: #6b5b4f;
+    color: #faf6f0;
+    padding: 0.3rem 0.5rem;
     border-radius: 4px;
-    color: #8b5e3c;
     font-family: monospace;
+    font-size: 0.9rem;
 }
 
-.example {
-    font-size: 0.85rem;
-    color: #a89a8c;
+.command-desc {
+    color: #a99b8d;
     font-style: italic;
+    margin-left: 0.5rem;
 }
 
 .cozy-note {
-    background: linear-gradient(135deg, #faf6f0 0%, #f5ede3 100%);
-    padding: 1.5rem;
-    border-radius: 12px;
-    margin: 2rem 0;
-    border: 1px solid #e8dfd3;
+    background: #fdfbf8;
+    padding: 1.5rem 2rem;
+    border-radius: 16px;
+    margin: 2.5rem 0;
+    border: 1px solid #ebe4da;
 }
 
 .cozy-note p {
     margin: 0;
     color: #6b5b4f;
+    font-size: 0.95rem;
 }
 
-.soft-cta {
-    font-style: italic;
-    color: #9b8b7b;
-    margin-top: 2rem;
+.presence-hint {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #a99b8d;
+    font-size: 0.85rem;
+    margin-top: 1.5rem;
+}
+
+.dot {
+    width: 6px;
+    height: 6px;
+    background: #b8a990;
+    border-radius: 50%;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 1; }
 }
 </style>
         </main>
