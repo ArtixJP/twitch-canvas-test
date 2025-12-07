@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Page Élégante</title>
+    <title>Expérience Collaborative - Ensemble</title>
     <link href="#" rel="stylesheet">
     <style>
         * {
@@ -11,129 +11,280 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
+        :root {
+            --primary: #2563eb;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+        }
+        
         body {
-            font-family: 'Open Sans', sans-serif;
+            font-family: 'Inter', sans-serif;
+            color: var(--text-primary);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+        
+        .hero {
+            min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            background-color: #f0f0f0;
-            color: #333333;
+            padding: 2rem;
+            position: relative;
+            background: linear-gradient(to bottom, var(--white) 0%, var(--bg-light) 100%);
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 100vh;
+            background-image: radial-gradient(circle at 20% 50%, rgba(37, 99, 235, 0.05) 0%, transparent 50%),
+                              radial-gradient(circle at 80% 80%, rgba(37, 99, 235, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
             text-align: center;
+            z-index: 1;
         }
+        
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-            color: #007bff;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
-            color: #666666;
+        
+        .subtitle {
+            font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+            font-weight: 300;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            line-height: 1.6;
         }
-        button {
-            background-color: #28a745;
+        
+        .music-button {
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
-            padding: 1rem 2rem;
+            border-radius: 50px;
+            padding: 1rem 2.5rem;
             font-size: 1rem;
+            font-weight: 400;
             cursor: pointer;
-            transition: background-color 0.3s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        footer {
-            margin-top: 2rem;
-            font-size: 0.8rem;
-            color: #999999;
-        }
-    </style>
-<link rel='stylesheet' href="#" />
-    <style>
-        .button-animation {
-            font-size: 1.2rem;
-            margin: 0 0.2rem;
-        }
-        #play-music-button:active {
-            transform: scale(0.95);
-        }
-        #play-music-button {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
         }
-        #play-music-button::after {
-            content: '🪙';
+        
+        .music-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(37, 99, 235, 0.3);
+        }
+        
+        .music-button:active {
+            transform: translateY(0);
+        }
+        
+        .music-button .icon {
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .ripple {
             position: absolute;
-            font-size: 2rem;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple-animation 0.6s ease-out;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 5rem;
+            padding: 0 2rem;
+        }
+        
+        .feature {
+            text-align: center;
             opacity: 0;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            transition: all 0.5s ease;
+            animation: fadeInUp 0.6s ease-out forwards;
         }
-        #play-music-button.coin-collected::after {
-            opacity: 1;
-            transform: translate(-50%, -150%) scale(1.5);
+        
+        .feature:nth-child(1) { animation-delay: 0.1s; }
+        .feature:nth-child(2) { animation-delay: 0.2s; }
+        .feature:nth-child(3) { animation-delay: 0.3s; }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-    </style></head>
+        
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            filter: grayscale(20%);
+        }
+        
+        .feature h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .feature p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        footer {
+            margin-top: 4rem;
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .note {
+            position: fixed;
+            font-size: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            animation: float-note 3s ease-out forwards;
+        }
+        
+        @keyframes float-note {
+            0% {
+                opacity: 0;
+                transform: translateY(0) rotate(0deg);
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) rotate(360deg);
+            }
+        }
+    </style>
+</head>
 <body>
-    <h1>Bienvenue sur notre plateforme</h1>
-    <p>Un espace pour des idées et collaborations.</p>
-    <button id="play-music-button"><span class='button-animation animate__animated' style='display:none;'>🎶</span><span class='button-animation animate__animated' style='display:none;'>🎵</span><span class='button-animation animate__animated' style='display:none;'>🎶</span> Jouer une musique !</button>
-    <footer>
-        <p>&copy; 2023 Projet Collaboratif</p>
-    </footer>
+    <section class="hero">
+        <div class="container">
+            <h1>Expérience Collaborative</h1>
+            <p class="subtitle">Où les idées se rencontrent et les créations prennent vie ensemble</p>
+            
+            <button class="music-button" id="play-music-button">
+                <span class="icon">🎵</span>
+                <span>Célébrer ensemble</span>
+            </button>
+            
+            <div class="features">
+                <div class="feature">
+                    <div class="feature-icon">🤝</div>
+                    <h3>Connexion</h3>
+                    <p>Rencontrez des esprits créatifs</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">💡</div>
+                    <h3>Innovation</h3>
+                    <p>Explorez de nouvelles idées</p>
+                </div>
+                <div class="feature">
+                    <div class="feature-icon">🌱</div>
+                    <h3>Croissance</h3>
+                    <p>Évoluez ensemble</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Une expérience sociale collaborative · 2023</p>
+        </footer>
+    </section>
+    
     <audio id="music-audio" src="#" preload="auto" crossorigin="anonymous"></audio>
+    
     <script>
-        document.getElementById('play-music-button').addEventListener('click', () => {
-            const audio = document.getElementById('music-audio');
-            const animations = document.querySelectorAll('.button-animation');
-            const button = document.getElementById('play-music-button');
-            
-            // Jouer le son directement
+        const button = document.getElementById('play-music-button');
+        const audio = document.getElementById('music-audio');
+        const notes = ['🎵', '🎶', '🎼', '🎤', '✨'];
+        
+// [BLOCKED: potentially dangerous]
+            // Jouer le son
             audio.currentTime = 0;
-            audio.play().catch(e => {
-                console.log('Audio play failed:', e);
-                // Fallback: créer un nouvel audio element
+            audio.play().catch(err => {
                 const newAudio = new Audio('https://www.myinstants.com/media/sounds/super-mario-coin-sound.mp3');
-                newAudio.play().catch(err => console.log('New audio failed:', err));
+                newAudio.play().catch(e => console.log('Audio error:', e));
             });
             
-            // Effet visuel sur le bouton
-            button.style.transform = 'scale(1.1)';
-            setTimeout(() => {
-                button.style.transform = 'scale(1)';
-            }, 100);
+            // Effet ripple
+            const ripple = document.createElement('span');
+            ripple.className = 'ripple';
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            this.appendChild(ripple);
             
-            // Effet pièce collectée
-            button.classList.add('coin-collected');
-            setTimeout(() => {
-                button.classList.remove('coin-collected');
-            }, 500);
+            setTimeout(() => ripple.remove(), 600);
             
-            // Animer les notes de musique avec des couleurs aléatoires
-            const colors = ['#FFD700', '#FF69B4', '#00CED1', '#32CD32', '#FF6347'];
-            animations.forEach((anim, index) => {
+            // Notes flottantes
+            for(let i = 0; i < 3; i++) {
                 setTimeout(() => {
-                    anim.style.display = 'inline';
-                    anim.style.color = colors[Math.floor(Math.random() * colors.length)];
-                    anim.classList.add('animate__bounceIn');
+                    const note = document.createElement('div');
+                    note.className = 'note';
+                    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                    note.style.left = (rect.left + Math.random() * rect.width) + 'px';
+                    note.style.top = (rect.top + rect.height / 2) + 'px';
+                    note.style.color = `hsl(${Math.random() * 60 + 200}, 70%, 60%)`;
+// [BLOCKED: potentially dangerous]
                     
-                    // Faire disparaître après l'animation
-                    setTimeout(() => {
-                        anim.classList.remove('animate__bounceIn');
-                        anim.classList.add('animate__fadeOut');
-                        setTimeout(() => {
-                            anim.style.display = 'none';
-                            anim.classList.remove('animate__fadeOut');
-                        }, 500);
-                    }, 1000 + index * 200);
-                }, index * 200);
-            });
+                    setTimeout(() => note.remove(), 3000);
+                }, i * 100);
+            }
         });
     </script>
 </body>
