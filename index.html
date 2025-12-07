@@ -113,7 +113,7 @@
         }
     
 @keyframes bounce { 0%, 20%, 50%, 80%, 100% { transform: translateY(0); } 40% { transform: translateY(-30px); } 60% { transform: translateY(-15px); } }</style>
-</head>
+<script></script></head>
 <body>
     <div class="header">
         <h1>✨ Emergent Canvas ✨</h1>
@@ -134,7 +134,7 @@
     <div style="background: red; width: 33.33%; height: 100%;"></div>
 </div>
             <div class="chaos-content">
-<div id="game-zone" style="margin-top: 2rem; text-align: center;">
+<div id="game-zone" style="margin-top: 2rem; text-align: center;"><div id="three-js-canvas" style="width: 400px; height: 300px; margin: 2rem auto; border: 1px solid #e94560;"></div>
     <canvas id="gameCanvas" width="400" height="300" style="border: 1px solid #e94560;"></canvas>
     <button id="start-button" style="display: block; margin: 1rem auto; padding: 0.5rem 1rem; background-color: #e94560; color: white; border: none; border-radius: 5px;">Démarrer le jeu</button>
     <p id="game-status" style="color: #aaa;"></p>
@@ -197,5 +197,27 @@ document.getElementById('start-button').addEventListener('click', () => {
 });
 </script>
 
-<script>const chaosZone = document.getElementById('chaos-zone'); chaosZone.style.animation = 'bounce 2s infinite';</script></body>
+<script>const chaosZone = document.getElementById('chaos-zone'); chaosZone.style.animation = 'bounce 2s infinite';</script><script>
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, 400 / 300, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer();
+renderer.setSize(400, 300);
+document.getElementById('three-js-canvas').appendChild(renderer.domElement);
+
+const geometry = new THREE.BoxGeometry();
+const material = new THREE.MeshBasicMaterial({ color: 0x007bff });
+const cube = new THREE.Mesh(geometry, material);
+scene.add(cube);
+
+camera.position.z = 5;
+
+function animate() {
+    requestAnimationFrame(animate);
+    cube.rotation.x += 0.01;
+    cube.rotation.y += 0.01;
+    renderer.render(scene, camera);
+}
+
+animate();
+</script></body>
 </html>
