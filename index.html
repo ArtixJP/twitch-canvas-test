@@ -262,20 +262,18 @@
         
         /* Pages */
         .page {
-            display: none !important;
+            display: none;
             opacity: 0;
             transform: translateY(20px);
             transition: opacity 0.4s ease, transform 0.4s ease;
             padding-top: 80px;
             min-height: 100vh;
-            visibility: hidden;
         }
         
         .page.active {
-            display: block !important;
+            display: block;
             opacity: 1;
             transform: translateY(0);
-            visibility: visible;
         }
         
         /* Page À Propos */
@@ -815,7 +813,7 @@
         </footer>
     </section>
     
-    <section class="page about-page" id="page-about" style="display: none;">
+    <section class="page about-page" id="page-about">
         <div class="about-content">
             <div class="about-avatar">🦒</div>
             <h2 class="about-title">À Propos de Nous</h2>
@@ -846,7 +844,7 @@
         </div>
     </section>
     
-    <section class="page contact-page" id="page-contact" style="display: none;">
+    <section class="page contact-page" id="page-contact">
         <div class="contact-content">
             <h2 class="contact-title">💌 Contactez-nous</h2>
             <p class="contact-subtitle">Une idée ? Une suggestion ? On veut tout savoir !</p>
