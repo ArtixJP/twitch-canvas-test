@@ -347,45 +347,101 @@ body {
 body {
     background: linear-gradient(to bottom, #f9f9f9, #e5e5e5);
 }
+
+:root{--cosy-warm:#f4a261;--cosy-cream:#fef3e2;--cosy-brown:#8b5a2b;--cosy-soft-pink:#f8e1d4;--cosy-green:#a7c4a0;--cosy-bg:#1a1612;--cosy-card:#2a2218;--cosy-glow:rgba(244,162,97,0.15)}.cosy-layout{background:linear-gradient(180deg,var(--cosy-bg) 0%,#1f1a15 100%)}.cosy-welcome-card{position:relative;background:var(--cosy-card);border-radius:20px;padding:3rem;text-align:center;border:1px solid rgba(244,162,97,0.2);overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.3)}.cosy-glow{position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,var(--cosy-glow) 0%,transparent 50%);animation:cosy-pulse 4s ease-in-out infinite}.cosy-icon{font-size:4rem;margin-bottom:1rem;animation:cosy-float 3s ease-in-out infinite}.cosy-title{font-size:1.8rem;color:var(--cosy-warm);margin-bottom:0.75rem;font-weight:600}.cosy-description{color:var(--cosy-cream);opacity:0.85;font-size:1.1rem;max-width:400px;margin:0 auto 2rem;line-height:1.7}.cosy-btn{display:inline-flex;align-items:center;gap:0.75rem;padding:1rem 2rem;font-size:1.2rem;font-weight:600;color:var(--cosy-bg);background:linear-gradient(135deg,var(--cosy-warm) 0%,#e76f51 100%);border:none;border-radius:50px;cursor:pointer;transition:all 0.3s ease;box-shadow:0 4px 20px rgba(244,162,97,0.3)}.cosy-btn:hover{transform:translateY(-3px);box-shadow:0 8px 30px rgba(244,162,97,0.4)}.cosy-message{margin-top:1.5rem;padding:1rem;border-radius:12px;background:rgba(167,196,160,0.15);color:var(--cosy-green);font-size:1rem;opacity:0;transition:opacity 0.5s ease}.cosy-message.visible{opacity:1}.cosy-features{display:flex;justify-content:center;gap:1.5rem;margin-top:2rem;flex-wrap:wrap}.cosy-feature{display:flex;align-items:center;gap:0.5rem;padding:0.75rem 1.25rem;background:var(--cosy-card);border-radius:30px;border:1px solid rgba(244,162,97,0.15);transition:all 0.3s ease}.cosy-feature:hover{border-color:var(--cosy-warm);transform:translateY(-2px)}.feature-icon{font-size:1.3rem}.feature-text{color:var(--cosy-cream);font-size:0.9rem}.cosy-sidebar-card{background:var(--cosy-card);border-radius:16px;padding:1.5rem;border:1px solid rgba(244,162,97,0.15)}.sidebar-title{color:var(--cosy-warm);font-size:1rem;margin-bottom:0.75rem}.sidebar-text{color:var(--cosy-cream);opacity:0.8;font-size:0.9rem;line-height:1.6}.cosy-list{list-style:none;color:var(--cosy-cream);opacity:0.8;font-size:0.9rem}.cosy-list li{padding:0.4rem 0;padding-left:1.2rem;position:relative}.cosy-list li::before{content:'✨';position:absolute;left:0;font-size:0.7rem}#zone-header{background:linear-gradient(180deg,#1f1a15 0%,var(--cosy-bg) 100%);border-bottom:1px solid rgba(244,162,97,0.2)}#zone-header h1{color:var(--cosy-warm)}#zone-footer{background:#1f1a15;border-top:1px solid rgba(244,162,97,0.2);color:var(--cosy-cream)}@keyframes cosy-pulse{0%,100%{opacity:0.5;transform:scale(1)}50%{opacity:0.8;transform:scale(1.1)}}@keyframes cosy-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
   </style>
  </head>
  <body>
   <header id="zone-header">
    <h1>
-    Bienvenue dans notre espace cosy
+    Bienvenue dans notre espace cosy ☕
    </h1>
    <p class="subtitle">
-    Un espace chaleureux pour partager et créer ensemble
+    Un espace chaleureux pour partager et créer ensemble 🌙
    </p>
   </header>
-  <div class="main-layout">
+  <div class="main-layout cosy-layout">
    <main id="zone-content">
-    <div class="story-container">
-     <button class="big-hello-btn" id="hello-btn">
-      <button class="big-hello-btn" id="hello-btn">
-       <span class="btn-icon">
-        👋
-       </span>
-       <span class="btn-text">
-        Coucou et bienvenue !
-       </span>
-      </button>
+    <div class="cosy-welcome-card">
+     <div class="cosy-glow">
+     </div>
+     <div class="cosy-icon">
+      🏠
+     </div>
+     <h2 class="cosy-title">
+      Notre petit coin douillet
+     </h2>
+     <p class="cosy-description">
+      Installez-vous confortablement, prenez une tasse de thé et profitez de ce moment avec nous.
+     </p>
+     <button class="cosy-btn" id="hello-btn">
+      <span class="btn-icon">
+       👋
+      </span>
+      <span class="btn-text">
+       Dire coucou
+      </span>
      </button>
-     <div class="story-box" id="story-box">
-      <div class="story-box" id="story-box">
-       <p class="story-text" id="story-text">
-        Partageons des histoires et des moments ensemble.
-       </p>
-      </div>
+     <div class="cosy-message" id="cosy-message">
+     </div>
+    </div>
+    <div class="cosy-features">
+     <div class="cosy-feature">
+      <span class="feature-icon">
+       🕯️
+      </span>
+      <span class="feature-text">
+       Ambiance apaisante
+      </span>
+     </div>
+     <div class="cosy-feature">
+      <span class="feature-icon">
+       💬
+      </span>
+      <span class="feature-text">
+       Discussions bienveillantes
+      </span>
+     </div>
+     <div class="cosy-feature">
+      <span class="feature-icon">
+       🤗
+      </span>
+      <span class="feature-text">
+       Communauté accueillante
+      </span>
      </div>
     </div>
    </main>
    <aside id="zone-sidebar">
+    <div class="cosy-sidebar-card">
+     <h3 class="sidebar-title">
+      🌿 Moment zen
+     </h3>
+     <p class="sidebar-text">
+      Respire, tu es au bon endroit.
+     </p>
+    </div>
+    <div class="cosy-sidebar-card">
+     <h3 class="sidebar-title">
+      ☕ Au programme
+     </h3>
+     <ul class="cosy-list">
+      <li>
+       Discussions tranquilles
+      </li>
+      <li>
+       Créations ensemble
+      </li>
+      <li>
+       Bonne humeur
+      </li>
+     </ul>
+    </div>
    </aside>
   </div>
   <footer id="zone-footer">
    <p>
-    Créé avec amour sur Twitch · Nourri par notre communauté
+    Créé avec 💛 sur Twitch · Nourri par notre communauté bienveillante
    </p>
   </footer>
   <script>
@@ -450,6 +506,9 @@ if (counterBtn) {
 }
 
 console.log('🎮 Twitch Versus Code loaded!');
+  </script>
+  <script>
+// [BLOCKED: potentially dangerous]
   </script>
  </body>
  <style>
