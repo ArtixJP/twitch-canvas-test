@@ -128,7 +128,13 @@
     <div class="main-content">
         <!-- LLM-EDIT-START -->
         <div id="chaos-zone">
-            <div class="chaos-content"><button id="blue-button" style="display: block; margin: 2rem auto; padding: 1rem 2rem; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 1.2rem; cursor: pointer;">Cliquez ici</button>
+            <div class="chaos-content">
+<div id="game-zone" style="margin-top: 2rem; text-align: center;">
+    <canvas id="gameCanvas" width="400" height="300" style="border: 1px solid #e94560;"></canvas>
+    <button id="start-button" style="display: block; margin: 1rem auto; padding: 0.5rem 1rem; background-color: #e94560; color: white; border: none; border-radius: 5px;">Démarrer le jeu</button>
+    <p id="game-status" style="color: #aaa;"></p>
+</div>
+<button id="blue-button" style="display: block; margin: 2rem auto; padding: 1rem 2rem; background-color: #007bff; color: white; border: none; border-radius: 5px; font-size: 1.2rem; cursor: pointer;">Cliquez ici</button>
                 <p>🎨 Cette zone attend vos idées créatives...</p><p>🎮 Cliquez sur le bouton pour marquer des points !</p>
                 <p>Proposez une idée dans le backlog !</p>
             </div>
@@ -157,5 +163,33 @@ button.addEventListener('click', () => {
     button.textContent = 'Score: ' + score;
     button.style.backgroundColor = score % 2 === 0 ? '#28a745' : '#007bff';
 });
-</script></body>
+</script>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let gameInterval;
+let player = { x: 50, y: 50, size: 20 };
+
+function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#007bff';
+    ctx.fillRect(player.x, player.y, player.size, player.size);
+}
+
+function movePlayer() {
+    player.x += 5;
+    if (player.x > canvas.width) {
+        player.x = -player.size;
+    }
+    draw();
+}
+
+document.getElementById('start-button').addEventListener('click', () => {
+    clearInterval(gameInterval);
+    player.x = 50; // Reset player position
+    gameInterval = setInterval(movePlayer, 100);
+    document.getElementById('game-status').textContent = 'Jeu en cours...';
+});
+</script>
+</body>
 </html>
