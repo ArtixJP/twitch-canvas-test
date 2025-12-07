@@ -124,11 +124,13 @@ code {
     margin-top: 1rem;
     position: relative;
     overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .fun-button:hover {
     background: var(--fun-button-hover);
     transform: scale(1.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
 }
 
 .fun-button:active {
@@ -176,13 +178,15 @@ code {
     <p>Tapez <code>!idea</code> suivi de votre idée pour proposer un changement !</p>
     <button id="fun-button" class="fun-button">Cliquez-moi pour une surprise ! 🎉</button>
     <button id="joke-button" class="joke-button">Faites-moi rire ! 😂</button>
+    <button id="dance-button" class="dance-button">Dansez avec moi ! 💃🕺</button>
     <p id="joke-output" class="joke-output"></p>
+    <p id="dance-output" class="dance-output"></p>
 </div>
 <script>
 // [BLOCKED: potentially dangerous]
         alert('🎈 Vous avez trouvé le bouton magique ! Continuez à proposer vos idées !');
     });
-    
+
 // [BLOCKED: potentially dangerous]
         const jokes = [
             "Pourquoi les plongeurs plongent-ils toujours en arrière et jamais en avant ? Parce que sinon ils tombent dans le bateau !",
@@ -192,9 +196,19 @@ code {
         const randomJoke = jokes[Math.floor(Math.random() * jokes.length)];
         document.getElementById('joke-output').textContent = randomJoke;
     });
+
+// [BLOCKED: potentially dangerous]
+        const danceMessages = [
+            "🕺 Vous dansez comme une étoile !",
+            "💃 La fête commence avec vous !",
+            "🎶 Faites tourner la musique et dansez !"
+        ];
+        const randomDance = danceMessages[Math.floor(Math.random() * danceMessages.length)];
+        document.getElementById('dance-output').textContent = randomDance;
+    });
 </script>
 <style>
-    .fun-button, .joke-button {
+    .fun-button, .joke-button, .dance-button {
         background-color: #ffcc00;
         color: #333;
         border: none;
@@ -205,11 +219,11 @@ code {
         transition: transform 0.2s;
         margin: 5px;
     }
-    .fun-button:hover, .joke-button:hover {
+    .fun-button:hover, .joke-button:hover, .dance-button:hover {
         transform: scale(1.1);
         background-color: #ffd700;
     }
-    .joke-output {
+    .joke-output, .dance-output {
         margin-top: 15px;
         font-style: italic;
         color: #555;
@@ -260,13 +274,17 @@ funnyButton.style.fontSize = '16px';
 funnyButton.style.cursor = 'pointer';
 funnyButton.style.marginTop = '20px';
 funnyButton.style.boxShadow = '0 4px 8px rgba(0,0,0,0.2)';
+funnyButton.style.transition = 'background-color 0.3s, transform 0.2s ease';
+
+// Effet de survol
 funnyButton.onmouseover = () => {
     funnyButton.style.transform = 'scale(1.1)';
-    funnyButton.style.transition = 'transform 0.2s ease';
 };
 funnyButton.onmouseout = () => {
     funnyButton.style.transform = 'scale(1)';
 };
+
+// Interactivité amusante
 funnyButton.onclick = () => {
     funnyButton.style.backgroundColor = '#FF9900';
     funnyButton.textContent = 'Trop rapide ! 😄';
@@ -276,6 +294,7 @@ funnyButton.onclick = () => {
     }, 1000);
 };
 
+// Ajout du bouton dans le contenu
 const zoneContent = document.getElementById('zone-content');
 if (zoneContent) zoneContent.appendChild(funnyButton);
 
