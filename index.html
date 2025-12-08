@@ -674,5 +674,103 @@ setInterval(() => {
 <script>
    (function(){const sleigh=document.getElementById('santa-sleigh');const scoreEl=document.getElementById('corner-score');const statusEl=document.getElementById('corner-status');if(!sleigh)return;sleigh.style.animation='none';let x=100,y=100;let vx=3,vy=2.5;let cornerHits=0;const sleighWidth=180,sleighHeight=60;const cornerThreshold=15;function checkCorner(){const atLeft=x<=cornerThreshold;const atRight=x>=window.innerWidth-sleighWidth-cornerThreshold;const atTop=y<=cornerThreshold;const atBottom=y>=window.innerHeight-sleighHeight-cornerThreshold;if((atLeft||atRight)&&(atTop||atBottom)){cornerHits++;scoreEl.textContent=cornerHits;sleigh.style.filter='hue-rotate('+(Math.random()*360)+'deg) saturate(2) brightness(1.5)';sleigh.style.textShadow='0 0 30px #ff00ff, 0 0 60px #00ffff, 0 0 90px #ffff00';statusEl.textContent='🎉 CORNER HIT #'+cornerHits+'! 🎉';statusEl.style.color='#ff00ff';celebrateCorner();setTimeout(()=>{sleigh.style.filter='hue-rotate(100deg) saturate(1.5)';sleigh.style.textShadow='0 0 15px #00ff00, 0 0 30px #32cd32';statusEl.style.color='#00ff00';statusEl.textContent='Prochain corner dans...';},2000);return true;}return false;}function celebrateCorner(){for(let i=0;i<30;i++){setTimeout(()=>{const confetti=document.createElement('div');confetti.textContent=['🎄','⭐','🎅','❄️','🎁','✨'][Math.floor(Math.random()*6)];confetti.style.cssText='position:fixed;font-size:'+(Math.random()*30+15)+'px;left:'+x+'px;top:'+y+'px;z-index:10000;pointer-events:none;animation:fireConfettiFall '+(Math.random()*2+1)+'s ease-out forwards';document.body.appendChild(confetti);setTimeout(()=>confetti.remove(),3000);},i*50);}}function animate(){x+=vx;y+=vy;if(x<=0){x=0;vx=-vx;changeColor();}if(x>=window.innerWidth-sleighWidth){x=window.innerWidth-sleighWidth;vx=-vx;changeColor();}if(y<=0){y=0;vy=-vy;changeColor();}if(y>=window.innerHeight-sleighHeight){y=window.innerHeight-sleighHeight;vy=-vy;changeColor();}checkCorner();sleigh.style.left=x+'px';sleigh.style.top=y+'px';sleigh.style.transform=vx>0?'scaleX(1)':'scaleX(-1)';requestAnimationFrame(animate);}function changeColor(){const hue=Math.random()*60+80;sleigh.style.filter='hue-rotate('+hue+'deg) saturate(1.5)';}animate();})();
   </script>
+<script>
+   (function(){
+  const pages = ['home', 'games', 'about', 'gallery'];
+  let currentPageIndex = 0;
+  let autoRotateInterval;
+  
+  function rotateToNextPage() {
+    currentPageIndex = (currentPageIndex + 1) % pages.length;
+    const targetPage = pages[currentPageIndex];
+    
+    // Mettre à jour les classes active du menu
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.classList.remove('active');
+      if(item.dataset.page === targetPage) {
+        item.classList.add('active');
+      }
+    });
+    
+    // Mettre à jour les pages visibles avec animation
+    document.querySelectorAll('.page').forEach(page => {
+      page.classList.remove('active');
+      if(page.id === targetPage) {
+        page.classList.add('active');
+      }
+    });
+    
+    // Cacher les canvas si on quitte la page jeux
+    if(targetPage !== 'games') {
+      document.querySelectorAll('#gameContainer canvas').forEach(c => c.style.display = 'none');
+    }
+    
+    // Petit effet visuel pour indiquer le changement
+    showPageTransitionNotification(targetPage);
+  }
+  
+  function showPageTransitionNotification(pageName) {
+    const pageNames = {
+      'home': '🏠 Accueil',
+      'games': '🎮 Jeux',
+      'about': '✨ À propos',
+      'gallery': '🎨 Galerie'
+    };
+    
+    const notif = document.createElement('div');
+    notif.innerHTML = pageNames[pageName] || pageName;
+    notif.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(147,51,234,0.9);color:#fff;padding:20px 40px;border-radius:30px;font-size:1.5rem;font-family:Orbitron,monospace;z-index:10001;pointer-events:none;box-shadow:0 0 30px rgba(147,51,234,0.8);animation:secretPop 1.5s ease-out forwards';
+    document.body.appendChild(notif);
+    setTimeout(() => notif.remove(), 1500);
+  }
+  
+  // Synchroniser avec l'index actuel si l'utilisateur clique manuellement
+  document.querySelectorAll('.menu-item').forEach(item => {
+    item.addEventListener('click', function() {
+      const clickedPage = this.dataset.page;
+      currentPageIndex = pages.indexOf(clickedPage);
+    });
+  });
+  
+  // Démarrer la rotation automatique
+  autoRotateInterval = setInterval(rotateToNextPage, 30000);
+  
+  // Indicateur visuel de la rotation auto
+  const indicator = document.createElement('div');
+  indicator.id = 'auto-rotate-indicator';
+  indicator.innerHTML = '🔄 Auto-rotation: <span id="countdown">30</span>s';
+  indicator.style.cssText = 'position:fixed;bottom:10px;right:10px;background:rgba(147,51,234,0.7);color:#fff;padding:8px 15px;border-radius:20px;font-size:12px;font-family:Orbitron,monospace;z-index:1000;cursor:pointer;transition:all 0.3s';
+  indicator.title = 'Cliquez pour désactiver';
+  document.body.appendChild(indicator);
+  
+  // Countdown visuel
+  let countdown = 30;
+  const countdownEl = document.getElementById('countdown');
+  const countdownInterval = setInterval(() => {
+    countdown--;
+    if(countdown <= 0) countdown = 30;
+    if(countdownEl) countdownEl.textContent = countdown;
+  }, 1000);
+  
+  // Toggle auto-rotation on click
+  let autoRotateEnabled = true;
+  indicator.addEventListener('click', function() {
+    autoRotateEnabled = !autoRotateEnabled;
+    if(autoRotateEnabled) {
+      autoRotateInterval = setInterval(rotateToNextPage, 30000);
+      indicator.innerHTML = '🔄 Auto-rotation: <span id="countdown">30</span>s';
+      indicator.style.background = 'rgba(147,51,234,0.7)';
+      countdown = 30;
+    } else {
+      clearInterval(autoRotateInterval);
+      indicator.innerHTML = '⏸️ Rotation pausée';
+      indicator.style.background = 'rgba(100,100,100,0.7)';
+    }
+  });
+  
+  indicator.addEventListener('mouseenter', () => indicator.style.transform = 'scale(1.1)');
+  indicator.addEventListener('mouseleave', () => indicator.style.transform = 'scale(1)');
+})();
+  </script>
 </body>
 </html>
