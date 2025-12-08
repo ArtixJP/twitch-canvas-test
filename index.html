@@ -807,6 +807,47 @@ body.twitch-mode .sidebar-theme-btn:hover {
         margin-left: 70px;
     }
 }
+   @keyframes santaZigzag {
+  0% { transform: translateX(-200px) translateY(0); top: 10%; }
+  10% { top: 25%; }
+  20% { top: 10%; }
+  30% { top: 30%; }
+  40% { top: 15%; }
+  50% { top: 35%; }
+  60% { top: 20%; }
+  70% { top: 40%; }
+  80% { top: 25%; }
+  90% { top: 45%; }
+  100% { transform: translateX(calc(100vw + 200px)) translateY(0); top: 30%; }
+}
+
+@keyframes sparkleTrail {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.3; transform: scale(0.5); }
+}
+
+#santa-sleigh:hover {
+  animation-play-state: paused;
+}
+
+#santa-sleigh::after {
+  content: '🎁';
+  position: absolute;
+  right: -30px;
+  top: 20px;
+  font-size: 1.5rem;
+  animation: giftDrop 2s ease-in-out infinite;
+}
+
+@keyframes giftDrop {
+  0%, 90%, 100% { opacity: 0; transform: translateY(0); }
+  92% { opacity: 1; transform: translateY(0); }
+  98% { opacity: 1; transform: translateY(50px); }
+}
+   @keyframes hohoFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+}
   </style>
 </head>
 <body class="warm-mode">
@@ -2225,6 +2266,34 @@ document.querySelectorAll('.menu-item').forEach(item => {
         });
     });
 });
+  </script>
+<div id="santa-sleigh" style="position:fixed;top:-100px;left:-200px;z-index:9999;pointer-events:none;font-size:3rem;animation:santaZigzag 12s linear infinite;">
+   🦌🦌🛷🎅
+   <span style="position:absolute;animation:sparkleTrail 0.5s infinite;font-size:1rem;">
+    ✨
+   </span>
+<span style="position:absolute;left:-20px;top:10px;animation:sparkleTrail 0.7s infinite 0.2s;font-size:0.8rem;">
+    ⭐
+   </span>
+<span style="position:absolute;left:-40px;top:-5px;animation:sparkleTrail 0.6s infinite 0.4s;font-size:1.2rem;">
+    ❄️
+   </span>
+</div>
+<script>
+   // Santa says ho ho ho randomly
+setInterval(() => {
+  const santa = document.getElementById('santa-sleigh');
+  if (santa && Math.random() > 0.7) {
+    const hoho = document.createElement('div');
+    hoho.textContent = 'Ho Ho Ho! 🎄';
+    hoho.style.cssText = 'position:fixed;font-size:1rem;color:#ff0000;font-weight:bold;text-shadow:0 0 10px #fff;z-index:10000;animation:hohoFloat 2s ease-out forwards;pointer-events:none;';
+    const rect = santa.getBoundingClientRect();
+    hoho.style.left = rect.left + 'px';
+    hoho.style.top = (rect.top + 50) + 'px';
+    document.body.appendChild(hoho);
+    setTimeout(() => hoho.remove(), 2000);
+  }
+}, 3000);
   </script>
 </body>
 </html>
