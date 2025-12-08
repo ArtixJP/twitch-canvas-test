@@ -164,6 +164,11 @@ canvas{border-radius:15px}
        🎨 Galerie
       </a>
 </li>
+<li>
+<a class="menu-item" data-page="contact" href="#">
+       📞 Contact
+      </a>
+</li>
 </ul>
 </nav>
 <div class="page-content">
@@ -382,6 +387,22 @@ canvas{border-radius:15px}
 <script>
      (function(){const avatar=document.getElementById('foucault-avatar');const speech=document.getElementById('foucault-speech');const citations=[{text:'«L\'école est devenue une machine à examiner, à classer, à normaliser les individus.»',source:'— Surveiller et punir, 1975'},{text:'«L\'examen combine les techniques de la hiérarchie qui surveille et celles de la sanction qui normalise.»',source:'— Surveiller et punir, 1975'},{text:'«L\'école tend à constituer des appareils de savoir continu sur les individus.»',source:'— Surveiller et punir, 1975'},{text:'«Le pouvoir disciplinaire s\'exerce en se rendant invisible; en revanche il impose à ceux qu\'il soumet un principe de visibilité obligatoire.»',source:'— Surveiller et punir, 1975'},{text:'«L\'examen fait entrer l\'individualité dans un champ documentaire.»',source:'— Surveiller et punir, 1975'}];let currentIndex=0;avatar.addEventListener('click',function(){currentIndex=(currentIndex+1)%citations.length;const citation=citations[currentIndex];speech.querySelector('p:first-child').textContent=citation.text;speech.querySelector('p:last-of-type').textContent=citation.source;speech.style.opacity='1';speech.style.transform='translateY(0)';setTimeout(()=>{speech.style.opacity='0';speech.style.transform='translateY(10px)';},5000);});avatar.addEventListener('mouseenter',()=>{speech.style.opacity='1';speech.style.transform='translateY(0)';});avatar.addEventListener('mouseleave',()=>{speech.style.opacity='0';speech.style.transform='translateY(10px)';});})();
     </script>
+<div class="page" id="contact" style="display:none;">
+<h1>
+      Contactez-nous
+     </h1>
+<p>
+      Pour toute question, veuillez nous contacter à l'adresse suivante:
+     </p>
+<p>
+<a href="mailto:support@example.com">
+       support@example.com
+      </a>
+</p>
+<button class="theme-toggle">
+      Retour à l'accueil
+     </button>
+</div>
 </div>
 </div>
 <audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3">
