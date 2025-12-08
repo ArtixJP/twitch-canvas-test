@@ -4,10 +4,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<title>Hello World - Mode Dual</title>
+<title>
+   Hello World - Mode Dual
+  </title>
 <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@300;700&amp;family=Orbitron:wght@400;900&amp;display=swap" rel="stylesheet"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;transition:all .3s}
+   *{margin:0;padding:0;box-sizing:border-box;transition:all .3s}
 body{min-height:100vh;display:flex;flex-direction:column;align-items:center;font-family:'Comfortaa',cursive;position:relative;overflow-x:hidden;padding:2rem 0}
 body.warm-mode{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;background-attachment:fixed}
 body.warm-mode::before{content:'';position:fixed;top:0;left:0;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,.1) 1px,transparent 1px);background-size:50px 50px;animation:drift 20s linear infinite;pointer-events:none}
@@ -121,77 +123,239 @@ canvas{border-radius:15px}
 @keyframes pulse{0%,100%{transform:translateX(-50%) scale(1);box-shadow:0 0 10px rgba(147,51,234,.5)}50%{transform:translateX(-50%) scale(1.05);box-shadow:0 0 20px rgba(147,51,234,.8)}}
 @keyframes fadeOut{to{opacity:0;transform:translateX(-50%) translateY(-20px)}}
 @media(max-width:768px){.container{padding:1rem;margin-left:70px}.sidebar{width:60px}.sidebar:hover{width:180px}.main-menu{position:relative;top:0}}
-</style>
+  </style>
 </head>
 <body class="warm-mode">
 <aside class="sidebar">
-<div class="sidebar-logo">✨</div>
+<div class="sidebar-logo">
+    ✨
+   </div>
 <nav class="sidebar-nav">
-<a class="sidebar-item active" data-page="home" href="#"><span class="sidebar-icon">🏠</span><span class="sidebar-label">Accueil</span></a>
-<a class="sidebar-item" data-page="games" href="#"><span class="sidebar-icon">🎮</span><span class="sidebar-label">Jeux</span></a>
-<a class="sidebar-item" data-page="about" href="#"><span class="sidebar-icon">✨</span><span class="sidebar-label">À propos</span></a>
-<a class="sidebar-item" data-page="gallery" href="#"><span class="sidebar-icon">🎨</span><span class="sidebar-label">Galerie</span></a>
-<div class="sidebar-divider"></div>
-<a class="sidebar-item" href="#" onclick="explodeFireConfetti();return false"><span class="sidebar-icon">🔥</span><span class="sidebar-label">Confettis</span></a>
-<a class="sidebar-item" href="#" onclick="toggleMusic();return false"><span class="sidebar-icon">🎵</span><span class="sidebar-label">Musique</span></a>
+<a class="sidebar-item active" data-page="home" href="#">
+<span class="sidebar-icon">
+      🏠
+     </span>
+<span class="sidebar-label">
+      Accueil
+     </span>
+</a>
+<a class="sidebar-item" data-page="games" href="#">
+<span class="sidebar-icon">
+      🎮
+     </span>
+<span class="sidebar-label">
+      Jeux
+     </span>
+</a>
+<a class="sidebar-item" data-page="about" href="#">
+<span class="sidebar-icon">
+      ✨
+     </span>
+<span class="sidebar-label">
+      À propos
+     </span>
+</a>
+<a class="sidebar-item" data-page="gallery" href="#">
+<span class="sidebar-icon">
+      🎨
+     </span>
+<span class="sidebar-label">
+      Galerie
+     </span>
+</a>
+<div class="sidebar-divider">
+</div>
+<a class="sidebar-item" href="#" onclick="explodeFireConfetti();return false">
+<span class="sidebar-icon">
+      🔥
+     </span>
+<span class="sidebar-label">
+      Confettis
+     </span>
+</a>
+<a class="sidebar-item" href="#" onclick="toggleMusic();return false">
+<span class="sidebar-icon">
+      🎵
+     </span>
+<span class="sidebar-label">
+      Musique
+     </span>
+</a>
 </nav>
-<div class="sidebar-footer"><button class="sidebar-theme-btn" onclick="toggleTheme()" title="Changer de thème">🌙</button></div>
+<div class="sidebar-footer">
+<button class="sidebar-theme-btn" onclick="toggleTheme()" title="Changer de thème">
+     🌙
+    </button>
+</div>
 </aside>
-<div class="pixels" id="pixelContainer"></div>
+<div class="pixels" id="pixelContainer">
+</div>
 <div class="container">
-<nav class="main-menu"><ul>
-<li><a class="menu-item active" data-page="home" href="#">🏠 Accueil</a></li>
-<li><a class="menu-item" data-page="games" href="#">🎮 Jeux</a></li>
-<li><a class="menu-item" data-page="about" href="#">✨ À propos</a></li>
-<li><a class="menu-item" data-page="gallery" href="#">🎨 Galerie</a></li>
-</ul></nav>
+<nav class="main-menu">
+<ul>
+<li>
+<a class="menu-item active" data-page="home" href="#">
+       🏠 Accueil
+      </a>
+</li>
+<li>
+<a class="menu-item" data-page="games" href="#">
+       🎮 Jeux
+      </a>
+</li>
+<li>
+<a class="menu-item" data-page="about" href="#">
+       ✨ À propos
+      </a>
+</li>
+<li>
+<a class="menu-item" data-page="gallery" href="#">
+       🎨 Galerie
+      </a>
+</li>
+</ul>
+</nav>
 <div class="page-content">
 <div class="page active" id="home">
-<h1 id="mainTitle" style="background:linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow 5s ease infinite">Hello World</h1>
-<p class="subtitle">Bienvenue dans cet espace digital</p>
-<button class="theme-toggle" onclick="toggleTheme()">Changer de dimension</button>
-<button class="confetti-btn" onclick="explodeFireConfetti()">🔥 Confettis Enflammés 🔥</button>
-<button class="music-btn" onclick="toggleMusic()">🎵 Animal Crossing Vibes 🎵</button>
-<audio id="acMusic" loop="" muted=""><source src="https://lambda.vgmtreasurechest.com/soundtracks/animal-crossing-new-horizons-2020-switch-gamerip/apvmuolo/1-09.%209%20a.m.%20%28~Sunny%20Weather~%29.mp3" type="audio/mpeg"/></audio>
+<h1 id="mainTitle" style="background:linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow 5s ease infinite">
+      Hello World
+     </h1>
+<p class="subtitle">
+      Bienvenue dans cet espace digital
+     </p>
+<button class="theme-toggle" onclick="toggleTheme()">
+      Changer de dimension
+     </button>
+<button class="confetti-btn" onclick="explodeFireConfetti()">
+      🔥 Confettis Enflammés 🔥
+     </button>
+<button class="music-btn" onclick="toggleMusic()">
+      🎵 Animal Crossing Vibes 🎵
+     </button>
+<audio id="acMusic" loop="" muted="">
+<source src="https://lambda.vgmtreasurechest.com/soundtracks/animal-crossing-new-horizons-2020-switch-gamerip/apvmuolo/1-09.%209%20a.m.%20%28~Sunny%20Weather~%29.mp3" type="audio/mpeg"/>
+</audio>
 </div>
 <div class="page" id="games">
-<h1>Zone de Jeux</h1>
-<p class="subtitle">Choisissez votre aventure pixelisée</p>
+<h1>
+      Zone de Jeux
+     </h1>
+<p class="subtitle">
+      Choisissez votre aventure pixelisée
+     </p>
 <div class="games-grid">
-<div class="game-card" onclick="showGame('snake')"><h3>🐍 Snake Néon</h3><p>Le classique revisité</p></div>
-<div class="game-card" onclick="showGame('pong')"><h3>🏓 Cyber Pong</h3><p>Défi rétro-futuriste</p></div>
-<div class="game-card" onclick="showGame('particles')"><h3>✨ Particules</h3><p>Créez votre galaxie</p></div>
-<div class="game-card" onclick="showGame('lutin')"><h3>🧝 Lutin Gourmand</h3><p>Muffins &amp; Or!</p></div>
+<div class="game-card" onclick="showGame('snake')">
+<h3>
+        🐍 Snake Néon
+       </h3>
+<p>
+        Le classique revisité
+       </p>
+</div>
+<div class="game-card" onclick="showGame('pong')">
+<h3>
+        🏓 Cyber Pong
+       </h3>
+<p>
+        Défi rétro-futuriste
+       </p>
+</div>
+<div class="game-card" onclick="showGame('particles')">
+<h3>
+        ✨ Particules
+       </h3>
+<p>
+        Créez votre galaxie
+       </p>
+</div>
+<div class="game-card" onclick="showGame('lutin')">
+<h3>
+        🧝 Lutin Gourmand
+       </h3>
+<p>
+        Muffins &amp; Or!
+       </p>
+</div>
 </div>
 <div id="gameContainer">
-<canvas height="400" id="snakeCanvas" width="400"></canvas>
-<canvas height="400" id="pongCanvas" width="600"></canvas>
-<canvas height="400" id="particlesCanvas" width="600"></canvas>
-<canvas height="400" id="lutinCanvas" width="600"></canvas>
-<div id="gameControls"><p><span id="gameInstructions">Sélectionnez un jeu</span> | Score: <span id="score">0</span></p></div>
+<canvas height="400" id="snakeCanvas" width="400">
+</canvas>
+<canvas height="400" id="pongCanvas" width="600">
+</canvas>
+<canvas height="400" id="particlesCanvas" width="600">
+</canvas>
+<canvas height="400" id="lutinCanvas" width="600">
+</canvas>
+<div id="gameControls">
+<p>
+<span id="gameInstructions">
+         Sélectionnez un jeu
+        </span>
+        | Score:
+        <span id="score">
+         0
+        </span>
+</p>
+</div>
 </div>
 </div>
 <div class="page" id="about">
-<h1>À propos</h1>
+<h1>
+      À propos
+     </h1>
 <div class="about-content">
-<p class="glowing-text">Cet espace est une expérience collaborative en temps réel</p>
-<p>Chaque pixel raconte une histoire, chaque ligne de code est une aventure.</p>
+<p class="glowing-text">
+       Cet espace est une expérience collaborative en temps réel
+      </p>
+<p>
+       Chaque pixel raconte une histoire, chaque ligne de code est une aventure.
+      </p>
 <div class="stats">
-<div class="stat-card"><h3>∞</h3><p>Possibilités</p></div>
-<div class="stat-card"><h3>42</h3><p>Réponses</p></div>
-<div class="stat-card"><h3>1337</h3><p>Lignes de magie</p></div>
+<div class="stat-card">
+<h3>
+         ∞
+        </h3>
+<p>
+         Possibilités
+        </p>
+</div>
+<div class="stat-card">
+<h3>
+         42
+        </h3>
+<p>
+         Réponses
+        </p>
+</div>
+<div class="stat-card">
+<h3>
+         1337
+        </h3>
+<p>
+         Lignes de magie
+        </p>
+</div>
 </div>
 </div>
 </div>
 <div class="page" id="gallery">
-<h1>Galerie Digitale</h1>
-<p class="subtitle">Art génératif et créations algorithmiques</p>
+<h1>
+      Galerie Digitale
+     </h1>
+<p class="subtitle">
+      Art génératif et créations algorithmiques
+     </p>
 <div class="art-grid">
-<div class="art-piece" id="art1"></div>
-<div class="art-piece" id="art2"></div>
-<div class="art-piece" id="art3"></div>
-<div class="art-piece" id="art4"></div>
-<div class="art-piece" id="art5"><pre id="llamaArt">       .=*=.
+<div class="art-piece" id="art1">
+</div>
+<div class="art-piece" id="art2">
+</div>
+<div class="art-piece" id="art3">
+</div>
+<div class="art-piece" id="art4">
+</div>
+<div class="art-piece" id="art5">
+<pre id="llamaArt">       .=*=.
       /  6 6\
      |  (_)  |
      /`-._.-'`\
@@ -202,20 +366,49 @@ canvas{border-radius:15px}
   |__|   |   |__|
    LL    |    LL
          |
-    ~~ LLAMA ~~</pre><div class="llama-sparkles"></div><p style="margin-top:10px;font-size:12px;color:#8b5a2b">🦙 Pixel Llama 🦙</p></div>
+    ~~ LLAMA ~~</pre>
+<div class="llama-sparkles">
+</div>
+<p style="margin-top:10px;font-size:12px;color:#8b5a2b">
+        🦙 Pixel Llama 🦙
+       </p>
 </div>
 </div>
-<div class="mini-monster" onclick="spawnSparkles(event);playSound('robot')"><span style="font-size:24px;color:#fff">👾</span></div>
-<div class="monster-speech">Clique-moi! ✨</div>
-<button class="red-button" onclick="playSound('red')">🌟 Nouveau Bouton Rouge 🌟</button>
+</div>
+<div class="mini-monster" onclick="spawnSparkles(event);playSound('robot')">
+<span style="font-size:24px;color:#fff">
+      👾
+     </span>
+</div>
+<div class="monster-speech">
+     Clique-moi! ✨
+    </div>
+<button class="red-button" onclick="playSound('red')">
+     🌟 Nouveau Bouton Rouge 🌟
+    </button>
 </div>
 </div>
-<audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3"></audio>
-<audio id="redButtonSound" preload="auto" src="https://cdn.freesound.org/previews/642/642431_14147481-lq.mp3"></audio>
-<div id="easter-egg-hint">🥚 Secrets: Konami Code ↑↑↓↓←→←→BA | Triple-clic sur le titre | Tape "llama"</div>
-<div id="santa-sleigh">🦌🦌🛷🎅<span style="position:absolute;animation:sparkleTrail .5s infinite;font-size:1rem">✨</span><span style="position:absolute;left:-20px;top:10px;animation:sparkleTrail .7s infinite .2s;font-size:.8rem">⭐</span><span style="position:absolute;left:-40px;top:-5px;animation:sparkleTrail .6s infinite .4s;font-size:1.2rem">❄️</span></div>
+<audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3">
+</audio>
+<audio id="redButtonSound" preload="auto" src="https://cdn.freesound.org/previews/642/642431_14147481-lq.mp3">
+</audio>
+<div id="easter-egg-hint">
+   🥚 Secrets: Konami Code ↑↑↓↓←→←→BA | Triple-clic sur le titre | Tape "llama"
+  </div>
+<div id="santa-sleigh">
+   🦌🦌🛷🎅
+   <span style="position:absolute;animation:sparkleTrail .5s infinite;font-size:1rem">
+    ✨
+   </span>
+<span style="position:absolute;left:-20px;top:10px;animation:sparkleTrail .7s infinite .2s;font-size:.8rem">
+    ⭐
+   </span>
+<span style="position:absolute;left:-40px;top:-5px;animation:sparkleTrail .6s infinite .4s;font-size:1.2rem">
+    ❄️
+   </span>
+</div>
 <script>
-let currentMode='warm',musicPlaying=false,currentGame=null;
+   let currentMode='warm',musicPlaying=false,currentGame=null;
 const $=s=>document.querySelector(s),$$=s=>document.querySelectorAll(s);
 const acAudio=$('#acMusic'),musicBtn=$('.music-btn');
 
@@ -348,6 +541,159 @@ setInterval(()=>{const s=$('#santa-sleigh');if(s&&Math.random()>.7){const h=docu
 // Audio hint
 (function(){let hi=false;const enable=()=>{if(!hi){hi=true;acAudio.muted=false;acAudio.volume=0.5;acAudio.play().then(()=>{musicPlaying=true;musicBtn.textContent='🎶 Now Playing... 🎶';musicBtn.classList.add('playing');spawnNotes()}).catch(()=>{})}};['click','touchstart','keydown'].forEach(e=>document.addEventListener(e,enable,{once:true,passive:true}));
 const h=document.createElement('div');h.id='audio-hint';h.innerHTML='🎵 Cliquez pour activer la musique!';h.style.cssText='position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(147,51,234,.9);color:#fff;padding:10px 20px;border-radius:25px;z-index:10000;font-size:14px;animation:pulse 2s infinite;cursor:pointer';document.body.appendChild(h);const rm=()=>{const x=$('#audio-hint');if(x){x.style.animation='fadeOut .5s forwards';setTimeout(()=>x.remove(),500)}};document.addEventListener('click',rm,{once:true});setTimeout(rm,5000)})();
-</script>
+  </script>
+<div id="chess-widget" style="position:fixed;bottom:20px;right:140px;z-index:1000;background:rgba(30,30,35,0.95);border-radius:15px;padding:15px;box-shadow:0 0 30px rgba(147,51,234,0.5);border:2px solid #9333ea;backdrop-filter:blur(10px)">
+<div style="text-align:center;margin-bottom:10px">
+<span style="color:#bf94ff;font-family:Orbitron,monospace;font-size:12px">
+     ♟️ TWITCH CHESS ♟️
+    </span>
+</div>
+<div id="chess-board" style="display:grid;grid-template-columns:repeat(8,28px);grid-template-rows:repeat(8,28px);border:2px solid #9333ea;border-radius:5px;overflow:hidden">
+</div>
+<div style="margin-top:10px;text-align:center">
+<input id="chess-input" placeholder="!move e2e4" style="background:rgba(147,51,234,0.2);border:1px solid #9333ea;border-radius:15px;padding:5px 10px;color:#fff;font-family:monospace;font-size:11px;width:120px;outline:none" type="text"/>
+<button id="chess-send" style="background:#9333ea;border:none;border-radius:50%;width:25px;height:25px;color:#fff;cursor:pointer;margin-left:5px;font-size:10px">
+     ▶
+    </button>
+</div>
+<div id="chess-status" style="color:#bf94ff;font-size:10px;text-align:center;margin-top:8px;font-family:monospace">
+    Tour: Blancs
+   </div>
+<div id="chess-log" style="max-height:60px;overflow-y:auto;font-size:9px;color:#888;margin-top:5px;font-family:monospace">
+</div>
+</div>
+<script>
+   (function(){
+const initialBoard = [
+  ['♜','♞','♝','♛','♚','♝','♞','♜'],
+  ['♟','♟','♟','♟','♟','♟','♟','♟'],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['♙','♙','♙','♙','♙','♙','♙','♙'],
+  ['♖','♘','♗','♕','♔','♗','♘','♖']
+];
+let board = JSON.parse(JSON.stringify(initialBoard));
+let whiteTurn = true;
+let moveHistory = [];
+
+const whitePieces = ['♔','♕','♖','♗','♘','♙'];
+const blackPieces = ['♚','♛','♜','♝','♞','♟'];
+
+function renderBoard() {
+  const container = document.getElementById('chess-board');
+  if(!container) return;
+  container.innerHTML = '';
+  for(let r=0; r<8; r++) {
+    for(let c=0; c<8; c++) {
+      const sq = document.createElement('div');
+      sq.style.cssText = `width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;background:${(r+c)%2===0?'#f0d9b5':'#b58863'};transition:background 0.2s`;
+      sq.dataset.row = r;
+      sq.dataset.col = c;
+      sq.textContent = board[r][c];
+      sq.onmouseenter = () => sq.style.boxShadow = 'inset 0 0 10px rgba(147,51,234,0.8)';
+      sq.onmouseleave = () => sq.style.boxShadow = 'none';
+      container.appendChild(sq);
+    }
+  }
+}
+
+function parseMove(moveStr) {
+  const clean = moveStr.replace('!move','').trim().toLowerCase();
+  if(clean.length < 4) return null;
+  const fromCol = clean.charCodeAt(0) - 97;
+  const fromRow = 8 - parseInt(clean[1]);
+  const toCol = clean.charCodeAt(2) - 97;
+  const toRow = 8 - parseInt(clean[3]);
+  if(fromCol<0||fromCol>7||toCol<0||toCol>7||fromRow<0||fromRow>7||toRow<0||toRow>7) return null;
+  return {fromRow, fromCol, toRow, toCol};
+}
+
+function isValidMove(move) {
+  const piece = board[move.fromRow][move.fromCol];
+  if(!piece) return false;
+  const isWhite = whitePieces.includes(piece);
+  if(whiteTurn && !isWhite) return false;
+  if(!whiteTurn && isWhite) return false;
+  const target = board[move.toRow][move.toCol];
+  if(target) {
+    const targetIsWhite = whitePieces.includes(target);
+    if(isWhite === targetIsWhite) return false;
+  }
+  return true;
+}
+
+function makeMove(moveStr) {
+  const move = parseMove(moveStr);
+  if(!move) {
+    addLog('❌ Format invalide! Ex: e2e4');
+    return false;
+  }
+  if(!isValidMove(move)) {
+    addLog('❌ Coup illégal!');
+    return false;
+  }
+  const piece = board[move.fromRow][move.fromCol];
+  const captured = board[move.toRow][move.toCol];
+  board[move.toRow][move.toCol] = piece;
+  board[move.fromRow][move.fromCol] = '';
+  whiteTurn = !whiteTurn;
+  const notation = String.fromCharCode(97+move.fromCol)+(8-move.fromRow)+String.fromCharCode(97+move.toCol)+(8-move.toRow);
+  moveHistory.push(notation);
+  addLog((whiteTurn?'⬛':'⬜')+' '+piece+' '+notation+(captured?' x'+captured:''));
+  updateStatus();
+  renderBoard();
+  highlightMove(move);
+  return true;
+}
+
+function highlightMove(move) {
+  setTimeout(() => {
+    const squares = document.querySelectorAll('#chess-board div');
+    const fromIdx = move.fromRow*8+move.fromCol;
+    const toIdx = move.toRow*8+move.toCol;
+    if(squares[fromIdx]) squares[fromIdx].style.background = 'rgba(147,51,234,0.5)';
+    if(squares[toIdx]) squares[toIdx].style.background = 'rgba(236,72,153,0.5)';
+    setTimeout(() => renderBoard(), 1500);
+  }, 50);
+}
+
+function updateStatus() {
+  const status = document.getElementById('chess-status');
+  if(status) status.textContent = 'Tour: '+(whiteTurn?'⬜ Blancs':'⬛ Noirs');
+}
+
+function addLog(msg) {
+  const log = document.getElementById('chess-log');
+  if(log) {
+    log.innerHTML = msg+'<br>'+log.innerHTML;
+    if(log.children.length > 10) log.innerHTML = log.innerHTML.split('<br>').slice(0,10).join('<br>');
+  }
+}
+
+function handleInput() {
+  const input = document.getElementById('chess-input');
+  if(input && input.value) {
+    makeMove(input.value);
+    input.value = '';
+  }
+}
+
+document.getElementById('chess-send')?.addEventListener('click', handleInput);
+document.getElementById('chess-input')?.addEventListener('keypress', e => { if(e.key==='Enter') handleInput(); });
+
+window.twitchChessMove = makeMove;
+renderBoard();
+addLog('🎮 !move e2e4 pour jouer');
+
+setInterval(() => {
+  if(Math.random() > 0.95 && !whiteTurn) {
+    const moves = ['e7e5','d7d5','g8f6','b8c6','f8c5'];
+    const randomMove = moves[Math.floor(Math.random()*moves.length)];
+  }
+}, 5000);
+})();
+  </script>
 </body>
 </html>
