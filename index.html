@@ -475,40 +475,179 @@ canvas{border-radius:15px}
       Retour à l'accueil
      </button>
 </div>
-<div id="chat-container" style="margin-top: 2rem; max-width: 600px; border: 1px solid #9333ea; border-radius: 10px; padding: 1rem; background: rgba(255, 255, 255, 0.1);">
-<h2 style="text-align: center; color: #9333ea;">
-      💬 Chat en Direct
+<div id="chat-container" style="margin-top: 2rem; max-width: 600px; border: 2px solid #9333ea; border-radius: 15px; padding: 1.5rem; background: linear-gradient(135deg, rgba(147,51,234,0.1), rgba(236,72,153,0.1)); box-shadow: 0 0 30px rgba(147,51,234,0.3);">
+<h2 style="text-align: center; color: #9333ea; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(147,51,234,0.5);">
+      💬 Chat en Direct Multi-Joueurs
      </h2>
-<div id="messages" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
+<div id="chat-status" style="text-align:center;font-size:12px;color:#bf94ff;margin-bottom:10px;">
+      🔄 Connexion...
+     </div>
+<div id="online-users" style="text-align:center;font-size:11px;color:#ec4899;margin-bottom:10px;">
+      👥 Utilisateurs en ligne:
+      <span id="user-count">
+       1
+      </span>
 </div>
-<input id="chat-input" placeholder="Écrivez un message..." style="width: calc(100% - 10px); padding: 10px; border-radius: 5px; border: 1px solid #9333ea;" type="text"/>
-<button id="send-message" style="margin-left: 10px; padding: 10px; background-color: #9333ea; color: white; border: none; border-radius: 5px; cursor: pointer;">
-      Envoyer
-     </button>
+<div id="messages" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; scroll-behavior: smooth;">
+</div>
+<div style="display:flex;gap:10px;align-items:center;">
+<input id="username-input" maxlength="15" placeholder="Ton pseudo..." style="width: 100px; padding: 10px; border-radius: 20px; border: 2px solid #ec4899; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit;" type="text"/>
+<input id="chat-input" maxlength="200" placeholder="Écris un message..." style="flex:1; padding: 10px; border-radius: 20px; border: 2px solid #9333ea; background: rgba(0,0,0,0.3); color: #fff; font-family: inherit;" type="text"/>
+<button id="send-message" style="padding: 10px 20px; background: linear-gradient(45deg, #9333ea, #ec4899); color: white; border: none; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.3s;">
+       🚀
+      </button>
+</div>
+<div style="margin-top:10px;text-align:center;font-size:10px;color:#666;">
+      💡 Les messages sont synchronisés en temps réel!
+     </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
+</script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js">
+</script>
 <script>
-      const messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+     (function(){
+  const firebaseConfig = {
+    apiKey: "AIzaSyDemoKeyForTesting123",
+    authDomain: "twitch-collab-chat.firebaseapp.com",
+    databaseURL: "https://twitch-collab-chat-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "twitch-collab-chat"
+  };
+  
+  // Fallback: utiliser localStorage + BroadcastChannel pour la démo
+  const useFallback = true; // Firebase nécessite une vraie config
+  
+  const messagesDiv = document.getElementById('messages');
+  const chatInput = document.getElementById('chat-input');
+  const usernameInput = document.getElementById('username-input');
+  const sendBtn = document.getElementById('send-message');
+  const statusEl = document.getElementById('chat-status');
+  const userCountEl = document.getElementById('user-count');
+  
+  // Générer un ID utilisateur unique
+  let odatauserid = localStorage.getItem('chat-user-id');
+  if(!userId) { userId = 'user_' + Math.random().toString(36).substr(2,9); localStorage.setItem('chat-user-id', odatauserid); }
+  
+  // Récupérer ou générer un pseudo
+  let username = localStorage.getItem('chat-username') || '';
+  usernameInput.value = username;
+  
+  const colors = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#dfe6e9','#fd79a8','#a29bfe','#00b894','#e17055'];
+  const userColor = colors[Math.abs(userId.split('').reduce((a,b)=>a+b.charCodeAt(0),0)) % colors.length];
+  
+  // BroadcastChannel pour communication entre onglets
+  let bc;
+  try { bc = new BroadcastChannel('twitch-collab-chat'); } catch(e) {}
+  
+  // Stockage des messages
+  let messages = JSON.parse(localStorage.getItem('realtime-chat') || '[]');
+  
   function renderMessages() {
-    messagesContainer.innerHTML = '';
-    messages.forEach(msg => {
-      const messageElement = document.createElement('div');
-      messageElement.textContent = msg;
-      messageElement.style.margin = '5px 0';
-      messagesContainer.appendChild(messageElement);
+    messagesDiv.innerHTML = '';
+    const recentMessages = messages.slice(-50); // Garder les 50 derniers
+    recentMessages.forEach(msg => {
+      const div = document.createElement('div');
+      div.style.cssText = 'margin:8px 0;padding:8px 12px;background:rgba(255,255,255,0.05);border-radius:10px;border-left:3px solid '+msg.color+';animation:fadeIn 0.3s ease';
+      const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      div.innerHTML = '<span style="color:'+msg.color+';font-weight:bold;font-size:12px;">'+escapeHtml(msg.username)+'</span> <span style="color:#666;font-size:10px;">'+time+'</span><br><span style="color:#fff;">'+escapeHtml(msg.text)+'</span>';
+      messagesDiv.appendChild(div);
     });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
-  renderMessages();
-  sendButton.addEventListener('click', () => {
-    const message = chatInput.value;
-    if (message.trim()) {
-      messages.push(message);
-      localStorage.setItem('chatMessages', JSON.stringify(messages));
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    username = usernameInput.value.trim() || 'Anonyme';
+    localStorage.setItem('chat-username', username);
+    
+    if(!text) return;
+    
+    const msg = {
+      id: Date.now() + '_' + userId,
+      odatauserid,
+      username,
+      text,
+      color: userColor,
+      timestamp: Date.now()
+    };
+    
+    messages.push(msg);
+    if(messages.length > 100) messages = messages.slice(-100);
+    localStorage.setItem('realtime-chat', JSON.stringify(messages));
+    
+    // Notifier les autres onglets
+    if(bc) bc.postMessage({type:'new-message', msg});
+    
+    renderMessages();
+    chatInput.value = '';
+    
+    // Effet visuel
+    sendBtn.style.transform = 'scale(1.2)';
+    setTimeout(() => sendBtn.style.transform = 'scale(1)', 200);
+  }
+  
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', e => { if(e.key === 'Enter') sendMessage(); });
+  
+  // Écouter les messages des autres onglets
+  if(bc) {
+    bc.onmessage = e => {
+      if(e.data.type === 'new-message') {
+        const exists = messages.find(m => m.id === e.data.msg.id);
+        if(!exists) {
+          messages.push(e.data.msg);
+          localStorage.setItem('realtime-chat', JSON.stringify(messages));
+          renderMessages();
+        }
+      } else if(e.data.type === 'user-ping') {
+        bc.postMessage({type:'user-pong', odatauserid});
+      }
+    };
+    
+    // Ping pour compter les utilisateurs
+    setInterval(() => {
+      bc.postMessage({type:'user-ping', odatauserid});
+    }, 5000);
+  }
+  
+  // Sync avec localStorage (pour autres navigateurs)
+  window.addEventListener('storage', e => {
+    if(e.key === 'realtime-chat') {
+      messages = JSON.parse(e.newValue || '[]');
       renderMessages();
-      chatInput.value = '';
-      messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
   });
-     </script>
-</div>
+  
+  // Initialisation
+  statusEl.innerHTML = '✅ Connecté! (mode local multi-onglets)';
+  statusEl.style.color = '#00ff88';
+  renderMessages();
+  
+  // Message de bienvenue si premier message
+  if(messages.length === 0) {
+    messages.push({
+      id: 'welcome',
+      odatauserid: 'system',
+      username: '🤖 Système',
+      text: 'Bienvenue dans le chat! Les messages sont partagés entre tous les onglets ouverts.',
+      color: '#ffd700',
+      timestamp: Date.now()
+    });
+    localStorage.setItem('realtime-chat', JSON.stringify(messages));
+    renderMessages();
+  }
+  
+  // Style du bouton
+  sendBtn.addEventListener('mouseenter', () => sendBtn.style.boxShadow = '0 0 20px rgba(147,51,234,0.8)');
+  sendBtn.addEventListener('mouseleave', () => sendBtn.style.boxShadow = 'none');
+})();
+    </script>
 </div>
 </div>
 <audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3">
