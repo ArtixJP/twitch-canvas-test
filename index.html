@@ -124,74 +124,13 @@ canvas{border-radius:15px}
 @keyframes fadeOut{to{opacity:0;transform:translateX(-50%) translateY(-20px)}}
 @media(max-width:768px){.container{padding:1rem;margin-left:70px}.sidebar{width:60px}.sidebar:hover{width:180px}.main-menu{position:relative;top:0}}
    #santa-sleigh{color:#00ff00 !important;text-shadow:0 0 20px #00ff00, 0 0 40px #32cd32 !important}#santa-sleigh::after{content:'🌿';position:absolute;right:-30px;animation:sparkleTrail 0.8s infinite 0.3s}
+   @media(max-width:768px){.container{margin-left:0 !important;}}
   </style>
 </head>
 <body class="warm-mode">
-<aside class="sidebar">
-<div class="sidebar-logo">
-    ✨
-   </div>
-<nav class="sidebar-nav">
-<a class="sidebar-item active" data-page="home" href="#">
-<span class="sidebar-icon">
-      🏠
-     </span>
-<span class="sidebar-label">
-      Accueil
-     </span>
-</a>
-<a class="sidebar-item" data-page="games" href="#">
-<span class="sidebar-icon">
-      🎮
-     </span>
-<span class="sidebar-label">
-      Jeux
-     </span>
-</a>
-<a class="sidebar-item" data-page="about" href="#">
-<span class="sidebar-icon">
-      ✨
-     </span>
-<span class="sidebar-label">
-      À propos
-     </span>
-</a>
-<a class="sidebar-item" data-page="gallery" href="#">
-<span class="sidebar-icon">
-      🎨
-     </span>
-<span class="sidebar-label">
-      Galerie
-     </span>
-</a>
-<div class="sidebar-divider">
-</div>
-<a class="sidebar-item" href="#" onclick="explodeFireConfetti();return false">
-<span class="sidebar-icon">
-      🔥
-     </span>
-<span class="sidebar-label">
-      Confettis
-     </span>
-</a>
-<a class="sidebar-item" href="#" onclick="toggleMusic();return false">
-<span class="sidebar-icon">
-      🎵
-     </span>
-<span class="sidebar-label">
-      Musique
-     </span>
-</a>
-</nav>
-<div class="sidebar-footer">
-<button class="sidebar-theme-btn" onclick="toggleTheme()" title="Changer de thème">
-     🌙
-    </button>
-</div>
-</aside>
 <div class="pixels" id="pixelContainer">
 </div>
-<div class="container">
+<div class="container" style="margin-left: 0;">
 <nav class="main-menu">
 <ul>
 <li>
