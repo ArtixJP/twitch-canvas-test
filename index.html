@@ -123,6 +123,7 @@ canvas{border-radius:15px}
 @keyframes pulse{0%,100%{transform:translateX(-50%) scale(1);box-shadow:0 0 10px rgba(147,51,234,.5)}50%{transform:translateX(-50%) scale(1.05);box-shadow:0 0 20px rgba(147,51,234,.8)}}
 @keyframes fadeOut{to{opacity:0;transform:translateX(-50%) translateY(-20px)}}
 @media(max-width:768px){.container{padding:1rem;margin-left:70px}.sidebar{width:60px}.sidebar:hover{width:180px}.main-menu{position:relative;top:0}}
+   #santa-sleigh{color:#00ff00 !important;text-shadow:0 0 20px #00ff00, 0 0 40px #32cd32 !important}#santa-sleigh::after{content:'🌿';position:absolute;right:-30px;animation:sparkleTrail 0.8s infinite 0.3s}
   </style>
 </head>
 <body class="warm-mode">
@@ -395,15 +396,15 @@ canvas{border-radius:15px}
 <div id="easter-egg-hint">
    🥚 Secrets: Konami Code ↑↑↓↓←→←→BA | Triple-clic sur le titre | Tape "llama"
   </div>
-<div id="santa-sleigh">
+<div id="santa-sleigh" style="color:#00ff00;filter:hue-rotate(100deg) saturate(1.5);text-shadow:0 0 15px #00ff00, 0 0 30px #32cd32">
    🦌🦌🛷🎅
-   <span style="position:absolute;animation:sparkleTrail .5s infinite;font-size:1rem">
+   <span style="position:absolute;animation:sparkleTrail .5s infinite;font-size:1rem;color:#00ff00">
     ✨
    </span>
-<span style="position:absolute;left:-20px;top:10px;animation:sparkleTrail .7s infinite .2s;font-size:.8rem">
+<span style="position:absolute;left:-20px;top:10px;animation:sparkleTrail .7s infinite .2s;font-size:.8rem;color:#32cd32">
     ⭐
    </span>
-<span style="position:absolute;left:-40px;top:-5px;animation:sparkleTrail .6s infinite .4s;font-size:1.2rem">
+<span style="position:absolute;left:-40px;top:-5px;animation:sparkleTrail .6s infinite .4s;font-size:1.2rem;color:#90ee90">
     ❄️
    </span>
 </div>
