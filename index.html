@@ -389,6 +389,7 @@ canvas{border-radius:15px}
     </style>
 <script>
      (function(){const avatar=document.getElementById('foucault-avatar');const speech=document.getElementById('foucault-speech');const citations=[{text:'«L\'école est devenue une machine à examiner, à classer, à normaliser les individus.»',source:'— Surveiller et punir, 1975'},{text:'«L\'examen combine les techniques de la hiérarchie qui surveille et celles de la sanction qui normalise.»',source:'— Surveiller et punir, 1975'},{text:'«L\'école tend à constituer des appareils de savoir continu sur les individus.»',source:'— Surveiller et punir, 1975'},{text:'«Le pouvoir disciplinaire s\'exerce en se rendant invisible; en revanche il impose à ceux qu\'il soumet un principe de visibilité obligatoire.»',source:'— Surveiller et punir, 1975'},{text:'«L\'examen fait entrer l\'individualité dans un champ documentaire.»',source:'— Surveiller et punir, 1975'}];let currentIndex=0;avatar.addEventListener('click',function(){currentIndex=(currentIndex+1)%citations.length;const citation=citations[currentIndex];speech.querySelector('p:first-child').textContent=citation.text;speech.querySelector('p:last-of-type').textContent=citation.source;speech.style.opacity='1';speech.style.transform='translateY(0)';setTimeout(()=>{speech.style.opacity='0';speech.style.transform='translateY(10px)';},5000);});avatar.addEventListener('mouseenter',()=>{speech.style.opacity='1';speech.style.transform='translateY(0)';});avatar.addEventListener('mouseleave',()=>{speech.style.opacity='0';speech.style.transform='translateY(10px)';});})();
+     function startFight(){ const cat = document.getElementById('cat'); const dog = document.getElementById('puppy'); cat.style.transform = 'translateY(-50%) scale(1.2)'; dog.style.transform = 'translateY(-50%) scale(1.2)'; setTimeout(() => { cat.style.transform = 'translateY(-50%) scale(1)'; dog.style.transform = 'translateY(-50%) scale(1)'; }, 500); }
     </script>
 <div class="page" id="contact" style="display:none;">
 <h1>
@@ -839,8 +840,11 @@ setInterval(() => {
 <div id="small-animal" style="position:fixed;left:10%;top:50%;transform:translateY(-50%);font-size:50px;">
    🐾
   </div>
-<div id="puppy" style="position:fixed;left:5%;top:50%;transform:translateY(-50%);font-size:80px;">
+<div id="puppy" onclick="startFight()" style="position:fixed;left:5%;top:50%;transform:translateY(-50%);font-size:80px;">
    🐶
+  </div>
+<div id="cat" onclick="startFight()" style="position:fixed;left:15%;top:50%;transform:translateY(-50%);font-size:50px;transition:transform 0.3s;">
+   🐱
   </div>
 </body>
 </html>
