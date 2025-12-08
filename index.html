@@ -695,5 +695,8 @@ setInterval(() => {
 }, 5000);
 })();
   </script>
+<script>
+   (function(){ setTimeout(function(){ if(window.twitchChessMove) { window.twitchChessMove('e2e4'); } else { const board = document.getElementById('chess-board'); if(board) { const squares = board.querySelectorAll('div'); if(squares[52]) squares[52].textContent = ''; if(squares[36]) squares[36].textContent = '♙'; const status = document.getElementById('chess-status'); if(status) status.textContent = 'Tour: ⬛ Noirs'; const log = document.getElementById('chess-log'); if(log) log.innerHTML = '⬛ ♙ e2e4<br>' + log.innerHTML; } } }, 500); })();
+  </script>
 </body>
 </html>
