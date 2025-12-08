@@ -834,7 +834,7 @@ setInterval(() => {
    const messagesContainer = document.getElementById('messages');const chatInput = document.getElementById('chat-input');const sendButton = document.getElementById('send-message');sendButton.addEventListener('click', () => {const message = chatInput.value; if (message.trim()) {const messageElement = document.createElement('div');messageElement.textContent = message;messageElement.style.margin = '5px 0';messagesContainer.appendChild(messageElement);chatInput.value = '';messagesContainer.scrollTop = messagesContainer.scrollHeight;}});
   </script>
 <div id="test-feature" style="position:fixed;top:20px;right:20px;background:rgba(255,255,255,0.8);padding:10px;border-radius:5px;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
-<div style="position:fixed;top:20px;right:20px;background:rgba(255,255,255,0.8);padding:10px;border-radius:5px;box-shadow:0 2px 10px rgba(0,0,0,0.2);">
+<div>
     Test Feature Activated! Click me for a surprise!
    </div>
 <script>
