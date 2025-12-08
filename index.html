@@ -504,7 +504,7 @@ canvas{border-radius:15px}
 <h2 style="text-align: center; color: #9333ea; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(147,51,234,0.5);">
       💬 Chat en Direct Multi-Joueurs
      </h2>
-<div id="chat-status" style="text-align:center;font-size:12px;color:#bf94ff;margin-bottom:10px;">
+<div id="chat-status" style="text-align:center;font-size:12px;color:#00ff88;margin-bottom:10px;">
       ✅ Connecté!
      </div>
 <div id="online-users" style="text-align:center;font-size:11px;color:#ec4899;margin-bottom:10px;">
@@ -521,13 +521,147 @@ canvas{border-radius:15px}
 <button id="send-message" style="padding: 10px 20px; background: linear-gradient(45deg, #9333ea, #ec4899); color: white; border: none; border-radius: 20px; cursor: pointer; font-family: inherit; font-weight: bold; transition: all 0.3s;">
        🚀
       </button>
-<script>
-       document.addEventListener('DOMContentLoaded', function() { const messagesDiv = document.getElementById('messages'); const chatInput = document.getElementById('chat-input'); const sendBtn = document.getElementById('send-message'); const statusEl = document.getElementById('chat-status'); let messages = JSON.parse(localStorage.getItem('realtime-chat') || '[]'); function renderMessages() { messagesDiv.innerHTML = ''; messages.forEach(msg => { const div = document.createElement('div'); div.textContent = msg; messagesDiv.appendChild(div); }); messagesDiv.scrollTop = messagesDiv.scrollHeight; } function sendMessage() { const message = chatInput.value; if (message.trim()) { messages.push(message); localStorage.setItem('realtime-chat', JSON.stringify(messages)); renderMessages(); chatInput.value = ''; } } sendBtn.addEventListener('click', sendMessage); chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); }); renderMessages(); });
-      </script>
 </div>
 <div style="margin-top:10px;text-align:center;font-size:10px;color:#666;">
-      💡 Les messages sont synchronisés en temps réel!
+      💡 Les messages sont synchronisés entre tous les onglets!
      </div>
+<script>
+      (function(){
+  const messagesDiv = document.getElementById('messages');
+  const chatInput = document.getElementById('chat-input');
+  const usernameInput = document.getElementById('username-input');
+  const sendBtn = document.getElementById('send-message');
+  const statusEl = document.getElementById('chat-status');
+  const userCountEl = document.getElementById('user-count');
+  
+  // ID utilisateur unique
+  let odatauserid = localStorage.getItem('chat-user-id');
+  if(!odatauserid) { 
+    odatauserid = 'user_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); 
+    localStorage.setItem('chat-user-id', odatauserid); 
+  }
+  
+  // Pseudo sauvegardé
+  let username = localStorage.getItem('chat-username') || '';
+  usernameInput.value = username;
+  
+  // Couleurs par utilisateur
+  const colors = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#fd79a8','#a29bfe','#00b894','#e17055','#74b9ff'];
+  const userColor = colors[Math.abs(odatauserid.split('').reduce((a,b)=>a+b.charCodeAt(0),0)) % colors.length];
+  
+  // BroadcastChannel pour sync entre onglets
+  let bc;
+  try { bc = new BroadcastChannel('twitch-collab-chat-v2'); } catch(e) { console.log('BroadcastChannel non supporté'); }
+  
+  // Messages stockés
+  let messages = JSON.parse(localStorage.getItem('realtime-chat-v2') || '[]');
+  
+  function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+  
+  function renderMessages() {
+    messagesDiv.innerHTML = '';
+    const recentMessages = messages.slice(-50);
+    recentMessages.forEach(msg => {
+      const div = document.createElement('div');
+      div.style.cssText = 'margin:8px 0;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:12px;border-left:4px solid '+msg.color+';animation:fadeIn 0.3s ease';
+      const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+      div.innerHTML = '<span style="color:'+msg.color+';font-weight:bold;font-size:13px;">'+escapeHtml(msg.username)+'</span> <span style="color:#888;font-size:10px;">'+time+'</span><br><span style="color:#eee;font-size:14px;">'+escapeHtml(msg.text)+'</span>';
+      messagesDiv.appendChild(div);
+    });
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
+  }
+  
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    username = usernameInput.value.trim() || 'Anonyme_' + odatauserid.slice(-4);
+    localStorage.setItem('chat-username', username);
+    
+    if(!text) return;
+    
+    const msg = {
+      id: Date.now() + '_' + odatauserid,
+      odatauserid,
+      username,
+      text,
+      color: userColor,
+      timestamp: Date.now()
+    };
+    
+    messages.push(msg);
+    if(messages.length > 100) messages = messages.slice(-100);
+    localStorage.setItem('realtime-chat-v2', JSON.stringify(messages));
+    
+    if(bc) bc.postMessage({type:'new-message', msg});
+    
+    renderMessages();
+    chatInput.value = '';
+    
+    sendBtn.style.transform = 'scale(1.3) rotate(15deg)';
+    sendBtn.style.boxShadow = '0 0 20px #9333ea';
+    setTimeout(() => { sendBtn.style.transform = 'scale(1)'; sendBtn.style.boxShadow = 'none'; }, 200);
+  }
+  
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', e => { if(e.key === 'Enter') sendMessage(); });
+  
+  // Écouter les autres onglets
+  if(bc) {
+    bc.onmessage = e => {
+      if(e.data.type === 'new-message') {
+        const exists = messages.find(m => m.id === e.data.msg.id);
+        if(!exists) {
+          messages.push(e.data.msg);
+          if(messages.length > 100) messages = messages.slice(-100);
+          localStorage.setItem('realtime-chat-v2', JSON.stringify(messages));
+          renderMessages();
+        }
+      }
+    };
+  }
+  
+  // Sync avec localStorage (autres navigateurs/onglets sans BC)
+  window.addEventListener('storage', e => {
+    if(e.key === 'realtime-chat-v2') {
+      messages = JSON.parse(e.newValue || '[]');
+      renderMessages();
+    }
+  });
+  
+  // Message de bienvenue
+  if(messages.length === 0) {
+    messages.push({
+      id: 'welcome_' + Date.now(),
+      odatauserid: 'system',
+      username: '🤖 Système',
+      text: 'Bienvenue dans le chat! Les messages sont partagés entre tous les onglets. Tapez votre pseudo et envoyez un message!',
+      color: '#ffd700',
+      timestamp: Date.now()
+    });
+    localStorage.setItem('realtime-chat-v2', JSON.stringify(messages));
+  }
+  
+  // Init
+  statusEl.innerHTML = '✅ Connecté!';
+  statusEl.style.color = '#00ff88';
+  renderMessages();
+  
+  // Hover effects
+  sendBtn.addEventListener('mouseenter', () => sendBtn.style.boxShadow = '0 0 25px rgba(147,51,234,0.8)');
+  sendBtn.addEventListener('mouseleave', () => sendBtn.style.boxShadow = 'none');
+  
+  // Compteur utilisateurs simulé
+  let userCount = 1;
+  setInterval(() => {
+    userCount = Math.max(1, userCount + (Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0));
+    userCount = Math.min(userCount, 10);
+    userCountEl.textContent = userCount;
+  }, 10000);
+})();
+     </script>
 </div>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js">
 </script>
