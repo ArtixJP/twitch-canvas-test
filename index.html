@@ -403,6 +403,17 @@ canvas{border-radius:15px}
       Retour à l'accueil
      </button>
 </div>
+<div id="chat-container" style="margin-top: 2rem; max-width: 600px; border: 1px solid #9333ea; border-radius: 10px; padding: 1rem; background: rgba(255, 255, 255, 0.1);">
+<h2 style="text-align: center; color: #9333ea;">
+      💬 Chat en Direct
+     </h2>
+<div id="messages" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;">
+</div>
+<input id="chat-input" placeholder="Écrivez un message..." style="width: calc(100% - 10px); padding: 10px; border-radius: 5px; border: 1px solid #9333ea;" type="text"/>
+<button id="send-message" style="margin-left: 10px; padding: 10px; background-color: #9333ea; color: white; border: none; border-radius: 5px; cursor: pointer;">
+      Envoyer
+     </button>
+</div>
 </div>
 </div>
 <audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3">
@@ -818,6 +829,9 @@ setInterval(() => {
   </script>
 <script>
    (function(){const yetiBox=document.getElementById('art6');if(!yetiBox)return;const snowContainer=yetiBox.querySelector('.yeti-snow');function createSnowflake(){const flake=document.createElement('span');flake.className='snowflake';flake.textContent=['❄','❅','❆','✧','✦'][Math.floor(Math.random()*5)];flake.style.left=Math.random()*100+'%';flake.style.fontSize=(Math.random()*10+8)+'px';flake.style.animationDuration=(Math.random()*3+2)+'s';flake.style.animationDelay=Math.random()*2+'s';snowContainer.appendChild(flake);setTimeout(()=>flake.remove(),5000);}setInterval(createSnowflake,300);yetiBox.addEventListener('click',function(){const roar=document.createElement('div');roar.textContent=['GROOAARRR!','*grognement*','❄️❄️❄️','YÉTI!'][Math.floor(Math.random()*4)];roar.style.cssText='position:absolute;top:20%;left:50%;transform:translateX(-50%);color:#a8d8ea;font-family:Orbitron,monospace;font-size:14px;font-weight:bold;text-shadow:0 0 15px #a8d8ea;z-index:10;pointer-events:none;animation:noteFloat 1.5s ease-out forwards';yetiBox.appendChild(roar);setTimeout(()=>roar.remove(),1500);for(let i=0;i<15;i++){setTimeout(()=>{const ice=document.createElement('span');ice.textContent=['❄','🧊','💎','✨'][Math.floor(Math.random()*4)];ice.style.cssText='position:absolute;font-size:'+(Math.random()*20+15)+'px;left:50%;top:50%;z-index:5;pointer-events:none';const angle=Math.random()*Math.PI*2;const dist=Math.random()*80+30;ice.animate([{transform:'translate(-50%,-50%) scale(0)',opacity:1},{transform:'translate('+(Math.cos(angle)*dist-50)+'%,'+(Math.sin(angle)*dist-50)+'%) scale(1.2)',opacity:0}],{duration:800,easing:'ease-out',fill:'forwards'});yetiBox.appendChild(ice);setTimeout(()=>ice.remove(),800);},i*30);}});})();
+  </script>
+<script>
+   const messagesContainer = document.getElementById('messages');const chatInput = document.getElementById('chat-input');const sendButton = document.getElementById('send-message');sendButton.addEventListener('click', () => {const message = chatInput.value; if (message.trim()) {const messageElement = document.createElement('div');messageElement.textContent = message;messageElement.style.margin = '5px 0';messagesContainer.appendChild(messageElement);chatInput.value = '';messagesContainer.scrollTop = messagesContainer.scrollHeight;}});
   </script>
 </body>
 </html>
