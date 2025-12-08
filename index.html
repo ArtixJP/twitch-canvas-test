@@ -426,7 +426,7 @@ canvas{border-radius:15px}
 <div id="easter-egg-hint">
    🥚 Secrets: Konami Code ↑↑↓↓←→←→BA | Triple-clic sur le titre | Tape "llama"
   </div>
-<div id="santa-sleigh" style="color:#00ff00;filter:hue-rotate(100deg) saturate(1.5);text-shadow:0 0 15px #00ff00, 0 0 30px #32cd32">
+<div id="santa-sleigh" style="position:fixed;top:100px;left:100px;z-index:9999;pointer-events:none;font-size:3rem;color:#00ff00;filter:hue-rotate(100deg) saturate(1.5);text-shadow:0 0 15px #00ff00, 0 0 30px #32cd32;transition:none">
    🦌🦌🛷🎅
    <span style="position:absolute;animation:sparkleTrail .5s infinite;font-size:1rem;color:#00ff00">
     ✨
@@ -727,5 +727,18 @@ setInterval(() => {
 <script>
    (function(){const dragon=document.getElementById('dragon-container');let lastFireTime=0;document.addEventListener('click',function(e){const now=Date.now();if(now-lastFireTime<300)return;lastFireTime=now;dragon.style.animation='none';dragon.offsetHeight;dragon.style.animation='dragonRoar 0.5s ease, dragonFloat 3s ease-in-out infinite 0.5s';const dragonRect=dragon.getBoundingClientRect();const startX=dragonRect.left+dragonRect.width/2;const startY=dragonRect.top;const targetX=e.clientX;const targetY=e.clientY;const angle=Math.atan2(targetY-startY,targetX-startX);for(let i=0;i<25;i++){setTimeout(()=>{const fire=document.createElement('div');fire.className='fire-particle';const fireEmojis=['🔥','💥','✨','🌟','💫','⭐'];fire.textContent=fireEmojis[Math.floor(Math.random()*fireEmojis.length)];fire.style.fontSize=(Math.random()*30+20)+'px';fire.style.left=startX+'px';fire.style.top=startY+'px';const spread=(Math.random()-0.5)*1;const distance=Math.random()*200+100;const endX=startX+Math.cos(angle+spread)*distance;const endY=startY+Math.sin(angle+spread)*distance;document.body.appendChild(fire);fire.animate([{left:startX+'px',top:startY+'px',opacity:1,transform:'scale(0.5)'},{left:endX+'px',top:endY+'px',opacity:0,transform:'scale(1.5) rotate('+(Math.random()*360)+'deg)'}],{duration:Math.random()*500+500,easing:'ease-out',fill:'forwards'});setTimeout(()=>fire.remove(),1000);},i*30);}const roar=document.createElement('div');roar.textContent=['ROAAAR!','🔥🔥🔥','GRAAAH!','*crache du feu*'][Math.floor(Math.random()*4)];roar.style.cssText='position:fixed;left:'+(dragonRect.left+dragonRect.width/2)+'px;top:'+(dragonRect.top-30)+'px;transform:translateX(-50%);color:#ff6b35;font-family:Orbitron,monospace;font-size:16px;font-weight:bold;text-shadow:0 0 10px #ff6b35;z-index:1001;pointer-events:none;animation:noteFloat 1.5s ease-out forwards';document.body.appendChild(roar);setTimeout(()=>roar.remove(),1500);});})();
   </script>
+<div id="corner-counter" style="position:fixed;bottom:60px;left:10px;background:rgba(0,255,0,0.2);border:2px solid #00ff00;border-radius:15px;padding:10px 15px;font-family:Orbitron,monospace;color:#00ff00;z-index:9999;text-shadow:0 0 10px #00ff00">
+<div style="font-size:10px;opacity:0.7">
+    🎯 CORNER HITS
+   </div>
+<div id="corner-score" style="font-size:24px;font-weight:bold">
+    0
+   </div>
+<div style="font-size:8px;margin-top:5px">
+    En attente du miracle...
+   </div>
+</div>
+<script>
+</script>
 </body>
 </html>
