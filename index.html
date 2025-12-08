@@ -529,6 +529,30 @@ body.warm-mode .stat-card h3 {
     0%, 100% { filter: brightness(1) drop-shadow(0 0 5px #ff6b35); }
     50% { filter: brightness(1.5) drop-shadow(0 0 15px #ffcc00); }
 }
+   /* Music Button */
+@keyframes musicPulse {
+    0%, 100% { box-shadow: 0 0 20px rgba(93, 184, 165, 0.5), 0 0 40px rgba(125, 211, 192, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(93, 184, 165, 0.8), 0 0 60px rgba(125, 211, 192, 0.5); }
+}
+
+.music-btn:hover {
+    transform: scale(1.1) translateY(-3px);
+    box-shadow: 0 0 50px rgba(93, 184, 165, 0.8), 0 0 80px rgba(125, 211, 192, 0.6) !important;
+}
+
+.music-btn.playing {
+    background: linear-gradient(45deg, #ff9a9e, #fecfef, #fecfef, #ff9a9e);
+    background-size: 300% 300%;
+    animation: musicPulse 2s ease-in-out infinite, gradient 3s ease infinite;
+}
+
+@keyframes noteFloat {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+}
+   @keyframes rainbow { 0% { background-position: 0% 50%; } 100% { background-position: 100% 50%; } }
+   @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+   .red-button:hover { transform: scale(1.05); box-shadow: 0 4px 20px rgba(255, 0, 0, 0.5); }
   </style>
 </head>
 <body class="warm-mode">
@@ -563,8 +587,10 @@ body.warm-mode .stat-card h3 {
 <!-- Page Accueil -->
 <div class="page active" id="home">
 <h1>
-      Hello World
-     </h1>
+<h1 style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 5s ease infinite;">
+       Hello World
+      </h1>
+</h1>
 <p class="subtitle">
       Bienvenue dans cet espace digital
      </p>
@@ -574,6 +600,12 @@ body.warm-mode .stat-card h3 {
 <button class="confetti-btn" onclick="explodeFireConfetti()" style="margin-left: 1rem; background: linear-gradient(45deg, #ff6b35, #f7931e, #ffcc00); border: none; padding: 1rem 2rem; border-radius: 50px; cursor: pointer; font-size: 1rem; color: #fff; font-family: inherit; position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(255, 107, 53, 0.5); animation: firePulse 1.5s ease-in-out infinite;">
       🔥 Confettis Enflammés 🔥
      </button>
+<button class="music-btn" onclick="toggleMusic()" style="margin-left: 1rem; background: linear-gradient(45deg, #7dd3c0, #5cb8a5, #3d9d8b); border: none; padding: 1rem 2rem; border-radius: 50px; cursor: pointer; font-size: 1rem; color: #fff; font-family: inherit; position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(93, 184, 165, 0.5); animation: musicPulse 2s ease-in-out infinite;">
+      🎵 Animal Crossing Vibes 🎵
+     </button>
+<audio id="acMusic" loop="">
+<source src="https://lambda.vgmtreasurechest.com/soundtracks/animal-crossing-new-horizons-2020-switch-gamerip/apvmuolo/1-09.%209%20a.m.%20%28~Sunny%20Weather~%29.mp3" type="audio/mpeg"/>
+</audio>
 </div>
 <!-- Page Jeux -->
 <div class="page" id="games">
@@ -688,6 +720,17 @@ body.warm-mode .stat-card h3 {
 </div>
 </div>
 </div>
+<div class="mini-monster" onclick="spawnSparkles(event); playRobotSound();" style="position: fixed; bottom: 20px; right: 20px; width: 100px; height: 100px; background-color: #ffcc00; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); animation: bounce 2s infinite; cursor: pointer; user-select: none;">
+<span style="font-size: 24px; color: #fff;">
+      👾
+     </span>
+</div>
+<div class="monster-speech" style="position: fixed; bottom: 120px; right: 40px; background: rgba(255, 255, 255, 0.9); border-radius: 15px; padding: 10px; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2); animation: fadeIn 1s;">
+     Clique-moi! ✨
+    </div>
+<button class="red-button" style="margin-top: 2rem; background: red; color: white; border: none; padding: 1rem 2rem; border-radius: 50px; cursor: pointer; font-size: 1rem; transition: transform 0.3s;">
+     🌟 Nouveau Bouton Rouge 🌟
+    </button>
 </div>
 </div>
 <script>
@@ -751,6 +794,7 @@ body.warm-mode .stat-card h3 {
                 konamiIndex = 0;
             }
         });
+   function playRobotSound() { document.getElementById('robotSound').play(); }
   </script>
 <script>
    // Mini-jeu Snake
@@ -1184,5 +1228,138 @@ const flashStyle = document.createElement('style');
 flashStyle.textContent = '@keyframes flashOut { from { opacity: 1; } to { opacity: 0; } }';
 document.head.appendChild(flashStyle);
   </script>
+<script>
+   let musicPlaying = false;
+const acAudio = document.getElementById('acMusic');
+const musicBtn = document.querySelector('.music-btn');
+
+function toggleMusic() {
+    if (musicPlaying) {
+        acAudio.pause();
+        musicBtn.textContent = '🎵 Animal Crossing Vibes 🎵';
+        musicBtn.classList.remove('playing');
+    } else {
+        acAudio.play();
+        musicBtn.textContent = '🎶 Now Playing... 🎶';
+        musicBtn.classList.add('playing');
+        spawnMusicNotes();
+    }
+    musicPlaying = !musicPlaying;
+}
+
+function spawnMusicNotes() {
+    if (!musicPlaying) return;
+    const notes = ['🎵', '🎶', '♪', '♫', '🌸', '🍃', '🌿'];
+    const note = document.createElement('div');
+    note.textContent = notes[Math.floor(Math.random() * notes.length)];
+    note.style.cssText = `position:fixed;bottom:20%;left:${Math.random()*80+10}%;font-size:${Math.random()*20+20}px;pointer-events:none;z-index:9999;animation:noteFloat 3s ease-out forwards;`;
+    document.body.appendChild(note);
+    setTimeout(() => note.remove(), 3000);
+    setTimeout(spawnMusicNotes, 800);
+}
+  </script>
+<style>
+   .sparkle {
+    position: fixed;
+    pointer-events: none;
+    z-index: 10000;
+    animation: sparkleAnim 1s ease-out forwards;
+}
+
+@keyframes sparkleAnim {
+    0% {
+        transform: translate(-50%, -50%) scale(0) rotate(0deg);
+        opacity: 1;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -50%) scale(1.5) rotate(180deg);
+        opacity: 0;
+    }
+}
+
+@keyframes sparkleFloat {
+    0% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-80px) scale(0);
+        opacity: 0;
+    }
+}
+
+.mini-monster:active {
+    transform: scale(0.9);
+    box-shadow: 0 0 30px rgba(255, 204, 0, 0.8), 0 0 60px rgba(255, 204, 0, 0.4);
+}
+  </style>
+<script>
+   function spawnSparkles(event) {
+    const sparkleEmojis = ['✨', '⭐', '🌟', '💫', '🔆', '💖', '💜', '💙', '💚', '💛'];
+    const colors = ['#FFD700', '#FF69B4', '#00CED1', '#9370DB', '#FF6347', '#7FFFD4', '#FF1493'];
+    
+    const rect = event.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    
+    // Créer 25 paillettes
+    for (let i = 0; i < 25; i++) {
+        setTimeout(() => {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            
+            const isEmoji = Math.random() > 0.4;
+            if (isEmoji) {
+                sparkle.textContent = sparkleEmojis[Math.floor(Math.random() * sparkleEmojis.length)];
+                sparkle.style.fontSize = (Math.random() * 20 + 15) + 'px';
+            } else {
+                sparkle.innerHTML = '✦';
+                sparkle.style.fontSize = (Math.random() * 25 + 10) + 'px';
+                sparkle.style.color = colors[Math.floor(Math.random() * colors.length)];
+                sparkle.style.textShadow = `0 0 10px ${colors[Math.floor(Math.random() * colors.length)]}`;
+            }
+            
+            const angle = (Math.PI * 2 * i) / 25 + Math.random() * 0.5;
+            const distance = Math.random() * 100 + 50;
+            const endX = centerX + Math.cos(angle) * distance;
+            const endY = centerY + Math.sin(angle) * distance;
+            
+            sparkle.style.left = centerX + 'px';
+            sparkle.style.top = centerY + 'px';
+            sparkle.style.setProperty('--endX', endX + 'px');
+            sparkle.style.setProperty('--endY', endY + 'px');
+            sparkle.style.animation = `sparkleAnim ${Math.random() * 0.5 + 0.8}s ease-out forwards`;
+            
+            // Animation personnalisée vers la position finale
+            sparkle.animate([
+                { left: centerX + 'px', top: centerY + 'px', opacity: 1, transform: 'scale(0) rotate(0deg)' },
+                { left: endX + 'px', top: endY + 'px', opacity: 0, transform: 'scale(1.2) rotate(360deg)' }
+            ], {
+                duration: Math.random() * 500 + 800,
+                easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                fill: 'forwards'
+            });
+            
+            document.body.appendChild(sparkle);
+            setTimeout(() => sparkle.remove(), 1500);
+        }, i * 20);
+    }
+    
+    // Changer temporairement le message du monstre
+    const speech = document.querySelector('.monster-speech');
+    const messages = ['Woohoo! ✨', 'Sparkles! 🌟', 'Magique! 💫', 'Yay! 💖', 'Paillettes! ⭐'];
+    speech.textContent = messages[Math.floor(Math.random() * messages.length)];
+    speech.style.transform = 'scale(1.2)';
+    setTimeout(() => {
+        speech.style.transform = 'scale(1)';
+        speech.textContent = 'Clique encore! 👾';
+    }, 1000);
+}
+  </script>
+<audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3">
+</audio>
 </body>
 </html>
