@@ -734,11 +734,14 @@ setInterval(() => {
 <div id="corner-score" style="font-size:24px;font-weight:bold">
     0
    </div>
-<div style="font-size:8px;margin-top:5px">
+<div id="corner-status" style="font-size:8px;margin-top:5px">
     En attente du miracle...
    </div>
 </div>
 <script>
 </script>
+<script>
+   (function(){const sleigh=document.getElementById('santa-sleigh');const scoreEl=document.getElementById('corner-score');const statusEl=document.getElementById('corner-status');if(!sleigh)return;sleigh.style.animation='none';let x=100,y=100;let vx=3,vy=2.5;let cornerHits=0;const sleighWidth=180,sleighHeight=60;const cornerThreshold=15;function checkCorner(){const atLeft=x<=cornerThreshold;const atRight=x>=window.innerWidth-sleighWidth-cornerThreshold;const atTop=y<=cornerThreshold;const atBottom=y>=window.innerHeight-sleighHeight-cornerThreshold;if((atLeft||atRight)&&(atTop||atBottom)){cornerHits++;scoreEl.textContent=cornerHits;sleigh.style.filter='hue-rotate('+(Math.random()*360)+'deg) saturate(2) brightness(1.5)';sleigh.style.textShadow='0 0 30px #ff00ff, 0 0 60px #00ffff, 0 0 90px #ffff00';statusEl.textContent='🎉 CORNER HIT #'+cornerHits+'! 🎉';statusEl.style.color='#ff00ff';celebrateCorner();setTimeout(()=>{sleigh.style.filter='hue-rotate(100deg) saturate(1.5)';sleigh.style.textShadow='0 0 15px #00ff00, 0 0 30px #32cd32';statusEl.style.color='#00ff00';statusEl.textContent='Prochain corner dans...';},2000);return true;}return false;}function celebrateCorner(){for(let i=0;i<30;i++){setTimeout(()=>{const confetti=document.createElement('div');confetti.textContent=['🎄','⭐','🎅','❄️','🎁','✨'][Math.floor(Math.random()*6)];confetti.style.cssText='position:fixed;font-size:'+(Math.random()*30+15)+'px;left:'+x+'px;top:'+y+'px;z-index:10000;pointer-events:none;animation:fireConfettiFall '+(Math.random()*2+1)+'s ease-out forwards';document.body.appendChild(confetti);setTimeout(()=>confetti.remove(),3000);},i*50);}}function animate(){x+=vx;y+=vy;if(x<=0){x=0;vx=-vx;changeColor();}if(x>=window.innerWidth-sleighWidth){x=window.innerWidth-sleighWidth;vx=-vx;changeColor();}if(y<=0){y=0;vy=-vy;changeColor();}if(y>=window.innerHeight-sleighHeight){y=window.innerHeight-sleighHeight;vy=-vy;changeColor();}checkCorner();sleigh.style.left=x+'px';sleigh.style.top=y+'px';sleigh.style.transform=vx>0?'scaleX(1)':'scaleX(-1)';requestAnimationFrame(animate);}function changeColor(){const hue=Math.random()*60+80;sleigh.style.filter='hue-rotate('+hue+'deg) saturate(1.5)';}animate();})();
+  </script>
 </body>
 </html>
