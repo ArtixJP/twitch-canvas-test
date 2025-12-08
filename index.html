@@ -502,15 +502,15 @@ canvas{border-radius:15px}
 </div>
 <div id="chat-container" style="margin-top: 2rem; max-width: 600px; border: 2px solid #9333ea; border-radius: 15px; padding: 1.5rem; background: linear-gradient(135deg, rgba(147,51,234,0.1), rgba(236,72,153,0.1)); box-shadow: 0 0 30px rgba(147,51,234,0.3);">
 <h2 style="text-align: center; color: #9333ea; margin-bottom: 1rem; text-shadow: 0 0 10px rgba(147,51,234,0.5);">
-      💬 Chat en Direct Multi-Joueurs
+      💬 Chat Global en Direct 🌍
      </h2>
-<div id="chat-status" style="text-align:center;font-size:12px;color:#00ff88;margin-bottom:10px;">
-      ✅ Connecté!
+<div id="chat-status" style="text-align:center;font-size:12px;color:#ffaa00;margin-bottom:10px;">
+      ⏳ Connexion en cours...
      </div>
 <div id="online-users" style="text-align:center;font-size:11px;color:#ec4899;margin-bottom:10px;">
-      👥 Utilisateurs en ligne:
+      👥 Utilisateurs connectés:
       <span id="user-count">
-       1
+       0
       </span>
 </div>
 <div id="messages" style="max-height: 350px; overflow-y: auto; margin-bottom: 1rem; background: rgba(0,0,0,0.3); border-radius: 10px; padding: 10px; scroll-behavior: smooth;">
@@ -523,10 +523,15 @@ canvas{border-radius:15px}
       </button>
 </div>
 <div style="margin-top:10px;text-align:center;font-size:10px;color:#666;">
-      💡 Les messages sont synchronisés entre tous les onglets!
+      🌐 Chat en temps réel - Parlez avec des gens du monde entier!
      </div>
+<script src="https://cdn.scaledrone.com/scaledrone.min.js">
+</script>
 <script>
       (function(){
+  const CLIENT_ID = 'OF5qtFVpQ3MvhVvn';
+  const ROOM_NAME = 'observable-twitch-collab-chat';
+  
   const messagesDiv = document.getElementById('messages');
   const chatInput = document.getElementById('chat-input');
   const usernameInput = document.getElementById('username-input');
@@ -534,27 +539,21 @@ canvas{border-radius:15px}
   const statusEl = document.getElementById('chat-status');
   const userCountEl = document.getElementById('user-count');
   
-  // ID utilisateur unique
   let odatauserid = localStorage.getItem('chat-user-id');
   if(!odatauserid) { 
     odatauserid = 'user_' + Math.random().toString(36).substr(2,9) + '_' + Date.now(); 
     localStorage.setItem('chat-user-id', odatauserid); 
   }
   
-  // Pseudo sauvegardé
   let username = localStorage.getItem('chat-username') || '';
   usernameInput.value = username;
   
-  // Couleurs par utilisateur
-  const colors = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#fd79a8','#a29bfe','#00b894','#e17055','#74b9ff'];
+  const colors = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#fd79a8','#a29bfe','#00b894','#e17055','#74b9ff','#ffd93d','#6c5ce7'];
   const userColor = colors[Math.abs(odatauserid.split('').reduce((a,b)=>a+b.charCodeAt(0),0)) % colors.length];
   
-  // BroadcastChannel pour sync entre onglets
-  let bc;
-  try { bc = new BroadcastChannel('twitch-collab-chat-v2'); } catch(e) { console.log('BroadcastChannel non supporté'); }
-  
-  // Messages stockés
-  let messages = JSON.parse(localStorage.getItem('realtime-chat-v2') || '[]');
+  let drone;
+  let room;
+  let members = [];
   
   function escapeHtml(text) {
     const div = document.createElement('div');
@@ -562,17 +561,18 @@ canvas{border-radius:15px}
     return div.innerHTML;
   }
   
-  function renderMessages() {
-    messagesDiv.innerHTML = '';
-    const recentMessages = messages.slice(-50);
-    recentMessages.forEach(msg => {
-      const div = document.createElement('div');
-      div.style.cssText = 'margin:8px 0;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:12px;border-left:4px solid '+msg.color+';animation:fadeIn 0.3s ease';
-      const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-      div.innerHTML = '<span style="color:'+msg.color+';font-weight:bold;font-size:13px;">'+escapeHtml(msg.username)+'</span> <span style="color:#888;font-size:10px;">'+time+'</span><br><span style="color:#eee;font-size:14px;">'+escapeHtml(msg.text)+'</span>';
-      messagesDiv.appendChild(div);
-    });
+  function addMessage(msg) {
+    const div = document.createElement('div');
+    div.style.cssText = 'margin:8px 0;padding:10px 12px;background:rgba(255,255,255,0.05);border-radius:12px;border-left:4px solid '+msg.color+';animation:fadeIn 0.3s ease';
+    const time = new Date(msg.timestamp).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+    const isMe = msg.odatauserid === odatauserid;
+    div.innerHTML = '<span style="color:'+msg.color+';font-weight:bold;font-size:13px;">'+(isMe?'👤 ':'')+escapeHtml(msg.username)+'</span> <span style="color:#888;font-size:10px;">'+time+'</span><br><span style="color:#eee;font-size:14px;">'+escapeHtml(msg.text)+'</span>';
+    messagesDiv.appendChild(div);
     messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    
+    if(messagesDiv.children.length > 100) {
+      messagesDiv.removeChild(messagesDiv.firstChild);
+    }
   }
   
   function sendMessage() {
@@ -580,10 +580,9 @@ canvas{border-radius:15px}
     username = usernameInput.value.trim() || 'Anonyme_' + odatauserid.slice(-4);
     localStorage.setItem('chat-username', username);
     
-    if(!text) return;
+    if(!text || !drone) return;
     
     const msg = {
-      id: Date.now() + '_' + odatauserid,
       odatauserid,
       username,
       text,
@@ -591,75 +590,109 @@ canvas{border-radius:15px}
       timestamp: Date.now()
     };
     
-    messages.push(msg);
-    if(messages.length > 100) messages = messages.slice(-100);
-    localStorage.setItem('realtime-chat-v2', JSON.stringify(messages));
+    drone.publish({
+      room: ROOM_NAME,
+      message: msg
+    });
     
-    if(bc) bc.postMessage({type:'new-message', msg});
-    
-    renderMessages();
     chatInput.value = '';
-    
     sendBtn.style.transform = 'scale(1.3) rotate(15deg)';
     sendBtn.style.boxShadow = '0 0 20px #9333ea';
     setTimeout(() => { sendBtn.style.transform = 'scale(1)'; sendBtn.style.boxShadow = 'none'; }, 200);
   }
   
+  function connectToScaledrone() {
+    drone = new Scaledrone(CLIENT_ID, {
+      data: {
+        odatauserid,
+        username: usernameInput.value || 'Anonyme',
+        color: userColor
+      }
+    });
+    
+    drone.on('open', error => {
+      if (error) {
+        statusEl.innerHTML = '❌ Erreur de connexion';
+        statusEl.style.color = '#ff4444';
+        return;
+      }
+      statusEl.innerHTML = '✅ Connecté au chat global!';
+      statusEl.style.color = '#00ff88';
+      
+      addMessage({
+        odatauserid: 'system',
+        username: '🤖 Système',
+        text: 'Bienvenue! Vous êtes connecté au chat mondial. Dites bonjour! 👋',
+        color: '#ffd700',
+        timestamp: Date.now()
+      });
+    });
+    
+    drone.on('close', () => {
+      statusEl.innerHTML = '🔄 Reconnexion...';
+      statusEl.style.color = '#ffaa00';
+      setTimeout(connectToScaledrone, 3000);
+    });
+    
+    drone.on('error', error => {
+      console.error('Scaledrone error:', error);
+      statusEl.innerHTML = '⚠️ Erreur - Reconnexion...';
+      statusEl.style.color = '#ff4444';
+    });
+    
+    room = drone.subscribe(ROOM_NAME);
+    
+    room.on('open', error => {
+      if (error) {
+        console.error('Room error:', error);
+        return;
+      }
+    });
+    
+    room.on('members', m => {
+      members = m;
+      userCountEl.textContent = members.length;
+    });
+    
+    room.on('member_join', member => {
+      members.push(member);
+      userCountEl.textContent = members.length;
+      addMessage({
+        odatauserid: 'system',
+        username: '🚀 Notification',
+        text: 'Un nouveau visiteur a rejoint le chat!',
+        color: '#00ff88',
+        timestamp: Date.now()
+      });
+    });
+    
+    room.on('member_leave', member => {
+      members = members.filter(m => m.id !== member.id);
+      userCountEl.textContent = members.length;
+    });
+    
+    room.on('message', message => {
+      addMessage(message.data);
+    });
+  }
+  
   sendBtn.addEventListener('click', sendMessage);
   chatInput.addEventListener('keypress', e => { if(e.key === 'Enter') sendMessage(); });
   
-  // Écouter les autres onglets
-  if(bc) {
-    bc.onmessage = e => {
-      if(e.data.type === 'new-message') {
-        const exists = messages.find(m => m.id === e.data.msg.id);
-        if(!exists) {
-          messages.push(e.data.msg);
-          if(messages.length > 100) messages = messages.slice(-100);
-          localStorage.setItem('realtime-chat-v2', JSON.stringify(messages));
-          renderMessages();
-        }
-      }
-    };
-  }
-  
-  // Sync avec localStorage (autres navigateurs/onglets sans BC)
-  window.addEventListener('storage', e => {
-    if(e.key === 'realtime-chat-v2') {
-      messages = JSON.parse(e.newValue || '[]');
-      renderMessages();
-    }
-  });
-  
-  // Message de bienvenue
-  if(messages.length === 0) {
-    messages.push({
-      id: 'welcome_' + Date.now(),
-      odatauserid: 'system',
-      username: '🤖 Système',
-      text: 'Bienvenue dans le chat! Les messages sont partagés entre tous les onglets. Tapez votre pseudo et envoyez un message!',
-      color: '#ffd700',
-      timestamp: Date.now()
-    });
-    localStorage.setItem('realtime-chat-v2', JSON.stringify(messages));
-  }
-  
-  // Init
-  statusEl.innerHTML = '✅ Connecté!';
-  statusEl.style.color = '#00ff88';
-  renderMessages();
-  
-  // Hover effects
   sendBtn.addEventListener('mouseenter', () => sendBtn.style.boxShadow = '0 0 25px rgba(147,51,234,0.8)');
   sendBtn.addEventListener('mouseleave', () => sendBtn.style.boxShadow = 'none');
   
-  // Compteur utilisateurs simulé
-  let userCount = 1;
-  setInterval(() => {
-    userCount = Math.max(1, userCount + (Math.random() > 0.7 ? (Math.random() > 0.5 ? 1 : -1) : 0));
-    userCount = Math.min(userCount, 10);
-    userCountEl.textContent = userCount;
-  }, 10000);
+  if(typeof Scaledrone !== 'undefined') {
+    connectToScaledrone();
+  } else {
+    const checkScaledrone = setInterval(() => {
+      if(typeof Scaledrone !== 'undefined') {
+        clearInterval(checkScaledrone);
+        connectToScaledrone();
+      }
+    }, 100);
+    setTimeout(() => clearInterval(checkScaledrone), 10000);
+  }
 })();
      </script>
 </div>
