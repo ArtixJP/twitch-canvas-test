@@ -485,6 +485,29 @@ canvas{border-radius:15px}
 <button id="send-message" style="margin-left: 10px; padding: 10px; background-color: #9333ea; color: white; border: none; border-radius: 5px; cursor: pointer;">
       Envoyer
      </button>
+<script>
+      const messages = JSON.parse(localStorage.getItem('chatMessages')) || [];
+  function renderMessages() {
+    messagesContainer.innerHTML = '';
+    messages.forEach(msg => {
+      const messageElement = document.createElement('div');
+      messageElement.textContent = msg;
+      messageElement.style.margin = '5px 0';
+      messagesContainer.appendChild(messageElement);
+    });
+  }
+  renderMessages();
+  sendButton.addEventListener('click', () => {
+    const message = chatInput.value;
+    if (message.trim()) {
+      messages.push(message);
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
+      renderMessages();
+      chatInput.value = '';
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+  });
+     </script>
 </div>
 </div>
 </div>
