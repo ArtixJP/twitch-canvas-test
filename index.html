@@ -620,6 +620,11 @@ body.warm-mode .stat-card h3 {
 #easter-egg-hint:hover {
     opacity: 0.8 !important;
 }
+   @keyframes particlePop {
+    0% { transform: scale(1) translateY(0); opacity: 1; }
+    100% { transform: scale(1.5) translateY(-50px); opacity: 0; }
+}
+#lutinCanvas { border-radius: 15px; }
   </style>
 </head>
 <body class="warm-mode">
@@ -707,6 +712,14 @@ body.warm-mode .stat-card h3 {
         Créez votre galaxie
        </p>
 </div>
+<div class="game-card" onclick="showGame('lutin')">
+<h3>
+        🧝 Lutin Gourmand
+       </h3>
+<p>
+        Muffins &amp; Or!
+       </p>
+</div>
 </div>
 <div id="gameContainer">
 <canvas height="400" id="snakeCanvas" style="border: 2px solid #9333ea; background: #1a1a1d; box-shadow: 0 0 30px rgba(147, 51, 234, 0.5); display: none;" width="400">
@@ -726,6 +739,8 @@ body.warm-mode .stat-card h3 {
         </span>
 </p>
 </div>
+<canvas height="400" id="lutinCanvas" style="border: 2px solid #ffd700; background: linear-gradient(180deg, #87ceeb 0%, #98fb98 100%); box-shadow: 0 0 30px rgba(255, 215, 0, 0.5); display: none;" width="600">
+</canvas>
 </div>
 </div>
 <!-- Page À propos -->
@@ -1675,6 +1690,262 @@ document.addEventListener('DOMContentLoaded', () => {
     to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
 }
   </style>
+<script>
+   // Lutin Game
+let lutinCanvas, lutinCtx;
+let lutin = { x: 50, y: 300, width: 40, height: 50, vy: 0, jumping: false };
+let muffins = [];
+let goldCoins = [];
+let traps = [];
+let lutinScore = 0;
+let lutinRunning = false;
+let gameSpeed = 3;
+let groundY = 350;
+
+function initLutin() {
+    lutinCanvas = document.getElementById('lutinCanvas');
+    lutinCtx = lutinCanvas.getContext('2d');
+    lutin = { x: 50, y: groundY - 50, width: 40, height: 50, vy: 0, jumping: false };
+    muffins = [];
+    goldCoins = [];
+    traps = [];
+    lutinScore = 0;
+    gameSpeed = 3;
+    lutinRunning = true;
+    document.getElementById('gameInstructions').textContent = 'ESPACE/↑ pour sauter!';
+    lutinGameLoop();
+}
+
+function spawnItems() {
+    if (Math.random() < 0.02) {
+        muffins.push({ x: 620, y: groundY - 30 - Math.random() * 100, size: 25 });
+    }
+    if (Math.random() < 0.015) {
+        goldCoins.push({ x: 620, y: groundY - 50 - Math.random() * 80, size: 20, angle: 0 });
+    }
+    if (Math.random() < 0.01) {
+        traps.push({ x: 620, y: groundY - 25, width: 40, height: 25, type: Math.random() > 0.5 ? 'spike' : 'hole' });
+    }
+}
+
+function drawLutin() {
+    lutinCtx.save();
+    // Body
+    lutinCtx.fillStyle = '#228b22';
+    lutinCtx.beginPath();
+    lutinCtx.ellipse(lutin.x + 20, lutin.y + 35, 15, 20, 0, 0, Math.PI * 2);
+    lutinCtx.fill();
+    // Head
+    lutinCtx.fillStyle = '#ffdab9';
+    lutinCtx.beginPath();
+    lutinCtx.arc(lutin.x + 20, lutin.y + 12, 12, 0, Math.PI * 2);
+    lutinCtx.fill();
+    // Hat
+    lutinCtx.fillStyle = '#ff4500';
+    lutinCtx.beginPath();
+    lutinCtx.moveTo(lutin.x + 8, lutin.y + 5);
+    lutinCtx.lineTo(lutin.x + 20, lutin.y - 15);
+    lutinCtx.lineTo(lutin.x + 32, lutin.y + 5);
+    lutinCtx.fill();
+    // Eyes
+    lutinCtx.fillStyle = '#000';
+    lutinCtx.beginPath();
+    lutinCtx.arc(lutin.x + 16, lutin.y + 10, 2, 0, Math.PI * 2);
+    lutinCtx.arc(lutin.x + 24, lutin.y + 10, 2, 0, Math.PI * 2);
+    lutinCtx.fill();
+    // Smile
+    lutinCtx.strokeStyle = '#000';
+    lutinCtx.beginPath();
+    lutinCtx.arc(lutin.x + 20, lutin.y + 14, 4, 0, Math.PI);
+    lutinCtx.stroke();
+    lutinCtx.restore();
+}
+
+function drawMuffin(m) {
+    const colors = ['#ff6b6b', '#ffa500', '#ffff00', '#00ff00', '#00bfff', '#8a2be2', '#ff69b4'];
+    lutinCtx.save();
+    // Wrapper
+    lutinCtx.fillStyle = '#deb887';
+    lutinCtx.fillRect(m.x - 10, m.y + 5, 20, 15);
+    // Top with rainbow swirl
+    for (let i = 0; i < 7; i++) {
+        lutinCtx.fillStyle = colors[i];
+        lutinCtx.beginPath();
+        lutinCtx.arc(m.x, m.y, m.size - i * 2, 0, Math.PI * 2);
+        lutinCtx.fill();
+    }
+    lutinCtx.fillStyle = '#fff';
+    lutinCtx.beginPath();
+    lutinCtx.arc(m.x - 5, m.y - 5, 3, 0, Math.PI * 2);
+    lutinCtx.fill();
+    lutinCtx.restore();
+}
+
+function drawGold(g) {
+    lutinCtx.save();
+    lutinCtx.translate(g.x, g.y);
+    lutinCtx.rotate(g.angle);
+    lutinCtx.fillStyle = '#ffd700';
+    lutinCtx.shadowBlur = 15;
+    lutinCtx.shadowColor = '#ffd700';
+    lutinCtx.beginPath();
+    lutinCtx.arc(0, 0, g.size / 2, 0, Math.PI * 2);
+    lutinCtx.fill();
+    lutinCtx.fillStyle = '#daa520';
+    lutinCtx.font = 'bold 12px Arial';
+    lutinCtx.textAlign = 'center';
+    lutinCtx.fillText('$', 0, 4);
+    lutinCtx.restore();
+}
+
+function drawTrap(t) {
+    lutinCtx.save();
+    if (t.type === 'spike') {
+        lutinCtx.fillStyle = '#4a4a4a';
+        for (let i = 0; i < 4; i++) {
+            lutinCtx.beginPath();
+            lutinCtx.moveTo(t.x + i * 10, t.y + t.height);
+            lutinCtx.lineTo(t.x + i * 10 + 5, t.y);
+            lutinCtx.lineTo(t.x + i * 10 + 10, t.y + t.height);
+            lutinCtx.fill();
+        }
+    } else {
+        lutinCtx.fillStyle = '#2d1b00';
+        lutinCtx.fillRect(t.x, t.y, t.width, t.height + 10);
+    }
+    lutinCtx.restore();
+}
+
+function checkCollision(a, b) {
+    return a.x < b.x + (b.width || b.size) &&
+           a.x + a.width > b.x - (b.size || 0) &&
+           a.y < b.y + (b.height || b.size) &&
+           a.y + a.height > b.y - (b.size || 0);
+}
+
+function lutinGameLoop() {
+    if (!lutinRunning || currentGame !== 'lutin') return;
+    
+    // Clear with gradient sky
+    const gradient = lutinCtx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, '#87ceeb');
+    gradient.addColorStop(1, '#98fb98');
+    lutinCtx.fillStyle = gradient;
+    lutinCtx.fillRect(0, 0, 600, 400);
+    
+    // Ground
+    lutinCtx.fillStyle = '#8b4513';
+    lutinCtx.fillRect(0, groundY, 600, 50);
+    lutinCtx.fillStyle = '#228b22';
+    lutinCtx.fillRect(0, groundY - 5, 600, 10);
+    
+    // Physics
+    lutin.vy += 0.8;
+    lutin.y += lutin.vy;
+    if (lutin.y >= groundY - 50) {
+        lutin.y = groundY - 50;
+        lutin.vy = 0;
+        lutin.jumping = false;
+    }
+    
+    spawnItems();
+    
+    // Update & draw items
+    muffins = muffins.filter(m => {
+        m.x -= gameSpeed;
+        if (checkCollision(lutin, { x: m.x - m.size, y: m.y - m.size, width: m.size * 2, height: m.size * 2 })) {
+            lutinScore += 15;
+            createParticles(m.x, m.y, '🌈');
+            return false;
+        }
+        drawMuffin(m);
+        return m.x > -30;
+    });
+    
+    goldCoins = goldCoins.filter(g => {
+        g.x -= gameSpeed;
+        g.angle += 0.1;
+        if (checkCollision(lutin, { x: g.x - g.size, y: g.y - g.size, width: g.size * 2, height: g.size * 2 })) {
+            lutinScore += 25;
+            createParticles(g.x, g.y, '✨');
+            return false;
+        }
+        drawGold(g);
+        return g.x > -30;
+    });
+    
+    traps = traps.filter(t => {
+        t.x -= gameSpeed;
+        if (checkCollision(lutin, t)) {
+            lutinRunning = false;
+            showGameOver();
+            return false;
+        }
+        drawTrap(t);
+        return t.x > -50;
+    });
+    
+    drawLutin();
+    
+    // Score
+    document.getElementById('score').textContent = lutinScore;
+    gameSpeed += 0.001;
+    
+    requestAnimationFrame(lutinGameLoop);
+}
+
+function createParticles(x, y, emoji) {
+    for (let i = 0; i < 5; i++) {
+        const p = document.createElement('span');
+        p.textContent = emoji;
+        p.style.cssText = `position:fixed;left:${lutinCanvas.getBoundingClientRect().left + x}px;top:${lutinCanvas.getBoundingClientRect().top + y}px;font-size:20px;pointer-events:none;z-index:1000;animation:particlePop 0.8s ease-out forwards;`;
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), 800);
+    }
+}
+
+function showGameOver() {
+    lutinCtx.fillStyle = 'rgba(0,0,0,0.7)';
+    lutinCtx.fillRect(0, 0, 600, 400);
+    lutinCtx.fillStyle = '#ffd700';
+    lutinCtx.font = 'bold 40px Orbitron';
+    lutinCtx.textAlign = 'center';
+    lutinCtx.fillText('GAME OVER', 300, 180);
+    lutinCtx.font = '20px Orbitron';
+    lutinCtx.fillStyle = '#fff';
+    lutinCtx.fillText('Score: ' + lutinScore, 300, 220);
+    lutinCtx.fillText('ESPACE pour rejouer', 300, 260);
+}
+
+// Jump control
+document.addEventListener('keydown', (e) => {
+    if (currentGame === 'lutin' && (e.code === 'Space' || e.key === 'ArrowUp')) {
+        e.preventDefault();
+        if (!lutinRunning) {
+            initLutin();
+        } else if (!lutin.jumping) {
+            lutin.vy = -15;
+            lutin.jumping = true;
+        }
+    }
+});
+
+// Add to showGame function
+const originalShowGame = showGame;
+showGame = function(game) {
+    originalShowGame(game);
+    if (game === 'lutin') {
+        document.getElementById('lutinCanvas').style.display = 'block';
+        document.getElementById('gameInstructions').textContent = 'ESPACE pour commencer!';
+        lutinCanvas = document.getElementById('lutinCanvas');
+        lutinCtx = lutinCanvas.getContext('2d');
+        lutinCtx.fillStyle = '#228b22';
+        lutinCtx.font = '20px Orbitron';
+        lutinCtx.textAlign = 'center';
+        lutinCtx.fillText('🧝 Appuie sur ESPACE! 🧝', 300, 200);
+    }
+};
+  </script>
 </body>
 </html>
 <!-- update -->
