@@ -670,7 +670,7 @@ body.warm-mode .stat-card h3 {
 <button class="music-btn" onclick="toggleMusic()" style="margin-left: 1rem; background: linear-gradient(45deg, #7dd3c0, #5cb8a5, #3d9d8b); border: none; padding: 1rem 2rem; border-radius: 50px; cursor: pointer; font-size: 1rem; color: #fff; font-family: inherit; position: relative; overflow: hidden; box-shadow: 0 0 20px rgba(93, 184, 165, 0.5); animation: musicPulse 2s ease-in-out infinite;">
       🎵 Animal Crossing Vibes 🎵
      </button>
-<audio autoplay="" id="acMusic" loop="">
+<audio autoplay="" id="acMusic" loop="" muted="true">
 <source src="https://lambda.vgmtreasurechest.com/soundtracks/animal-crossing-new-horizons-2020-switch-gamerip/apvmuolo/1-09.%209%20a.m.%20%28~Sunny%20Weather~%29.mp3" type="audio/mpeg"/>
 </audio>
 </div>
@@ -1618,6 +1618,63 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
   </script>
+<script>
+   // Improved auto-play with user interaction detection
+(function() {
+    const acAudio = document.getElementById('acMusic');
+    const musicBtn = document.querySelector('.music-btn');
+    let hasInteracted = false;
+    
+    // Try to unmute and play on first interaction
+    const enableAudio = () => {
+        if (!hasInteracted) {
+            hasInteracted = true;
+            acAudio.muted = false;
+            acAudio.volume = 0.5;
+            acAudio.play().then(() => {
+                musicPlaying = true;
+                musicBtn.textContent = '🎶 Now Playing... 🎶';
+                musicBtn.classList.add('playing');
+                if (typeof spawnMusicNotes === 'function') spawnMusicNotes();
+            }).catch(e => console.log('Audio play failed:', e));
+        }
+    };
+    
+    // Listen for any user interaction
+    ['click', 'touchstart', 'keydown', 'scroll'].forEach(event => {
+        document.addEventListener(event, enableAudio, { once: true, passive: true });
+    });
+    
+    // Show hint to user
+    const hint = document.createElement('div');
+    hint.id = 'audio-hint';
+    hint.innerHTML = '🎵 Cliquez n\'importe où pour activer la musique!';
+    hint.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);background:rgba(147,51,234,0.9);color:white;padding:10px 20px;border-radius:25px;z-index:10000;font-size:14px;animation:pulse 2s infinite;cursor:pointer;';
+    document.body.appendChild(hint);
+    
+    // Remove hint on interaction
+    const removeHint = () => {
+        const h = document.getElementById('audio-hint');
+        if (h) {
+            h.style.animation = 'fadeOut 0.5s forwards';
+            setTimeout(() => h.remove(), 500);
+        }
+    };
+    document.addEventListener('click', removeHint, { once: true });
+    
+    // Auto-remove hint after 5 seconds anyway
+    setTimeout(removeHint, 5000);
+})();
+  </script>
+<style>
+   @keyframes pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); box-shadow: 0 0 10px rgba(147,51,234,0.5); }
+    50% { transform: translateX(-50%) scale(1.05); box-shadow: 0 0 20px rgba(147,51,234,0.8); }
+}
+@keyframes fadeOut {
+    to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+}
+  </style>
 </body>
 </html>
 <!-- update -->
