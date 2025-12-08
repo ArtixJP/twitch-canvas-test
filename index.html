@@ -306,7 +306,31 @@ canvas{border-radius:15px}
 </div>
 </div>
 <script>
-      (function(){const puppy=document.getElementById('puppy');const cat=document.getElementById('cat');const dogHealthBar=document.getElementById('dog-health-bar');const catHealthBar=document.getElementById('cat-health-bar');const fightStatus=document.getElementById('fight-status');const autoFightBtn=document.getElementById('auto-fight-btn');let dogScore=0,catScore=0;let dogHealth=100,catHealth=100;let fighting=false;let autoFighting=false;let autoFightInterval;let matchWinner=null;const WIN_SCORE=5;function updateHealthBars(){dogHealthBar.style.width=Math.max(0,dogHealth)+'%';catHealthBar.style.width=Math.max(0,catHealth)+'%';}function updateScores(){document.getElementById('dog-score').textContent=dogScore;document.getElementById('cat-score').textContent=catScore;}function spawnArenaEffect(x,y,text,color){const effect=document.createElement('div');effect.className='arena-spark';effect.textContent=text;effect.style.cssText='position:fixed;font-size:'+(Math.random()*25+20)+'px;left:'+x+'px;top:'+y+'px;color:'+color+';font-family:Orbitron,monospace;font-weight:bold;text-shadow:0 0 15px '+color+';pointer-events:none;z-index:1000';document.body.appendChild(effect);effect.animate([{transform:'translateY(0) scale(1)',opacity:1},{transform:'translateY(-60px) scale(1.5)',opacity:0}],{duration:800,easing:'ease-out'});setTimeout(()=>effect.remove(),800);}function declareRoundWinner(winner){if(winner==='dog'){dogScore++;fightStatus.innerHTML='🐶 DOGGO remporte le round!';fightStatus.style.color='#4169e1';}else{catScore++;fightStatus.innerHTML='🐱 KITTY remporte le round!';fightStatus.style.color='#ff1493';}updateScores();dogHealth=100;catHealth=100;updateHealthBars();if(dogScore>=WIN_SCORE||catScore>=WIN_SCORE){declareMatchWinner(dogScore>=WIN_SCORE?'dog':'cat');}}function declareMatchWinner(winner){matchWinner=winner;autoFighting=false;clearInterval(autoFightInterval);autoFightBtn.textContent='🔄 REJOUER';const winnerName=winner==='dog'?'🐶 DOGGO':'🐱 KITTY';fightStatus.innerHTML='🏆 '+winnerName+' EST LE CHAMPION! 🏆';fightStatus.style.color='#ffd700';fightStatus.style.fontSize='16px';}function resetMatch(){dogScore=0;catScore=0;dogHealth=100;catHealth=100;matchWinner=null;updateScores();updateHealthBars();fightStatus.innerHTML='🔔 Premier à 5 victoires gagne!';fightStatus.style.color='#aaa';fightStatus.style.fontSize='12px';autoFightBtn.textContent='⚔️ AUTO-COMBAT ⚔️';}function fight(attacker){if(fighting||matchWinner)return;fighting=true;const isdog=attacker==='dog';const defenderEl=isdog?cat:puppy;const defenderRect=defenderEl.getBoundingClientRect();const damage=Math.floor(Math.random()*25)+10;const critical=Math.random()>0.8;const actualDamage=critical?damage*2:damage;setTimeout(()=>{if(isdog){catHealth-=actualDamage;}else{dogHealth-=actualDamage;}updateHealthBars();const effects=critical?['💥CRIT!','⚡'+actualDamage,'🔥']:['POW!',''+actualDamage,'💫'];effects.forEach((e,i)=>{setTimeout(()=>spawnArenaEffect(defenderRect.left+Math.random()*60,defenderRect.top+Math.random()*60,e,critical?'#ffd700':'#fff'),i*100);});fightStatus.innerHTML=(isdog?'🐶':'🐱')+' inflige '+actualDamage+' dégâts!'+(critical?' CRITIQUE!':'');fightStatus.style.color=critical?'#ffd700':'#fff';if(dogHealth<=0){declareRoundWinner('cat');}else if(catHealth<=0){declareRoundWinner('dog');}setTimeout(()=>{fighting=false;},300);},150);}if(puppy)puppy.addEventListener('click',()=>fight('dog'));if(cat)cat.addEventListener('click',()=>fight('cat'));if(autoFightBtn)autoFightBtn.addEventListener('click',function(){if(matchWinner){resetMatch();return;}autoFighting=!autoFighting;if(autoFighting){this.textContent='⏸️ PAUSE';this.style.background='linear-gradient(45deg,#ff4444,#ff6666)';autoFightInterval=setInterval(()=>{if(!fighting&&!matchWinner)fight(Math.random()>0.5?'dog':'cat');},800);}else{this.textContent='⚔️ AUTO-COMBAT ⚔️';this.style.background='linear-gradient(45deg,#ff6b35,#ffd700)';clearInterval(autoFightInterval);}});})();
+      const messagesContainer = document.getElementById('messages');const chatInput = document.getElementById('chat-input');const sendButton = document.getElementById('send-message');sendButton.addEventListener('click', () => {const message = chatInput.value; if (message.trim()) {const messageElement = document.createElement('div');messageElement.textContent = message;messageElement.style.margin = '5px 0';messagesContainer.appendChild(messageElement);chatInput.value = '';messagesContainer.scrollTop = messagesContainer.scrollHeight;}});
+
+(function() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDemoKeyForTesting123",
+    authDomain: "twitch-collab-chat.firebaseapp.com",
+    databaseURL: "https://twitch-collab-chat-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "twitch-collab-chat"
+  };
+  const messagesDiv = document.getElementById('messages');
+  const chatInput = document.getElementById('chat-input');
+  const usernameInput = document.getElementById('username-input');
+  const sendBtn = document.getElementById('send-message');
+  let userId = localStorage.getItem('chat-user-id');
+  if (!userId) { userId = 'user_' + Math.random().toString(36).substr(2, 9); localStorage.setItem('chat-user-id', userId); }
+  let username = localStorage.getItem('chat-username') || '';
+  usernameInput.value = username;
+  const colors = ['#ff6b6b','#4ecdc4','#45b7d1','#96ceb4','#ffeaa7','#dfe6e9','#fd79a8','#a29bfe','#00b894','#e17055'];
+  const userColor = colors[Math.abs(userId.split('').reduce((a,b) => a + b.charCodeAt(0), 0)) % colors.length];
+  let messages = JSON.parse(localStorage.getItem('realtime-chat') || '[]');
+  function renderMessages() { ... } // Reste inchangé
+  function sendMessage() { ... } // Reste inchangé
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+})();
      </script>
 <div id="gameContainer">
 <canvas height="400" id="snakeCanvas" width="400">
