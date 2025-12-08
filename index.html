@@ -387,6 +387,36 @@ canvas{border-radius:15px}
 <button class="red-button" onclick="playSound('red')">
      🌟 Nouveau Bouton Rouge 🌟
     </button>
+<div id="foucault-avatar" style="position:fixed;bottom:120px;left:20px;cursor:pointer;z-index:1000;transition:transform 0.3s">
+<div style="width:80px;height:80px;background:linear-gradient(135deg,#2c2c2c,#1a1a1a);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(0,0,0,0.4);border:3px solid #8b7355;position:relative">
+<div style="font-size:40px;filter:grayscale(0.3)">
+       👨‍🦲
+      </div>
+<div style="position:absolute;top:-5px;left:50%;transform:translateX(-50%);width:60px;height:20px;background:#2c2c2c;border-radius:50% 50% 0 0">
+</div>
+<div style="position:absolute;top:5px;width:50px;height:8px;background:linear-gradient(90deg,transparent,#555,transparent);border-radius:50%">
+</div>
+</div>
+<div style="text-align:center;margin-top:5px;font-size:10px;color:#8b7355;font-family:Georgia,serif;font-weight:bold">
+      M. Foucault
+     </div>
+</div>
+<div id="foucault-speech" style="position:fixed;bottom:210px;left:20px;background:rgba(255,255,255,0.95);border-radius:15px;padding:15px;max-width:280px;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:999;opacity:0;transform:translateY(10px);transition:all 0.4s ease;pointer-events:none;border-left:4px solid #8b7355">
+<p style="margin:0;font-family:Georgia,serif;font-size:13px;color:#333;line-height:1.5;font-style:italic">
+      «Là où il y a pouvoir, il y a résistance.»
+     </p>
+<p style="margin:8px 0 0;font-size:10px;color:#666;text-align:right">
+      — Surveiller et punir, 1975
+     </p>
+<div style="position:absolute;bottom:-10px;left:30px;width:0;height:0;border-left:10px solid transparent;border-right:10px solid transparent;border-top:10px solid rgba(255,255,255,0.95)">
+</div>
+</div>
+<style>
+     #foucault-avatar:hover{transform:scale(1.1)}#foucault-avatar:hover~#foucault-speech,#foucault-avatar:hover+#foucault-speech{opacity:1;transform:translateY(0)}#foucault-speech{animation:none}@keyframes foucaultPulse{0%,100%{box-shadow:0 4px 20px rgba(0,0,0,0.4)}50%{box-shadow:0 4px 30px rgba(139,115,85,0.6)}}
+    </style>
+<script>
+     (function(){const avatar=document.getElementById('foucault-avatar');const speech=document.getElementById('foucault-speech');const citations=[{text:'«Là où il y a pouvoir, il y a résistance.»',source:'— Surveiller et punir, 1975'},{text:'«Il ne faut pas décrire la sexualité comme une force rebelle.»',source:'— Histoire de la sexualité, 1976'},{text:'«Le savoir n\'est pas fait pour comprendre, il est fait pour trancher.»',source:'— Leçon sur la volonté de savoir, 1970'},{text:'«La vérité est de ce monde; elle y est produite grâce à de multiples contraintes.»',source:'— Dits et écrits, 1977'},{text:'«Je ne dis pas les choses parce que je les pense, je les dis pour ne plus les penser.»',source:'— Entretien, 1975'}];let currentIndex=0;avatar.addEventListener('click',function(){currentIndex=(currentIndex+1)%citations.length;const citation=citations[currentIndex];speech.querySelector('p:first-child').textContent=citation.text;speech.querySelector('p:last-child').textContent=citation.source;speech.style.opacity='1';speech.style.transform='translateY(0)';setTimeout(()=>{speech.style.opacity='0';speech.style.transform='translateY(10px)';},5000);});avatar.addEventListener('mouseenter',()=>{speech.style.opacity='1';speech.style.transform='translateY(0)';});avatar.addEventListener('mouseleave',()=>{speech.style.opacity='0';speech.style.transform='translateY(10px)';});})();
+    </script>
 </div>
 </div>
 <audio id="robotSound" preload="auto" src="https://www.soundjay.com/button/sounds/button-16.mp3">
