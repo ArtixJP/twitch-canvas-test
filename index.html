@@ -594,6 +594,32 @@ body.warm-mode .stat-card h3 {
     0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
     50% { transform: translateY(-15px) rotate(15deg); opacity: 1; }
 }
+   @keyframes rainbowBg {
+    0% { filter: hue-rotate(0deg); }
+    50% { filter: hue-rotate(180deg) brightness(1.2); }
+    100% { filter: hue-rotate(360deg); }
+}
+
+@keyframes unicornRise {
+    0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(-120vh) rotate(720deg); opacity: 0; }
+}
+
+@keyframes secretPop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+}
+
+@keyframes llamaSpin {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(-180deg); }
+    50% { transform: translate(-50%, -50%) scale(1.2) rotate(10deg); }
+    100% { transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+}
+
+#easter-egg-hint:hover {
+    opacity: 0.8 !important;
+}
   </style>
 </head>
 <body class="warm-mode">
@@ -628,7 +654,7 @@ body.warm-mode .stat-card h3 {
 <!-- Page Accueil -->
 <div class="page active" id="home">
 <h1>
-<h1 style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 5s ease infinite;">
+<h1 id="mainTitle" style="background: linear-gradient(90deg, red, orange, yellow, green, blue, indigo, violet); -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: rainbow 5s ease infinite;">
        Hello World
       </h1>
 </h1>
@@ -1440,6 +1466,86 @@ if (llamaArt) {
             }, i * 100);
         }
     });
+}
+  </script>
+<div id="easter-egg-hint" style="position: fixed; bottom: 10px; left: 10px; font-size: 10px; opacity: 0.4; color: inherit; font-family: monospace; z-index: 50; pointer-events: none; max-width: 200px; line-height: 1.4;">
+   🥚 Secrets: Konami Code ↑↑↓↓←→←→BA | Triple-clic sur le titre | Tape "llama"
+  </div>
+<script>
+   // Easter Egg 1: Triple click on title
+let titleClickCount = 0;
+let titleClickTimer = null;
+const mainTitle = document.getElementById('mainTitle');
+if (mainTitle) {
+    mainTitle.style.cursor = 'pointer';
+    mainTitle.addEventListener('click', () => {
+        titleClickCount++;
+        clearTimeout(titleClickTimer);
+        titleClickTimer = setTimeout(() => titleClickCount = 0, 500);
+        
+        if (titleClickCount >= 3) {
+            titleClickCount = 0;
+            activateRainbowMode();
+        }
+    });
+}
+
+function activateRainbowMode() {
+    document.body.style.animation = 'rainbowBg 2s ease';
+    
+    // Spawn unicorns
+    for (let i = 0; i < 15; i++) {
+        setTimeout(() => {
+            const unicorn = document.createElement('div');
+            unicorn.textContent = ['🦄', '🌈', '⭐', '🎠'][Math.floor(Math.random() * 4)];
+            unicorn.style.cssText = `position:fixed;font-size:${Math.random()*30+20}px;left:${Math.random()*100}vw;top:100vh;z-index:10000;pointer-events:none;animation:unicornRise 3s ease-out forwards;`;
+            document.body.appendChild(unicorn);
+            setTimeout(() => unicorn.remove(), 3000);
+        }, i * 100);
+    }
+    
+    // Secret message
+    const msg = document.createElement('div');
+    msg.innerHTML = '🦄 MODE LICORNE ACTIVÉ! 🌈';
+    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:2rem;color:#fff;text-shadow:0 0 20px #ff69b4,0 0 40px #9333ea;z-index:10001;animation:secretPop 2s ease-out forwards;pointer-events:none;';
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 2000);
+}
+
+// Easter Egg 2: Type "llama"
+let typedKeys = '';
+document.addEventListener('keypress', (e) => {
+    typedKeys += e.key.toLowerCase();
+    if (typedKeys.length > 10) typedKeys = typedKeys.slice(-10);
+    
+    if (typedKeys.includes('llama')) {
+        typedKeys = '';
+        summonLlama();
+    }
+});
+
+function summonLlama() {
+    const llama = document.createElement('div');
+    llama.innerHTML = `<pre style="font-size:6px;line-height:1;color:#9333ea;">       .=*=.
+      /  ^ ^\\n     |  (o)  |
+     /\`-._.-'\`\
+    /    |    \
+   🦙 LLAMA POWER! 🦙</pre>`;
+    llama.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(255,255,255,0.95);padding:2rem;border-radius:20px;z-index:10002;animation:llamaSpin 1s ease;box-shadow:0 0 50px rgba(147,51,234,0.8);';
+    document.body.appendChild(llama);
+    
+    // Spawn mini llamas
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const mini = document.createElement('span');
+            mini.textContent = '🦙';
+            mini.style.cssText = `position:fixed;font-size:30px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;z-index:10001;animation:llamaBounce 0.5s ease infinite;pointer-events:none;`;
+            document.body.appendChild(mini);
+            setTimeout(() => mini.remove(), 2000);
+        }, i * 50);
+    }
+    
+    setTimeout(() => llama.remove(), 2500);
 }
   </script>
 </body>
