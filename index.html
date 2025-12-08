@@ -239,6 +239,74 @@ canvas{border-radius:15px}
        </p>
 </div>
 </div>
+<div id="arena-section" style="margin-top:3rem;text-align:center;">
+<h2 style="color:#ffd700;font-family:Orbitron,monospace;text-shadow:0 0 20px #ff6b35;margin-bottom:1rem;">
+       ⚔️ ARÈNE DU DESTIN ⚔️
+      </h2>
+<p class="subtitle" style="margin-bottom:2rem;">
+       Cliquez sur les combattants pour attaquer!
+      </p>
+<div id="fight-arena" style="position:relative;margin:0 auto;width:500px;height:400px;background:radial-gradient(ellipse at center,#2a1a0a 0%,#1a0a00 50%,#0a0500 100%);border:8px solid #8b4513;border-radius:50%;box-shadow:inset 0 0 100px rgba(255,100,0,0.3),0 0 50px rgba(139,69,19,0.8),0 0 100px rgba(255,69,0,0.4);overflow:hidden;">
+<div style="position:absolute;inset:10px;border:4px dashed rgba(255,200,100,0.3);border-radius:50%;">
+</div>
+<div style="position:absolute;inset:30px;border:2px solid rgba(255,150,50,0.2);border-radius:50%;">
+</div>
+<div id="arena-flames" style="position:absolute;bottom:-10px;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(255,100,0,0.8),rgba(255,150,0,0.4),transparent);animation:flamesFlicker 0.5s ease-in-out infinite alternate;">
+</div>
+<div id="crowd" style="position:absolute;top:5px;left:50%;transform:translateX(-50%);font-size:16px;opacity:0.6;animation:crowdCheer 1s ease-in-out infinite;">
+        👥👥👥👥👥👥👥👥👥
+       </div>
+<div id="puppy" style="position:absolute;left:25%;top:50%;transform:translate(-50%,-50%);font-size:80px;cursor:pointer;filter:drop-shadow(0 0 20px #4169e1);transition:all 0.3s;">
+        🐶
+        <div id="dog-health" style="position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:10px;background:#333;border-radius:5px;overflow:hidden;border:2px solid #4169e1;">
+<div id="dog-health-bar" style="width:100%;height:100%;background:linear-gradient(90deg,#4169e1,#00bfff);transition:width 0.3s;">
+</div>
+</div>
+<div style="position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:14px;color:#4169e1;font-weight:bold;text-shadow:0 0 10px #4169e1;">
+         DOGGO
+        </div>
+</div>
+<div id="cat" style="position:absolute;left:75%;top:50%;transform:translate(-50%,-50%);font-size:80px;cursor:pointer;filter:drop-shadow(0 0 20px #ff1493);transition:all 0.3s;">
+        🐱
+        <div id="cat-health" style="position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:10px;background:#333;border-radius:5px;overflow:hidden;border:2px solid #ff1493;">
+<div id="cat-health-bar" style="width:100%;height:100%;background:linear-gradient(90deg,#ff1493,#ff69b4);transition:width 0.3s;">
+</div>
+</div>
+<div style="position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:14px;color:#ff1493;font-weight:bold;text-shadow:0 0 10px #ff1493;">
+         KITTY
+        </div>
+</div>
+</div>
+<div id="fight-score" style="margin-top:1.5rem;background:linear-gradient(135deg,rgba(0,0,0,0.9),rgba(50,0,0,0.9));color:#fff;padding:20px 40px;border-radius:20px;font-family:Orbitron,monospace;font-size:24px;border:3px solid #ffd700;box-shadow:0 0 30px rgba(255,215,0,0.5);display:inline-block;">
+<div style="font-size:14px;color:#ffd700;margin-bottom:10px;">
+        🏆 SCORE 🏆
+       </div>
+       🐶
+       <span id="dog-score" style="color:#4169e1;font-size:32px;text-shadow:0 0 10px #4169e1;">
+        0
+       </span>
+<span style="color:#ffd700;">
+        VS
+       </span>
+<span id="cat-score" style="color:#ff1493;font-size:32px;text-shadow:0 0 10px #ff1493;">
+        0
+       </span>
+       🐱
+       <br/>
+<small id="fight-status" style="color:#aaa;font-size:12px;">
+        🔔 Premier à 5 victoires gagne!
+       </small>
+<br/>
+<button id="auto-fight-btn" style="margin-top:10px;padding:8px 20px;background:linear-gradient(45deg,#ff6b35,#ffd700);border:none;border-radius:20px;color:#000;font-family:Orbitron,monospace;font-weight:bold;cursor:pointer;font-size:12px;transition:all 0.3s;">
+        ⚔️ AUTO-COMBAT ⚔️
+       </button>
+</div>
+<div id="fight-effects" style="pointer-events:none;">
+</div>
+</div>
+<script>
+      (function(){const puppy=document.getElementById('puppy');const cat=document.getElementById('cat');const dogHealthBar=document.getElementById('dog-health-bar');const catHealthBar=document.getElementById('cat-health-bar');const fightStatus=document.getElementById('fight-status');const autoFightBtn=document.getElementById('auto-fight-btn');let dogScore=0,catScore=0;let dogHealth=100,catHealth=100;let fighting=false;let autoFighting=false;let autoFightInterval;let matchWinner=null;const WIN_SCORE=5;function updateHealthBars(){dogHealthBar.style.width=Math.max(0,dogHealth)+'%';catHealthBar.style.width=Math.max(0,catHealth)+'%';}function updateScores(){document.getElementById('dog-score').textContent=dogScore;document.getElementById('cat-score').textContent=catScore;}function spawnArenaEffect(x,y,text,color){const effect=document.createElement('div');effect.className='arena-spark';effect.textContent=text;effect.style.cssText='position:fixed;font-size:'+(Math.random()*25+20)+'px;left:'+x+'px;top:'+y+'px;color:'+color+';font-family:Orbitron,monospace;font-weight:bold;text-shadow:0 0 15px '+color+';pointer-events:none;z-index:1000';document.body.appendChild(effect);effect.animate([{transform:'translateY(0) scale(1)',opacity:1},{transform:'translateY(-60px) scale(1.5)',opacity:0}],{duration:800,easing:'ease-out'});setTimeout(()=>effect.remove(),800);}function declareRoundWinner(winner){if(winner==='dog'){dogScore++;fightStatus.innerHTML='🐶 DOGGO remporte le round!';fightStatus.style.color='#4169e1';}else{catScore++;fightStatus.innerHTML='🐱 KITTY remporte le round!';fightStatus.style.color='#ff1493';}updateScores();dogHealth=100;catHealth=100;updateHealthBars();if(dogScore>=WIN_SCORE||catScore>=WIN_SCORE){declareMatchWinner(dogScore>=WIN_SCORE?'dog':'cat');}}function declareMatchWinner(winner){matchWinner=winner;autoFighting=false;clearInterval(autoFightInterval);autoFightBtn.textContent='🔄 REJOUER';const winnerName=winner==='dog'?'🐶 DOGGO':'🐱 KITTY';fightStatus.innerHTML='🏆 '+winnerName+' EST LE CHAMPION! 🏆';fightStatus.style.color='#ffd700';fightStatus.style.fontSize='16px';}function resetMatch(){dogScore=0;catScore=0;dogHealth=100;catHealth=100;matchWinner=null;updateScores();updateHealthBars();fightStatus.innerHTML='🔔 Premier à 5 victoires gagne!';fightStatus.style.color='#aaa';fightStatus.style.fontSize='12px';autoFightBtn.textContent='⚔️ AUTO-COMBAT ⚔️';}function fight(attacker){if(fighting||matchWinner)return;fighting=true;const isdog=attacker==='dog';const defenderEl=isdog?cat:puppy;const defenderRect=defenderEl.getBoundingClientRect();const damage=Math.floor(Math.random()*25)+10;const critical=Math.random()>0.8;const actualDamage=critical?damage*2:damage;setTimeout(()=>{if(isdog){catHealth-=actualDamage;}else{dogHealth-=actualDamage;}updateHealthBars();const effects=critical?['💥CRIT!','⚡'+actualDamage,'🔥']:['POW!',''+actualDamage,'💫'];effects.forEach((e,i)=>{setTimeout(()=>spawnArenaEffect(defenderRect.left+Math.random()*60,defenderRect.top+Math.random()*60,e,critical?'#ffd700':'#fff'),i*100);});fightStatus.innerHTML=(isdog?'🐶':'🐱')+' inflige '+actualDamage+' dégâts!'+(critical?' CRITIQUE!':'');fightStatus.style.color=critical?'#ffd700':'#fff';if(dogHealth<=0){declareRoundWinner('cat');}else if(catHealth<=0){declareRoundWinner('dog');}setTimeout(()=>{fighting=false;},300);},150);}if(puppy)puppy.addEventListener('click',()=>fight('dog'));if(cat)cat.addEventListener('click',()=>fight('cat'));if(autoFightBtn)autoFightBtn.addEventListener('click',function(){if(matchWinner){resetMatch();return;}autoFighting=!autoFighting;if(autoFighting){this.textContent='⏸️ PAUSE';this.style.background='linear-gradient(45deg,#ff4444,#ff6666)';autoFightInterval=setInterval(()=>{if(!fighting&&!matchWinner)fight(Math.random()>0.5?'dog':'cat');},800);}else{this.textContent='⚔️ AUTO-COMBAT ⚔️';this.style.background='linear-gradient(45deg,#ff6b35,#ffd700)';clearInterval(autoFightInterval);}});})();
+     </script>
 <div id="gameContainer">
 <canvas height="400" id="snakeCanvas" width="400">
 </canvas>
@@ -837,68 +905,8 @@ setInterval(() => {
 <script>
    const messagesContainer = document.getElementById('messages');const chatInput = document.getElementById('chat-input');const sendButton = document.getElementById('send-message');sendButton.addEventListener('click', () => {const message = chatInput.value; if (message.trim()) {const messageElement = document.createElement('div');messageElement.textContent = message;messageElement.style.margin = '5px 0';messagesContainer.appendChild(messageElement);chatInput.value = '';messagesContainer.scrollTop = messagesContainer.scrollHeight;}});
   </script>
-<div id="fight-arena" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:500px;height:400px;background:radial-gradient(ellipse at center,#2a1a0a 0%,#1a0a00 50%,#0a0500 100%);border:8px solid #8b4513;border-radius:50%;box-shadow:inset 0 0 100px rgba(255,100,0,0.3),0 0 50px rgba(139,69,19,0.8),0 0 100px rgba(255,69,0,0.4);z-index:98;overflow:hidden;">
-<div style="position:absolute;inset:10px;border:4px dashed rgba(255,200,100,0.3);border-radius:50%;">
-</div>
-<div style="position:absolute;inset:30px;border:2px solid rgba(255,150,50,0.2);border-radius:50%;">
-</div>
-<div id="arena-title" style="position:absolute;top:-50px;left:50%;transform:translateX(-50%);font-family:Orbitron,monospace;font-size:28px;color:#ffd700;text-shadow:0 0 20px #ff6b35,0 0 40px #ff4500;white-space:nowrap;">
-    ⚔️ ARÈNE DU DESTIN ⚔️
-   </div>
-<div id="arena-flames" style="position:absolute;bottom:-10px;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(255,100,0,0.8),rgba(255,150,0,0.4),transparent);animation:flamesFlicker 0.5s ease-in-out infinite alternate;">
-</div>
-<div id="crowd" style="position:absolute;top:5px;left:50%;transform:translateX(-50%);font-size:16px;opacity:0.6;animation:crowdCheer 1s ease-in-out infinite;">
-    👥👥👥👥👥👥👥👥👥
-   </div>
-</div>
-<div id="puppy" style="position:fixed;left:calc(50% - 150px);top:50%;transform:translate(-50%,-50%);font-size:80px;cursor:pointer;z-index:100;filter:drop-shadow(0 0 20px #4169e1);transition:all 0.3s;">
-   🐶
-   <div id="dog-health" style="position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:10px;background:#333;border-radius:5px;overflow:hidden;border:2px solid #4169e1;">
-<div id="dog-health-bar" style="width:100%;height:100%;background:linear-gradient(90deg,#4169e1,#00bfff);transition:width 0.3s;">
-</div>
-</div>
-<div style="position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:14px;color:#4169e1;font-weight:bold;text-shadow:0 0 10px #4169e1;">
-    DOGGO
-   </div>
-</div>
-<div id="cat" style="position:fixed;left:calc(50% + 150px);top:50%;transform:translate(-50%,-50%);font-size:80px;cursor:pointer;z-index:100;filter:drop-shadow(0 0 20px #ff1493);transition:all 0.3s;">
-   🐱
-   <div id="cat-health" style="position:absolute;bottom:-30px;left:50%;transform:translateX(-50%);width:80px;height:10px;background:#333;border-radius:5px;overflow:hidden;border:2px solid #ff1493;">
-<div id="cat-health-bar" style="width:100%;height:100%;background:linear-gradient(90deg,#ff1493,#ff69b4);transition:width 0.3s;">
-</div>
-</div>
-<div style="position:absolute;top:-25px;left:50%;transform:translateX(-50%);font-size:14px;color:#ff1493;font-weight:bold;text-shadow:0 0 10px #ff1493;">
-    KITTY
-   </div>
-</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js">
 </script>
-<div id="fight-effects" style="position:fixed;pointer-events:none;z-index:1000;">
-</div>
-<div id="fight-score" style="position:fixed;left:50%;top:15%;transform:translateX(-50%);background:linear-gradient(135deg,rgba(0,0,0,0.9),rgba(50,0,0,0.9));color:#fff;padding:20px 40px;border-radius:20px;font-family:Orbitron,monospace;font-size:24px;z-index:101;border:3px solid #ffd700;box-shadow:0 0 30px rgba(255,215,0,0.5);text-align:center;">
-<div style="font-size:14px;color:#ffd700;margin-bottom:10px;">
-    🏆 SCORE 🏆
-   </div>
-   🐶
-   <span id="dog-score" style="color:#4169e1;font-size:32px;text-shadow:0 0 10px #4169e1;">
-    0
-   </span>
-<span style="color:#ffd700;">
-    VS
-   </span>
-<span id="cat-score" style="color:#ff1493;font-size:32px;text-shadow:0 0 10px #ff1493;">
-    0
-   </span>
-   🐱
-   <br/>
-<small id="fight-status" style="color:#aaa;font-size:12px;">
-    🔔 Premier à 5 victoires gagne!
-   </small>
-<br/>
-<button id="auto-fight-btn" style="margin-top:10px;padding:8px 20px;background:linear-gradient(45deg,#ff6b35,#ffd700);border:none;border-radius:20px;color:#000;font-family:Orbitron,monospace;font-weight:bold;cursor:pointer;font-size:12px;transition:all 0.3s;">
-    ⚔️ AUTO-COMBAT ⚔️
-   </button>
-</div>
 <script>
    (function(){const puppy=document.getElementById('puppy');const cat=document.getElementById('cat');const effects=document.getElementById('fight-effects');let dogScore=0;let catScore=0;let fighting=false;const fightSounds=['POW!','BAM!','WOOF!','MEOW!','SCRATCH!','BITE!','*griffe*','*aboie*','💥','⚡','💫','🌟'];const catAttacks=['😾','🙀','😼','👊','💢'];const dogAttacks=['🐕','😤','💪','🦴','💢'];function spawnEffect(x,y,text){const effect=document.createElement('div');effect.textContent=text;effect.style.cssText='position:fixed;font-size:'+(Math.random()*30+20)+'px;left:'+x+'px;top:'+y+'px;pointer-events:none;z-index:1001;font-family:Orbitron,monospace;font-weight:bold;color:hsl('+(Math.random()*360)+',100%,50%);text-shadow:0 0 10px currentColor';document.body.appendChild(effect);gsap.to(effect,{y:-80,x:(Math.random()-0.5)*100,opacity:0,scale:1.5,rotation:(Math.random()-0.5)*60,duration:1,ease:'power2.out',onComplete:()=>effect.remove()});}function updateScore(){document.getElementById('dog-score').textContent=dogScore;document.getElementById('cat-score').textContent=catScore;}function fight(attacker){if(fighting)return;fighting=true;const isdog=attacker==='dog';const attackerEl=isdog?puppy:cat;const defenderEl=isdog?cat:puppy;const attackerRect=attackerEl.getBoundingClientRect();const defenderRect=defenderEl.getBoundingClientRect();gsap.timeline().to(attackerEl,{x:isdog?80:-80,scale:1.3,duration:0.2,ease:'power2.in'}).to(attackerEl,{x:isdog?120:-120,duration:0.1,ease:'power2.out'}).add(()=>{for(let i=0;i<8;i++){setTimeout(()=>{spawnEffect(defenderRect.left+Math.random()*50,defenderRect.top+Math.random()*50,fightSounds[Math.floor(Math.random()*fightSounds.length)]);},i*50);}attackerEl.textContent=isdog?dogAttacks[Math.floor(Math.random()*dogAttacks.length)]:catAttacks[Math.floor(Math.random()*catAttacks.length)];}).to(defenderEl,{x:isdog?50:-50,rotation:isdog?30:-30,scale:0.8,duration:0.2,ease:'power2.out'}).to(defenderEl,{x:0,rotation:0,scale:1,duration:0.3,ease:'elastic.out(1,0.5)'}).to(attackerEl,{x:0,scale:1,duration:0.3,ease:'elastic.out(1,0.5)'},'-=0.2').add(()=>{attackerEl.textContent=isdog?'🐶':'🐱';if(Math.random()>0.3){if(isdog)dogScore++;else catScore++;updateScore();const winner=isdog?'🐶 WOOF!':'🐱 MEOW!';spawnEffect(attackerRect.left,attackerRect.top-50,winner);}else{spawnEffect(defenderRect.left,defenderRect.top-50,'ESQUIVE!');}fighting=false;});gsap.to([puppy,cat],{y:()=>(Math.random()-0.5)*20,duration:0.1,repeat:5,yoyo:true,ease:'none'});}puppy.addEventListener('click',()=>fight('dog'));cat.addEventListener('click',()=>fight('cat'));function idleAnimations(){gsap.to(puppy,{y:-10,duration:0.5,repeat:-1,yoyo:true,ease:'power1.inOut'});gsap.to(cat,{rotation:5,duration:0.8,repeat:-1,yoyo:true,ease:'power1.inOut',transformOrigin:'bottom center'});}setTimeout(idleAnimations,100);setInterval(()=>{if(!fighting&&Math.random()>0.7){const taunt=document.createElement('div');taunt.textContent=Math.random()>0.5?'Viens te battre! 🐶':'Approche si tu oses! 🐱';taunt.style.cssText='position:fixed;left:8%;top:28%;background:rgba(255,255,255,0.9);padding:8px 15px;border-radius:15px;font-size:12px;z-index:102;pointer-events:none';document.body.appendChild(taunt);gsap.to(taunt,{opacity:0,y:-20,duration:2,delay:1,onComplete:()=>taunt.remove()});}},5000);})();
   </script>
