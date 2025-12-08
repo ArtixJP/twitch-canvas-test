@@ -221,6 +221,12 @@ canvas{border-radius:15px}
 <h1 id="mainTitle" style="background:linear-gradient(90deg,red,orange,yellow,green,blue,indigo,violet);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:rainbow 5s ease infinite">
       Hello World
      </h1>
+<button class="dynamic-button" style="margin-top: 20px; background-color: blue; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;">
+      Cliquez pour du réconfort!
+      <script>
+       const messages = ['Tout ira bien!', 'Vous êtes incroyable!', 'Ne perdez jamais espoir!', 'Vous êtes aimé!', 'Restez positif!']; const button = document.querySelector('.dynamic-button'); let index = 0; button.addEventListener('click', () => { button.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16); button.textContent = messages[index]; index = (index + 1) % messages.length; });
+      </script>
+</button>
 <p class="subtitle">
       Bienvenue dans cet espace digital
      </p>
