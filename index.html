@@ -509,21 +509,32 @@
         }
   </style>
 </head>
-<div id="scoreboard" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); padding: 15px 30px; border-radius: 15px; border: 2px solid rgba(100, 200, 255, 0.5); z-index: 1000; font-size: 1.5rem; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8);">
+<div class="section-animals" id="scoreboard" style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); padding: 15px 30px; border-radius: 15px; border: 2px solid rgba(100, 200, 255, 0.5); z-index: 1000; font-size: 1.5rem; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8); display: none;">
   🐕 Dog Score:
   <span id="dog-score">
    0
   </span>
 </div>
 <body>
-<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+<div class="section-space" id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
 </div>
-<h1>
+<nav id="main-nav" style="position: fixed; top: 0; left: 0; right: 0; display: flex; justify-content: center; gap: 10px; padding: 15px; background: rgba(0,0,0,0.8); border-bottom: 2px solid rgba(100, 200, 255, 0.5); z-index: 2000; backdrop-filter: blur(10px);">
+<button class="nav-btn active" data-section="space" style="padding: 12px 25px; font-size: 1.1rem; background: linear-gradient(135deg, #4a90a4, #2d5a6b); border: 2px solid rgba(100, 200, 255, 0.5); color: white; border-radius: 25px; cursor: pointer; transition: all 0.3s ease;">
+    🌌 Espace
+   </button>
+<button class="nav-btn" data-section="animals" style="padding: 12px 25px; font-size: 1.1rem; background: rgba(74, 144, 164, 0.3); border: 2px solid rgba(100, 200, 255, 0.3); color: white; border-radius: 25px; cursor: pointer; transition: all 0.3s ease;">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" data-section="games" style="padding: 12px 25px; font-size: 1.1rem; background: rgba(74, 144, 164, 0.3); border: 2px solid rgba(100, 200, 255, 0.3); color: white; border-radius: 25px; cursor: pointer; transition: all 0.3s ease;">
+    🎮 Jeux
+   </button>
+</nav>
+<h1 style="margin-top: 80px;">
    🌌 Welcome to Space 🌌
   </h1>
-<div class="stars" id="stars">
+<div class="stars section-space" id="stars">
 </div>
-<div class="solar-system" id="planet-system">
+<div class="solar-system section-space" id="planet-system" style="margin-top: 60px;">
 <div class="planet" id="main-planet">
 </div>
 <div class="rings">
@@ -531,6 +542,14 @@
 <div class="moon">
 </div>
 <div class="moon moon-2">
+</div>
+</div>
+<div class="section-animals" id="animals-container" style="display: none;">
+<div id="animals-title" style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); font-size: 2.5rem; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5); z-index: 500;">
+    🐾 Animaux Mignons 🐾
+   </div>
+<div class="solar-system" id="animals-orbit" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+<div class="planet" id="animals-planet" style="background: linear-gradient(135deg, #90a44a 0%, #5a6b2d 30%, #3a451a 70%, #1f260d 100%); box-shadow: inset -20px -20px 40px rgba(0,0,0,0.6), inset 10px 10px 20px rgba(100,255,100,0.2), 0 0 60px rgba(144, 164, 74, 0.4);">
 </div>
 <div class="kitty" id="orbiting-kitty">
 <div class="kitty-body">
@@ -597,28 +616,22 @@
 </div>
 </div>
 </div>
-<div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 100;">
+<div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, calc(-50% + 180px)); z-index: 100;">
 <div id="elephant" style="position: relative; width: 120px; height: 100px;">
-<!-- Corps -->
 <div style="position: absolute; width: 80px; height: 60px; background: linear-gradient(135deg, #8b8b8b 0%, #6b6b6b 100%); border-radius: 50%; top: 30px; left: 20px;">
 </div>
-<!-- Tête -->
 <div style="position: absolute; width: 50px; height: 45px; background: linear-gradient(135deg, #9b9b9b 0%, #7b7b7b 100%); border-radius: 50%; top: 20px; left: -5px;">
 </div>
-<!-- Oreille -->
 <div style="position: absolute; width: 30px; height: 35px; background: linear-gradient(135deg, #8b8b8b 0%, #5b5b5b 100%); border-radius: 50% 50% 50% 50%; top: 15px; left: -15px;">
 </div>
-<!-- Oeil -->
 <div style="position: absolute; width: 8px; height: 8px; background: #222; border-radius: 50%; top: 32px; left: 8px;">
 </div>
 <div style="position: absolute; width: 3px; height: 3px; background: #fff; border-radius: 50%; top: 33px; left: 10px;">
 </div>
-<!-- Trompe -->
 <div id="trunk" style="position: absolute; width: 15px; height: 50px; background: linear-gradient(90deg, #9b9b9b 0%, #7b7b7b 100%); border-radius: 8px; top: 40px; left: 5px; transform-origin: top center; animation: trunk-move 2s ease-in-out infinite;">
 <div style="position: absolute; width: 20px; height: 12px; background: #8b8b8b; border-radius: 50%; bottom: -5px; left: -2px;">
 </div>
 </div>
-<!-- Pattes -->
 <div style="position: absolute; width: 18px; height: 25px; background: #7b7b7b; border-radius: 5px 5px 8px 8px; bottom: -5px; left: 25px;">
 </div>
 <div style="position: absolute; width: 18px; height: 25px; background: #6b6b6b; border-radius: 5px 5px 8px 8px; bottom: -5px; left: 45px;">
@@ -627,15 +640,13 @@
 </div>
 <div style="position: absolute; width: 18px; height: 22px; background: #6b6b6b; border-radius: 5px 5px 8px 8px; bottom: -5px; left: 78px;">
 </div>
-<!-- Queue -->
 <div style="position: absolute; width: 5px; height: 20px; background: #6b6b6b; border-radius: 3px; top: 45px; right: -3px; transform: rotate(20deg);">
 </div>
-<!-- Défenses -->
 <div style="position: absolute; width: 6px; height: 15px; background: #fffff0; border-radius: 3px; top: 50px; left: 15px; transform: rotate(-30deg);">
 </div>
 </div>
-<!-- Particules d'eau -->
 <div id="water-spray">
+</div>
 </div>
 </div>
 <script>
@@ -984,18 +995,23 @@ window.addEventListener('load', () => {
   updatePositions();
 })();
   </script>
-<div id="game-container" style="position: fixed; bottom: 80px; left: 20px; z-index: 1000; background: rgba(0,0,0,0.8); border-radius: 15px; border: 2px solid rgba(100, 200, 255, 0.5); padding: 10px; box-shadow: 0 0 30px rgba(100, 200, 255, 0.3);">
-<div style="color: #fff; text-align: center; margin-bottom: 5px; font-size: 0.9rem;">
-    🐍 Space Snake - Use Arrow Keys
+<div class="section-games" id="games-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
+<div id="games-title" style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); font-size: 2.5rem; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5); z-index: 500;">
+    🎮 Zone de Jeux 🎮
    </div>
-<div id="snake-score" style="color: gold; text-align: center; margin-bottom: 5px;">
-    Score: 0
-   </div>
+<div id="game-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; background: rgba(0,0,0,0.8); border-radius: 15px; border: 2px solid rgba(100, 200, 255, 0.5); padding: 15px; box-shadow: 0 0 30px rgba(100, 200, 255, 0.3);">
+<div style="color: #fff; text-align: center; margin-bottom: 10px; font-size: 1.1rem;">
+     🐍 Space Snake - Use Arrow Keys
+    </div>
+<div id="snake-score" style="color: gold; text-align: center; margin-bottom: 10px; font-size: 1.2rem;">
+     Score: 0
+    </div>
 <canvas height="300" id="snake-game" style="border-radius: 10px; background: linear-gradient(135deg, #0a0a20 0%, #1a1a3e 100%);" width="300">
 </canvas>
-<button id="restart-snake" style="display: block; width: 100%; margin-top: 8px; padding: 8px; background: linear-gradient(135deg, #4a90a4, #2d5a6b); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 0.9rem;">
-    🔄 Restart
-   </button>
+<button id="restart-snake" style="display: block; width: 100%; margin-top: 10px; padding: 10px; background: linear-gradient(135deg, #4a90a4, #2d5a6b); border: none; border-radius: 8px; color: white; cursor: pointer; font-size: 1rem;">
+     🔄 Restart
+    </button>
+</div>
 </div>
 <script id="snake-game-script">
    (function() {
@@ -1262,6 +1278,103 @@ window.addEventListener('load', () => {
       setTimeout(() => createWaterParticle(), i * 50);
     }
   }, 200);
+})();
+  </script>
+<script id="nav-script">
+   (function() {
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = {
+    space: document.querySelectorAll('.section-space, [data-llm-id="e1"]'),
+    animals: document.querySelectorAll('.section-animals, #animals-container'),
+    games: document.querySelectorAll('.section-games, #games-container')
+  };
+  
+  const sectionOrder = ['space', 'animals', 'games'];
+  let currentSectionIndex = 0;
+  let autoRotateInterval = null;
+  
+  function showSection(sectionName) {
+    // Update current index
+    currentSectionIndex = sectionOrder.indexOf(sectionName);
+    if (currentSectionIndex === -1) currentSectionIndex = 0;
+    
+    // Hide all sections
+    Object.values(sections).forEach(els => {
+      els.forEach(el => {
+        if (el) el.style.display = 'none';
+      });
+    });
+    
+    // Show selected section
+    if (sections[sectionName]) {
+      sections[sectionName].forEach(el => {
+        if (el) {
+          if (el.classList.contains('stars')) {
+            el.style.display = 'block';
+          } else if (el.classList.contains('solar-system')) {
+            el.style.display = 'block';
+          } else if (el.id === 'three-container') {
+            el.style.display = 'block';
+          } else if (el.tagName === 'H1') {
+            el.style.display = 'block';
+          } else {
+            el.style.display = 'block';
+          }
+        }
+      });
+    }
+    
+    // Update nav buttons
+    navBtns.forEach(btn => {
+      if (btn.dataset.section === sectionName) {
+        btn.classList.add('active');
+        btn.style.background = 'linear-gradient(135deg, #4a90a4, #2d5a6b)';
+        btn.style.borderColor = 'rgba(100, 200, 255, 0.5)';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'rgba(74, 144, 164, 0.3)';
+        btn.style.borderColor = 'rgba(100, 200, 255, 0.3)';
+      }
+    });
+  }
+  
+  function nextSection() {
+    currentSectionIndex = (currentSectionIndex + 1) % sectionOrder.length;
+    showSection(sectionOrder[currentSectionIndex]);
+  }
+  
+  function startAutoRotate() {
+    if (autoRotateInterval) clearInterval(autoRotateInterval);
+    autoRotateInterval = setInterval(nextSection, 30000); // 30 secondes
+  }
+  
+  // Add click handlers
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showSection(btn.dataset.section);
+      // Reset timer on manual click
+      startAutoRotate();
+    });
+    btn.addEventListener('mouseenter', () => {
+      btn.style.transform = 'scale(1.05)';
+      btn.style.boxShadow = '0 0 20px rgba(100, 200, 255, 0.4)';
+    });
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = 'scale(1)';
+      btn.style.boxShadow = 'none';
+    });
+  });
+  
+  // Initialize with space section
+  showSection('space');
+  
+  // Start auto-rotation
+  startAutoRotate();
+  
+  // Make showSection globally accessible
+  window.showSection = showSection;
+  window.currentSection = 'space';
+  window.sectionOrder = sectionOrder;
 })();
   </script>
 </body>
