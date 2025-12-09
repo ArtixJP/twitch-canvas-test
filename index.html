@@ -209,7 +209,7 @@
     🎵 London Streets
    </span>
 </div>
-<audio id="bgMusic" loop="">
+<audio autoplay="" id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
 <script>
@@ -231,6 +231,24 @@ function toggleMusic() {
 }
 
 music.volume = 0.5;
+  </script>
+<script>
+   // Auto-play music on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const music = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    
+    // Try to play automatically
+    music.play().then(() => {
+        isPlaying = true;
+        musicBtn.textContent = '⏸️';
+        musicBtn.classList.add('playing');
+    }).catch((error) => {
+        // Autoplay blocked by browser, user needs to click
+        console.log('Autoplay blocked, click to play');
+        isPlaying = false;
+    });
+});
   </script>
 </body>
 </html>
