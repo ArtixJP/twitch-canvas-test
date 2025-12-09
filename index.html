@@ -197,7 +197,6 @@
             width: 180px;
             height: 180px;
             margin: -90px;
-            animation: orbit 6s linear infinite;
             z-index: 5;
         }
         .kitty {
@@ -310,6 +309,156 @@
             0% { transform: rotate(-20deg); }
             100% { transform: rotate(20deg); }
         }
+        
+        /* DOG STYLES */
+        .dog-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 220px;
+            height: 220px;
+            margin: -110px;
+            z-index: 4;
+        }
+        .dog {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: dogBounce 0.3s ease-in-out infinite;
+        }
+        .dog.chasing {
+            animation: dogBounce 0.15s ease-in-out infinite;
+        }
+        .dog-body {
+            width: 25px;
+            height: 16px;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #6B3E0A 100%);
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+        }
+        .dog-head {
+            width: 20px;
+            height: 18px;
+            background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+            border-radius: 50% 50% 40% 40%;
+            position: absolute;
+            top: -12px;
+            left: 2px;
+        }
+        .dog-ear {
+            width: 8px;
+            height: 12px;
+            background: #6B3E0A;
+            border-radius: 50% 50% 40% 40%;
+            position: absolute;
+            top: 0px;
+        }
+        .dog-ear.left { left: -2px; transform: rotate(-20deg); }
+        .dog-ear.right { right: -2px; transform: rotate(20deg); }
+        .dog-face {
+            position: relative;
+            top: 5px;
+        }
+        .dog-eye {
+            width: 4px;
+            height: 4px;
+            background: #222;
+            border-radius: 50%;
+            position: absolute;
+        }
+        .dog-eye.left { left: 4px; }
+        .dog-eye.right { right: 4px; }
+        .dog-eye::after {
+            content: '';
+            width: 1.5px;
+            height: 1.5px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 0.5px;
+            left: 0.5px;
+        }
+        .dog-snout {
+            width: 10px;
+            height: 8px;
+            background: #D2691E;
+            border-radius: 40%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 6px;
+        }
+        .dog-nose {
+            width: 5px;
+            height: 4px;
+            background: #222;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0px;
+        }
+        .dog-tongue {
+            width: 4px;
+            height: 6px;
+            background: #ff6b8a;
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 5px;
+            animation: tonguePant 0.3s ease-in-out infinite alternate;
+        }
+        .dog-tail {
+            width: 4px;
+            height: 12px;
+            background: linear-gradient(to top, #6B3E0A, #8B4513);
+            border-radius: 4px;
+            position: absolute;
+            right: -3px;
+            top: 0px;
+            transform-origin: bottom;
+            animation: tailWagFast 0.2s ease-in-out infinite alternate;
+        }
+        .dog-legs {
+            position: absolute;
+            bottom: -6px;
+            left: 3px;
+            display: flex;
+            gap: 12px;
+        }
+        .dog-leg {
+            width: 4px;
+            height: 8px;
+            background: #8B4513;
+            border-radius: 2px;
+            animation: legRun 0.15s ease-in-out infinite alternate;
+        }
+        .dog-leg:nth-child(2) { animation-delay: 0.075s; }
+        @keyframes dogBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-4px); }
+        }
+        @keyframes tonguePant {
+            0% { height: 4px; }
+            100% { height: 8px; }
+        }
+        @keyframes tailWagFast {
+            0% { transform: rotate(-30deg); }
+            100% { transform: rotate(30deg); }
+        }
+        @keyframes legRun {
+            0% { transform: rotate(-15deg); }
+            100% { transform: rotate(15deg); }
+        }
+        
+        .kitty.escaping .kitty-tail {
+            animation: tailWag 0.1s ease-in-out infinite alternate;
+        }
+        .kitty.escaping .kitty-eye {
+            transform: scaleX(1.3) scaleY(1.5);
+        }
   </style>
 </head>
 <body>
@@ -352,6 +501,38 @@
 </div>
 </div>
 <div class="kitty-tail">
+</div>
+</div>
+</div>
+<div class="dog-orbit" id="dog-orbit">
+<div class="dog" id="dog">
+<div class="dog-body">
+<div class="dog-legs">
+<div class="dog-leg">
+</div>
+<div class="dog-leg">
+</div>
+</div>
+</div>
+<div class="dog-head">
+<div class="dog-ear left">
+</div>
+<div class="dog-ear right">
+</div>
+<div class="dog-face">
+<div class="dog-eye left">
+</div>
+<div class="dog-eye right">
+</div>
+<div class="dog-snout">
+<div class="dog-nose">
+</div>
+<div class="dog-tongue">
+</div>
+</div>
+</div>
+</div>
+<div class="dog-tail">
 </div>
 </div>
 </div>
@@ -544,6 +725,84 @@ document.addEventListener('DOMContentLoaded', function() {
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
+})();
+  </script>
+<script>
+   (function() {
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const dogOrbit = document.getElementById('dog-orbit');
+    const kitty = document.querySelector('.kitty');
+    const dog = document.getElementById('dog');
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI; // Start opposite to cat
+    let catSpeed = 0.02; // Normal speed
+    let dogSpeed = 0.025; // Dog is slightly faster
+    const catNormalSpeed = 0.02;
+    const catEscapeSpeed = 0.08;
+    const dogChaseSpeed = 0.035;
+    const dogNormalSpeed = 0.025;
+    const escapeThreshold = 0.8; // Radians - when dog gets this close
+    
+    const catRadius = 90;
+    const dogRadius = 110;
+    
+    function updatePositions() {
+        // Calculate angle difference (shortest path)
+        let angleDiff = Math.abs(catAngle - dogAngle);
+        if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
+        
+        // Calculate actual distance considering different radii
+        const catX = Math.cos(catAngle) * catRadius;
+        const catY = Math.sin(catAngle) * catRadius;
+        const dogX = Math.cos(dogAngle) * dogRadius;
+        const dogY = Math.sin(dogAngle) * dogRadius;
+        const distance = Math.sqrt(Math.pow(catX - dogX, 2) + Math.pow(catY - dogY, 2));
+        
+        // Check if dog is close
+        if (distance < 50) {
+            // Cat escapes!
+            catSpeed = catEscapeSpeed;
+            dogSpeed = dogChaseSpeed;
+            kitty.classList.add('escaping');
+            dog.classList.add('chasing');
+        } else {
+            // Normal speeds
+            catSpeed = catNormalSpeed;
+            dogSpeed = dogNormalSpeed;
+            kitty.classList.remove('escaping');
+            dog.classList.remove('chasing');
+        }
+        
+        // Update angles
+        catAngle += catSpeed;
+        
+        // Dog chases cat - moves toward cat's angle
+        const catAngleNorm = ((catAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        const dogAngleNorm = ((dogAngle % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        
+        let diff = catAngleNorm - dogAngleNorm;
+        if (diff > Math.PI) diff -= 2 * Math.PI;
+        if (diff < -Math.PI) diff += 2 * Math.PI;
+        
+        if (diff > 0) {
+            dogAngle += dogSpeed;
+        } else {
+            dogAngle -= dogSpeed;
+        }
+        
+        // Apply positions using transform
+        kittyOrbit.style.transform = `rotate(${catAngle}rad)`;
+        dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
+        
+        requestAnimationFrame(updatePositions);
+    }
+    
+    // Remove CSS animation and use JS instead
+    kittyOrbit.style.animation = 'none';
+    dogOrbit.style.animation = 'none';
+    
+    updatePositions();
 })();
   </script>
 </body>
