@@ -1023,21 +1023,25 @@ window.addEventListener('load', () => {
   const gridSize = 15;
   const tileCount = canvas.width / gridSize;
   
-  let snake = [{x: 10, y: 10}];
-  let direction = {x: 0, y: 0};
-  let food = {x: 5, y: 5};
-  let score = 0;
-  let gameOver = false;
-  let speed = 100;
-  let particles = [];
+  let snake, direction, food, score, gameOver, speed, particles, gameLoopId;
   
-  // Spawn food at random position
+  function init() {
+    snake = [{x: 10, y: 10}];
+    direction = {x: 1, y: 0};
+    food = {x: 5, y: 5};
+    score = 0;
+    gameOver = false;
+    speed = 100;
+    particles = [];
+    scoreEl.textContent = 'Score: 0';
+    spawnFood();
+  }
+  
   function spawnFood() {
     food = {
       x: Math.floor(Math.random() * tileCount),
       y: Math.floor(Math.random() * tileCount)
     };
-    // Make sure food doesn't spawn on snake
     for (let segment of snake) {
       if (segment.x === food.x && segment.y === food.y) {
         spawnFood();
@@ -1046,7 +1050,6 @@ window.addEventListener('load', () => {
     }
   }
   
-  // Create particle explosion
   function createParticles(x, y) {
     for (let i = 0; i < 8; i++) {
       particles.push({
@@ -1063,16 +1066,13 @@ window.addEventListener('load', () => {
   function update() {
     if (gameOver) return;
     
-    // Move snake
     const head = {x: snake[0].x + direction.x, y: snake[0].y + direction.y};
     
-    // Wall collision (wrap around)
     if (head.x < 0) head.x = tileCount - 1;
     if (head.x >= tileCount) head.x = 0;
     if (head.y < 0) head.y = tileCount - 1;
     if (head.y >= tileCount) head.y = 0;
     
-    // Self collision
     for (let segment of snake) {
       if (head.x === segment.x && head.y === segment.y) {
         gameOver = true;
@@ -1082,13 +1082,11 @@ window.addEventListener('load', () => {
     
     snake.unshift(head);
     
-    // Food collision
     if (head.x === food.x && head.y === food.y) {
       score += 10;
       scoreEl.textContent = 'Score: ' + score;
       createParticles(food.x, food.y);
       spawnFood();
-      // Speed up slightly
       if (speed > 50) speed -= 2;
     } else {
       snake.pop();
@@ -1096,11 +1094,9 @@ window.addEventListener('load', () => {
   }
   
   function draw() {
-    // Clear with trail effect
     ctx.fillStyle = 'rgba(10, 10, 32, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw stars background
     ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
     for (let i = 0; i < 20; i++) {
       const x = (i * 37 + Date.now() * 0.01) % canvas.width;
@@ -1110,7 +1106,6 @@ window.addEventListener('load', () => {
       ctx.fill();
     }
     
-    // Draw particles
     particles = particles.filter(p => p.life > 0);
     for (let p of particles) {
       p.x += p.vx;
@@ -1124,18 +1119,15 @@ window.addEventListener('load', () => {
     }
     ctx.globalAlpha = 1;
     
-    // Draw snake with gradient
     snake.forEach((segment, i) => {
       const hue = (120 + i * 5) % 360;
-      const glow = i === 0 ? 'rgba(100, 255, 100, 0.5)' : 'transparent';
-      ctx.shadowColor = glow;
+      ctx.shadowColor = i === 0 ? 'rgba(100, 255, 100, 0.5)' : 'transparent';
       ctx.shadowBlur = i === 0 ? 10 : 0;
       ctx.fillStyle = `hsl(${hue}, 80%, ${60 - i * 2}%)`;
       ctx.beginPath();
       ctx.roundRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2, 4);
       ctx.fill();
       
-      // Eyes on head
       if (i === 0) {
         ctx.fillStyle = '#fff';
         ctx.beginPath();
@@ -1146,7 +1138,6 @@ window.addEventListener('load', () => {
     });
     ctx.shadowBlur = 0;
     
-    // Draw food (star)
     ctx.save();
     ctx.translate(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2);
     ctx.rotate(Date.now() * 0.005);
@@ -1164,7 +1155,6 @@ window.addEventListener('load', () => {
     ctx.restore();
     ctx.shadowBlur = 0;
     
-    // Game over text
     if (gameOver) {
       ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -1181,35 +1171,28 @@ window.addEventListener('load', () => {
   function gameLoop() {
     update();
     draw();
-    setTimeout(() => requestAnimationFrame(gameLoop), gameOver ? 100 : speed);
+    gameLoopId = setTimeout(() => requestAnimationFrame(gameLoop), gameOver ? 100 : speed);
   }
   
   function restart() {
-    snake = [{x: 10, y: 10}];
-    direction = {x: 0, y: 0};
-    score = 0;
-    speed = 100;
-    gameOver = false;
-    particles = [];
-    scoreEl.textContent = 'Score: 0';
-    spawnFood();
+    if (gameLoopId) clearTimeout(gameLoopId);
+    init();
+    gameLoop();
   }
   
-  // Controls
   document.addEventListener('keydown', (e) => {
     if (gameOver) return;
     switch(e.key) {
-      case 'ArrowUp': if (direction.y !== 1) { direction = {x: 0, y: -1}; } break;
-      case 'ArrowDown': if (direction.y !== -1) { direction = {x: 0, y: 1}; } break;
-      case 'ArrowLeft': if (direction.x !== 1) { direction = {x: -1, y: 0}; } break;
-      case 'ArrowRight': if (direction.x !== -1) { direction = {x: 1, y: 0}; } break;
+      case 'ArrowUp': if (direction.y !== 1) { direction = {x: 0, y: -1}; } e.preventDefault(); break;
+      case 'ArrowDown': if (direction.y !== -1) { direction = {x: 0, y: 1}; } e.preventDefault(); break;
+      case 'ArrowLeft': if (direction.x !== 1) { direction = {x: -1, y: 0}; } e.preventDefault(); break;
+      case 'ArrowRight': if (direction.x !== -1) { direction = {x: 1, y: 0}; } e.preventDefault(); break;
     }
   });
   
   restartBtn.addEventListener('click', restart);
   
-  // Start game
-  spawnFood();
+  init();
   gameLoop();
 })();
   </script>
@@ -1283,45 +1266,46 @@ window.addEventListener('load', () => {
 <script id="nav-script">
    (function() {
   const navBtns = document.querySelectorAll('.nav-btn');
-  const sections = {
-    space: document.querySelectorAll('.section-space, [data-llm-id="e1"]'),
-    animals: document.querySelectorAll('.section-animals, #animals-container'),
-    games: document.querySelectorAll('.section-games, #games-container')
-  };
   
   const sectionOrder = ['space', 'animals', 'games'];
   let currentSectionIndex = 0;
   let autoRotateInterval = null;
   
   function showSection(sectionName) {
-    // Update current index
     currentSectionIndex = sectionOrder.indexOf(sectionName);
     if (currentSectionIndex === -1) currentSectionIndex = 0;
     
-    // Hide all sections
-    Object.values(sections).forEach(els => {
-      els.forEach(el => {
-        if (el) el.style.display = 'none';
-      });
-    });
+    // Hide ALL section-specific elements
+    document.querySelectorAll('.section-space').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.section-animals').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.section-games').forEach(el => el.style.display = 'none');
     
-    // Show selected section
-    if (sections[sectionName]) {
-      sections[sectionName].forEach(el => {
-        if (el) {
-          if (el.classList.contains('stars')) {
-            el.style.display = 'block';
-          } else if (el.classList.contains('solar-system')) {
-            el.style.display = 'block';
-          } else if (el.id === 'three-container') {
-            el.style.display = 'block';
-          } else if (el.tagName === 'H1') {
-            el.style.display = 'block';
-          } else {
-            el.style.display = 'block';
-          }
-        }
-      });
+    // Hide specific containers
+    document.getElementById('three-container').style.display = 'none';
+    document.getElementById('stars').style.display = 'none';
+    document.getElementById('planet-system').style.display = 'none';
+    document.getElementById('animals-container').style.display = 'none';
+    document.getElementById('games-container').style.display = 'none';
+    document.getElementById('scoreboard').style.display = 'none';
+    
+    // Update title based on section
+    const h1 = document.querySelector('h1');
+    
+    if (sectionName === 'space') {
+      document.getElementById('three-container').style.display = 'block';
+      document.getElementById('stars').style.display = 'block';
+      document.getElementById('planet-system').style.display = 'block';
+      h1.innerHTML = '🌌 Welcome to Space 🌌';
+      h1.style.display = 'block';
+    } else if (sectionName === 'animals') {
+      document.getElementById('animals-container').style.display = 'block';
+      document.getElementById('scoreboard').style.display = 'block';
+      h1.innerHTML = '🐾 Animaux Mignons 🐾';
+      h1.style.display = 'block';
+    } else if (sectionName === 'games') {
+      document.getElementById('games-container').style.display = 'block';
+      h1.innerHTML = '🎮 Zone de Jeux 🎮';
+      h1.style.display = 'block';
     }
     
     // Update nav buttons
@@ -1336,6 +1320,8 @@ window.addEventListener('load', () => {
         btn.style.borderColor = 'rgba(100, 200, 255, 0.3)';
       }
     });
+    
+    window.currentSection = sectionName;
   }
   
   function nextSection() {
@@ -1345,14 +1331,12 @@ window.addEventListener('load', () => {
   
   function startAutoRotate() {
     if (autoRotateInterval) clearInterval(autoRotateInterval);
-    autoRotateInterval = setInterval(nextSection, 30000); // 30 secondes
+    autoRotateInterval = setInterval(nextSection, 30000);
   }
   
-  // Add click handlers
   navBtns.forEach(btn => {
     btn.addEventListener('click', () => {
       showSection(btn.dataset.section);
-      // Reset timer on manual click
       startAutoRotate();
     });
     btn.addEventListener('mouseenter', () => {
@@ -1365,15 +1349,11 @@ window.addEventListener('load', () => {
     });
   });
   
-  // Initialize with space section
+  // Initialize
   showSection('space');
-  
-  // Start auto-rotation
   startAutoRotate();
   
-  // Make showSection globally accessible
   window.showSection = showSection;
-  window.currentSection = 'space';
   window.sectionOrder = sectionOrder;
 })();
   </script>
