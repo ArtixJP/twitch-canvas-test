@@ -347,6 +347,8 @@
   </style>
 </head>
 <body>
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+</div>
 <h1>
    🌌 Welcome to Space 🌌
   </h1>
@@ -452,6 +454,150 @@ window.addEventListener('load', () => {
     }, { once: true });
   });
 });
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script id="sun-script">
+   (function() {
+  const container = document.getElementById('three-container');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+  
+  // Sun geometry with glow
+  const sunGeometry = new THREE.SphereGeometry(0.8, 64, 64);
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffdd44,
+    transparent: true
+  });
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-3, 2, 0);
+  scene.add(sun);
+  
+  // Sun glow layers
+  const glowColors = [0xffaa00, 0xff8800, 0xff6600];
+  const glowSizes = [1.0, 1.2, 1.5];
+  glowColors.forEach((color, i) => {
+    const glowGeo = new THREE.SphereGeometry(glowSizes[i], 32, 32);
+    const glowMat = new THREE.MeshBasicMaterial({
+      color: color,
+      transparent: true,
+      opacity: 0.15 - i * 0.04
+    });
+    const glow = new THREE.Mesh(glowGeo, glowMat);
+    sun.add(glow);
+  });
+  
+  // Corona particles
+  const coronaCount = 200;
+  const coronaGeometry = new THREE.BufferGeometry();
+  const coronaPositions = new Float32Array(coronaCount * 3);
+  for(let i = 0; i < coronaCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    const r = 0.9 + Math.random() * 0.5;
+    coronaPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+    coronaPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+    coronaPositions[i * 3 + 2] = r * Math.cos(phi);
+  }
+  coronaGeometry.setAttribute('position', new THREE.BufferAttribute(coronaPositions, 3));
+  const coronaMaterial = new THREE.PointsMaterial({
+    color: 0xffcc00,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.8
+  });
+  const corona = new THREE.Points(coronaGeometry, coronaMaterial);
+  sun.add(corona);
+  
+  // Point light from sun
+  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+  sunLight.position.copy(sun.position);
+  sunLight.castShadow = true;
+  scene.add(sunLight);
+  
+  // Ambient light
+  const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
+  scene.add(ambientLight);
+  
+  // Light rays (god rays effect)
+  const rayCount = 12;
+  const rays = [];
+  for(let i = 0; i < rayCount; i++) {
+    const rayGeo = new THREE.PlaneGeometry(0.1, 4);
+    const rayMat = new THREE.MeshBasicMaterial({
+      color: 0xffee88,
+      transparent: true,
+      opacity: 0.1,
+      side: THREE.DoubleSide
+    });
+    const ray = new THREE.Mesh(rayGeo, rayMat);
+    ray.rotation.z = (i / rayCount) * Math.PI * 2;
+    ray.position.y = 2;
+    sun.add(ray);
+    rays.push(ray);
+  }
+  
+  // Animation
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    // Sun pulse
+    const pulse = 1 + Math.sin(time * 2) * 0.05;
+    sun.scale.set(pulse, pulse, pulse);
+    
+    // Corona rotation
+    corona.rotation.y += 0.002;
+    corona.rotation.x += 0.001;
+    
+    // Ray animation
+    rays.forEach((ray, i) => {
+      ray.material.opacity = 0.05 + Math.sin(time * 3 + i) * 0.05;
+      ray.scale.y = 1 + Math.sin(time * 2 + i * 0.5) * 0.3;
+    });
+    
+    // Sun orbit
+    sun.position.x = -3 + Math.sin(time * 0.3) * 0.5;
+    sun.position.y = 2 + Math.cos(time * 0.2) * 0.3;
+    sunLight.position.copy(sun.position);
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  // Resize handler
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+  
+  // CSS shadow effect on page elements
+  function updateShadows() {
+    const sunScreenX = (sun.position.x + 3) / 6 * 100;
+    const sunScreenY = (2 - sun.position.y) / 4 * 100;
+    const shadowX = (50 - sunScreenX) * 0.3;
+    const shadowY = (sunScreenY - 50) * 0.3;
+    
+    document.querySelector('h1').style.textShadow = `${shadowX}px ${shadowY}px 20px rgba(255, 200, 100, 0.6), 0 0 40px rgba(255, 150, 50, 0.3)`;
+    
+    const planet = document.querySelector('.planet');
+    if(planet) {
+      planet.style.boxShadow = `inset ${-shadowX}px ${-shadowY}px 40px rgba(0,0,0,0.8), ${shadowX*0.5}px ${shadowY*0.5}px 30px rgba(255, 200, 100, 0.2), 0 0 60px rgba(74, 144, 164, 0.4)`;
+    }
+  }
+  setInterval(updateShadows, 50);
+})();
   </script>
 </body>
 </html>
