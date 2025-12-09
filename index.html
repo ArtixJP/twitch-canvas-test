@@ -309,6 +309,88 @@
   0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
   50% { opacity: 1; transform: translateX(-50%) scale(1.1); }
 }
+
+.doggy-orbit {
+    position: absolute;
+    width: 450px;
+    height: 450px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+.space-doggy {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.2rem;
+    filter: drop-shadow(0 0 10px rgba(255,200,100,0.8));
+    transition: filter 0.3s;
+}
+.doggy-body {
+    animation: doggyBounce 0.3s ease-in-out infinite;
+    display: inline-block;
+}
+.doggy-trail {
+    position: absolute;
+    top: 50%;
+    right: 100%;
+    width: 50px;
+    height: 6px;
+    background: linear-gradient(270deg, rgba(255,180,100,0.9), rgba(255,150,50,0));
+    border-radius: 3px;
+    transform: translateY(-50%);
+    animation: dogTrailPulse 0.5s ease-in-out infinite;
+}
+.doggy-drool {
+    position: absolute;
+    top: -5px;
+    left: 100%;
+    font-size: 0.9rem;
+    animation: droolFloat 0.8s ease-in-out infinite;
+    opacity: 0.9;
+}
+.space-doggy.excited {
+    filter: drop-shadow(0 0 20px rgba(255,100,50,1)) drop-shadow(0 0 40px rgba(255,50,0,0.6));
+}
+.space-doggy.excited .doggy-trail {
+    width: 80px;
+    background: linear-gradient(270deg, rgba(255,100,50,1), rgba(255,50,0,0));
+}
+.kitty-orbit.escaping .space-kitty {
+    filter: drop-shadow(0 0 20px rgba(100,255,255,1)) drop-shadow(0 0 40px rgba(0,255,200,0.6));
+}
+.kitty-orbit.escaping .kitty-trail {
+    width: 100px !important;
+    background: linear-gradient(90deg, rgba(100,255,255,0.9), rgba(0,255,200,0)) !important;
+}
+@keyframes doggyBounce {
+    0%, 100% { transform: translateY(0) scale(1) scaleX(-1); }
+    50% { transform: translateY(-5px) scale(1.05) scaleX(-1); }
+}
+@keyframes dogTrailPulse {
+    0%, 100% { opacity: 0.7; width: 50px; }
+    50% { opacity: 1; width: 70px; }
+}
+@keyframes droolFloat {
+    0%, 100% { transform: translateY(0) rotate(-10deg); opacity: 0.9; }
+    50% { transform: translateY(-3px) rotate(10deg); opacity: 1; }
+}
+
+.score-container { text-align: center; }
+.score-board { display: flex; justify-content: center; align-items: center; gap: 2rem; font-size: 1.8rem; margin-top: 1rem; padding: 15px 30px; background: rgba(0,0,0,0.4); border-radius: 50px; border: 2px solid rgba(255,220,180,0.4); }
+.dog-score, .cat-score { display: flex; align-items: center; gap: 8px; }
+.dog-score span, .cat-score span { font-weight: bold; min-width: 30px; }
+#dogScore { color: #ffcc00; text-shadow: 0 0 10px rgba(255,200,0,0.8); }
+#catScore { color: #ff88cc; text-shadow: 0 0 10px rgba(255,136,204,0.8); }
+.vs { color: rgba(255,255,255,0.5); font-size: 1rem; font-weight: bold; }
+.catch-flash { animation: catchFlash 0.5s ease-out; }
+@keyframes catchFlash { 0% { transform: scale(1); } 50% { transform: scale(1.5); color: #00ff00; text-shadow: 0 0 30px #00ff00; } 100% { transform: scale(1); } }
+.caught-effect { position: fixed; pointer-events: none; font-size: 3rem; animation: caughtPop 1s ease-out forwards; z-index: 1000; }
+@keyframes caughtPop { 0% { transform: scale(0) rotate(0deg); opacity: 1; } 50% { transform: scale(1.5) rotate(180deg); opacity: 1; } 100% { transform: scale(2) rotate(360deg) translateY(-50px); opacity: 0; } }
+.respawn-kitty { animation: respawnFlash 0.5s ease-out; }
+@keyframes respawnFlash { 0%, 100% { filter: drop-shadow(0 0 10px rgba(255,182,193,0.8)); } 50% { filter: drop-shadow(0 0 30px rgba(0,255,255,1)) drop-shadow(0 0 50px rgba(255,255,255,1)); } }
   </style>
 </head>
 <body>
@@ -364,10 +446,41 @@
       </div>
 </div>
 </div>
+<div class="doggy-orbit" id="doggyOrbit">
+<div class="space-doggy" id="spaceDoggy">
+<div class="doggy-body" id="doggyBody">
+       🐕
+      </div>
+<div class="doggy-trail">
 </div>
+<div class="doggy-drool">
+       💨
+      </div>
+</div>
+</div>
+</div>
+<div class="score-container">
 <h1>
-    Hello World
-   </h1>
+     Hello World
+    </h1>
+<div class="score-board">
+<span class="dog-score">
+      🐕
+      <span id="dogScore">
+       0
+      </span>
+</span>
+<span class="vs">
+      VS
+     </span>
+<span class="cat-score">
+      🐱
+      <span id="catScore">
+       0
+      </span>
+</span>
+</div>
+</div>
 <div class="music-controls">
 <audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
@@ -596,6 +709,188 @@ function toggleMusic() {
     renderer.render(scene, camera);
   }
   animate();
+})();
+  </script>
+<script>
+   (function() {
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const doggyOrbit = document.getElementById('doggyOrbit');
+    const spaceDoggy = document.getElementById('spaceDoggy');
+    
+    let kittyAngle = 0;
+    let doggyAngle = Math.PI; // Start opposite side
+    let kittySpeed = 0.008; // Normal cat speed
+    let doggySpeed = 0.012; // Dog is faster normally
+    const normalKittySpeed = 0.008;
+    const normalDoggySpeed = 0.012;
+    const excitedDoggySpeed = 0.02;
+    const escapeKittySpeed = 0.04;
+    const dangerDistance = 0.8; // radians
+    
+    // Remove CSS animation from kitty
+    kittyOrbit.style.animation = 'none';
+    doggyOrbit.style.animation = 'none';
+    
+    function getAngleDiff(a1, a2) {
+        let diff = Math.abs(a1 - a2) % (Math.PI * 2);
+        if (diff > Math.PI) diff = Math.PI * 2 - diff;
+        return diff;
+    }
+    
+    function animate() {
+        const distance = getAngleDiff(kittyAngle, doggyAngle);
+        
+        // Dog behavior
+        if (distance < dangerDistance * 1.5) {
+            doggySpeed = excitedDoggySpeed;
+            spaceDoggy.classList.add('excited');
+        } else {
+            doggySpeed = normalDoggySpeed;
+            spaceDoggy.classList.remove('excited');
+        }
+        
+        // Cat behavior - escape when dog is close!
+        if (distance < dangerDistance) {
+            kittySpeed = escapeKittySpeed;
+            kittyOrbit.classList.add('escaping');
+        } else {
+            kittySpeed = normalKittySpeed;
+            kittyOrbit.classList.remove('escaping');
+        }
+        
+        // Update positions (cat goes counter-clockwise, dog chases clockwise direction)
+        kittyAngle -= kittySpeed;
+        
+        // Dog chases in the shorter direction
+        let diff = kittyAngle - doggyAngle;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        doggyAngle += (diff > 0 ? 1 : -1) * doggySpeed;
+        
+        // Apply transforms
+        kittyOrbit.style.transform = `translate(-50%, -50%) rotate(${kittyAngle}rad)`;
+        doggyOrbit.style.transform = `translate(-50%, -50%) rotate(${doggyAngle}rad)`;
+        
+        // Counter-rotate the emojis so they stay upright-ish
+        const kittyBody = kittyOrbit.querySelector('.kitty-body');
+        const doggyBody = document.getElementById('doggyBody');
+        kittyBody.style.transform = `rotate(${-kittyAngle}rad)`;
+        doggyBody.style.transform = `scaleX(-1) rotate(${-doggyAngle}rad)`;
+        
+        requestAnimationFrame(animate);
+    }
+    
+    animate();
+})();
+  </script>
+<script>
+   (function() {
+    // Override the chase animation with scoring
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const doggyOrbit = document.getElementById('doggyOrbit');
+    const spaceDoggy = document.getElementById('spaceDoggy');
+    const spaceKitty = document.querySelector('.space-kitty');
+    
+    let dogScore = 0;
+    let kittyAngle = 0;
+    let doggyAngle = Math.PI;
+    let kittySpeed = 0.008;
+    let doggySpeed = 0.012;
+    const normalKittySpeed = 0.008;
+    const normalDoggySpeed = 0.012;
+    const excitedDoggySpeed = 0.025;
+    const escapeKittySpeed = 0.045;
+    const dangerDistance = 0.8;
+    const catchDistance = 0.25;
+    let catchCooldown = false;
+    
+    kittyOrbit.style.animation = 'none';
+    doggyOrbit.style.animation = 'none';
+    
+    function getAngleDiff(a1, a2) {
+        let diff = Math.abs(a1 - a2) % (Math.PI * 2);
+        if (diff > Math.PI) diff = Math.PI * 2 - diff;
+        return diff;
+    }
+    
+    function createCatchEffect(x, y) {
+        const effect = document.createElement('div');
+        effect.className = 'caught-effect';
+        effect.textContent = '💥';
+        effect.style.left = x + 'px';
+        effect.style.top = y + 'px';
+        document.body.appendChild(effect);
+        setTimeout(() => effect.remove(), 1000);
+    }
+    
+    function dogCatchesCat() {
+        if (catchCooldown) return;
+        catchCooldown = true;
+        
+        dogScore++;
+        const scoreEl = document.getElementById('dogScore');
+        scoreEl.textContent = dogScore;
+        scoreEl.classList.add('catch-flash');
+        setTimeout(() => scoreEl.classList.remove('catch-flash'), 500);
+        
+        // Get kitty position for effect
+        const kittyRect = spaceKitty.getBoundingClientRect();
+        createCatchEffect(kittyRect.left + kittyRect.width/2, kittyRect.top + kittyRect.height/2);
+        
+        // Respawn kitty on opposite side
+        kittyAngle = doggyAngle + Math.PI;
+        spaceKitty.classList.add('respawn-kitty');
+        setTimeout(() => spaceKitty.classList.remove('respawn-kitty'), 500);
+        
+        // Cooldown to prevent rapid scoring
+        setTimeout(() => { catchCooldown = false; }, 1500);
+    }
+    
+    function animateChase() {
+        const distance = getAngleDiff(kittyAngle, doggyAngle);
+        
+        // Check for catch!
+        if (distance < catchDistance && !catchCooldown) {
+            dogCatchesCat();
+        }
+        
+        // Dog behavior
+        if (distance < dangerDistance * 1.5) {
+            doggySpeed = excitedDoggySpeed;
+            spaceDoggy.classList.add('excited');
+        } else {
+            doggySpeed = normalDoggySpeed;
+            spaceDoggy.classList.remove('excited');
+        }
+        
+        // Cat behavior
+        if (distance < dangerDistance) {
+            kittySpeed = escapeKittySpeed;
+            kittyOrbit.classList.add('escaping');
+        } else {
+            kittySpeed = normalKittySpeed;
+            kittyOrbit.classList.remove('escaping');
+        }
+        
+        kittyAngle -= kittySpeed;
+        
+        let diff = kittyAngle - doggyAngle;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        doggyAngle += (diff > 0 ? 1 : -1) * doggySpeed;
+        
+        kittyOrbit.style.transform = `translate(-50%, -50%) rotate(${kittyAngle}rad)`;
+        doggyOrbit.style.transform = `translate(-50%, -50%) rotate(${doggyAngle}rad)`;
+        
+        const kittyBody = kittyOrbit.querySelector('.kitty-body');
+        const doggyBody = document.getElementById('doggyBody');
+        kittyBody.style.transform = `rotate(${-kittyAngle}rad)`;
+        doggyBody.style.transform = `scaleX(-1) rotate(${-doggyAngle}rad)`;
+        
+        requestAnimationFrame(animateChase);
+    }
+    
+    animateChase();
 })();
   </script>
 </body>
