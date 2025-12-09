@@ -4,10 +4,265 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<title>
+   Twitch Versus Code
+  </title>
+<script>
+   // Navigation
+    let activeSection = 'espace';
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const section = btn.dataset.section;
+        activeSection = section;
+        document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('section-' + section).classList.add('active');
+        btn.classList.add('active');
+      });
+    });
+    
+    // Stars - créés une seule fois
+    const starsContainer = document.getElementById('stars-container');
+    for(let i = 0; i < 50; i++) {
+      const star = document.createElement('div');
+      star.className = 'star';
+      star.style.left = Math.random() * 100 + '%';
+      star.style.top = Math.random() * 100 + '%';
+      star.style.animationDelay = Math.random() * 2 + 's';
+      starsContainer.appendChild(star);
+    }
+    
+    // Music
+    const audio = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicToggle');
+    audio.volume = 0.5;
+    
+    musicBtn.addEventListener('click', () => {
+      if(audio.paused) {
+        audio.play();
+        musicBtn.textContent = '⏸️ Pause';
+      } else {
+        audio.pause();
+        musicBtn.textContent = '▶️ Play';
+      }
+    });
+    
+    // Water spray - avec limite et nettoyage
+    const waterSpray = document.getElementById('water-spray');
+    const MAX_DROPLETS = 10;
+    let dropletPool = [];
+    
+    function createDroplet() {
+      const droplet = document.createElement('span');
+      droplet.className = 'water-droplet';
+      droplet.textContent = '💧';
+      return droplet;
+    }
+    
+    setInterval(() => {
+      if(activeSection !== 'animaux') return;
+      
+      // Nettoyer les anciennes droplets
+      while(waterSpray.children.length > MAX_DROPLETS) {
+        waterSpray.removeChild(waterSpray.firstChild);
+      }
+      
+      for(let i = 0; i < 2; i++) {
+        const droplet = createDroplet();
+        droplet.style.left = (Math.random() * 60 - 30) + 'px';
+        droplet.style.animationDuration = (1 + Math.random() * 0.5) + 's';
+        waterSpray.appendChild(droplet);
+      }
+    }, 500);
+    
+    // Cat & Dog chase - optimisé
+    (function() {
+      const kittyOrbit = document.getElementById('kitty-orbit');
+      const dogOrbit = document.getElementById('dog-orbit');
+      const kitty = document.querySelector('.kitty');
+      const dogScoreEl = document.getElementById('dogScore');
+      
+      let catAngle = 0, dogAngle = Math.PI;
+      let catSpeed = 0.02, dogSpeed = 0.035;
+      let dogScore = 0, catchCooldown = false;
+      let animationId = null;
+      
+      function update() {
+        if(activeSection !== 'animaux') {
+          animationId = requestAnimationFrame(update);
+          return;
+        }
+        
+        const diff = Math.abs(catAngle - dogAngle) % (Math.PI * 2);
+        const normalizedDiff = Math.min(diff, Math.PI * 2 - diff);
+        
+        if(normalizedDiff < 0.3 && !catchCooldown) {
+          dogScore++;
+          dogScoreEl.textContent = dogScore;
+          catAngle = dogAngle + Math.PI;
+          catchCooldown = true;
+          setTimeout(() => catchCooldown = false, 1000);
+        }
+        
+        catSpeed = normalizedDiff < 0.8 ? 0.12 : 0.02;
+        kitty.classList.toggle('escaping', normalizedDiff < 0.8);
+        
+        catAngle -= catSpeed;
+        dogAngle -= dogSpeed;
+        
+        kittyOrbit.style.transform = `rotate(${catAngle}rad)`;
+        dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
+        
+        animationId = requestAnimationFrame(update);
+      }
+      update();
+    })();
+    
+    // Snake Game - optimisé
+    (function() {
+      const canvas = document.getElementById('snakeCanvas');
+      const ctx = canvas.getContext('2d');
+      const gridSize = 20, tileCount = 20;
+      
+      let snake = [{x: 10, y: 10}];
+      let star = {x: 15, y: 15};
+      let asteroids = [];
+      let dx = 0, dy = 0;
+      let score = 0, level = 1, gameSpeed = 120;
+      let gameInterval = null;
+      
+      function spawnAsteroids() {
+        asteroids = [];
+        for(let i = 0; i < Math.min(3 + level, 10); i++) {
+          let pos;
+          let attempts = 0;
+          do {
+            pos = {x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount)};
+            attempts++;
+          } while(isOccupied(pos.x, pos.y) && attempts < 50);
+          if(attempts < 50) asteroids.push({...pos, rot: Math.random() * Math.PI * 2});
+        }
+      }
+      
+      function isOccupied(x, y) {
+        if(star.x === x && star.y === y) return true;
+        for(let s of snake) if(s.x === x && s.y === y) return true;
+        for(let a of asteroids) if(a.x === x && a.y === y) return true;
+        return false;
+      }
+      
+      function placeStar() {
+        let attempts = 0;
+        do {
+          star = {x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount)};
+          attempts++;
+        } while(isOccupied(star.x, star.y) && attempts < 50);
+      }
+      
+      function draw() {
+        ctx.fillStyle = 'rgba(5,5,20,0.3)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Asteroids
+        asteroids.forEach(a => {
+          a.rot += 0.02;
+          ctx.save();
+          ctx.translate(a.x * gridSize + gridSize/2, a.y * gridSize + gridSize/2);
+          ctx.rotate(a.rot);
+          ctx.fillStyle = '#666';
+          ctx.beginPath();
+          ctx.arc(0, 0, 8, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+        
+        // Star
+        ctx.fillStyle = '#ffdd00';
+        ctx.shadowColor = '#ffdd00';
+        ctx.shadowBlur = 15;
+        ctx.beginPath();
+        ctx.arc(star.x * gridSize + gridSize/2, star.y * gridSize + gridSize/2, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        
+        // Snake
+        snake.forEach((seg, i) => {
+          ctx.fillStyle = i === 0 ? '#4ecdc4' : `rgba(78,205,196,${Math.max(0.3, 1 - i * 0.05)})`;
+          ctx.beginPath();
+          ctx.arc(seg.x * gridSize + gridSize/2, seg.y * gridSize + gridSize/2, gridSize/2 - 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+      }
+      
+      function move() {
+        if(dx === 0 && dy === 0) return;
+        
+        const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+        if(head.x < 0) head.x = tileCount - 1;
+        if(head.x >= tileCount) head.x = 0;
+        if(head.y < 0) head.y = tileCount - 1;
+        if(head.y >= tileCount) head.y = 0;
+        
+        for(let s of snake) if(head.x === s.x && head.y === s.y) { reset(); return; }
+        for(let a of asteroids) if(head.x === a.x && head.y === a.y) { reset(); return; }
+        
+        snake.unshift(head);
+        
+        if(head.x === star.x && head.y === star.y) {
+          score += 10 * level;
+          document.getElementById('snakeScore').textContent = 'Score: ' + score;
+          if(score % (50 * level) === 0) {
+            level++;
+            document.getElementById('spaceLevel').textContent = 'Niveau: ' + level;
+            spawnAsteroids();
+          }
+          placeStar();
+        } else {
+          snake.pop();
+        }
+      }
+      
+      function reset() {
+        snake = [{x: 10, y: 10}];
+        dx = dy = 0;
+        score = 0;
+        level = 1;
+        document.getElementById('snakeScore').textContent = 'Score: 0';
+        document.getElementById('spaceLevel').textContent = 'Niveau: 1';
+        placeStar();
+        spawnAsteroids();
+      }
+      
+      function gameLoop() {
+        if(activeSection === 'jeux') {
+          move();
+        }
+        draw();
+      }
+      
+      document.addEventListener('keydown', e => {
+        if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+        if(e.key === 'ArrowUp' && dy !== 1) { dx = 0; dy = -1; }
+        if(e.key === 'ArrowDown' && dy !== -1) { dx = 0; dy = 1; }
+        if(e.key === 'ArrowLeft' && dx !== 1) { dx = -1; dy = 0; }
+        if(e.key === 'ArrowRight' && dx !== -1) { dx = 1; dy = 0; }
+      });
+      
+      placeStar();
+      spawnAsteroids();
+      gameInterval = setInterval(gameLoop, gameSpeed);
+    })();
+    
+    // Auto-switch sections - avec cleanup
+    let sectionIndex = 0;
+    const sections = ['espace', 'animaux', 'jeux'];
+    setInterval(() => {
+      sectionIndex = (sectionIndex + 1) % sections.length;
+      document.querySelectorAll('.nav-btn')[sectionIndex].click();
+    }, 30000);
+  </script>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+   * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
       font-family: system-ui, sans-serif;
@@ -243,52 +498,87 @@
 </head>
 <body>
 <nav id="main-nav">
-<button class="nav-btn active" data-section="espace">🌌 Espace</button>
-<button class="nav-btn" data-section="animaux">🐾 Animaux</button>
-<button class="nav-btn" data-section="jeux">🎮 Jeux</button>
+<button class="nav-btn active" data-section="espace">
+    🌌 Espace
+   </button>
+<button class="nav-btn" data-section="animaux">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" data-section="jeux">
+    🎮 Jeux
+   </button>
 </nav>
-<h1>Twitch Versus Code</h1>
+<h1>
+   Twitch Versus Code
+  </h1>
 <section class="content-section active" id="section-espace">
-<div id="sun-container"></div>
+<div id="sun-container">
+</div>
 <div class="planet-system">
-<div class="planet"></div>
+<div class="planet">
+</div>
 <div class="moon-orbit">
-<div class="moon"></div>
+<div class="moon">
 </div>
 </div>
-<div class="stars" id="stars-container"></div>
+</div>
+<div class="stars" id="stars-container">
+</div>
 </section>
 <section class="content-section" id="section-animaux">
 <div id="elephant-container" style="margin-top: 50px;">
-<div id="elephant">🐘<div id="water-spray" style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%);"></div></div>
+<div id="elephant">
+     🐘
+     <div id="water-spray" style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%);">
+</div>
+</div>
 </div>
 <div class="planet-system" style="margin-top: 40px;">
-<div class="planet"></div>
+<div class="planet">
+</div>
 <div class="kitty-orbit" id="kitty-orbit">
-<div class="kitty">🐱</div>
+<div class="kitty">
+      🐱
+     </div>
 </div>
 <div class="dog-orbit" id="dog-orbit">
-<div class="dog">🐕</div>
+<div class="dog">
+      🐕
+     </div>
 </div>
 </div>
 <div id="scoreboard-animaux">
-<span>🐕 Dog Score: </span><span id="dogScore">0</span>
+<span>
+     🐕 Dog Score:
+    </span>
+<span id="dogScore">
+     0
+    </span>
 </div>
 </section>
 <section class="content-section" id="section-jeux">
 <div id="snake-game-container">
-<canvas height="400" id="snakeCanvas" width="400"></canvas>
+<canvas height="400" id="snakeCanvas" width="400">
+</canvas>
 <div style="color: white; text-align: center; margin-top: 15px;">
-        🚀 Pilote ton vaisseau avec les flèches ! Collecte les ⭐ et évite les ☄️<br/>
-<span id="snakeScore">Score: 0</span>
-<span id="spaceLevel">Niveau: 1</span>
+     🚀 Pilote ton vaisseau avec les flèches ! Collecte les ⭐ et évite les ☄️
+     <br/>
+<span id="snakeScore">
+      Score: 0
+     </span>
+<span id="spaceLevel">
+      Niveau: 1
+     </span>
 </div>
 </div>
 </section>
-<audio id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio>
-<button id="musicToggle">▶️ Play</button>
+<audio id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3">
+</audio>
+<button id="musicToggle">
+   ▶️ Play
+  </button>
 <script>
-    // Navigation
+   // Navigation
     document.querySelectorAll('.nav-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const section = btn.dataset.section;
