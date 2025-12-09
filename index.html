@@ -36,18 +36,17 @@
   renderer.setClearColor(0x000000, 0);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  document.getElementById('planet-container').appendChild(renderer.domElement);
+  const canvas = renderer.domElement;
+  document.getElementById('planet-container').appendChild(canvas);
 
   // Soleil
   const sunGeom = new THREE.SphereGeometry(1.5, 64, 64);
-  const sunMat = new THREE.MeshBasicMaterial({
-    color: 0xffdd44,
-  });
+  const sunMat = new THREE.MeshBasicMaterial({ color: 0xffdd44 });
   const sun = new THREE.Mesh(sunGeom, sunMat);
   sun.position.set(12, 6, 8);
   scene.add(sun);
 
-  // Halo du soleil (glow effect)
+  // Halo du soleil
   const sunGlowGeom = new THREE.SphereGeometry(2.2, 32, 32);
   const sunGlowMat = new THREE.ShaderMaterial({
     uniforms: {
@@ -82,19 +81,14 @@
   sunGlow.position.copy(sun.position);
   scene.add(sunGlow);
 
-  // Corona/rayons du soleil
+  // Corona
   const coronaGeom = new THREE.SphereGeometry(3, 32, 32);
-  const coronaMat = new THREE.MeshBasicMaterial({
-    color: 0xff6600,
-    transparent: true,
-    opacity: 0.15,
-    side: THREE.BackSide
-  });
+  const coronaMat = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.15, side: THREE.BackSide });
   const corona = new THREE.Mesh(coronaGeom, coronaMat);
   corona.position.copy(sun.position);
   scene.add(corona);
 
-  // Planète avec ombres
+  // Planète avec matériau accessible
   const geometry = new THREE.SphereGeometry(2, 64, 64);
   const material = new THREE.MeshPhongMaterial({
     color: 0x4a9eff,
@@ -106,19 +100,16 @@
   planet.castShadow = true;
   planet.receiveShadow = true;
   scene.add(planet);
+  
+  // Store material reference on canvas for color changing
+  canvas.__planetMaterial = material;
 
-  // Lune qui orbite
+  // Lune
   const moonGeom = new THREE.SphereGeometry(0.4, 32, 32);
-  const moonMat = new THREE.MeshPhongMaterial({
-    color: 0xcccccc,
-    emissive: 0x222222,
-    specular: 0xffffff,
-    shininess: 5
-  });
+  const moonMat = new THREE.MeshPhongMaterial({ color: 0xcccccc, emissive: 0x222222, specular: 0xffffff, shininess: 5 });
   const moon = new THREE.Mesh(moonGeom, moonMat);
   moon.castShadow = true;
   moon.receiveShadow = true;
-  
   const moonPivot = new THREE.Object3D();
   moonPivot.add(moon);
   moon.position.x = 4;
@@ -128,38 +119,26 @@
 
   // Atmosphère
   const atmosGeom = new THREE.SphereGeometry(2.15, 64, 64);
-  const atmosMat = new THREE.MeshPhongMaterial({
-    color: 0x88ccff,
-    transparent: true,
-    opacity: 0.2,
-    side: THREE.BackSide
-  });
+  const atmosMat = new THREE.MeshPhongMaterial({ color: 0x88ccff, transparent: true, opacity: 0.2, side: THREE.BackSide });
   const atmosphere = new THREE.Mesh(atmosGeom, atmosMat);
   scene.add(atmosphere);
+  canvas.__atmosMaterial = atmosMat;
 
   // Anneaux
   const ringGeom = new THREE.RingGeometry(2.8, 4, 64);
-  const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x9966ff,
-    transparent: true,
-    opacity: 0.5,
-    side: THREE.DoubleSide
-  });
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x9966ff, transparent: true, opacity: 0.5, side: THREE.DoubleSide });
   const ring = new THREE.Mesh(ringGeom, ringMat);
   ring.rotation.x = Math.PI / 2.5;
   ring.receiveShadow = true;
   scene.add(ring);
 
-  // Lumière du soleil (point light avec ombres)
+  // Lumière du soleil
   const sunLight = new THREE.PointLight(0xffffcc, 2, 100);
   sunLight.position.copy(sun.position);
   sunLight.castShadow = true;
   sunLight.shadow.mapSize.width = 2048;
   sunLight.shadow.mapSize.height = 2048;
-  sunLight.shadow.camera.near = 0.5;
-  sunLight.shadow.camera.far = 50;
   scene.add(sunLight);
-
   scene.add(new THREE.AmbientLight(0x333366, 0.3));
 
   camera.position.z = 7;
@@ -180,17 +159,13 @@
   function animate() {
     requestAnimationFrame(animate);
     time += 0.01;
-    
     planet.rotation.y += 0.003;
     atmosphere.rotation.y += 0.002;
     ring.rotation.z += 0.001;
     moonPivot.rotation.y += 0.008;
     moon.rotation.y += 0.01;
-    
-    // Animation du halo solaire
     sunGlow.scale.setScalar(1 + Math.sin(time * 2) * 0.05);
     corona.scale.setScalar(1 + Math.sin(time * 3) * 0.1);
-    
     renderer.render(scene, camera);
   }
   animate();
@@ -370,6 +345,75 @@
   </style>
 <script>
    (function(){const overlay=document.getElementById('autoplay-overlay');const audio=document.getElementById('bg-music');const playIcon=document.getElementById('play-icon');const pauseIcon=document.getElementById('pause-icon');overlay.addEventListener('click',function(){audio.play().then(()=>{playIcon.style.display='none';pauseIcon.style.display='block';}).catch(e=>console.log(e));overlay.style.opacity='0';overlay.style.transition='opacity 0.5s ease';setTimeout(()=>overlay.remove(),500);});document.addEventListener('keydown',function(e){if(overlay.parentNode){audio.play().then(()=>{playIcon.style.display='none';pauseIcon.style.display='block';}).catch(e=>console.log(e));overlay.style.opacity='0';overlay.style.transition='opacity 0.5s ease';setTimeout(()=>overlay.remove(),500);}},{once:true});})();
+  </script>
+<div id="cat" style="position: fixed; z-index: 1000; font-size: 40px; transition: none; pointer-events: none;">
+   🐱
+  </div>
+<div id="dog" style="position: fixed; z-index: 999; font-size: 45px; transition: none; pointer-events: none;">
+   🐕
+  </div>
+<script>
+   (function(){const cat=document.getElementById('cat');const dog=document.getElementById('dog');let catX=window.innerWidth/2;let catY=window.innerHeight/2;let catVX=(Math.random()-0.5)*3;let catVY=(Math.random()-0.5)*3;let dogX=100;let dogY=100;let catSpeed=2;const normalSpeed=2;const panicSpeed=12;const dogSpeed=3.5;const dangerDistance=150;function updatePositions(){const dx=catX-dogX;const dy=catY-dogY;const distance=Math.sqrt(dx*dx+dy*dy);if(distance<dangerDistance){catSpeed=panicSpeed;const escapeAngle=Math.atan2(dy,dx);catVX=Math.cos(escapeAngle)*catSpeed;catVY=Math.sin(escapeAngle)*catSpeed;}else{catSpeed=Math.max(normalSpeed,catSpeed*0.95);if(Math.random()<0.02){catVX+=(Math.random()-0.5)*2;catVY+=(Math.random()-0.5)*2;const mag=Math.sqrt(catVX*catVX+catVY*catVY);catVX=(catVX/mag)*catSpeed;catVY=(catVY/mag)*catSpeed;}}catX+=catVX;catY+=catVY;if(catX<30||catX>window.innerWidth-30)catVX*=-1;if(catY<30||catY>window.innerHeight-30)catVY*=-1;catX=Math.max(30,Math.min(window.innerWidth-30,catX));catY=Math.max(30,Math.min(window.innerHeight-30,catY));const toCatX=catX-dogX;const toCatY=catY-dogY;const toCatDist=Math.sqrt(toCatX*toCatX+toCatY*toCatY);if(toCatDist>5){dogX+=((toCatX/toCatDist)*dogSpeed);dogY+=((toCatY/toCatDist)*dogSpeed);}cat.style.left=catX+'px';cat.style.top=catY+'px';cat.style.transform=catVX<0?'scaleX(-1)':'scaleX(1)';dog.style.left=dogX+'px';dog.style.top=dogY+'px';dog.style.transform=toCatX<0?'scaleX(-1)':'scaleX(1)';if(distance<dangerDistance){cat.style.filter='brightness(1.5)';cat.style.fontSize='45px';}else{cat.style.filter='none';cat.style.fontSize='40px';}requestAnimationFrame(updatePositions);}updatePositions();})();
+  </script>
+<div id="scoreboard" style="position: fixed; top: 20px; right: 30px; z-index: 1000; background: linear-gradient(135deg, rgba(153, 102, 255, 0.8), rgba(74, 158, 255, 0.8)); padding: 15px 25px; border-radius: 15px; font-family: system-ui, sans-serif; box-shadow: 0 4px 20px rgba(100, 150, 255, 0.5); backdrop-filter: blur(10px);">
+<div style="font-size: 0.9rem; opacity: 0.8; margin-bottom: 5px;">
+    🐕 Dog Score
+   </div>
+<div id="dog-score" style="font-size: 2.5rem; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5);">
+    0
+   </div>
+</div>
+<div id="catch-effect" style="position: fixed; z-index: 1001; font-size: 60px; pointer-events: none; opacity: 0; transition: all 0.3s ease;">
+   💥
+  </div>
+<script>
+   (function(){let dogScore=0;const scoreDisplay=document.getElementById('dog-score');const catchEffect=document.getElementById('catch-effect');const cat=document.getElementById('cat');const dog=document.getElementById('dog');const catchDistance=40;let canCatch=true;function checkCatch(){if(!canCatch)return;const catRect=cat.getBoundingClientRect();const dogRect=dog.getBoundingClientRect();const catCenterX=catRect.left+catRect.width/2;const catCenterY=catRect.top+catRect.height/2;const dogCenterX=dogRect.left+dogRect.width/2;const dogCenterY=dogRect.top+dogRect.height/2;const dx=catCenterX-dogCenterX;const dy=catCenterY-dogCenterY;const distance=Math.sqrt(dx*dx+dy*dy);if(distance<catchDistance){dogScore++;scoreDisplay.textContent=dogScore;scoreDisplay.style.transform='scale(1.3)';setTimeout(()=>scoreDisplay.style.transform='scale(1)',200);catchEffect.style.left=(catCenterX-30)+'px';catchEffect.style.top=(catCenterY-30)+'px';catchEffect.style.opacity='1';catchEffect.style.transform='scale(1.5)';setTimeout(()=>{catchEffect.style.opacity='0';catchEffect.style.transform='scale(1)';},300);canCatch=false;setTimeout(()=>canCatch=true,1000);const scoreboard=document.getElementById('scoreboard');scoreboard.style.animation='scoreGlow 0.5s ease';setTimeout(()=>scoreboard.style.animation='',500);}}setInterval(checkCatch,50);const style=document.createElement('style');style.textContent='@keyframes scoreGlow{0%,100%{box-shadow:0 4px 20px rgba(100,150,255,0.5);}50%{box-shadow:0 4px 40px rgba(255,200,100,0.9);}}';document.head.appendChild(style);})();
+  </script>
+<script>
+   (function(){
+  // Expose planet color change function globally
+  window.changePlanetColor = function() {
+    const colors = [
+      { main: 0xff6b6b, emissive: 0x441111, atmos: 0xffaaaa }, // Rouge
+      { main: 0x6bff6b, emissive: 0x114411, atmos: 0xaaffaa }, // Vert
+      { main: 0xffff6b, emissive: 0x444411, atmos: 0xffffaa }, // Jaune
+      { main: 0xff6bff, emissive: 0x441144, atmos: 0xffaaff }, // Magenta
+      { main: 0x6bffff, emissive: 0x114444, atmos: 0xaaffff }, // Cyan
+      { main: 0xffaa6b, emissive: 0x442211, atmos: 0xffddaa }, // Orange
+      { main: 0x4a9eff, emissive: 0x112244, atmos: 0x88ccff }, // Bleu original
+    ];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    // Find all Three.js canvases and update planet materials
+    const canvases = document.querySelectorAll('#planet-container canvas');
+    canvases.forEach(canvas => {
+      if (canvas.__planetMaterial) {
+        canvas.__planetMaterial.color.setHex(randomColor.main);
+        canvas.__planetMaterial.emissive.setHex(randomColor.emissive);
+      }
+      if (canvas.__atmosMaterial) {
+        canvas.__atmosMaterial.color.setHex(randomColor.atmos);
+      }
+    });
+  };
+  
+  // Hook into existing catch detection
+  const originalCheckCatch = setInterval(() => {
+    const scoreDisplay = document.getElementById('dog-score');
+    if (scoreDisplay) {
+      let lastScore = parseInt(scoreDisplay.textContent) || 0;
+      const observer = new MutationObserver(() => {
+        const newScore = parseInt(scoreDisplay.textContent) || 0;
+        if (newScore > lastScore) {
+          window.changePlanetColor();
+          lastScore = newScore;
+        }
+      });
+      observer.observe(scoreDisplay, { childList: true, characterData: true, subtree: true });
+      clearInterval(originalCheckCatch);
+    }
+  }, 100);
+})();
   </script>
 </body>
 </html>
