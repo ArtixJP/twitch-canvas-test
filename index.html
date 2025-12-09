@@ -83,8 +83,10 @@
   </style>
 </head>
 <body>
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+</div>
 <h1>
-   🌙 Hello World
+   🌙 Hello World ☀️
   </h1>
 <div id="moon">
 <div class="crater c1">
@@ -195,6 +197,354 @@ window.addEventListener('load', () => {
         });
     }, 500);
 });
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script>
+   (function() {
+    const container = document.getElementById('three-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 5;
+    
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+    
+    // Soleil - sphère lumineuse
+    const sunGeometry = new THREE.SphereGeometry(0.8, 64, 64);
+    const sunMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffdd44,
+        transparent: true,
+        opacity: 0.95
+    });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    sun.position.set(-3, 2, 0);
+    scene.add(sun);
+    
+    // Halo du soleil
+    const haloGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+    const haloMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffaa00,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.BackSide
+    });
+    const halo = new THREE.Mesh(haloGeometry, haloMaterial);
+    sun.add(halo);
+    
+    // Deuxième halo plus grand
+    const halo2Geometry = new THREE.SphereGeometry(1.8, 32, 32);
+    const halo2Material = new THREE.MeshBasicMaterial({
+        color: 0xff6600,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    const halo2 = new THREE.Mesh(halo2Geometry, halo2Material);
+    sun.add(halo2);
+    
+    // Lumière ponctuelle du soleil
+    const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+    sunLight.position.copy(sun.position);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 1024;
+    sunLight.shadow.mapSize.height = 1024;
+    scene.add(sunLight);
+    
+    // Rayons de lumière (god rays effect)
+    const rayCount = 12;
+    const rays = [];
+    for(let i = 0; i < rayCount; i++) {
+        const rayGeometry = new THREE.PlaneGeometry(0.05, 3);
+        const rayMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffaa,
+            transparent: true,
+            opacity: 0.1,
+            side: THREE.DoubleSide
+        });
+        const ray = new THREE.Mesh(rayGeometry, rayMaterial);
+        ray.position.copy(sun.position);
+        ray.rotation.z = (i / rayCount) * Math.PI * 2;
+        rays.push(ray);
+        scene.add(ray);
+    }
+    
+    // Particules solaires
+    const particleCount = 100;
+    const particlesGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for(let i = 0; i < particleCount; i++) {
+        const angle = Math.random() * Math.PI * 2;
+        const radius = 0.8 + Math.random() * 1.5;
+        positions[i * 3] = sun.position.x + Math.cos(angle) * radius;
+        positions[i * 3 + 1] = sun.position.y + Math.sin(angle) * radius;
+        positions[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
+    }
+    particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particlesMaterial = new THREE.PointsMaterial({
+        color: 0xffcc00,
+        size: 0.05,
+        transparent: true,
+        opacity: 0.6
+    });
+    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+    scene.add(particles);
+    
+    // Animation
+    let time = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.01;
+        
+        // Pulsation du soleil
+        const pulse = 1 + Math.sin(time * 2) * 0.05;
+        sun.scale.set(pulse, pulse, pulse);
+        
+        // Rotation des halos
+        halo.rotation.y += 0.005;
+        halo2.rotation.y -= 0.003;
+        
+        // Animation des rayons
+        rays.forEach((ray, i) => {
+            ray.material.opacity = 0.05 + Math.sin(time * 3 + i) * 0.05;
+            ray.scale.y = 1 + Math.sin(time * 2 + i * 0.5) * 0.3;
+        });
+        
+        // Rotation des particules
+        particles.rotation.z += 0.002;
+        
+        // Variation de l'intensité lumineuse
+        sunLight.intensity = 1.5 + Math.sin(time * 1.5) * 0.5;
+        
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Responsive
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
+  </script>
+<div id="game-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 200; display: none;">
+<canvas height="400" id="game-canvas" style="border-radius: 20px; box-shadow: 0 0 50px rgba(255,182,193,0.5), 0 0 100px rgba(102,126,234,0.3); background: linear-gradient(180deg, #0a0a20 0%, #1a1a3e 100%);" width="600">
+</canvas>
+<div style="position: absolute; top: 10px; left: 20px; font-size: 18px; color: #fff; text-shadow: 0 0 10px #f0f;">
+    Score:
+    <span id="game-score">
+     0
+    </span>
+</div>
+<div style="position: absolute; top: 10px; right: 20px; font-size: 18px; color: #fff; text-shadow: 0 0 10px #0ff;">
+    ⏱️
+    <span id="game-time">
+     30
+    </span>
+    s
+   </div>
+<button id="close-game" onclick="closeGame()" style="position: absolute; top: -15px; right: -15px; width: 40px; height: 40px; border-radius: 50%; border: none; background: linear-gradient(135deg, #f5576c, #f093fb); color: white; font-size: 20px; cursor: pointer; box-shadow: 0 4px 15px rgba(245,87,108,0.5);">
+    ✕
+   </button>
+</div>
+<button id="start-game-btn" onclick="startGame()" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.1)'" style="position: fixed; top: 20px; left: 20px; z-index: 100; padding: 15px 25px; border-radius: 30px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(102,126,234,0.5); transition: all 0.3s ease;">
+   🎮 Jouer!
+  </button>
+<div id="game-over-screen" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 300; background: rgba(0,0,0,0.9); padding: 40px 60px; border-radius: 20px; text-align: center; border: 2px solid rgba(255,255,255,0.2);">
+<h2 style="font-size: 36px; margin-bottom: 20px; background: linear-gradient(90deg, #f093fb, #f5576c); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+    Game Over!
+   </h2>
+<p style="font-size: 24px; margin-bottom: 30px;">
+    Score final:
+    <span id="final-score" style="color: #ffdd44; font-weight: bold;">
+     0
+    </span>
+</p>
+<button onclick="restartGame()" style="padding: 15px 40px; border-radius: 30px; border: none; background: linear-gradient(135deg, #667eea, #764ba2); color: white; font-size: 18px; cursor: pointer; margin-right: 10px;">
+    🔄 Rejouer
+   </button>
+<button onclick="closeGameOver()" style="padding: 15px 40px; border-radius: 30px; border: none; background: linear-gradient(135deg, #f5576c, #f093fb); color: white; font-size: 18px; cursor: pointer;">
+    ✕ Fermer
+   </button>
+</div>
+<script>
+   let gameRunning = false;
+let gameScore = 0;
+let gameTime = 30;
+let gameInterval;
+let timerInterval;
+let cat = { x: 300, y: 350, size: 40, speed: 8 };
+let stars = [];
+let particles = [];
+let keys = {};
+
+function startGame() {
+    document.getElementById('game-container').style.display = 'block';
+    document.getElementById('start-game-btn').style.display = 'none';
+    gameRunning = true;
+    gameScore = 0;
+    gameTime = 30;
+    cat = { x: 300, y: 350, size: 40, speed: 8 };
+    stars = [];
+    particles = [];
+    document.getElementById('game-score').textContent = '0';
+    document.getElementById('game-time').textContent = '30';
+    
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Spawn stars
+    for(let i = 0; i < 5; i++) spawnStar();
+    
+    // Timer
+    timerInterval = setInterval(() => {
+        gameTime--;
+        document.getElementById('game-time').textContent = gameTime;
+        if(gameTime <= 0) endGame();
+    }, 1000);
+    
+    // Game loop
+    gameInterval = setInterval(() => gameLoop(ctx, canvas), 16);
+    
+    // Mouse control
+    canvas.onmousemove = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        cat.x = e.clientX - rect.left;
+        cat.y = e.clientY - rect.top;
+    };
+}
+
+function spawnStar() {
+    const types = [
+        { emoji: '⭐', points: 10, size: 25 },
+        { emoji: '🌟', points: 25, size: 30 },
+        { emoji: '💫', points: 50, size: 35 },
+        { emoji: '🌠', points: 100, size: 40 }
+    ];
+    const type = types[Math.floor(Math.random() * types.length)];
+    stars.push({
+        x: Math.random() * 550 + 25,
+        y: -50,
+        speed: 2 + Math.random() * 3,
+        ...type,
+        wobble: Math.random() * Math.PI * 2
+    });
+}
+
+function spawnParticle(x, y, color) {
+    for(let i = 0; i < 8; i++) {
+        particles.push({
+            x, y,
+            vx: (Math.random() - 0.5) * 10,
+            vy: (Math.random() - 0.5) * 10,
+            life: 30,
+            color
+        });
+    }
+}
+
+function gameLoop(ctx, canvas) {
+    if(!gameRunning) return;
+    
+    // Clear
+    ctx.fillStyle = 'rgba(10, 10, 32, 0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw background stars
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    for(let i = 0; i < 30; i++) {
+        const bx = (i * 73 + Date.now() * 0.01) % canvas.width;
+        const by = (i * 47) % canvas.height;
+        ctx.beginPath();
+        ctx.arc(bx, by, 1, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    // Update and draw falling stars
+    for(let i = stars.length - 1; i >= 0; i--) {
+        const star = stars[i];
+        star.y += star.speed;
+        star.wobble += 0.1;
+        star.x += Math.sin(star.wobble) * 0.5;
+        
+        // Draw star
+        ctx.font = star.size + 'px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(star.emoji, star.x, star.y);
+        
+        // Collision with cat
+        const dist = Math.hypot(cat.x - star.x, cat.y - star.y);
+        if(dist < cat.size) {
+            gameScore += star.points;
+            document.getElementById('game-score').textContent = gameScore;
+            spawnParticle(star.x, star.y, '#ffdd44');
+            stars.splice(i, 1);
+            spawnStar();
+            continue;
+        }
+        
+        // Remove if off screen
+        if(star.y > canvas.height + 50) {
+            stars.splice(i, 1);
+            spawnStar();
+        }
+    }
+    
+    // Update particles
+    for(let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life--;
+        ctx.fillStyle = `rgba(255, 221, 68, ${p.life / 30})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        ctx.fill();
+        if(p.life <= 0) particles.splice(i, 1);
+    }
+    
+    // Draw cat
+    ctx.font = cat.size + 'px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('🐱', cat.x, cat.y);
+    
+    // Glow effect around cat
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = 'rgba(255,182,193,0.8)';
+    ctx.fillText('🐱', cat.x, cat.y);
+    ctx.shadowBlur = 0;
+}
+
+function endGame() {
+    gameRunning = false;
+    clearInterval(gameInterval);
+    clearInterval(timerInterval);
+    document.getElementById('game-container').style.display = 'none';
+    document.getElementById('final-score').textContent = gameScore;
+    document.getElementById('game-over-screen').style.display = 'block';
+}
+
+function closeGame() {
+    gameRunning = false;
+    clearInterval(gameInterval);
+    clearInterval(timerInterval);
+    document.getElementById('game-container').style.display = 'none';
+    document.getElementById('start-game-btn').style.display = 'block';
+}
+
+function restartGame() {
+    document.getElementById('game-over-screen').style.display = 'none';
+    startGame();
+}
+
+function closeGameOver() {
+    document.getElementById('game-over-screen').style.display = 'none';
+    document.getElementById('start-game-btn').style.display = 'block';
+}
   </script>
 </body>
 </html>
