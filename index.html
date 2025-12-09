@@ -201,43 +201,5 @@
         starsContainer.appendChild(star);
     }
   </script>
-<div class="music-control">
-<button class="music-btn playing" id="musicBtn" onclick="toggleMusic()">
-    ⏸️
-   </button>
-<span class="music-label">
-    🎵 Animal Crossing
-   </span>
-</div>
-<audio autoplay="" id="bgMusic" loop="">
-<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
-</audio>
-<script>
-   const audio = document.getElementById('bgMusic');
-    const btn = document.getElementById('musicBtn');
-    let isPlaying = true;
-    
-    audio.volume = 0.5;
-    
-    function toggleMusic() {
-        if (isPlaying) {
-            audio.pause();
-            btn.textContent = '▶️';
-            btn.classList.remove('playing');
-        } else {
-            audio.play();
-            btn.textContent = '⏸️';
-            btn.classList.add('playing');
-        }
-        isPlaying = !isPlaying;
-    }
-    
-    // Handle autoplay restrictions
-    audio.play().catch(() => {
-        isPlaying = false;
-        btn.textContent = '▶️';
-        btn.classList.remove('playing');
-    });
-  </script>
 </body>
 </html>
