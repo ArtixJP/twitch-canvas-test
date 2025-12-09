@@ -23,7 +23,7 @@
 </head>
 <body>
 <h1 style="position: absolute; top: 20px; z-index: 10; text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);">
-   🌍 Little Explorers
+   🌍 Little Explorers 🌙
    <span style="font-size: 1.5rem;">
     🚶‍♂️🚶‍♀️
    </span>
@@ -60,6 +60,35 @@
   
   const earth = new THREE.Mesh(geometry, material);
   scene.add(earth);
+  
+  // === MOON ===
+  const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+  const moonTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/lunar-surface.jpg');
+  const moonMaterial = new THREE.MeshPhongMaterial({
+    map: moonTexture,
+    bumpScale: 0.02,
+    specular: new THREE.Color(0x111111),
+    shininess: 2
+  });
+  const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+  
+  // Moon pivot for orbital animation
+  const moonPivot = new THREE.Group();
+  moon.position.set(4.5, 0, 0);
+  moonPivot.add(moon);
+  moonPivot.rotation.x = 0.3; // Slight tilt
+  scene.add(moonPivot);
+  
+  // Moon glow
+  const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
+  const moonGlowMaterial = new THREE.MeshBasicMaterial({
+    color: 0xaaaacc,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+  });
+  const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+  moon.add(moonGlow);
   
   // === CUTE STICKMAN FACTORY ===
   function createStickman(shirtColor, pantsColor, faceColor) {
@@ -206,6 +235,10 @@
     earth.rotation.y += 0.003;
     atmosphere.rotation.y += 0.003;
     stars.rotation.y += 0.0002;
+    
+    // Moon orbits Earth
+    moonPivot.rotation.y += 0.002;
+    moon.rotation.y += 0.005;
     
     // Stickmen walk around!
     pivot1.rotation.z -= 0.006;
