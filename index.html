@@ -20,7 +20,7 @@
             color: white;
             overflow: hidden;
         }
-        h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
+        h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; text-shadow: 0 0 30px rgba(255, 170, 50, 0.5); }
         
         .solar-system {
             position: relative;
@@ -40,7 +40,8 @@
             box-shadow: 
                 inset -30px -20px 40px rgba(0,0,0,0.6),
                 inset 10px 10px 20px rgba(255,200,100,0.3),
-                0 0 60px rgba(230, 126, 34, 0.4);
+                0 0 60px rgba(230, 126, 34, 0.4),
+                -40px -20px 60px rgba(255, 170, 50, 0.3);
             animation: rotate 20s linear infinite;
         }
         
@@ -109,7 +110,8 @@
             background: linear-gradient(135deg, #bdc3c7 0%, #7f8c8d 50%, #5d6d7e 100%);
             box-shadow: 
                 inset -5px -5px 10px rgba(0,0,0,0.5),
-                0 0 20px rgba(189, 195, 199, 0.3);
+                0 0 20px rgba(189, 195, 199, 0.3),
+                -8px -4px 15px rgba(255, 170, 50, 0.2);
         }
         
         .moon-orbit-2 {
@@ -133,7 +135,8 @@
             background: linear-gradient(135deg, #f5e6d3 0%, #d4c4b0 50%, #a89080 100%);
             box-shadow: 
                 inset -4px -4px 8px rgba(0,0,0,0.4),
-                0 0 15px rgba(245, 230, 211, 0.4);
+                0 0 15px rgba(245, 230, 211, 0.4),
+                -6px -3px 12px rgba(255, 170, 50, 0.2);
         }
         
         .kitty-orbit {
@@ -154,6 +157,7 @@
             width: 40px;
             height: 35px;
             animation: kittyFloat 1s ease-in-out infinite;
+            filter: drop-shadow(-5px -3px 8px rgba(255, 170, 50, 0.3));
         }
         
         .kitty-body {
@@ -348,6 +352,8 @@
   </style>
 </head>
 <body>
+<div id="three-sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none;">
+</div>
 <h1>
    🌌 Hello World
   </h1>
@@ -402,6 +408,11 @@
   </button>
 <script>
    const bgMusic=document.getElementById('bg-music');const musicBtn=document.getElementById('music-toggle');let isPlaying=false;function toggleMusic(){if(isPlaying){bgMusic.pause();musicBtn.textContent='🎵 Play Music';isPlaying=false;}else{bgMusic.play().then(()=>{musicBtn.textContent='⏸️ Pause Music';isPlaying=true;}).catch(e=>console.log('Autoplay blocked, user interaction required'));}}function startMusic(){bgMusic.play().then(()=>{musicBtn.textContent='⏸️ Pause Music';isPlaying=true;document.removeEventListener('click',startMusic);}).catch(e=>{console.log('Autoplay blocked, waiting for user interaction');document.addEventListener('click',startMusic,{once:true});});}window.addEventListener('load',startMusic);
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script id="sun-script">
+   (function(){const container=document.getElementById('three-sun-container');const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);camera.position.z=5;const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setSize(window.innerWidth,window.innerHeight);renderer.setClearColor(0x000000,0);container.appendChild(renderer.domElement);const sunGeometry=new THREE.SphereGeometry(1.2,64,64);const sunMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec2 vUv;varying vec3 vNormal;void main(){vUv=uv;vNormal=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;varying vec2 vUv;varying vec3 vNormal;void main(){vec3 sunColor=vec3(1.0,0.8,0.2);vec3 coronaColor=vec3(1.0,0.4,0.1);float intensity=pow(0.7-dot(vNormal,vec3(0,0,1)),2.0);float noise=sin(vUv.x*20.0+time)*sin(vUv.y*20.0+time)*0.1;vec3 color=mix(sunColor,coronaColor,intensity+noise);float glow=pow(1.0-dot(vNormal,vec3(0,0,1)),3.0);color+=vec3(1.0,0.6,0.2)*glow*0.5;gl_FragColor=vec4(color,1.0);}`,transparent:true});const sun=new THREE.Mesh(sunGeometry,sunMaterial);sun.position.set(-3,2,0);scene.add(sun);const coronaGeometry=new THREE.SphereGeometry(1.8,32,32);const coronaMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec3 vNormal;void main(){vNormal=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;varying vec3 vNormal;void main(){float intensity=pow(0.6-dot(vNormal,vec3(0,0,1)),2.0);vec3 color=vec3(1.0,0.5,0.1)*intensity;float flicker=sin(time*3.0)*0.1+0.9;gl_FragColor=vec4(color*flicker,intensity*0.6);}`,transparent:true,blending:THREE.AdditiveBlending,side:THREE.BackSide});const corona=new THREE.Mesh(coronaGeometry,coronaMaterial);corona.position.copy(sun.position);scene.add(corona);const sunLight=new THREE.PointLight(0xffaa33,2,100);sunLight.position.copy(sun.position);scene.add(sunLight);const ambientLight=new THREE.AmbientLight(0x222244,0.3);scene.add(ambientLight);for(let i=0;i<5;i++){const flareGeometry=new THREE.PlaneGeometry(0.3+Math.random()*0.5,0.05);const flareMaterial=new THREE.MeshBasicMaterial({color:0xffcc66,transparent:true,opacity:0.6,blending:THREE.AdditiveBlending});const flare=new THREE.Mesh(flareGeometry,flareMaterial);flare.position.set(sun.position.x+Math.random()*0.5-0.25,sun.position.y+Math.random()*0.5-0.25,sun.position.z+0.1);flare.rotation.z=Math.random()*Math.PI;scene.add(flare);}let time=0;function animate(){requestAnimationFrame(animate);time+=0.01;sunMaterial.uniforms.time.value=time;coronaMaterial.uniforms.time.value=time;sun.rotation.y+=0.002;corona.rotation.y-=0.001;sunLight.intensity=1.8+Math.sin(time*2)*0.2;renderer.render(scene,camera);}animate();window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});})();
   </script>
 </body>
 </html>
