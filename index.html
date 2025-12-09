@@ -577,6 +577,27 @@
 <h1>
    Hello World
   </h1>
+<div id="score-display" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 30px; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255,255,255,0.5);">
+<div id="dog-score" style="display: flex; align-items: center; gap: 10px; background: rgba(212, 165, 116, 0.3); padding: 10px 20px; border-radius: 20px; border: 2px solid #d4a574;">
+<span>
+     🐕
+    </span>
+<span id="dog-points">
+     0
+    </span>
+</div>
+<div id="cat-score" style="display: flex; align-items: center; gap: 10px; background: rgba(255, 182, 193, 0.3); padding: 10px 20px; border-radius: 20px; border: 2px solid #ffb6c1;">
+<span>
+     🐱
+    </span>
+<span id="cat-escapes">
+     0
+    </span>
+<span style="font-size: 0.8rem; opacity: 0.7;">
+     escapes
+    </span>
+</div>
+</div>
 <div class="solar-system" id="planet-system">
 <div class="rings">
 </div>
@@ -828,52 +849,138 @@ music.addEventListener('ended', () => {
 });
   </script>
 <script id="chase-script">
-   // Chase game logic
+   // Chase game logic with scoring
 const catOrbit = document.getElementById('cat-orbit');
 const dogOrbit = document.getElementById('dog-orbit');
 const kitty = document.getElementById('kitty');
+const planet = document.querySelector('.planet');
 
 let catAngle = 0;
-let dogAngle = Math.PI; // Start on opposite side
-let catSpeed = 0.02; // Normal speed
-let dogSpeed = 0.025; // Dog is faster
+let dogAngle = Math.PI;
+let catSpeed = 0.02;
+let dogSpeed = 0.025;
 const normalCatSpeed = 0.02;
-const escapeCatSpeed = 0.08; // Super fast escape!
-const catchDistance = 0.5; // Radians - how close before cat escapes
+const escapeCatSpeed = 0.08;
+const catchDistance = 0.3;
+const escapeDistance = 0.5;
+
+let dogPoints = 0;
+let catEscapes = 0;
+let canScore = true;
+let wasEscaping = false;
+
+// Planet color palettes
+const planetColors = [
+    { main: '#e67e22', mid: '#d35400', dark: '#c0392b', darker: '#922b21' },
+    { main: '#9b59b6', mid: '#8e44ad', dark: '#6c3483', darker: '#4a235a' },
+    { main: '#3498db', mid: '#2980b9', dark: '#1f618d', darker: '#154360' },
+    { main: '#1abc9c', mid: '#16a085', dark: '#117a65', darker: '#0b5345' },
+    { main: '#e74c3c', mid: '#c0392b', dark: '#a93226', darker: '#78281f' },
+    { main: '#f39c12', mid: '#d68910', dark: '#b9770e', darker: '#7e5109' },
+    { main: '#2ecc71', mid: '#27ae60', dark: '#1e8449', darker: '#145a32' },
+    { main: '#e91e63', mid: '#c2185b', dark: '#ad1457', darker: '#880e4f' }
+];
+
+function changePlanetColor() {
+    const colors = planetColors[Math.floor(Math.random() * planetColors.length)];
+    planet.style.background = `linear-gradient(135deg, ${colors.main} 0%, ${colors.mid} 30%, ${colors.dark} 70%, ${colors.darker} 100%)`;
+    planet.style.boxShadow = `
+        inset -30px -20px 40px rgba(0,0,0,0.6),
+        inset 10px 10px 20px rgba(255,200,100,0.3),
+        0 0 60px ${colors.main}66,
+        -20px -10px 30px rgba(255, 200, 100, 0.2)`;
+    
+    // Flash effect
+    planet.style.transition = 'none';
+    planet.style.filter = 'brightness(2)';
+    setTimeout(() => {
+        planet.style.transition = 'filter 0.5s ease-out';
+        planet.style.filter = 'brightness(1)';
+    }, 50);
+}
+
+function showCatchAnimation() {
+    const catchText = document.createElement('div');
+    catchText.textContent = '🎉 CATCH! +1';
+    catchText.style.cssText = `
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        color: #ffd700;
+        text-shadow: 0 0 20px #ff6600, 0 0 40px #ff3300;
+        z-index: 1000;
+        animation: catchPop 1s ease-out forwards;
+        pointer-events: none;
+    `;
+    document.body.appendChild(catchText);
+    setTimeout(() => catchText.remove(), 1000);
+}
+
+if (!document.getElementById('catch-styles')) {
+    const style = document.createElement('style');
+    style.id = 'catch-styles';
+    style.textContent = `
+        @keyframes catchPop {
+            0% { transform: translate(-50%, -50%) scale(0.5); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1.5); opacity: 1; }
+            100% { transform: translate(-50%, -100%) scale(1); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+}
+
+function updateScore() {
+    document.getElementById('dog-points').textContent = dogPoints;
+    document.getElementById('cat-escapes').textContent = catEscapes;
+}
 
 function updateChase() {
-    // Calculate angular distance
     let angleDiff = Math.abs(catAngle - dogAngle) % (2 * Math.PI);
     if (angleDiff > Math.PI) angleDiff = 2 * Math.PI - angleDiff;
     
-    // If dog is close, cat escapes!
-    if (angleDiff < catchDistance) {
+    if (angleDiff < catchDistance && canScore) {
+        dogPoints++;
+        updateScore();
+        showCatchAnimation();
+        changePlanetColor();
+        canScore = false;
+        
+        catAngle = dogAngle + Math.PI;
         catSpeed = escapeCatSpeed;
         kitty.classList.add('escaping');
+        
+        setTimeout(() => { canScore = true; }, 2000);
+    }
+    else if (angleDiff < escapeDistance) {
+        catSpeed = escapeCatSpeed;
+        kitty.classList.add('escaping');
+        wasEscaping = true;
     } else {
-        // Gradually slow down to normal speed
+        if (wasEscaping && angleDiff > escapeDistance + 0.5) {
+            catEscapes++;
+            updateScore();
+            wasEscaping = false;
+        }
         catSpeed = Math.max(normalCatSpeed, catSpeed * 0.98);
         if (catSpeed <= normalCatSpeed * 1.1) {
             kitty.classList.remove('escaping');
         }
     }
     
-    // Update angles
     catAngle += catSpeed;
     dogAngle += dogSpeed;
     
-    // Keep angles in range
     if (catAngle > 2 * Math.PI) catAngle -= 2 * Math.PI;
     if (dogAngle > 2 * Math.PI) dogAngle -= 2 * Math.PI;
     
-    // Apply rotations
     catOrbit.style.transform = `translate(-50%, -50%) rotate(${catAngle}rad)`;
     dogOrbit.style.transform = `translate(-50%, -50%) rotate(${dogAngle}rad)`;
     
     requestAnimationFrame(updateChase);
 }
 
-// Start the chase!
 updateChase();
   </script>
 <audio id="bg-music" loop="" preload="auto">
