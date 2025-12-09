@@ -475,5 +475,276 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
   </script>
+<div id="game-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 1000; display: none;">
+<canvas height="400" id="gameCanvas" style="border: 3px solid rgba(100, 200, 255, 0.6); border-radius: 15px; box-shadow: 0 0 40px rgba(100, 200, 255, 0.4);" width="600">
+</canvas>
+<div id="game-ui" style="position: absolute; top: 10px; left: 10px; color: white; font-family: system-ui; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8);">
+<div>
+     Score:
+     <span id="score">
+      0
+     </span>
+</div>
+<div>
+     Lives:
+     <span id="lives">
+      ❤️❤️❤️
+     </span>
+</div>
+</div>
+<button id="closeGame" style="position: absolute; top: 10px; right: 10px; background: rgba(255,100,100,0.8); border: none; color: white; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 1rem;">
+    ✕ Close
+   </button>
+<div id="game-over" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white;">
+<h2 style="font-size: 2rem; text-shadow: 0 0 20px rgba(255, 100, 100, 0.8);">
+     Game Over!
+    </h2>
+<p>
+     Final Score:
+     <span id="final-score">
+      0
+     </span>
+</p>
+<button id="restartBtn" style="background: linear-gradient(135deg, rgba(100, 200, 255, 0.8), rgba(50, 150, 200, 0.8)); border: none; color: white; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 1.1rem; margin-top: 10px;">
+     🚀 Play Again
+    </button>
+</div>
+</div>
+<button id="playGameBtn" style="position: fixed; bottom: 30px; left: 30px; z-index: 100; background: linear-gradient(135deg, rgba(255, 200, 100, 0.9), rgba(255, 150, 50, 0.9)); border: 2px solid rgba(255, 220, 150, 0.8); color: white; padding: 15px 25px; border-radius: 50px; cursor: pointer; font-size: 1.1rem; font-weight: bold; box-shadow: 0 0 30px rgba(255, 200, 100, 0.4); transition: all 0.3s ease;">
+   🎮 Play Space Catcher!
+  </button>
+<script>
+   (function() {
+    const playBtn = document.getElementById('playGameBtn');
+    const gameContainer = document.getElementById('game-container');
+    const closeBtn = document.getElementById('closeGame');
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('score');
+    const livesEl = document.getElementById('lives');
+    const gameOverEl = document.getElementById('game-over');
+    const finalScoreEl = document.getElementById('final-score');
+    const restartBtn = document.getElementById('restartBtn');
+    
+    let gameRunning = false;
+    let score = 0;
+    let lives = 3;
+    let ship = { x: 300, y: 350, width: 40, height: 30, speed: 8 };
+    let stars = [];
+    let asteroids = [];
+    let particles = [];
+    let keys = {};
+    let mouseX = 300;
+    
+    playBtn.addEventListener('mouseenter', () => playBtn.style.transform = 'scale(1.1)');
+    playBtn.addEventListener('mouseleave', () => playBtn.style.transform = 'scale(1)');
+    
+    playBtn.onclick = () => {
+        gameContainer.style.display = 'block';
+        startGame();
+    };
+    
+    closeBtn.onclick = () => {
+        gameContainer.style.display = 'none';
+        gameRunning = false;
+    };
+    
+    restartBtn.onclick = startGame;
+    
+    document.addEventListener('keydown', e => keys[e.key] = true);
+    document.addEventListener('keyup', e => keys[e.key] = false);
+    canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+    });
+    
+    function startGame() {
+        score = 0;
+        lives = 3;
+        ship.x = 300;
+        stars = [];
+        asteroids = [];
+        particles = [];
+        gameOverEl.style.display = 'none';
+        updateUI();
+        gameRunning = true;
+        gameLoop();
+    }
+    
+    function updateUI() {
+        scoreEl.textContent = score;
+        livesEl.textContent = '❤️'.repeat(Math.max(0, lives));
+    }
+    
+    function spawnStar() {
+        if (Math.random() < 0.03) {
+            stars.push({
+                x: Math.random() * (canvas.width - 20) + 10,
+                y: -20,
+                size: 15 + Math.random() * 10,
+                speed: 2 + Math.random() * 2,
+                rotation: 0,
+                type: Math.random() < 0.2 ? 'super' : 'normal'
+            });
+        }
+    }
+    
+    function spawnAsteroid() {
+        if (Math.random() < 0.02 + score * 0.0005) {
+            asteroids.push({
+                x: Math.random() * (canvas.width - 30) + 15,
+                y: -30,
+                size: 20 + Math.random() * 20,
+                speed: 1.5 + Math.random() * 2 + score * 0.01,
+                rotation: 0,
+                rotSpeed: (Math.random() - 0.5) * 0.1
+            });
+        }
+    }
+    
+    function createParticles(x, y, color, count) {
+        for (let i = 0; i < count; i++) {
+            particles.push({
+                x, y,
+                vx: (Math.random() - 0.5) * 8,
+                vy: (Math.random() - 0.5) * 8,
+                life: 1,
+                color,
+                size: 3 + Math.random() * 4
+            });
+        }
+    }
+    
+    function update() {
+        // Ship movement
+        if (keys['ArrowLeft'] || keys['a']) ship.x -= ship.speed;
+        if (keys['ArrowRight'] || keys['d']) ship.x += ship.speed;
+        ship.x += (mouseX - ship.x) * 0.1;
+        ship.x = Math.max(20, Math.min(canvas.width - 20, ship.x));
+        
+        spawnStar();
+        spawnAsteroid();
+        
+        // Update stars
+        stars.forEach((star, i) => {
+            star.y += star.speed;
+            star.rotation += 0.05;
+            if (star.y > canvas.height + 20) stars.splice(i, 1);
+            
+            // Collision with ship
+            if (Math.abs(star.x - ship.x) < 25 && Math.abs(star.y - ship.y) < 25) {
+                score += star.type === 'super' ? 50 : 10;
+                createParticles(star.x, star.y, star.type === 'super' ? '#ffff00' : '#00ffff', 10);
+                stars.splice(i, 1);
+                updateUI();
+            }
+        });
+        
+        // Update asteroids
+        asteroids.forEach((ast, i) => {
+            ast.y += ast.speed;
+            ast.rotation += ast.rotSpeed;
+            if (ast.y > canvas.height + 30) asteroids.splice(i, 1);
+            
+            // Collision with ship
+            if (Math.abs(ast.x - ship.x) < ast.size/2 + 15 && Math.abs(ast.y - ship.y) < ast.size/2 + 10) {
+                lives--;
+                createParticles(ship.x, ship.y, '#ff4444', 20);
+                asteroids.splice(i, 1);
+                updateUI();
+                if (lives <= 0) endGame();
+            }
+        });
+        
+        // Update particles
+        particles.forEach((p, i) => {
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.03;
+            if (p.life <= 0) particles.splice(i, 1);
+        });
+    }
+    
+    function draw() {
+        ctx.fillStyle = 'rgba(10, 10, 25, 0.95)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw background stars
+        for (let i = 0; i < 50; i++) {
+            ctx.fillStyle = `rgba(255, 255, 255, ${0.3 + Math.random() * 0.5})`;
+            ctx.beginPath();
+            ctx.arc((i * 37) % canvas.width, (i * 73 + Date.now() * 0.02) % canvas.height, 1, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Draw stars (collectibles)
+        stars.forEach(star => {
+            ctx.save();
+            ctx.translate(star.x, star.y);
+            ctx.rotate(star.rotation);
+            ctx.fillStyle = star.type === 'super' ? '#ffff00' : '#00ffff';
+            ctx.shadowColor = star.type === 'super' ? '#ffff00' : '#00ffff';
+            ctx.shadowBlur = 15;
+            ctx.font = `${star.size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText(star.type === 'super' ? '💎' : '⭐', 0, 5);
+            ctx.restore();
+        });
+        
+        // Draw asteroids
+        asteroids.forEach(ast => {
+            ctx.save();
+            ctx.translate(ast.x, ast.y);
+            ctx.rotate(ast.rotation);
+            ctx.fillStyle = '#888';
+            ctx.shadowColor = '#ff6600';
+            ctx.shadowBlur = 5;
+            ctx.font = `${ast.size}px Arial`;
+            ctx.textAlign = 'center';
+            ctx.fillText('🪨', 0, 8);
+            ctx.restore();
+        });
+        
+        // Draw particles
+        particles.forEach(p => {
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.life;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        });
+        
+        // Draw ship
+        ctx.save();
+        ctx.translate(ship.x, ship.y);
+        ctx.shadowColor = '#00ffff';
+        ctx.shadowBlur = 20;
+        ctx.font = '35px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('🚀', 0, 10);
+        ctx.restore();
+        
+        // Engine glow
+        ctx.fillStyle = `rgba(255, 150, 50, ${0.5 + Math.random() * 0.3})`;
+        ctx.beginPath();
+        ctx.arc(ship.x, ship.y + 20, 8 + Math.random() * 4, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    function gameLoop() {
+        if (!gameRunning) return;
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+    
+    function endGame() {
+        gameRunning = false;
+        finalScoreEl.textContent = score;
+        gameOverEl.style.display = 'block';
+    }
+})();
+  </script>
 </body>
 </html>
