@@ -331,9 +331,176 @@
             0%, 100% { opacity: 0; transform: translateY(0) scale(0.8); }
             50% { opacity: 1; transform: translateY(-5px) scale(1.2); }
         }
+   #sun-container canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+.solar-system {
+  filter: drop-shadow(-20px -10px 30px rgba(255, 200, 50, 0.3));
+}
+   .doggy {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 50px;
+            height: 35px;
+            z-index: 4;
+            transition: none;
+        }
+        .doggy-body {
+            position: absolute;
+            width: 35px;
+            height: 22px;
+            background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #6B3E26 100%);
+            border-radius: 50% 50% 45% 45%;
+            top: 10px;
+            left: 8px;
+            box-shadow: inset -3px -2px 5px rgba(0,0,0,0.3);
+        }
+        .doggy-head {
+            position: absolute;
+            width: 26px;
+            height: 22px;
+            background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
+            border-radius: 50% 50% 40% 40%;
+            top: 0px;
+            left: -5px;
+            box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
+        }
+        .doggy-ear {
+            position: absolute;
+            width: 12px;
+            height: 16px;
+            background: linear-gradient(180deg, #6B3E26, #8B4513);
+            border-radius: 50% 50% 30% 30%;
+            top: -4px;
+        }
+        .doggy-ear.left { left: 0px; transform: rotate(-20deg); }
+        .doggy-ear.right { right: 0px; transform: rotate(20deg); }
+        .doggy-face { position: relative; width: 100%; height: 100%; }
+        .doggy-eye {
+            position: absolute;
+            width: 5px;
+            height: 6px;
+            background: #2c3e50;
+            border-radius: 50%;
+            top: 8px;
+        }
+        .doggy-eye.left { left: 5px; }
+        .doggy-eye.right { right: 5px; }
+        .doggy-eye::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            top: 1px;
+            left: 1px;
+        }
+        .doggy-nose {
+            position: absolute;
+            width: 8px;
+            height: 6px;
+            background: #2c2c2c;
+            border-radius: 50%;
+            top: 13px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .doggy-tongue {
+            position: absolute;
+            width: 6px;
+            height: 8px;
+            background: #ff6b6b;
+            border-radius: 0 0 50% 50%;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: pant 0.3s ease-in-out infinite;
+        }
+        .doggy-tail {
+            position: absolute;
+            width: 18px;
+            height: 8px;
+            background: linear-gradient(90deg, #6B3E26, #8B4513);
+            border-radius: 5px 15px 15px 5px;
+            top: 12px;
+            right: -10px;
+            transform-origin: left center;
+            animation: wag-dog-tail 0.2s ease-in-out infinite;
+        }
+        .doggy-legs {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        .doggy .leg {
+            position: absolute;
+            width: 5px;
+            height: 12px;
+            background: #8B4513;
+            border-radius: 3px;
+            bottom: -5px;
+        }
+        .leg.front-left { left: 12px; animation: run-front 0.15s ease-in-out infinite; }
+        .leg.front-right { left: 18px; animation: run-front 0.15s ease-in-out infinite 0.075s; }
+        .leg.back-left { left: 30px; animation: run-back 0.15s ease-in-out infinite; }
+        .leg.back-right { left: 36px; animation: run-back 0.15s ease-in-out infinite 0.075s; }
+        @keyframes pant {
+            0%, 100% { height: 8px; }
+            50% { height: 12px; }
+        }
+        @keyframes wag-dog-tail {
+            0%, 100% { transform: rotate(-25deg); }
+            50% { transform: rotate(25deg); }
+        }
+        @keyframes run-front {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(20deg); }
+        }
+        @keyframes run-back {
+            0%, 100% { transform: rotate(20deg); }
+            50% { transform: rotate(-20deg); }
+        }
+        .doggy::before {
+            content: '🔥';
+            position: absolute;
+            font-size: 8px;
+            top: -8px;
+            left: 50%;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .doggy.chasing::before {
+            opacity: 1;
+            animation: chase-fire 0.5s ease-in-out infinite;
+        }
+        @keyframes chase-fire {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.3); }
+        }
+        .kitty.escaping::after {
+            content: '💨';
+            font-size: 12px;
+            animation: speed-lines 0.3s linear infinite;
+        }
+        @keyframes speed-lines {
+            0% { opacity: 1; transform: translateX(0); }
+            100% { opacity: 0; transform: translateX(-20px); }
+        }
+   @keyframes confettiFall {
+  0% { opacity: 1; transform: translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: translateY(100px) rotate(360deg); }
+}
+#dogScore { transition: transform 0.3s ease, color 0.3s ease; }
   </style>
 </head>
 <body>
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
+</div>
 <div class="stars" id="stars">
 </div>
 <div class="solar-system">
@@ -369,6 +536,51 @@
 <div class="kitty-tail">
 </div>
 </div>
+<div class="doggy">
+<div class="doggy-body">
+</div>
+<div class="doggy-head">
+<div class="doggy-ear left">
+</div>
+<div class="doggy-ear right">
+</div>
+<div class="doggy-face">
+<div class="doggy-eye left">
+</div>
+<div class="doggy-eye right">
+</div>
+<div class="doggy-nose">
+</div>
+<div class="doggy-tongue">
+</div>
+</div>
+</div>
+<div class="doggy-tail">
+</div>
+<div class="doggy-legs">
+<div class="leg front-left">
+</div>
+<div class="leg front-right">
+</div>
+<div class="leg back-left">
+</div>
+<div class="leg back-right">
+</div>
+</div>
+</div>
+</div>
+<div id="scoreboard" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 30px; font-family: 'Courier New', monospace;">
+<div class="score-item" style="background: linear-gradient(135deg, #8B4513, #A0522D); padding: 10px 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(139,69,19,0.5);">
+<span style="font-size: 1.5rem;">
+     🐕
+    </span>
+<span id="dogScore" style="font-size: 1.8rem; font-weight: bold; margin-left: 8px;">
+     0
+    </span>
+</div>
+<div class="catch-notification" id="catchNotif" style="position: absolute; top: 60px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #ff6b6b, #ee5a5a); padding: 8px 16px; border-radius: 20px; font-size: 1rem; opacity: 0; transition: all 0.3s ease; white-space: nowrap;">
+    🎯 CATCH!
+   </div>
 </div>
 <h1>
    Hello World
@@ -429,6 +641,272 @@
   });
   
   music.volume = 0.5;
+})();
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script>
+   (function() {
+  const container = document.getElementById('sun-container');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+
+  // Soleil principal
+  const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffdd00,
+    transparent: true,
+    opacity: 0.95
+  });
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-8, 5, -15);
+  scene.add(sun);
+
+  // Halo interne
+  const haloGeometry = new THREE.SphereGeometry(2.5, 32, 32);
+  const haloMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffaa00,
+    transparent: true,
+    opacity: 0.3,
+    side: THREE.BackSide
+  });
+  const halo = new THREE.Mesh(haloGeometry, haloMaterial);
+  sun.add(halo);
+
+  // Halo externe (corona)
+  const coronaGeometry = new THREE.SphereGeometry(4, 32, 32);
+  const coronaMaterial = new THREE.MeshBasicMaterial({
+    color: 0xff6600,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+  });
+  const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
+  sun.add(corona);
+
+  // Rayons de lumière (god rays)
+  const rayCount = 12;
+  const rays = [];
+  for (let i = 0; i < rayCount; i++) {
+    const rayGeometry = new THREE.PlaneGeometry(0.3, 15);
+    const rayMaterial = new THREE.MeshBasicMaterial({
+      color: 0xffee88,
+      transparent: true,
+      opacity: 0.08,
+      side: THREE.DoubleSide
+    });
+    const ray = new THREE.Mesh(rayGeometry, rayMaterial);
+    ray.rotation.z = (i / rayCount) * Math.PI * 2;
+    ray.position.y = 5;
+    sun.add(ray);
+    rays.push({ mesh: ray, speed: 0.001 + Math.random() * 0.002, phase: Math.random() * Math.PI * 2 });
+  }
+
+  // Particules solaires
+  const particleCount = 50;
+  const particlesGeometry = new THREE.BufferGeometry();
+  const positions = new Float32Array(particleCount * 3);
+  for (let i = 0; i < particleCount; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 2 + Math.random() * 3;
+    positions[i * 3] = Math.cos(angle) * radius;
+    positions[i * 3 + 1] = Math.sin(angle) * radius;
+    positions[i * 3 + 2] = (Math.random() - 0.5) * 2;
+  }
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  const particlesMaterial = new THREE.PointsMaterial({
+    color: 0xffcc00,
+    size: 0.1,
+    transparent: true,
+    opacity: 0.6
+  });
+  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  sun.add(particles);
+
+  camera.position.z = 10;
+
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.016;
+
+    // Pulsation du soleil
+    const pulse = 1 + Math.sin(time * 2) * 0.05;
+    sun.scale.set(pulse, pulse, pulse);
+
+    // Animation des rayons
+    rays.forEach((ray, i) => {
+      ray.mesh.material.opacity = 0.05 + Math.sin(time * 3 + ray.phase) * 0.04;
+      ray.mesh.rotation.z += ray.speed;
+    });
+
+    // Rotation des particules
+    particles.rotation.z += 0.002;
+
+    // Corona pulsante
+    corona.material.opacity = 0.1 + Math.sin(time * 1.5) * 0.05;
+    halo.material.opacity = 0.25 + Math.sin(time * 2.5) * 0.1;
+
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+  </script>
+<script>
+   (function() {
+    const kitty = document.querySelector('.kitty');
+    const doggy = document.querySelector('.doggy');
+    const solarSystem = document.querySelector('.solar-system');
+    
+    const centerX = solarSystem.offsetWidth / 2;
+    const centerY = solarSystem.offsetHeight / 2;
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI;
+    let catRadius = 160;
+    let dogRadius = 140;
+    let catSpeed = 0.015;
+    let dogSpeed = 0.022;
+    let catEscapeSpeed = 0.06;
+    let isEscaping = false;
+    let escapeTimer = null;
+    
+    kitty.style.animation = 'none';
+    
+    function getDistance(angle1, radius1, angle2, radius2) {
+        const x1 = Math.cos(angle1) * radius1;
+        const y1 = Math.sin(angle1) * radius1;
+        const x2 = Math.cos(angle2) * radius2;
+        const y2 = Math.sin(angle2) * radius2;
+        return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    }
+    
+    function updatePositions() {
+        const distance = getDistance(catAngle, catRadius, dogAngle, dogRadius);
+        
+        if (distance < 60 && !isEscaping) {
+            isEscaping = true;
+            kitty.classList.add('escaping');
+            doggy.classList.add('chasing');
+            
+            if (escapeTimer) clearTimeout(escapeTimer);
+            escapeTimer = setTimeout(() => {
+                isEscaping = false;
+                kitty.classList.remove('escaping');
+                doggy.classList.remove('chasing');
+            }, 1500);
+        }
+        
+        const currentCatSpeed = isEscaping ? catEscapeSpeed : catSpeed;
+        catAngle += currentCatSpeed;
+        
+        const angleDiff = catAngle - dogAngle;
+        const normalizedDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
+        dogAngle += dogSpeed * Math.sign(normalizedDiff);
+        
+        const catX = centerX + Math.cos(catAngle) * catRadius - 20;
+        const catY = centerY + Math.sin(catAngle) * catRadius - 15;
+        kitty.style.left = catX + 'px';
+        kitty.style.top = catY + 'px';
+        kitty.style.transform = catAngle > Math.PI/2 && catAngle < Math.PI*1.5 ? 'scaleX(-1)' : 'scaleX(1)';
+        
+        const dogX = centerX + Math.cos(dogAngle) * dogRadius - 25;
+        const dogY = centerY + Math.sin(dogAngle) * dogRadius - 17;
+        doggy.style.left = dogX + 'px';
+        doggy.style.top = dogY + 'px';
+        doggy.style.transform = dogAngle > Math.PI/2 && dogAngle < Math.PI*1.5 ? 'scaleX(-1)' : 'scaleX(1)';
+        
+        requestAnimationFrame(updatePositions);
+    }
+    
+    updatePositions();
+})();
+  </script>
+<script>
+   (function() {
+    const kitty = document.querySelector('.kitty');
+    const doggy = document.querySelector('.doggy');
+    const solarSystem = document.querySelector('.solar-system');
+    
+    const centerX = solarSystem.offsetWidth / 2;
+    const centerY = solarSystem.offsetHeight / 2;
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI;
+    let catRadius = 160;
+    let dogRadius = 140;
+    let catSpeed = 0.015;
+    let dogSpeed = 0.022;
+    let catEscapeSpeed = 0.06;
+    let isEscaping = false;
+    let escapeTimer = null;
+    
+    kitty.style.animation = 'none';
+    
+    function getDistance(angle1, radius1, angle2, radius2) {
+        const x1 = Math.cos(angle1) * radius1;
+        const y1 = Math.sin(angle1) * radius1;
+        const x2 = Math.cos(angle2) * radius2;
+        const y2 = Math.sin(angle2) * radius2;
+        return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
+    }
+    
+    function updatePositions() {
+        const distance = getDistance(catAngle, catRadius, dogAngle, dogRadius);
+        
+        // Détection de capture!
+        if (distance < 30) {
+            if (window.dogCatch) window.dogCatch();
+            // Téléporter le chat à l'opposé
+            catAngle += Math.PI;
+        }
+        
+        if (distance < 60 && !isEscaping) {
+            isEscaping = true;
+            kitty.classList.add('escaping');
+            doggy.classList.add('chasing');
+            
+            if (escapeTimer) clearTimeout(escapeTimer);
+            escapeTimer = setTimeout(() => {
+                isEscaping = false;
+                kitty.classList.remove('escaping');
+                doggy.classList.remove('chasing');
+            }, 1500);
+        }
+        
+        const currentCatSpeed = isEscaping ? catEscapeSpeed : catSpeed;
+        catAngle += currentCatSpeed;
+        
+        const angleDiff = catAngle - dogAngle;
+        const normalizedDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
+        dogAngle += dogSpeed * Math.sign(normalizedDiff);
+        
+        const catX = centerX + Math.cos(catAngle) * catRadius - 20;
+        const catY = centerY + Math.sin(catAngle) * catRadius - 15;
+        kitty.style.left = catX + 'px';
+        kitty.style.top = catY + 'px';
+        kitty.style.transform = catAngle > Math.PI/2 && catAngle < Math.PI*1.5 ? 'scaleX(-1)' : 'scaleX(1)';
+        
+        const dogX = centerX + Math.cos(dogAngle) * dogRadius - 25;
+        const dogY = centerY + Math.sin(dogAngle) * dogRadius - 17;
+        doggy.style.left = dogX + 'px';
+        doggy.style.top = dogY + 'px';
+        doggy.style.transform = dogAngle > Math.PI/2 && dogAngle < Math.PI*1.5 ? 'scaleX(-1)' : 'scaleX(1)';
+        
+        requestAnimationFrame(updatePositions);
+    }
+    
+    updatePositions();
 })();
   </script>
 </body>
