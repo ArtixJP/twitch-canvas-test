@@ -34,9 +34,67 @@
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setClearColor(0x000000, 0);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   document.getElementById('planet-container').appendChild(renderer.domElement);
 
-  // Planète
+  // Soleil
+  const sunGeom = new THREE.SphereGeometry(1.5, 64, 64);
+  const sunMat = new THREE.MeshBasicMaterial({
+    color: 0xffdd44,
+  });
+  const sun = new THREE.Mesh(sunGeom, sunMat);
+  sun.position.set(12, 6, 8);
+  scene.add(sun);
+
+  // Halo du soleil (glow effect)
+  const sunGlowGeom = new THREE.SphereGeometry(2.2, 32, 32);
+  const sunGlowMat = new THREE.ShaderMaterial({
+    uniforms: {
+      c: { type: 'f', value: 0.4 },
+      p: { type: 'f', value: 4.0 },
+      glowColor: { type: 'c', value: new THREE.Color(0xffaa00) },
+      viewVector: { type: 'v3', value: camera.position }
+    },
+    vertexShader: `
+      uniform vec3 viewVector;
+      varying float intensity;
+      void main() {
+        vec3 vNormal = normalize(normalMatrix * normal);
+        vec3 vNormel = normalize(normalMatrix * viewVector);
+        intensity = pow(0.7 - dot(vNormal, vNormel), 2.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 glowColor;
+      varying float intensity;
+      void main() {
+        vec3 glow = glowColor * intensity;
+        gl_FragColor = vec4(glow, intensity * 0.8);
+      }
+    `,
+    side: THREE.FrontSide,
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+  const sunGlow = new THREE.Mesh(sunGlowGeom, sunGlowMat);
+  sunGlow.position.copy(sun.position);
+  scene.add(sunGlow);
+
+  // Corona/rayons du soleil
+  const coronaGeom = new THREE.SphereGeometry(3, 32, 32);
+  const coronaMat = new THREE.MeshBasicMaterial({
+    color: 0xff6600,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+  });
+  const corona = new THREE.Mesh(coronaGeom, coronaMat);
+  corona.position.copy(sun.position);
+  scene.add(corona);
+
+  // Planète avec ombres
   const geometry = new THREE.SphereGeometry(2, 64, 64);
   const material = new THREE.MeshPhongMaterial({
     color: 0x4a9eff,
@@ -45,6 +103,8 @@
     shininess: 15
   });
   const planet = new THREE.Mesh(geometry, material);
+  planet.castShadow = true;
+  planet.receiveShadow = true;
   scene.add(planet);
 
   // Lune qui orbite
@@ -56,14 +116,13 @@
     shininess: 5
   });
   const moon = new THREE.Mesh(moonGeom, moonMat);
+  moon.castShadow = true;
+  moon.receiveShadow = true;
   
-  // Pivot pour l'orbite de la lune
   const moonPivot = new THREE.Object3D();
   moonPivot.add(moon);
   moon.position.x = 4;
   scene.add(moonPivot);
-  
-  // Légère inclinaison de l'orbite lunaire
   moonPivot.rotation.x = 0.3;
   moonPivot.rotation.z = 0.2;
 
@@ -88,13 +147,20 @@
   });
   const ring = new THREE.Mesh(ringGeom, ringMat);
   ring.rotation.x = Math.PI / 2.5;
+  ring.receiveShadow = true;
   scene.add(ring);
 
-  // Lumières
-  const light = new THREE.PointLight(0xffffff, 1.5);
-  light.position.set(10, 5, 10);
-  scene.add(light);
-  scene.add(new THREE.AmbientLight(0x333366, 0.5));
+  // Lumière du soleil (point light avec ombres)
+  const sunLight = new THREE.PointLight(0xffffcc, 2, 100);
+  sunLight.position.copy(sun.position);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 2048;
+  sunLight.shadow.mapSize.height = 2048;
+  sunLight.shadow.camera.near = 0.5;
+  sunLight.shadow.camera.far = 50;
+  scene.add(sunLight);
+
+  scene.add(new THREE.AmbientLight(0x333366, 0.3));
 
   camera.position.z = 7;
 
@@ -110,15 +176,20 @@
   const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
   scene.add(new THREE.Points(starsGeom, starsMat));
 
+  let time = 0;
   function animate() {
     requestAnimationFrame(animate);
+    time += 0.01;
+    
     planet.rotation.y += 0.003;
     atmosphere.rotation.y += 0.002;
     ring.rotation.z += 0.001;
-    
-    // Orbite de la lune
     moonPivot.rotation.y += 0.008;
     moon.rotation.y += 0.01;
+    
+    // Animation du halo solaire
+    sunGlow.scale.setScalar(1 + Math.sin(time * 2) * 0.05);
+    corona.scale.setScalar(1 + Math.sin(time * 3) * 0.1);
     
     renderer.render(scene, camera);
   }
