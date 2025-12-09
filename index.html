@@ -286,6 +286,50 @@
             pointer-events: none;
             z-index: 0;
         }
+   .doggy-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 380px;
+            height: 380px;
+            transform: translate(-50%, -50%);
+            z-index: 12;
+            pointer-events: none;
+        }
+        .space-doggy {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.2rem;
+            filter: drop-shadow(0 0 10px rgba(255, 180, 100, 0.6));
+            transition: filter 0.3s ease;
+        }
+        .space-doggy.chasing {
+            filter: drop-shadow(0 0 20px rgba(255, 100, 50, 0.9));
+        }
+        .doggy-sparkle {
+            position: absolute;
+            top: 5px;
+            right: -20px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .space-doggy.chasing .doggy-sparkle {
+            opacity: 1;
+            animation: sparkleTrail 0.3s ease-in-out infinite;
+        }
+        .space-kitty.escaping {
+            filter: drop-shadow(0 0 25px rgba(255, 50, 200, 1)) !important;
+        }
+        .space-kitty.escaping .kitty-sparkle {
+            animation: sparkleGlow 0.2s ease-in-out infinite !important;
+        }
+        @keyframes sparkleTrail {
+            0%, 100% { transform: translateX(0); opacity: 0.7; }
+            50% { transform: translateX(-5px); opacity: 1; }
+        }
   </style>
 </head>
 <body>
@@ -310,6 +354,14 @@
      🐱
      <span class="kitty-sparkle">
       ✨
+     </span>
+</div>
+</div>
+<div class="doggy-orbit">
+<div class="space-doggy">
+     🐕
+     <span class="doggy-sparkle">
+      💨
      </span>
 </div>
 </div>
@@ -744,6 +796,92 @@ window.addEventListener('resize', () => {
         finalScoreEl.textContent = score;
         gameOverEl.style.display = 'block';
     }
+})();
+  </script>
+<script>
+   (function() {
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const doggyOrbit = document.querySelector('.doggy-orbit');
+    const spaceKitty = document.querySelector('.space-kitty');
+    const spaceDoggy = document.querySelector('.space-doggy');
+    
+    let kittyAngle = 0;
+    let doggyAngle = Math.PI; // Start opposite to kitty
+    let kittySpeed = 0.008; // Normal speed
+    let doggySpeed = 0.012; // Dog is faster
+    const normalKittySpeed = 0.008;
+    const escapeKittySpeed = 0.035; // Super fast escape!
+    const catchDistance = 0.8; // Radians - when dog gets too close
+    const safeDistance = 1.5; // Radians - when cat can slow down
+    
+    function getAngleDiff(a1, a2) {
+        let diff = a1 - a2;
+        while (diff > Math.PI) diff -= Math.PI * 2;
+        while (diff < -Math.PI) diff += Math.PI * 2;
+        return Math.abs(diff);
+    }
+    
+    function updateChase() {
+        // Move kitty
+        kittyAngle += kittySpeed;
+        if (kittyAngle > Math.PI * 2) kittyAngle -= Math.PI * 2;
+        
+        // Dog always chases kitty (moves toward kitty's position)
+        let angleDiff = kittyAngle - doggyAngle;
+        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        
+        // Dog moves in the direction of the cat
+        if (angleDiff > 0) {
+            doggyAngle += doggySpeed;
+        } else {
+            doggyAngle -= doggySpeed;
+        }
+        if (doggyAngle > Math.PI * 2) doggyAngle -= Math.PI * 2;
+        if (doggyAngle < 0) doggyAngle += Math.PI * 2;
+        
+        // Check distance between them
+        const distance = getAngleDiff(kittyAngle, doggyAngle);
+        
+        // If dog is close, cat escapes!
+        if (distance < catchDistance) {
+            kittySpeed = escapeKittySpeed;
+            spaceKitty.classList.add('escaping');
+            spaceDoggy.classList.add('chasing');
+        } else if (distance > safeDistance) {
+            // Cat is safe, slow down gradually
+            kittySpeed = Math.max(normalKittySpeed, kittySpeed * 0.95);
+            if (kittySpeed <= normalKittySpeed * 1.1) {
+                spaceKitty.classList.remove('escaping');
+                spaceDoggy.classList.remove('chasing');
+            }
+        }
+        
+        // Position kitty
+        const kittyRadius = 190;
+        const kittyX = Math.cos(kittyAngle - Math.PI/2) * kittyRadius;
+        const kittyY = Math.sin(kittyAngle - Math.PI/2) * kittyRadius;
+        kittyOrbit.style.transform = `translate(-50%, -50%)`;
+        spaceKitty.style.left = `calc(50% + ${kittyX}px)`;
+        spaceKitty.style.top = `calc(50% + ${kittyY}px)`;
+        spaceKitty.style.transform = `translate(-50%, -50%) rotate(${kittyAngle + Math.PI/2}rad)`;
+        
+        // Position doggy
+        const doggyRadius = 190;
+        const doggyX = Math.cos(doggyAngle - Math.PI/2) * doggyRadius;
+        const doggyY = Math.sin(doggyAngle - Math.PI/2) * doggyRadius;
+        spaceDoggy.style.left = `calc(50% + ${doggyX}px)`;
+        spaceDoggy.style.top = `calc(50% + ${doggyY}px)`;
+        spaceDoggy.style.transform = `translate(-50%, -50%) rotate(${doggyAngle + Math.PI/2}rad)`;
+        
+        requestAnimationFrame(updateChase);
+    }
+    
+    // Stop CSS animation on kitty orbit
+    kittyOrbit.style.animation = 'none';
+    
+    // Start the chase!
+    updateChase();
 })();
   </script>
 </body>
