@@ -1,24 +1,123 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>
+   Twitch Versus Code
+  </title>
+<style>
+   body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #16213e 100%);
             color: white;
+            overflow: hidden;
+            position: relative;
         }
-        h1 { font-size: 3rem; text-align: center; }
-    </style>
+        h1 { font-size: 3rem; text-align: center; z-index: 10; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        
+        #moon {
+            position: absolute;
+            top: 10%;
+            right: 15%;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f5f5dc 0%, #e8e8d0 50%, #d4d4c4 100%);
+            box-shadow: 
+                0 0 60px 20px rgba(255, 255, 200, 0.3),
+                0 0 100px 40px rgba(255, 255, 200, 0.1),
+                inset -20px -10px 40px rgba(0,0,0,0.2);
+            animation: float 6s ease-in-out infinite, glow 4s ease-in-out infinite alternate;
+        }
+        
+        .crater {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(180, 180, 160, 0.6);
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        .c1 { width: 30px; height: 30px; top: 20%; left: 25%; }
+        .c2 { width: 20px; height: 20px; top: 50%; left: 60%; }
+        .c3 { width: 15px; height: 15px; top: 70%; left: 30%; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(3deg); }
+        }
+        
+        @keyframes glow {
+            0% { box-shadow: 0 0 60px 20px rgba(255, 255, 200, 0.3), 0 0 100px 40px rgba(255, 255, 200, 0.1), inset -20px -10px 40px rgba(0,0,0,0.2); }
+            100% { box-shadow: 0 0 80px 30px rgba(255, 255, 200, 0.4), 0 0 120px 50px rgba(255, 255, 200, 0.15), inset -20px -10px 40px rgba(0,0,0,0.2); }
+        }
+        
+        #stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+  </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1>
+   🌙 Hello World
+  </h1>
+<div id="moon">
+<div class="crater c1">
+</div>
+<div class="crater c2">
+</div>
+<div class="crater c3">
+</div>
+</div>
+<div id="planet-saturn" style="position: absolute; top: 35%; left: 10%; width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #e8c87a 0%, #d4a853 30%, #c9924c 60%, #b8834a 100%); box-shadow: 0 0 40px 10px rgba(232, 200, 122, 0.2), inset -15px -8px 30px rgba(0,0,0,0.3); animation: floatPlanet 8s ease-in-out infinite;">
+<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) rotateX(75deg); width: 140px; height: 140px; border: 8px solid transparent; border-radius: 50%; background: linear-gradient(90deg, transparent 0%, rgba(210, 180, 140, 0.6) 20%, rgba(230, 200, 160, 0.8) 50%, rgba(210, 180, 140, 0.6) 80%, transparent 100%); -webkit-mask: radial-gradient(ellipse 70% 70% at center, transparent 50%, black 51%); mask: radial-gradient(ellipse 70% 70% at center, transparent 50%, black 51%);">
+</div>
+<div style="position: absolute; width: 12px; height: 12px; background: rgba(200, 150, 100, 0.5); border-radius: 50%; top: 25%; left: 20%;">
+</div>
+<div style="position: absolute; width: 8px; height: 8px; background: rgba(180, 130, 80, 0.4); border-radius: 50%; top: 60%; left: 65%;">
+</div>
+</div>
+<style>
+   @keyframes floatPlanet { 0%, 100% { transform: translateY(0px) rotate(-5deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+  </style>
+<div id="stars">
+</div>
+<script>
+   const starsContainer = document.getElementById('stars');
+        for(let i = 0; i < 50; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.width = (Math.random() * 2 + 1) + 'px';
+            star.style.height = star.style.width;
+            starsContainer.appendChild(star);
+        }
+  </script>
 </body>
 </html>
