@@ -41,5 +41,17 @@
 <script>
    function toggleMusic(){const a=document.getElementById('bg-music'),b=document.getElementById('music-toggle');a.paused?(a.play(),b.textContent='⏸️',b.style.background='linear-gradient(135deg,#ff6b6b,#feca57)'):(a.pause(),b.textContent='▶️',b.style.background='linear-gradient(135deg,#a8e6cf,#88d8b0)')}document.getElementById('music-toggle').addEventListener('mouseenter',function(){this.style.transform='scale(1.1)'});document.getElementById('music-toggle').addEventListener('mouseleave',function(){this.style.transform='scale(1)'});
   </script>
+<audio autoplay="" id="bg-music" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+</audio>
+<button id="music-toggle" onclick="toggleMusic()" style="position:fixed;bottom:30px;right:30px;width:60px;height:60px;border-radius:50%;border:none;background:linear-gradient(135deg,#a8e6cf,#88d8b0);font-size:24px;cursor:pointer;box-shadow:0 4px 15px rgba(0,0,0,0.3);transition:all 0.3s ease;z-index:1000;">
+   ▶️
+  </button>
+<script>
+   function toggleMusic(){const a=document.getElementById('bg-music'),b=document.getElementById('music-toggle');if(a.paused){a.play();b.textContent='⏸️';b.style.background='linear-gradient(135deg,#ff6b6b,#feca57)';}else{a.pause();b.textContent='▶️';b.style.background='linear-gradient(135deg,#a8e6cf,#88d8b0)';}}
+  </script>
+<script>
+   document.addEventListener('DOMContentLoaded',function(){const audio=document.getElementById('bg-music');const btn=document.getElementById('music-toggle');audio.play().then(()=>{btn.textContent='⏸️';btn.style.background='linear-gradient(135deg,#ff6b6b,#feca57)';}).catch(()=>{document.body.addEventListener('click',function autoPlay(){audio.play().then(()=>{btn.textContent='⏸️';btn.style.background='linear-gradient(135deg,#ff6b6b,#feca57)';});document.body.removeEventListener('click',autoPlay);},{once:true});});});
+  </script>
 </body>
 </html>
