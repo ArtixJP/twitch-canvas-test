@@ -40,6 +40,15 @@
                 0 0 60px rgba(74, 144, 217, 0.4);
             animation: float 4s ease-in-out infinite;
             position: relative;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+        .planet.caught {
+            animation: float 4s ease-in-out infinite, planetPulse 0.5s ease;
+        }
+        @keyframes planetPulse {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
         }
         .planet::before {
             content: '';
@@ -196,10 +205,18 @@ h1 {
 <h1>
    Hello World
   </h1>
+<div id="scoreBoard" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; z-index: 100; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2);">
+<span>
+    🐕 Dog Score:
+   </span>
+<span id="dogScore">
+    0
+   </span>
+</div>
 <div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
 </div>
 <div class="planet-system">
-<div class="planet">
+<div class="planet" id="planet">
 </div>
 <div class="moon-orbit">
 <div class="moon">
@@ -458,6 +475,126 @@ function updateChase() {
 }
 
 updateChase();
+  </script>
+<script>
+   // Score system
+let dogPoints = 0;
+const dogScoreDisplay = document.getElementById('dogScore');
+const catchDistance = 0.3; // Radians - when dog catches cat
+let catchCooldown = false;
+
+function checkCatch() {
+    if (catchCooldown) return;
+    
+    // Calculate angular distance between cat and dog
+    let angleDiff = Math.abs(catAngle - dogAngle) % (Math.PI * 2);
+    if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
+    
+    // If dog catches cat!
+    if (angleDiff < catchDistance) {
+        dogPoints++;
+        dogScoreDisplay.textContent = dogPoints;
+        
+        // Visual feedback
+        dogScoreDisplay.style.transform = 'scale(1.5)';
+        dogScoreDisplay.style.color = '#ffdd00';
+        setTimeout(() => {
+            dogScoreDisplay.style.transform = 'scale(1)';
+            dogScoreDisplay.style.color = 'white';
+        }, 300);
+        
+        // Show catch message
+        const catchMsg = document.createElement('div');
+        catchMsg.textContent = '🐕 CAUGHT! +1';
+        catchMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffdd00; text-shadow: 0 0 20px rgba(255,221,0,0.8); z-index: 200; animation: fadeUp 1s forwards;';
+        document.body.appendChild(catchMsg);
+        setTimeout(() => catchMsg.remove(), 1000);
+        
+        // Reset positions with cooldown
+        catchCooldown = true;
+        catAngle = 0;
+        dogAngle = Math.PI;
+        setTimeout(() => {
+            catchCooldown = false;
+        }, 1000);
+    }
+}
+
+// Add animation for catch message
+const catchStyle = document.createElement('style');
+catchStyle.textContent = `
+@keyframes fadeUp {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -100%) scale(1.5); }
+}
+#dogScore { transition: transform 0.3s, color 0.3s; }
+`;
+document.head.appendChild(catchStyle);
+
+// Run catch check in animation loop
+setInterval(checkCatch, 50);
+  </script>
+<script>
+   // Planet color change on catch
+const planet = document.getElementById('planet');
+const planetColors = [
+    { gradient: 'linear-gradient(135deg, #d94a4a 0%, #991e1e 50%, #5e0d0d 100%)', glow: 'rgba(217, 74, 74, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #4ad9a7 0%, #1e9963 50%, #0d5e3a 100%)', glow: 'rgba(74, 217, 167, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #d9a74a 0%, #996b1e 50%, #5e420d 100%)', glow: 'rgba(217, 167, 74, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #a74ad9 0%, #631e99 50%, #3a0d5e 100%)', glow: 'rgba(167, 74, 217, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #4ad9d9 0%, #1e9999 50%, #0d5e5e 100%)', glow: 'rgba(74, 217, 217, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #d94a90 0%, #991e57 50%, #5e0d2f 100%)', glow: 'rgba(217, 74, 144, 0.4)' }
+];
+const originalColor = { gradient: 'linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5e 100%)', glow: 'rgba(74, 144, 217, 0.4)' };
+
+function changePlanetColor() {
+    const randomColor = planetColors[Math.floor(Math.random() * planetColors.length)];
+    planet.style.background = randomColor.gradient;
+    planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.5), inset 10px 10px 40px rgba(255,255,255,0.2), 0 0 60px ${randomColor.glow}`;
+    planet.classList.add('caught');
+    
+    // Return to original color after 2 seconds
+    setTimeout(() => {
+        planet.style.background = originalColor.gradient;
+        planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.5), inset 10px 10px 40px rgba(255,255,255,0.2), 0 0 60px ${originalColor.glow}`;
+        planet.classList.remove('caught');
+    }, 2000);
+}
+
+// Override the checkCatch function to include planet color change
+const originalCheckCatch = checkCatch;
+checkCatch = function() {
+    if (catchCooldown) return;
+    
+    let angleDiff = Math.abs(catAngle - dogAngle) % (Math.PI * 2);
+    if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
+    
+    if (angleDiff < catchDistance) {
+        changePlanetColor();
+        dogPoints++;
+        dogScoreDisplay.textContent = dogPoints;
+        
+        dogScoreDisplay.style.transform = 'scale(1.5)';
+        dogScoreDisplay.style.color = '#ffdd00';
+        setTimeout(() => {
+            dogScoreDisplay.style.transform = 'scale(1)';
+            dogScoreDisplay.style.color = 'white';
+        }, 300);
+        
+        const catchMsg = document.createElement('div');
+        catchMsg.textContent = '🐕 CAUGHT! +1';
+        catchMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffdd00; text-shadow: 0 0 20px rgba(255,221,0,0.8); z-index: 200; animation: fadeUp 1s forwards;';
+        document.body.appendChild(catchMsg);
+        setTimeout(() => catchMsg.remove(), 1000);
+        
+        catchCooldown = true;
+        catAngle = 0;
+        dogAngle = Math.PI;
+        setTimeout(() => {
+            catchCooldown = false;
+        }, 1000);
+    }
+};
   </script>
 </body>
 </html>
