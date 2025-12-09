@@ -115,6 +115,28 @@
                 inset -5px -5px 10px rgba(0,0,0,0.5),
                 0 0 20px rgba(192, 192, 192, 0.3);
         }
+        .moon-orbit-2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            animation: orbit-reverse 10s linear infinite;
+        }
+        .moon-2 {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8d4a8 0%, #b8956e 50%, #8b6914 100%);
+            box-shadow: 
+                inset -4px -4px 8px rgba(0,0,0,0.5),
+                0 0 15px rgba(232, 212, 168, 0.4);
+        }
         .stars {
             position: fixed;
             top: 0;
@@ -161,6 +183,10 @@
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
+        @keyframes orbit-reverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
         @keyframes ring-rotate {
             from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
             to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
@@ -184,6 +210,10 @@
 </div>
 <div class="moon-orbit">
 <div class="moon">
+</div>
+</div>
+<div class="moon-orbit-2">
+<div class="moon-2">
 </div>
 </div>
 </div>
