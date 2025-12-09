@@ -10,35 +10,39 @@
 <style>
    * { box-sizing: border-box; }
 body { 
-    font-family: system-ui, sans-serif; 
+    font-family: 'Press Start 2P', 'Courier New', monospace; 
     display: flex; 
     flex-direction: column;
     justify-content: flex-start; 
     align-items: center; 
     min-height: 100vh; 
     margin: 0;
-    background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #16213e 100%);
-    color: white;
+    background: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 30%, #1f1f3a 60%, #0d0d1a 100%);
+    color: #fff;
     overflow-x: hidden;
+    image-rendering: pixelated;
 }
 
-/* Navigation Menu */
+/* Pixel Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+/* Navigation Menu - Retro Arcade Style */
 #main-nav {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     z-index: 1000;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
-    backdrop-filter: blur(10px);
-    padding: 15px 0;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(180deg, #6441a5 0%, #9146ff 50%, #6441a5 100%);
+    border-bottom: 4px solid #00ff88;
+    padding: 10px 0;
+    box-shadow: 0 4px 0 #00cc6a, 0 8px 30px rgba(145, 70, 255, 0.5);
 }
 
 #main-nav ul {
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 20px;
     list-style: none;
     margin: 0;
     padding: 0;
@@ -46,22 +50,33 @@ body {
 
 #main-nav li {
     cursor: pointer;
-    padding: 12px 30px;
-    border-radius: 25px;
-    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: 3px solid #00ff88;
+    border-radius: 0;
+    font-size: 0.8rem;
     font-weight: bold;
-    transition: all 0.3s ease;
-    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.1s ease;
+    background: rgba(0, 0, 0, 0.5);
+    text-shadow: 2px 2px 0 #000;
+    box-shadow: 4px 4px 0 #00cc6a;
 }
 
 #main-nav li:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: scale(1.05);
+    background: #9146ff;
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #00cc6a;
 }
 
 #main-nav li.active {
-    background: rgba(255, 255, 255, 0.3);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    background: #00ff88;
+    color: #1a0a2e;
+    text-shadow: none;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
 }
 
 /* Sections */
@@ -69,7 +84,7 @@ body {
     display: none;
     width: 100%;
     min-height: 100vh;
-    padding-top: 80px;
+    padding-top: 100px;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -80,17 +95,20 @@ body {
 }
 
 .section-title {
-    font-size: 3rem;
+    font-size: 1.5rem;
     text-align: center;
     margin-bottom: 2rem;
-    text-shadow: 0 0 30px rgba(255, 170, 50, 0.5);
+    color: #ffdd00;
+    text-shadow: 3px 3px 0 #ff6b00, 6px 6px 0 rgba(0,0,0,0.3);
+    animation: titleFloat 2s ease-in-out infinite;
 }
 
-/* Space Section */
-#section-space {
-    position: relative;
+@keyframes titleFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
 }
 
+/* Three.js Sun Container - Only visible in space section */
 #three-sun-container {
     position: fixed;
     top: 0;
@@ -99,6 +117,19 @@ body {
     height: 100%;
     z-index: -2;
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+#section-space.active ~ #three-sun-container,
+body:has(#section-space.active) #three-sun-container {
+    opacity: 1;
+}
+
+/* Space Section */
+#section-space {
+    position: relative;
+    background: radial-gradient(ellipse at 20% 30%, rgba(255, 170, 50, 0.1) 0%, transparent 50%);
 }
 
 .solar-system {
@@ -120,7 +151,8 @@ body {
         inset -30px -20px 40px rgba(0,0,0,0.6),
         inset 10px 10px 20px rgba(255,200,100,0.3),
         0 0 60px rgba(230, 126, 34, 0.4),
-        -40px -20px 60px rgba(255, 170, 50, 0.3);
+        0 0 0 4px #ffdd00,
+        0 0 0 8px #ff6b00;
     animation: rotate 20s linear infinite;
 }
 
@@ -190,7 +222,7 @@ body {
     box-shadow: 
         inset -5px -5px 10px rgba(0,0,0,0.5),
         0 0 20px rgba(189, 195, 199, 0.3),
-        -8px -4px 15px rgba(255, 170, 50, 0.2);
+        0 0 0 2px #00ff88;
 }
 
 .moon-orbit-2 {
@@ -215,7 +247,7 @@ body {
     box-shadow: 
         inset -4px -4px 8px rgba(0,0,0,0.4),
         0 0 15px rgba(245, 230, 211, 0.4),
-        -6px -3px 12px rgba(255, 170, 50, 0.2);
+        0 0 0 2px #ff6b00;
 }
 
 .stars {
@@ -235,27 +267,31 @@ body {
     animation: twinkle 2s ease-in-out infinite;
 }
 
-/* Animals Section */
+/* Animals Section - Warm Cozy Style */
+#section-animals {
+    background: radial-gradient(ellipse at center, rgba(255, 107, 107, 0.1) 0%, transparent 60%);
+}
+
 #scoreboard {
     display: flex;
-    gap: 30px;
-    font-size: 1.5rem;
+    gap: 20px;
+    font-size: 0.7rem;
     margin-bottom: 1rem;
-    text-shadow: 0 0 10px rgba(255,255,255,0.5);
+    text-shadow: 2px 2px 0 #000;
 }
 
 #dog-score {
-    background: linear-gradient(135deg, #d4a574, #c4956a);
-    padding: 10px 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(180,120,60,0.5);
+    background: linear-gradient(180deg, #ff9f43 0%, #ee5a24 100%);
+    padding: 10px 15px;
+    border: 3px solid #ffdd00;
+    box-shadow: 4px 4px 0 #b33000;
 }
 
 #cat-score {
-    background: linear-gradient(135deg, #ffb6c1, #ff91a4);
-    padding: 10px 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(255,105,180,0.5);
+    background: linear-gradient(180deg, #ff6b9d 0%, #c44569 100%);
+    padding: 10px 15px;
+    border: 3px solid #ff00ff;
+    box-shadow: 4px 4px 0 #8b0050;
 }
 
 .kitty-orbit {
@@ -276,7 +312,7 @@ body {
     width: 40px;
     height: 35px;
     animation: kittyFloat 1s ease-in-out infinite;
-    filter: drop-shadow(-5px -3px 8px rgba(255, 170, 50, 0.3));
+    filter: drop-shadow(0 0 10px rgba(255, 0, 255, 0.5));
 }
 
 .kitty-body {
@@ -422,7 +458,7 @@ body {
     width: 45px;
     height: 40px;
     animation: dogBounce 0.3s ease-in-out infinite;
-    filter: drop-shadow(-5px -3px 8px rgba(255, 170, 50, 0.3));
+    filter: drop-shadow(0 0 10px rgba(255, 159, 67, 0.5));
 }
 
 .dog-body {
@@ -557,34 +593,59 @@ body {
     animation: waterDrop 1.5s ease-out forwards;
 }
 
-/* Games Section */
+/* Games Section - Full Arcade Mode */
+#section-games {
+    background: 
+        repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,136,0.03) 2px, rgba(0,255,136,0.03) 4px),
+        radial-gradient(ellipse at center, rgba(145, 70, 255, 0.2) 0%, transparent 60%);
+}
+
 #snake-game-container {
-    background: rgba(10, 10, 30, 0.9);
-    border-radius: 15px;
+    background: linear-gradient(180deg, #1a0a2e 0%, #0d0d1a 100%);
+    border: 4px solid #00ff88;
+    border-radius: 0;
     padding: 15px;
-    box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
-    border: 2px solid #667eea;
+    box-shadow: 
+        0 0 0 4px #9146ff,
+        0 0 30px rgba(0, 255, 136, 0.3),
+        inset 0 0 30px rgba(145, 70, 255, 0.2);
+}
+
+#snake-game-container::before {
+    content: '[ INSERT COIN ]';
+    display: block;
+    text-align: center;
+    font-size: 0.5rem;
+    color: #00ff88;
+    margin-bottom: 5px;
+    animation: blink 1s infinite;
 }
 
 #music-toggle {
     position: fixed;
     bottom: 20px;
     right: 20px;
-    padding: 12px 20px;
-    font-size: 1rem;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border: none;
-    border-radius: 25px;
+    padding: 10px 15px;
+    font-size: 0.7rem;
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(180deg, #9146ff 0%, #6441a5 100%);
+    border: 3px solid #00ff88;
+    border-radius: 0;
     color: white;
     cursor: pointer;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0 #00cc6a;
+    transition: all 0.1s ease;
     z-index: 1000;
 }
 
 #music-toggle:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #00cc6a;
+}
+
+#music-toggle:active {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0 #00cc6a;
 }
 
 /* Animations */
@@ -806,8 +867,8 @@ body {
     🎮 Zone de Jeux
    </h1>
 <div id="snake-game-container">
-<div style="color: #fff; text-align: center; margin-bottom: 5px; font-size: 1.1rem;">
-     🐍 Space Snake - Use Arrow Keys
+<div style="color: #00ff88; text-align: center; margin-bottom: 5px; font-size: 0.6rem; text-shadow: 2px 2px 0 #000;">
+     🐍 SPACE SNAKE - USE ARROW KEYS
     </div>
 <div id="snake-game" style="width: 300px; height: 300px; border-radius: 10px; overflow: hidden;">
 </div>
@@ -818,8 +879,8 @@ body {
        0
       </span>
 </span>
-<button id="snake-restart" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;">
-      🔄 Restart
+<button id="snake-restart" style="background: linear-gradient(180deg, #00ff88, #00cc6a); border: 2px solid #ffdd00; color: #1a0a2e; padding: 8px 15px; cursor: pointer; font-size: 0.6rem; font-family: 'Press Start 2P', monospace; box-shadow: 3px 3px 0 #006633;">
+      🔄 RESTART
      </button>
 </div>
 </div>
@@ -953,13 +1014,21 @@ musicBtn.addEventListener('click', toggleMusic);
     let time = 0;
     function animate() {
         requestAnimationFrame(animate);
-        time += 0.01;
-        sunMaterial.uniforms.time.value = time;
-        coronaMaterial.uniforms.time.value = time;
-        sun.rotation.y += 0.002;
-        corona.rotation.y -= 0.001;
-        sunLight.intensity = 1.8 + Math.sin(time*2) * 0.2;
-        renderer.render(scene, camera);
+        
+        // Only render when space section is active
+        const spaceSection = document.getElementById('section-space');
+        const isSpaceActive = spaceSection && spaceSection.classList.contains('active');
+        container.style.opacity = isSpaceActive ? '1' : '0';
+        
+        if (isSpaceActive) {
+            time += 0.01;
+            sunMaterial.uniforms.time.value = time;
+            coronaMaterial.uniforms.time.value = time;
+            sun.rotation.y += 0.002;
+            corona.rotation.y -= 0.001;
+            sunLight.intensity = 1.8 + Math.sin(time*2) * 0.2;
+            renderer.render(scene, camera);
+        }
     }
     animate();
     
