@@ -23,9 +23,9 @@
 </head>
 <body>
 <h1 style="position: absolute; top: 20px; z-index: 10; text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);">
-   🌍 Hello World
+   🌍 Little Explorers
    <span style="font-size: 1.5rem;">
-    🚶‍♂️
+    🚶‍♂️🚶‍♀️
    </span>
 </h1>
 <div id="globe-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
@@ -61,157 +61,96 @@
   const earth = new THREE.Mesh(geometry, material);
   scene.add(earth);
   
-  // Atmosphere glow
-  const atmosphereGeometry = new THREE.SphereGeometry(2.1, 64, 64);
-  const atmosphereMaterial = new THREE.MeshPhongMaterial({
-    color: 0x4444ff,
-    transparent: true,
-    opacity: 0.15,
-    side: THREE.BackSide
-  });
-  const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-  scene.add(atmosphere);
-  
-  // Stars background
-  const starsGeometry = new THREE.BufferGeometry();
-  const starPositions = [];
-  for(let i = 0; i < 2000; i++) {
-    starPositions.push((Math.random() - 0.5) * 200);
-    starPositions.push((Math.random() - 0.5) * 200);
-    starPositions.push((Math.random() - 0.5) * 200);
+  // === CUTE STICKMAN FACTORY ===
+  function createStickman(shirtColor, pantsColor, faceColor) {
+    const stickman = new THREE.Group();
+    
+    // Head
+    const headGeo = new THREE.SphereGeometry(0.12, 32, 32);
+    const headMat = new THREE.MeshPhongMaterial({ color: faceColor });
+    const head = new THREE.Mesh(headGeo, headMat);
+    head.position.y = 0.35;
+    stickman.add(head);
+    stickman.head = head;
+    
+    // Eyes
+    const eyeGeo = new THREE.SphereGeometry(0.025, 16, 16);
+    const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+    leftEye.position.set(-0.04, 0.38, 0.1);
+    const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+    rightEye.position.set(0.04, 0.38, 0.1);
+    stickman.add(leftEye, rightEye);
+    
+    // Rosy cheeks
+    const cheekGeo = new THREE.SphereGeometry(0.02, 16, 16);
+    const cheekMat = new THREE.MeshBasicMaterial({ color: 0xff9999 });
+    const leftCheek = new THREE.Mesh(cheekGeo, cheekMat);
+    leftCheek.position.set(-0.08, 0.33, 0.08);
+    const rightCheek = new THREE.Mesh(cheekGeo, cheekMat);
+    rightCheek.position.set(0.08, 0.33, 0.08);
+    stickman.add(leftCheek, rightCheek);
+    
+    // Body
+    const bodyGeo = new THREE.CylinderGeometry(0.04, 0.05, 0.18, 8);
+    const bodyMat = new THREE.MeshPhongMaterial({ color: shirtColor });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.position.y = 0.14;
+    stickman.add(body);
+    
+    // Arms
+    const armGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.14, 8);
+    const skinMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
+    const leftArm = new THREE.Mesh(armGeo, skinMat);
+    leftArm.position.set(-0.07, 0.18, 0);
+    const rightArm = new THREE.Mesh(armGeo, skinMat);
+    rightArm.position.set(0.07, 0.18, 0);
+    stickman.add(leftArm, rightArm);
+    stickman.leftArm = leftArm;
+    stickman.rightArm = rightArm;
+    
+    // Legs
+    const legGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.14, 8);
+    const legMat = new THREE.MeshPhongMaterial({ color: pantsColor });
+    const leftLeg = new THREE.Mesh(legGeo, legMat);
+    leftLeg.position.set(-0.025, -0.02, 0);
+    const rightLeg = new THREE.Mesh(legGeo, legMat);
+    rightLeg.position.set(0.025, -0.02, 0);
+    stickman.add(leftLeg, rightLeg);
+    stickman.leftLeg = leftLeg;
+    stickman.rightLeg = rightLeg;
+    
+    // Feet
+    const footGeo = new THREE.SphereGeometry(0.03, 16, 16);
+    const footMat = new THREE.MeshPhongMaterial({ color: 0x333333 });
+    const leftFoot = new THREE.Mesh(footGeo, footMat);
+    leftFoot.position.set(-0.025, -0.1, 0.02);
+    leftFoot.scale.set(1, 0.6, 1.3);
+    const rightFoot = new THREE.Mesh(footGeo, footMat);
+    rightFoot.position.set(0.025, -0.1, 0.02);
+    rightFoot.scale.set(1, 0.6, 1.3);
+    stickman.add(leftFoot, rightFoot);
+    stickman.leftFoot = leftFoot;
+    stickman.rightFoot = rightFoot;
+    
+    stickman.position.set(0, 2.12, 0);
+    stickman.scale.set(0.7, 0.7, 0.7);
+    
+    return stickman;
   }
-  starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-  const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-  const stars = new THREE.Points(starsGeometry, starsMaterial);
-  scene.add(stars);
   
-  // Lighting
-  const ambientLight = new THREE.AmbientLight(0x333333);
-  scene.add(ambientLight);
+  // Create two stickmen!
+  const stickman1 = createStickman(0xff6b6b, 0x4ecdc4, 0xffdd00);
+  const stickman2 = createStickman(0x9b59b6, 0x3498db, 0xffcc88);
   
-  const sunLight = new THREE.DirectionalLight(0xffffff, 1);
-  sunLight.position.set(5, 3, 5);
-  scene.add(sunLight);
+  const pivot1 = new THREE.Group();
+  pivot1.add(stickman1);
+  scene.add(pivot1);
   
-  camera.position.z = 5;
-  
-  // Animation
-  function animate() {
-    requestAnimationFrame(animate);
-    earth.rotation.y += 0.003;
-    atmosphere.rotation.y += 0.003;
-    stars.rotation.y += 0.0002;
-    renderer.render(scene, camera);
-  }
-  animate();
-  
-  // Resize handler
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-})();
-  </script>
-<script>
-   (function() {
-  const container = document.getElementById('globe-container');
-  
-  // Scene setup
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.setPixelRatio(window.devicePixelRatio);
-  container.appendChild(renderer.domElement);
-  
-  // Earth sphere
-  const geometry = new THREE.SphereGeometry(2, 64, 64);
-  const textureLoader = new THREE.TextureLoader();
-  const earthTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
-  const bumpTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-topology.png');
-  
-  const material = new THREE.MeshPhongMaterial({
-    map: earthTexture,
-    bumpMap: bumpTexture,
-    bumpScale: 0.05,
-    specular: new THREE.Color(0x333333),
-    shininess: 5
-  });
-  
-  const earth = new THREE.Mesh(geometry, material);
-  scene.add(earth);
-  
-  // === CUTE STICKMAN ===
-  const stickman = new THREE.Group();
-  
-  // Head (yellow happy face)
-  const headGeo = new THREE.SphereGeometry(0.12, 32, 32);
-  const headMat = new THREE.MeshPhongMaterial({ color: 0xffdd00 });
-  const head = new THREE.Mesh(headGeo, headMat);
-  head.position.y = 0.35;
-  stickman.add(head);
-  
-  // Eyes
-  const eyeGeo = new THREE.SphereGeometry(0.025, 16, 16);
-  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
-  const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
-  leftEye.position.set(-0.04, 0.38, 0.1);
-  const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
-  rightEye.position.set(0.04, 0.38, 0.1);
-  stickman.add(leftEye, rightEye);
-  
-  // Rosy cheeks
-  const cheekGeo = new THREE.SphereGeometry(0.02, 16, 16);
-  const cheekMat = new THREE.MeshBasicMaterial({ color: 0xff9999 });
-  const leftCheek = new THREE.Mesh(cheekGeo, cheekMat);
-  leftCheek.position.set(-0.08, 0.33, 0.08);
-  const rightCheek = new THREE.Mesh(cheekGeo, cheekMat);
-  rightCheek.position.set(0.08, 0.33, 0.08);
-  stickman.add(leftCheek, rightCheek);
-  
-  // Body (red shirt)
-  const bodyGeo = new THREE.CylinderGeometry(0.04, 0.05, 0.18, 8);
-  const bodyMat = new THREE.MeshPhongMaterial({ color: 0xff6b6b });
-  const body = new THREE.Mesh(bodyGeo, bodyMat);
-  body.position.y = 0.14;
-  stickman.add(body);
-  
-  // Arms
-  const armGeo = new THREE.CylinderGeometry(0.018, 0.018, 0.14, 8);
-  const skinMat = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
-  const leftArm = new THREE.Mesh(armGeo, skinMat);
-  leftArm.position.set(-0.07, 0.18, 0);
-  const rightArm = new THREE.Mesh(armGeo, skinMat);
-  rightArm.position.set(0.07, 0.18, 0);
-  stickman.add(leftArm, rightArm);
-  
-  // Legs (blue pants)
-  const legGeo = new THREE.CylinderGeometry(0.022, 0.022, 0.14, 8);
-  const legMat = new THREE.MeshPhongMaterial({ color: 0x4ecdc4 });
-  const leftLeg = new THREE.Mesh(legGeo, legMat);
-  leftLeg.position.set(-0.025, -0.02, 0);
-  const rightLeg = new THREE.Mesh(legGeo, legMat);
-  rightLeg.position.set(0.025, -0.02, 0);
-  stickman.add(leftLeg, rightLeg);
-  
-  // Feet (little shoes)
-  const footGeo = new THREE.SphereGeometry(0.03, 16, 16);
-  const footMat = new THREE.MeshPhongMaterial({ color: 0x333333 });
-  const leftFoot = new THREE.Mesh(footGeo, footMat);
-  leftFoot.position.set(-0.025, -0.1, 0.02);
-  leftFoot.scale.set(1, 0.6, 1.3);
-  const rightFoot = new THREE.Mesh(footGeo, footMat);
-  rightFoot.position.set(0.025, -0.1, 0.02);
-  rightFoot.scale.set(1, 0.6, 1.3);
-  stickman.add(leftFoot, rightFoot);
-  
-  stickman.position.set(0, 2.12, 0);
-  stickman.scale.set(0.7, 0.7, 0.7);
-  
-  const pivot = new THREE.Group();
-  pivot.add(stickman);
-  scene.add(pivot);
+  const pivot2 = new THREE.Group();
+  pivot2.rotation.x = Math.PI / 2;
+  pivot2.add(stickman2);
+  scene.add(pivot2);
   
   // Atmosphere glow
   const atmosphereGeometry = new THREE.SphereGeometry(2.1, 64, 64);
@@ -247,7 +186,19 @@
   
   camera.position.z = 5;
   
-  let legSwing = 0;
+  let legSwing1 = 0;
+  let legSwing2 = Math.PI / 2;
+  
+  function animateStickman(stickman, legSwing) {
+    stickman.leftLeg.rotation.x = Math.sin(legSwing) * 0.6;
+    stickman.rightLeg.rotation.x = Math.sin(legSwing + Math.PI) * 0.6;
+    stickman.leftFoot.position.y = -0.1 + Math.max(0, Math.sin(legSwing)) * 0.02;
+    stickman.rightFoot.position.y = -0.1 + Math.max(0, Math.sin(legSwing + Math.PI)) * 0.02;
+    stickman.leftArm.rotation.x = Math.sin(legSwing + Math.PI) * 0.4;
+    stickman.rightArm.rotation.x = Math.sin(legSwing) * 0.4;
+    stickman.position.y = 2.12 + Math.abs(Math.sin(legSwing * 0.5)) * 0.02;
+    stickman.head.rotation.z = Math.sin(legSwing * 0.5) * 0.1;
+  }
   
   // Animation
   function animate() {
@@ -256,25 +207,15 @@
     atmosphere.rotation.y += 0.003;
     stars.rotation.y += 0.0002;
     
-    // Stickman walks around!
-    pivot.rotation.z -= 0.006;
+    // Stickmen walk around!
+    pivot1.rotation.z -= 0.006;
+    pivot2.rotation.z += 0.008;
     
-    // Walking animation
-    legSwing += 0.18;
-    leftLeg.rotation.x = Math.sin(legSwing) * 0.6;
-    rightLeg.rotation.x = Math.sin(legSwing + Math.PI) * 0.6;
-    leftFoot.position.y = -0.1 + Math.max(0, Math.sin(legSwing)) * 0.02;
-    rightFoot.position.y = -0.1 + Math.max(0, Math.sin(legSwing + Math.PI)) * 0.02;
-    
-    // Arm swing
-    leftArm.rotation.x = Math.sin(legSwing + Math.PI) * 0.4;
-    rightArm.rotation.x = Math.sin(legSwing) * 0.4;
-    
-    // Happy bounce
-    stickman.position.y = 2.12 + Math.abs(Math.sin(legSwing * 0.5)) * 0.02;
-    
-    // Head bobbing
-    head.rotation.z = Math.sin(legSwing * 0.5) * 0.1;
+    // Walking animations
+    legSwing1 += 0.18;
+    legSwing2 += 0.22;
+    animateStickman(stickman1, legSwing1);
+    animateStickman(stickman2, legSwing2);
     
     renderer.render(scene, camera);
   }
