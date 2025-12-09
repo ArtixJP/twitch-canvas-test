@@ -964,5 +964,450 @@
   100% { opacity: 0; transform: scale(2); }
 }
   </style>
+<div id="game-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: none; background: rgba(0,0,0,0.9);">
+<canvas id="game-canvas">
+</canvas>
+<div id="game-ui" style="position: absolute; top: 20px; left: 20px; color: white; font-family: 'Courier New', monospace; font-size: 18px; text-shadow: 0 0 10px #0ff;">
+<div>
+     SCORE:
+     <span id="game-score">
+      0
+     </span>
+</div>
+<div>
+     VIES:
+     <span id="game-lives">
+      ❤️❤️❤️
+     </span>
+</div>
+</div>
+<div id="game-over" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; font-family: system-ui;">
+<h2 style="font-size: 48px; color: #ff4444; text-shadow: 0 0 20px #ff0000;">
+     GAME OVER
+    </h2>
+<p style="font-size: 24px;">
+     Score final:
+     <span id="final-score">
+      0
+     </span>
+</p>
+<button onclick="restartGame()" style="padding: 15px 30px; font-size: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; border-radius: 10px; cursor: pointer; margin-top: 20px;">
+     REJOUER
+    </button>
+</div>
+<button id="close-game" onclick="closeGame()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,100,100,0.8); border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+    ✕ FERMER
+   </button>
+</div>
+<button id="play-game-btn" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(0, 198, 255, 0.5)';" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(0, 198, 255, 0.7)';" style="position: fixed; bottom: 30px; left: 30px; z-index: 100; padding: 15px 25px; background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border: none; color: white; font-size: 18px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 198, 255, 0.5); transition: all 0.3s ease;">
+   🚀 JOUER
+  </button>
+<script>
+   (function() {
+  const canvas = document.getElementById('game-canvas');
+  const ctx = canvas.getContext('2d');
+  const container = document.getElementById('game-container');
+  const playBtn = document.getElementById('play-game-btn');
+  
+  let gameRunning = false;
+  let score = 0;
+  let lives = 3;
+  let ship, bullets, asteroids, particles, stars;
+  let keys = {};
+  
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  
+  function initGame() {
+    resizeCanvas();
+    score = 0;
+    lives = 3;
+    updateUI();
+    
+    ship = {
+      x: canvas.width / 2,
+      y: canvas.height / 2,
+      angle: -Math.PI / 2,
+      vx: 0,
+      vy: 0,
+      radius: 15,
+      thrust: false,
+      invincible: 0
+    };
+    
+    bullets = [];
+    asteroids = [];
+    particles = [];
+    stars = [];
+    
+    // Créer les étoiles de fond
+    for (let i = 0; i < 100; i++) {
+      stars.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 2 + 0.5,
+        twinkle: Math.random() * Math.PI * 2
+      });
+    }
+    
+    // Créer les astéroïdes initiaux
+    for (let i = 0; i < 5; i++) {
+      spawnAsteroid();
+    }
+    
+    document.getElementById('game-over').style.display = 'none';
+  }
+  
+  function spawnAsteroid(x, y, size) {
+    size = size || 3;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = 1 + Math.random() * 2;
+    
+    if (x === undefined) {
+      const side = Math.floor(Math.random() * 4);
+      if (side === 0) { x = 0; y = Math.random() * canvas.height; }
+      else if (side === 1) { x = canvas.width; y = Math.random() * canvas.height; }
+      else if (side === 2) { x = Math.random() * canvas.width; y = 0; }
+      else { x = Math.random() * canvas.width; y = canvas.height; }
+    }
+    
+    // Forme irrégulière
+    const vertices = [];
+    const numVertices = 8 + Math.floor(Math.random() * 5);
+    for (let i = 0; i < numVertices; i++) {
+      const a = (i / numVertices) * Math.PI * 2;
+      const r = (size * 15) * (0.7 + Math.random() * 0.3);
+      vertices.push({ x: Math.cos(a) * r, y: Math.sin(a) * r });
+    }
+    
+    asteroids.push({
+      x, y,
+      vx: Math.cos(angle) * speed,
+      vy: Math.sin(angle) * speed,
+      size,
+      radius: size * 15,
+      rotation: 0,
+      rotSpeed: (Math.random() - 0.5) * 0.05,
+      vertices,
+      color: `hsl(${30 + Math.random() * 30}, 30%, ${40 + Math.random() * 20}%)`
+    });
+  }
+  
+  function shoot() {
+    const speed = 10;
+    bullets.push({
+      x: ship.x + Math.cos(ship.angle) * 20,
+      y: ship.y + Math.sin(ship.angle) * 20,
+      vx: Math.cos(ship.angle) * speed + ship.vx * 0.5,
+      vy: Math.sin(ship.angle) * speed + ship.vy * 0.5,
+      life: 60
+    });
+  }
+  
+  function createExplosion(x, y, color, count) {
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = Math.random() * 5 + 2;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 30 + Math.random() * 30,
+        color,
+        size: Math.random() * 4 + 2
+      });
+    }
+  }
+  
+  function updateUI() {
+    document.getElementById('game-score').textContent = score;
+    document.getElementById('game-lives').textContent = '❤️'.repeat(Math.max(0, lives));
+  }
+  
+  function update() {
+    if (!gameRunning) return;
+    
+    // Contrôles du vaisseau
+    if (keys['ArrowLeft'] || keys['KeyA']) ship.angle -= 0.08;
+    if (keys['ArrowRight'] || keys['KeyD']) ship.angle += 0.08;
+    if (keys['ArrowUp'] || keys['KeyW']) {
+      ship.vx += Math.cos(ship.angle) * 0.15;
+      ship.vy += Math.sin(ship.angle) * 0.15;
+      ship.thrust = true;
+      // Particules de propulsion
+      if (Math.random() > 0.5) {
+        particles.push({
+          x: ship.x - Math.cos(ship.angle) * 15,
+          y: ship.y - Math.sin(ship.angle) * 15,
+          vx: -Math.cos(ship.angle) * 3 + (Math.random() - 0.5) * 2,
+          vy: -Math.sin(ship.angle) * 3 + (Math.random() - 0.5) * 2,
+          life: 20,
+          color: '#ff6600',
+          size: Math.random() * 3 + 2
+        });
+      }
+    } else {
+      ship.thrust = false;
+    }
+    
+    // Friction
+    ship.vx *= 0.99;
+    ship.vy *= 0.99;
+    
+    // Limite de vitesse
+    const maxSpeed = 8;
+    const speed = Math.sqrt(ship.vx * ship.vx + ship.vy * ship.vy);
+    if (speed > maxSpeed) {
+      ship.vx = (ship.vx / speed) * maxSpeed;
+      ship.vy = (ship.vy / speed) * maxSpeed;
+    }
+    
+    // Mouvement du vaisseau
+    ship.x += ship.vx;
+    ship.y += ship.vy;
+    
+    // Wrap around
+    if (ship.x < 0) ship.x = canvas.width;
+    if (ship.x > canvas.width) ship.x = 0;
+    if (ship.y < 0) ship.y = canvas.height;
+    if (ship.y > canvas.height) ship.y = 0;
+    
+    if (ship.invincible > 0) ship.invincible--;
+    
+    // Mise à jour des balles
+    bullets = bullets.filter(b => {
+      b.x += b.vx;
+      b.y += b.vy;
+      b.life--;
+      
+      // Wrap around
+      if (b.x < 0) b.x = canvas.width;
+      if (b.x > canvas.width) b.x = 0;
+      if (b.y < 0) b.y = canvas.height;
+      if (b.y > canvas.height) b.y = 0;
+      
+      return b.life > 0;
+    });
+    
+    // Mise à jour des astéroïdes
+    asteroids.forEach(a => {
+      a.x += a.vx;
+      a.y += a.vy;
+      a.rotation += a.rotSpeed;
+      
+      // Wrap around
+      if (a.x < -a.radius) a.x = canvas.width + a.radius;
+      if (a.x > canvas.width + a.radius) a.x = -a.radius;
+      if (a.y < -a.radius) a.y = canvas.height + a.radius;
+      if (a.y > canvas.height + a.radius) a.y = -a.radius;
+    });
+    
+    // Collision balles-astéroïdes
+    bullets.forEach((b, bi) => {
+      asteroids.forEach((a, ai) => {
+        const dx = b.x - a.x;
+        const dy = b.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist < a.radius) {
+          bullets.splice(bi, 1);
+          createExplosion(a.x, a.y, a.color, 15);
+          
+          score += (4 - a.size) * 100;
+          updateUI();
+          
+          if (a.size > 1) {
+            spawnAsteroid(a.x, a.y, a.size - 1);
+            spawnAsteroid(a.x, a.y, a.size - 1);
+          }
+          
+          asteroids.splice(ai, 1);
+        }
+      });
+    });
+    
+    // Collision vaisseau-astéroïdes
+    if (ship.invincible <= 0) {
+      asteroids.forEach(a => {
+        const dx = ship.x - a.x;
+        const dy = ship.y - a.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        
+        if (dist < a.radius + ship.radius) {
+          lives--;
+          updateUI();
+          createExplosion(ship.x, ship.y, '#00ffff', 30);
+          ship.invincible = 120;
+          ship.x = canvas.width / 2;
+          ship.y = canvas.height / 2;
+          ship.vx = 0;
+          ship.vy = 0;
+          
+          if (lives <= 0) {
+            gameOver();
+          }
+        }
+      });
+    }
+    
+    // Mise à jour des particules
+    particles = particles.filter(p => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= 0.98;
+      p.vy *= 0.98;
+      p.life--;
+      return p.life > 0;
+    });
+    
+    // Spawn de nouveaux astéroïdes
+    if (asteroids.length < 3 + Math.floor(score / 1000)) {
+      spawnAsteroid();
+    }
+  }
+  
+  function draw() {
+    ctx.fillStyle = 'rgba(0, 0, 20, 0.3)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Étoiles
+    stars.forEach(s => {
+      s.twinkle += 0.05;
+      const alpha = 0.5 + Math.sin(s.twinkle) * 0.3;
+      ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    
+    // Particules
+    particles.forEach(p => {
+      const alpha = p.life / 60;
+      ctx.fillStyle = p.color;
+      ctx.globalAlpha = alpha;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.globalAlpha = 1;
+    
+    // Astéroïdes
+    asteroids.forEach(a => {
+      ctx.save();
+      ctx.translate(a.x, a.y);
+      ctx.rotate(a.rotation);
+      ctx.strokeStyle = a.color;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(a.vertices[0].x, a.vertices[0].y);
+      a.vertices.forEach(v => ctx.lineTo(v.x, v.y));
+      ctx.closePath();
+      ctx.stroke();
+      ctx.restore();
+    });
+    
+    // Balles
+    ctx.fillStyle = '#00ffff';
+    ctx.shadowColor = '#00ffff';
+    ctx.shadowBlur = 10;
+    bullets.forEach(b => {
+      ctx.beginPath();
+      ctx.arc(b.x, b.y, 3, 0, Math.PI * 2);
+      ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+    
+    // Vaisseau
+    if (ship.invincible <= 0 || Math.floor(ship.invincible / 5) % 2 === 0) {
+      ctx.save();
+      ctx.translate(ship.x, ship.y);
+      ctx.rotate(ship.angle);
+      
+      // Corps du vaisseau
+      ctx.strokeStyle = '#00ffff';
+      ctx.lineWidth = 2;
+      ctx.shadowColor = '#00ffff';
+      ctx.shadowBlur = 15;
+      ctx.beginPath();
+      ctx.moveTo(20, 0);
+      ctx.lineTo(-15, -12);
+      ctx.lineTo(-10, 0);
+      ctx.lineTo(-15, 12);
+      ctx.closePath();
+      ctx.stroke();
+      
+      // Flamme de propulsion
+      if (ship.thrust) {
+        ctx.strokeStyle = '#ff6600';
+        ctx.shadowColor = '#ff6600';
+        ctx.beginPath();
+        ctx.moveTo(-10, -5);
+        ctx.lineTo(-25 - Math.random() * 10, 0);
+        ctx.lineTo(-10, 5);
+        ctx.stroke();
+      }
+      
+      ctx.restore();
+    }
+    ctx.shadowBlur = 0;
+  }
+  
+  function gameLoop() {
+    if (gameRunning) {
+      update();
+      draw();
+      requestAnimationFrame(gameLoop);
+    }
+  }
+  
+  function gameOver() {
+    gameRunning = false;
+    document.getElementById('final-score').textContent = score;
+    document.getElementById('game-over').style.display = 'block';
+  }
+  
+  window.restartGame = function() {
+    initGame();
+    gameRunning = true;
+    gameLoop();
+  };
+  
+  window.closeGame = function() {
+    gameRunning = false;
+    container.style.display = 'none';
+  };
+  
+  playBtn.addEventListener('click', () => {
+    container.style.display = 'block';
+    initGame();
+    gameRunning = true;
+    gameLoop();
+  });
+  
+  document.addEventListener('keydown', (e) => {
+    keys[e.code] = true;
+    if (e.code === 'Space' && gameRunning) {
+      shoot();
+      e.preventDefault();
+    }
+    if (e.code === 'Escape' && container.style.display === 'block') {
+      closeGame();
+    }
+  });
+  
+  document.addEventListener('keyup', (e) => {
+    keys[e.code] = false;
+  });
+  
+  window.addEventListener('resize', resizeCanvas);
+})();
+  </script>
+<div id="elephant-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none;">
+</div>
+<script>
+   (function() { setTimeout(() => { const container = document.getElementById('elephant-container'); const elephantScene = new THREE.Scene(); const elephantCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); const elephantRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); elephantRenderer.setSize(window.innerWidth, window.innerHeight); elephantRenderer.setClearColor(0x000000, 0); container.appendChild(elephantRenderer.domElement); const light = new THREE.PointLight(0xffffff, 1.5); light.position.set(5, 5, 10); elephantScene.add(light); elephantScene.add(new THREE.AmbientLight(0x6688aa, 0.6)); const elephantMat = new THREE.MeshPhongMaterial({ color: 0x888899, emissive: 0x222233, specular: 0xaaaaaa, shininess: 20 }); const pinkMat = new THREE.MeshPhongMaterial({ color: 0xffaaaa, emissive: 0x331111 }); const elephant = new THREE.Group(); const body = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), elephantMat); body.scale.set(1.2, 0.9, 0.9); elephant.add(body); const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), elephantMat); head.position.set(0.9, 0.3, 0); elephant.add(head); const trunkSegments = []; const trunkMat = elephantMat.clone(); for(let i = 0; i < 8; i++) { const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.12 - i*0.01, 0.14 - i*0.01, 0.2, 16), trunkMat); seg.position.set(1.3 + i*0.15, 0.1 - i*0.08, 0); seg.rotation.z = Math.PI/2 + i*0.15; trunkSegments.push(seg); elephant.add(seg); } const earL = new THREE.Mesh(new THREE.CircleGeometry(0.4, 32), elephantMat); earL.position.set(0.6, 0.5, -0.4); earL.rotation.y = -0.5; elephant.add(earL); const earLInner = new THREE.Mesh(new THREE.CircleGeometry(0.25, 32), pinkMat); earLInner.position.set(0.61, 0.5, -0.39); earLInner.rotation.y = -0.5; elephant.add(earLInner); const earR = new THREE.Mesh(new THREE.CircleGeometry(0.4, 32), elephantMat); earR.position.set(0.6, 0.5, 0.4); earR.rotation.y = 0.5; elephant.add(earR); const earRInner = new THREE.Mesh(new THREE.CircleGeometry(0.25, 32), pinkMat); earRInner.position.set(0.61, 0.5, 0.39); earRInner.rotation.y = 0.5; elephant.add(earRInner); const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 }); const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), eyeMat); eyeL.position.set(1.2, 0.5, -0.2); elephant.add(eyeL); const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), eyeMat); eyeR.position.set(1.2, 0.5, 0.2); elephant.add(eyeR); const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff }); const shineL = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), shineMat); shineL.position.set(1.25, 0.53, -0.22); elephant.add(shineL); const shineR = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), shineMat); shineR.position.set(1.25, 0.53, 0.18); elephant.add(shineR); const legGeom = new THREE.CylinderGeometry(0.15, 0.18, 0.6, 16); const legFL = new THREE.Mesh(legGeom, elephantMat); legFL.position.set(0.4, -0.7, -0.35); elephant.add(legFL); const legFR = new THREE.Mesh(legGeom, elephantMat); legFR.position.set(0.4, -0.7, 0.35); elephant.add(legFR); const legBL = new THREE.Mesh(legGeom, elephantMat); legBL.position.set(-0.5, -0.7, -0.35); elephant.add(legBL); const legBR = new THREE.Mesh(legGeom, elephantMat); legBR.position.set(-0.5, -0.7, 0.35); elephant.add(legBR); const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.5, 8), elephantMat); tail.position.set(-1.1, -0.2, 0); tail.rotation.z = Math.PI/3; elephant.add(tail); const tailTuft = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshPhongMaterial({color: 0x555566})); tailTuft.position.set(-1.3, -0.45, 0); elephant.add(tailTuft); elephant.position.set(0, 0, 0); elephant.scale.set(1.5, 1.5, 1.5); elephantScene.add(elephant); const waterParticles = []; const waterGeom = new THREE.SphereGeometry(0.05, 8, 8); const waterMat = new THREE.MeshPhongMaterial({ color: 0x44aaff, emissive: 0x113355, transparent: true, opacity: 0.8 }); function spawnWater() { const particle = new THREE.Mesh(waterGeom, waterMat.clone()); const trunkEnd = new THREE.Vector3(2.5, 0.8, 0); particle.position.copy(trunkEnd); const angle = Math.random() * 0.5 - 0.25; const upAngle = Math.random() * 0.3 + 0.3; particle.userData = { vx: Math.cos(angle) * 0.15, vy: Math.sin(upAngle) * 0.25 + 0.1, vz: Math.sin(angle) * 0.1, life: 80 + Math.random() * 40 }; waterParticles.push(particle); elephantScene.add(particle); } elephantCamera.position.z = 6; let time = 0; function animateElephant() { requestAnimationFrame(animateElephant); time += 0.016; elephant.rotation.y = Math.sin(time * 0.5) * 0.2; earL.rotation.x = Math.sin(time * 2) * 0.1; earR.rotation.x = Math.sin(time * 2 + 0.5) * 0.1; for(let i = 0; i < trunkSegments.length; i++) { trunkSegments[i].rotation.x = Math.sin(time * 3 + i * 0.3) * 0.2; trunkSegments[i].position.y = 0.1 - i*0.08 + Math.sin(time * 2 + i * 0.2) * 0.05; } tail.rotation.x = Math.sin(time * 4) * 0.3; if(Math.random() > 0.7) { spawnWater(); } for(let i = waterParticles.length - 1; i >= 0; i--) { const p = waterParticles[i]; p.position.x += p.userData.vx; p.position.y += p.userData.vy; p.position.z += p.userData.vz; p.userData.vy -= 0.008; p.userData.life--; p.material.opacity = Math.min(0.8, p.userData.life / 40); p.scale.setScalar(1 + (80 - p.userData.life) * 0.01); if(p.userData.life <= 0 || p.position.y < -3) { elephantScene.remove(p); waterParticles.splice(i, 1); } } elephantRenderer.render(elephantScene, elephantCamera); } animateElephant(); window.addEventListener('resize', () => { elephantCamera.aspect = window.innerWidth / window.innerHeight; elephantCamera.updateProjectionMatrix(); elephantRenderer.setSize(window.innerWidth, window.innerHeight); }); }, 1000); })();
+  </script>
 </body>
 </html>
