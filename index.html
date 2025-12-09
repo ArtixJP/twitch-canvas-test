@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>
+   Twitch Versus Code
+  </title>
+<style>
+   body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
@@ -16,9 +19,18 @@
             color: white;
         }
         h1 { font-size: 3rem; text-align: center; }
-    </style>
+  </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1>
+   Hello World
+  </h1>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/examples/js/loaders/GLTFLoader.js">
+</script>
+<script>
+   const scene = new THREE.Scene();const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);const renderer = new THREE.WebGLRenderer();renderer.setSize(window.innerWidth, window.innerHeight);document.body.appendChild(renderer.domElement);const geometry = new THREE.SphereGeometry(5, 32, 32);const texture = new THREE.TextureLoader().load('https://cdn.pixabay.com/photo/2015/09/18/18/02/world-957115_1280.png');const material = new THREE.MeshBasicMaterial({map: texture});const sphere = new THREE.Mesh(geometry, material);scene.add(sphere);camera.position.z = 10;function animate() {sphere.rotation.y += 0.01;requestAnimationFrame(animate);renderer.render(scene, camera);}animate();
+  </script>
 </body>
 </html>
