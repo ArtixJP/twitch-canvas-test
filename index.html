@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code</title>
+<title>
+   Twitch Versus Code
+  </title>
 <style>
-* { box-sizing: border-box; }
+   * { box-sizing: border-box; }
 body { 
     font-family: system-ui, sans-serif; 
     display: flex; 
@@ -650,131 +653,196 @@ body {
     50% { transform: translate(-50%,-50%) scale(1.2); }
     100% { opacity: 0; transform: translate(-50%,-150%) scale(1); }
 }
-</style>
+  </style>
 </head>
 <body>
-
 <!-- Navigation Menu -->
 <nav id="main-nav">
-    <ul>
-        <li class="active" data-section="space">🌌 Espace</li>
-        <li data-section="animals">🐾 Animaux</li>
-        <li data-section="games">🎮 Jeux</li>
-    </ul>
+<ul>
+<li class="active" data-section="space">
+     🌌 Espace
+    </li>
+<li data-section="animals">
+     🐾 Animaux
+    </li>
+<li data-section="games">
+     🎮 Jeux
+    </li>
+</ul>
 </nav>
-
 <!-- Background Elements -->
-<div id="three-sun-container"></div>
-<div class="stars" id="stars"></div>
-
+<div id="three-sun-container">
+</div>
+<div class="stars" id="stars">
+</div>
 <!-- Section Espace -->
 <section class="section active" id="section-space">
-    <h1 class="section-title">🌌 Exploration Spatiale</h1>
-    <div class="solar-system" id="planet-system">
-        <div class="ring"></div>
-        <div class="planet"></div>
-        <div class="moon-orbit">
-            <div class="moon"></div>
-        </div>
-        <div class="moon-orbit-2">
-            <div class="moon-2"></div>
-        </div>
-    </div>
+<h1 class="section-title">
+    🌌 Exploration Spatiale
+   </h1>
+<div class="solar-system" id="planet-system">
+<div class="ring">
+</div>
+<div class="planet">
+</div>
+<div class="moon-orbit">
+<div class="moon">
+</div>
+</div>
+<div class="moon-orbit-2">
+<div class="moon-2">
+</div>
+</div>
+</div>
 </section>
-
 <!-- Section Animaux -->
 <section class="section" id="section-animals">
-    <h1 class="section-title">🐾 Royaume Animal</h1>
-    <div id="scoreboard">
-        <div id="dog-score">🐕 Dog: <span id="dog-points">0</span></div>
-        <div id="cat-score">🐱 Cat: <span id="cat-escapes">0</span> escapes</div>
+<h1 class="section-title">
+    🐾 Royaume Animal
+   </h1>
+<div id="scoreboard">
+<div id="dog-score">
+     🐕 Dog:
+     <span id="dog-points">
+      0
+     </span>
+</div>
+<div id="cat-score">
+     🐱 Cat:
+     <span id="cat-escapes">
+      0
+     </span>
+     escapes
     </div>
-    <div class="solar-system" id="animal-orbit-container">
-        <div class="planet" id="animal-planet"></div>
-        <div class="kitty-orbit" id="kitty-orbit">
-            <div class="kitty" id="kitty">
-                <div class="kitty-body"></div>
-                <div class="kitty-head">
-                    <div class="kitty-ear left"></div>
-                    <div class="kitty-ear right"></div>
-                    <div class="kitty-face">
-                        <div class="kitty-eye left"></div>
-                        <div class="kitty-eye right"></div>
-                        <div class="kitty-nose"></div>
-                        <div class="kitty-mouth"></div>
-                    </div>
-                </div>
-                <div class="kitty-tail"></div>
-            </div>
-        </div>
-        <div class="dog-orbit" id="dog-orbit">
-            <div class="dog" id="dog">
-                <div class="dog-body"></div>
-                <div class="dog-head">
-                    <div class="dog-ear left"></div>
-                    <div class="dog-ear right"></div>
-                    <div class="dog-face">
-                        <div class="dog-eye left"></div>
-                        <div class="dog-eye right"></div>
-                        <div class="dog-nose"></div>
-                        <div class="dog-tongue"></div>
-                    </div>
-                </div>
-                <div class="dog-tail"></div>
-            </div>
-        </div>
-    </div>
-    <div id="elephant-container">
-        <div id="elephant" style="position: relative; width: 120px; height: 100px;">
-            <div style="position: absolute; bottom: 10px; left: 20px; width: 80px; height: 50px; background: linear-gradient(135deg, #8e99a4 0%, #6b7280 100%); border-radius: 50% 50% 45% 45%; box-shadow: 0 4px 15px rgba(107, 114, 128, 0.5);"></div>
-            <div style="position: absolute; top: 15px; left: 0; width: 50px; height: 45px; background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%); border-radius: 50%;">
-                <div style="position: absolute; top: 0; left: -15px; width: 25px; height: 35px; background: linear-gradient(135deg, #7c8591 0%, #5a6270 100%); border-radius: 50% 20% 50% 50%; transform: rotate(-20deg);"></div>
-                <div style="position: absolute; top: 12px; left: 25px; width: 8px; height: 8px; background: #1f2937; border-radius: 50%;">
-                    <div style="position: absolute; top: 2px; left: 2px; width: 3px; height: 3px; background: white; border-radius: 50%;"></div>
-                </div>
-            </div>
-            <div id="elephant-trunk" style="position: absolute; top: 30px; left: -25px; width: 40px; height: 15px; background: linear-gradient(180deg, #9ca3af 0%, #6b7280 100%); border-radius: 0 0 20px 20px; transform-origin: right center; animation: trunkSpray 2s ease-in-out infinite;">
-                <div style="position: absolute; bottom: -8px; left: 0; width: 12px; height: 12px; background: #6b7280; border-radius: 50%;"></div>
-            </div>
-            <div style="position: absolute; bottom: 0; left: 25px; width: 15px; height: 20px; background: #6b7280; border-radius: 5px;"></div>
-            <div style="position: absolute; bottom: 0; left: 45px; width: 15px; height: 20px; background: #6b7280; border-radius: 5px;"></div>
-            <div style="position: absolute; bottom: 0; left: 65px; width: 15px; height: 20px; background: #5a6270; border-radius: 5px;"></div>
-            <div style="position: absolute; bottom: 0; left: 80px; width: 15px; height: 20px; background: #5a6270; border-radius: 5px;"></div>
-            <div style="position: absolute; bottom: 35px; right: -5px; width: 20px; height: 6px; background: #6b7280; border-radius: 10px; transform: rotate(20deg);">
-                <div style="position: absolute; right: -5px; top: -2px; width: 8px; height: 10px; background: #4b5563; border-radius: 50%;"></div>
-            </div>
-        </div>
-        <div id="water-particles" style="position: absolute; top: 20px; left: -40px; width: 60px; height: 80px; pointer-events: none;"></div>
-    </div>
+</div>
+<div class="solar-system" id="animal-orbit-container">
+<div class="planet" id="animal-planet">
+</div>
+<div class="kitty-orbit" id="kitty-orbit">
+<div class="kitty" id="kitty">
+<div class="kitty-body">
+</div>
+<div class="kitty-head">
+<div class="kitty-ear left">
+</div>
+<div class="kitty-ear right">
+</div>
+<div class="kitty-face">
+<div class="kitty-eye left">
+</div>
+<div class="kitty-eye right">
+</div>
+<div class="kitty-nose">
+</div>
+<div class="kitty-mouth">
+</div>
+</div>
+</div>
+<div class="kitty-tail">
+</div>
+</div>
+</div>
+<div class="dog-orbit" id="dog-orbit">
+<div class="dog" id="dog">
+<div class="dog-body">
+</div>
+<div class="dog-head">
+<div class="dog-ear left">
+</div>
+<div class="dog-ear right">
+</div>
+<div class="dog-face">
+<div class="dog-eye left">
+</div>
+<div class="dog-eye right">
+</div>
+<div class="dog-nose">
+</div>
+<div class="dog-tongue">
+</div>
+</div>
+</div>
+<div class="dog-tail">
+</div>
+</div>
+</div>
+</div>
+<div id="elephant-container">
+<div id="elephant" style="position: relative; width: 120px; height: 100px;">
+<div style="position: absolute; bottom: 10px; left: 20px; width: 80px; height: 50px; background: linear-gradient(135deg, #8e99a4 0%, #6b7280 100%); border-radius: 50% 50% 45% 45%; box-shadow: 0 4px 15px rgba(107, 114, 128, 0.5);">
+</div>
+<div style="position: absolute; top: 15px; left: 0; width: 50px; height: 45px; background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%); border-radius: 50%;">
+<div style="position: absolute; top: 0; left: -15px; width: 25px; height: 35px; background: linear-gradient(135deg, #7c8591 0%, #5a6270 100%); border-radius: 50% 20% 50% 50%; transform: rotate(-20deg);">
+</div>
+<div style="position: absolute; top: 12px; left: 25px; width: 8px; height: 8px; background: #1f2937; border-radius: 50%;">
+<div style="position: absolute; top: 2px; left: 2px; width: 3px; height: 3px; background: white; border-radius: 50%;">
+</div>
+</div>
+</div>
+<div id="elephant-trunk" style="position: absolute; top: 30px; left: -25px; width: 40px; height: 15px; background: linear-gradient(180deg, #9ca3af 0%, #6b7280 100%); border-radius: 0 0 20px 20px; transform-origin: right center; animation: trunkSpray 2s ease-in-out infinite;">
+<div style="position: absolute; bottom: -8px; left: 0; width: 12px; height: 12px; background: #6b7280; border-radius: 50%;">
+</div>
+</div>
+<div style="position: absolute; bottom: 0; left: 25px; width: 15px; height: 20px; background: #6b7280; border-radius: 5px;">
+</div>
+<div style="position: absolute; bottom: 0; left: 45px; width: 15px; height: 20px; background: #6b7280; border-radius: 5px;">
+</div>
+<div style="position: absolute; bottom: 0; left: 65px; width: 15px; height: 20px; background: #5a6270; border-radius: 5px;">
+</div>
+<div style="position: absolute; bottom: 0; left: 80px; width: 15px; height: 20px; background: #5a6270; border-radius: 5px;">
+</div>
+<div style="position: absolute; bottom: 35px; right: -5px; width: 20px; height: 6px; background: #6b7280; border-radius: 10px; transform: rotate(20deg);">
+<div style="position: absolute; right: -5px; top: -2px; width: 8px; height: 10px; background: #4b5563; border-radius: 50%;">
+</div>
+</div>
+</div>
+<div id="water-particles" style="position: absolute; top: 20px; left: -40px; width: 60px; height: 80px; pointer-events: none;">
+</div>
+</div>
 </section>
-
 <!-- Section Jeux -->
 <section class="section" id="section-games">
-    <h1 class="section-title">🎮 Zone de Jeux</h1>
-    <div id="snake-game-container">
-        <div style="color: #fff; text-align: center; margin-bottom: 5px; font-size: 1.1rem;">🐍 Space Snake - Use Arrow Keys</div>
-        <div id="snake-game" style="width: 300px; height: 300px; border-radius: 10px; overflow: hidden;"></div>
-        <div style="display: flex; justify-content: space-between; margin-top: 10px; color: #fff; font-size: 1rem;">
-            <span>Score: <span id="snake-score">0</span></span>
-            <button id="snake-restart" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;">🔄 Restart</button>
-        </div>
+<h1 class="section-title">
+    🎮 Zone de Jeux
+   </h1>
+<div id="snake-game-container">
+<div style="color: #fff; text-align: center; margin-bottom: 5px; font-size: 1.1rem;">
+     🐍 Space Snake - Use Arrow Keys
     </div>
+<div id="snake-game" style="width: 300px; height: 300px; border-radius: 10px; overflow: hidden;">
+</div>
+<div style="display: flex; justify-content: space-between; margin-top: 10px; color: #fff; font-size: 1rem;">
+<span>
+      Score:
+      <span id="snake-score">
+       0
+      </span>
+</span>
+<button id="snake-restart" style="background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; padding: 8px 15px; border-radius: 10px; cursor: pointer; font-size: 0.9rem;">
+      🔄 Restart
+     </button>
+</div>
+</div>
 </section>
-
 <!-- Audio & Controls -->
 <audio id="bg-music" loop="" preload="auto">
-    <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
-<button id="music-toggle">🎵 Play Music</button>
-
+<button id="music-toggle">
+   🎵 Play Music
+  </button>
 <!-- Scripts -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script src="https://cdn.jsdelivr.net/npm/phaser@3.60.0/dist/phaser.min.js">
+</script>
 <script id="navigation-script">
-// Navigation entre sections
+   // Navigation entre sections
 const navItems = document.querySelectorAll('#main-nav li');
 const sections = document.querySelectorAll('.section');
+const sectionOrder = ['space', 'animals', 'games'];
+let currentSectionIndex = 0;
+let autoRotateInterval = null;
 
 function switchSection(sectionId) {
     navItems.forEach(item => item.classList.remove('active'));
@@ -782,18 +850,36 @@ function switchSection(sectionId) {
     
     document.querySelector(`[data-section="${sectionId}"]`).classList.add('active');
     document.getElementById(`section-${sectionId}`).classList.add('active');
+    
+    // Met à jour l'index courant
+    currentSectionIndex = sectionOrder.indexOf(sectionId);
 }
 
+function autoRotateSections() {
+    // Passe à la section suivante de manière circulaire
+    currentSectionIndex = (currentSectionIndex + 1) % sectionOrder.length;
+    switchSection(sectionOrder[currentSectionIndex]);
+}
+
+// Gestion des clics sur le menu
 navItems.forEach(item => {
     item.addEventListener('click', () => {
         const sectionId = item.getAttribute('data-section');
         switchSection(sectionId);
+        
+        // Redémarre le timer après un clic manuel
+        if (autoRotateInterval) {
+            clearInterval(autoRotateInterval);
+        }
+        autoRotateInterval = setInterval(autoRotateSections, 30000);
     });
 });
-</script>
 
+// Démarre la rotation automatique toutes les 30 secondes
+autoRotateInterval = setInterval(autoRotateSections, 30000);
+  </script>
 <script id="stars-script">
-const starsContainer = document.getElementById('stars');
+   const starsContainer = document.getElementById('stars');
 for (let i = 0; i < 100; i++) {
     const star = document.createElement('div');
     star.className = 'star';
@@ -803,10 +889,9 @@ for (let i = 0; i < 100; i++) {
     star.style.animationDelay = Math.random() * 2 + 's';
     starsContainer.appendChild(star);
 }
-</script>
-
+  </script>
 <script id="music-script">
-const bgMusic = document.getElementById('bg-music');
+   const bgMusic = document.getElementById('bg-music');
 const musicBtn = document.getElementById('music-toggle');
 let isPlaying = false;
 
@@ -824,10 +909,9 @@ function toggleMusic() {
 }
 
 musicBtn.addEventListener('click', toggleMusic);
-</script>
-
+  </script>
 <script id="sun-script">
-(function(){
+   (function(){
     const container = document.getElementById('three-sun-container');
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -885,10 +969,9 @@ musicBtn.addEventListener('click', toggleMusic);
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
 })();
-</script>
-
+  </script>
 <script id="chase-script">
-(function() {
+   (function() {
     const kittyOrbit = document.getElementById('kitty-orbit');
     const dogOrbit = document.getElementById('dog-orbit');
     const dogPointsEl = document.getElementById('dog-points');
@@ -956,10 +1039,9 @@ musicBtn.addEventListener('click', toggleMusic);
     
     updatePositions();
 })();
-</script>
-
+  </script>
 <script id="elephant-water-script">
-(function() {
+   (function() {
     const waterContainer = document.getElementById('water-particles');
     if (!waterContainer) return;
     
@@ -986,10 +1068,9 @@ musicBtn.addEventListener('click', toggleMusic);
         }
     }, 200);
 })();
-</script>
-
+  </script>
 <script id="snake-game-script">
-(function(){
+   (function(){
     const gameContainer = document.getElementById('snake-game');
     if (!gameContainer) return;
     
@@ -1092,7 +1173,6 @@ musicBtn.addEventListener('click', toggleMusic);
         scene.children.list.filter(c=>c.type==='Text').forEach(t=>t.destroy());
     });
 })();
-</script>
-
+  </script>
 </body>
 </html>
