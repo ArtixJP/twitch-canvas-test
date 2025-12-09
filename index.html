@@ -115,7 +115,6 @@
             width: 380px;
             height: 380px;
             border-radius: 50%;
-            animation: orbit-reverse 6s linear infinite;
         }
         
         .kitty {
@@ -125,7 +124,31 @@
             transform: translateX(-50%);
             font-size: 35px;
             filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
-            animation: kitty-wiggle 0.5s ease-in-out infinite;
+            transition: filter 0.3s;
+        }
+        
+        .kitty.scared {
+            filter: drop-shadow(0 0 20px rgba(255, 100, 100, 0.9));
+        }
+        
+        .doggy-orbit {
+            position: absolute;
+            width: 420px;
+            height: 420px;
+            border-radius: 50%;
+        }
+        
+        .doggy {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(139, 90, 43, 0.6));
+        }
+        
+        .doggy.chasing {
+            filter: drop-shadow(0 0 15px rgba(255, 150, 50, 0.8));
         }
         
         @keyframes orbit {
@@ -190,13 +213,18 @@ h1 {
 }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
-<h1>Hello World</h1>
+<h1>Hello World</h1><div id="scoreBoard" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; z-index: 100; display: flex; gap: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
+<div style="display: flex; align-items: center; gap: 10px;">
+<span>🐕</span>
+<span id="dogScore">0</span>
+</div>
+</div>
 <div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></div><div class="planet-system">
 <div class="planet"></div>
 <div class="moon-orbit">
 <div class="moon"></div>
 </div>
-<div class="kitty-orbit"><div class="kitty">🐱</div></div></div>
+<div class="kitty-orbit"><div class="kitty">🐱</div></div><div class="doggy-orbit"><div class="doggy">🐕</div></div></div>
 <div class="stars">
 <div class="star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
 <div class="star" style="top: 20%; left: 80%; animation-delay: 0.5s;"></div>
@@ -374,6 +402,112 @@ h1 {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
+})();
+</script><script>
+(function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const doggyOrbit = document.querySelector('.doggy-orbit');
+  const kitty = document.querySelector('.kitty');
+  const doggy = document.querySelector('.doggy');
+  const dogScoreEl = document.getElementById('dogScore');
+  
+  let kittyAngle = 0;
+  let doggyAngle = Math.PI; // Start opposite side
+  
+  const kittyRadius = 190;
+  const doggyRadius = 210;
+  
+  const normalKittySpeed = 0.015;
+  const scaredKittySpeed = 0.08;
+  const doggySpeed = 0.025;
+  
+  const dangerDistance = 80;
+  const catchDistance = 35;
+  
+  let currentKittySpeed = normalKittySpeed;
+  let dogScore = 0;
+  let catchCooldown = false;
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    const dx = pos1.x - pos2.x;
+    const dy = pos1.y - pos2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  
+  function showCatchEffect() {
+    // Flash effect
+    kitty.style.transition = 'transform 0.1s, filter 0.1s';
+    kitty.style.filter = 'drop-shadow(0 0 30px rgba(255, 255, 0, 1)) brightness(2)';
+    doggy.style.filter = 'drop-shadow(0 0 30px rgba(255, 200, 0, 1)) brightness(1.5)';
+    
+    // Reset cat position (teleport away)
+    setTimeout(() => {
+      kittyAngle = doggyAngle + Math.PI; // Teleport to opposite side
+      kitty.style.filter = 'drop-shadow(0 0 10px rgba(255, 182, 193, 0.6))';
+      doggy.style.filter = 'drop-shadow(0 0 10px rgba(139, 90, 43, 0.6))';
+      catchCooldown = false;
+    }, 500);
+  }
+  
+  function animate() {
+    // Get positions
+    const kittyPos = getPosition(kittyAngle, kittyRadius);
+    const doggyPos = getPosition(doggyAngle, doggyRadius);
+    
+    // Check distance
+    const distance = getDistance(kittyPos, doggyPos);
+    
+    // Check for catch
+    if (distance < catchDistance && !catchCooldown) {
+      catchCooldown = true;
+      dogScore++;
+      dogScoreEl.textContent = dogScore;
+      dogScoreEl.style.transform = 'scale(1.5)';
+      setTimeout(() => { dogScoreEl.style.transform = 'scale(1)'; }, 200);
+      showCatchEffect();
+    }
+    
+    // Adjust cat speed based on distance
+    if (distance < dangerDistance) {
+      currentKittySpeed = scaredKittySpeed;
+      kitty.classList.add('scared');
+      doggy.classList.add('chasing');
+    } else {
+      // Gradually slow down
+      currentKittySpeed = Math.max(normalKittySpeed, currentKittySpeed * 0.98);
+      if (currentKittySpeed < normalKittySpeed * 1.5) {
+        kitty.classList.remove('scared');
+        doggy.classList.remove('chasing');
+      }
+    }
+    
+    // Update angles (cat goes counter-clockwise, dog chases)
+    kittyAngle -= currentKittySpeed;
+    doggyAngle -= doggySpeed;
+    
+    // Apply transforms
+    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
+    doggyOrbit.style.transform = `rotate(${doggyAngle}rad)`;
+    
+    // Counter-rotate the emojis so they stay upright
+    kitty.style.transform = `translateX(-50%) rotate(${-kittyAngle}rad)`;
+    doggy.style.transform = `translateX(-50%) rotate(${-doggyAngle}rad)`;
+    
+    // Wiggle effect for kitty
+    const wiggle = Math.sin(Date.now() * 0.01) * 10;
+    kitty.style.transform = `translateX(-50%) rotate(${-kittyAngle + wiggle * Math.PI / 180}rad)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  animate();
 })();
 </script></body>
 </html>
