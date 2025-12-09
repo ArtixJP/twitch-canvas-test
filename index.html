@@ -415,5 +415,45 @@
   }, 100);
 })();
   </script>
+<div id="game-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 500; display: none;">
+<canvas id="game-canvas">
+</canvas>
+<div id="game-ui" style="position: absolute; top: 10px; left: 10px; color: #4a9eff; font-family: 'Courier New', monospace; font-size: 18px; text-shadow: 0 0 10px #4a9eff;">
+<div>
+     SCORE:
+     <span id="game-score">
+      0
+     </span>
+</div>
+<div>
+     LIVES:
+     <span id="game-lives">
+      ❤️❤️❤️
+     </span>
+</div>
+</div>
+<button id="close-game" style="position: absolute; top: 10px; right: 10px; background: rgba(255,100,100,0.8); border: none; color: white; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;">
+    ✕ CLOSE
+   </button>
+</div>
+<button id="play-game-btn" style="position: fixed; bottom: 30px; left: 30px; z-index: 100; padding: 15px 25px; border-radius: 25px; border: none; background: linear-gradient(135deg, #ff6b6b 0%, #ffa500 100%); color: white; cursor: pointer; box-shadow: 0 4px 20px rgba(255, 150, 100, 0.5); font-size: 1.1rem; font-weight: bold; transition: all 0.3s ease;">
+   🚀 PLAY ASTEROID BLASTER
+  </button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js">
+</script>
+<script>
+   (function(){const playBtn=document.getElementById('play-game-btn');const gameContainer=document.getElementById('game-container');const closeBtn=document.getElementById('close-game');const scoreEl=document.getElementById('game-score');const livesEl=document.getElementById('game-lives');let gameActive=false;let score=0;let lives=3;let ship,bullets=[],asteroids=[],particles=[];let p5Instance;playBtn.addEventListener('mouseenter',()=>{playBtn.style.transform='scale(1.1)';playBtn.style.boxShadow='0 6px 30px rgba(255,150,100,0.7)';});playBtn.addEventListener('mouseleave',()=>{playBtn.style.transform='scale(1)';playBtn.style.boxShadow='0 4px 20px rgba(255,150,100,0.5)';});playBtn.addEventListener('click',()=>{gameContainer.style.display='block';if(!p5Instance)startGame();gameActive=true;});closeBtn.addEventListener('click',()=>{gameContainer.style.display='none';gameActive=false;});function startGame(){const sketch=(p)=>{const W=600,H=500;p.setup=()=>{const canvas=p.createCanvas(W,H);canvas.parent('game-container');ship={x:W/2,y:H/2,angle:0,vx:0,vy:0,thrust:false};spawnAsteroids(5);};p.draw=()=>{if(!gameActive)return;p.background(10,15,30);drawStars(p);if(p.keyIsDown(p.LEFT_ARROW))ship.angle-=0.08;if(p.keyIsDown(p.RIGHT_ARROW))ship.angle+=0.08;if(p.keyIsDown(p.UP_ARROW)){ship.vx+=Math.cos(ship.angle)*0.15;ship.vy+=Math.sin(ship.angle)*0.15;ship.thrust=true;for(let i=0;i<2;i++){particles.push({x:ship.x-Math.cos(ship.angle)*15,y:ship.y-Math.sin(ship.angle)*15,vx:-Math.cos(ship.angle)*p.random(2,4)+p.random(-1,1),vy:-Math.sin(ship.angle)*p.random(2,4)+p.random(-1,1),life:30,color:[255,p.random(100,200),50]});}}else{ship.thrust=false;}ship.vx*=0.99;ship.vy*=0.99;ship.x+=ship.vx;ship.y+=ship.vy;ship.x=(ship.x+W)%W;ship.y=(ship.y+H)%H;bullets.forEach((b,i)=>{b.x+=b.vx;b.y+=b.vy;b.life--;if(b.life<=0)bullets.splice(i,1);});asteroids.forEach((a,ai)=>{a.x+=a.vx;a.y+=a.vy;a.rot+=a.rotSpeed;a.x=(a.x+W)%W;a.y=(a.y+H)%H;bullets.forEach((b,bi)=>{if(p.dist(b.x,b.y,a.x,a.y)<a.size){bullets.splice(bi,1);for(let i=0;i<15;i++){particles.push({x:a.x,y:a.y,vx:p.random(-3,3),vy:p.random(-3,3),life:40,color:[150,200,255]});}if(a.size>20){asteroids.push({x:a.x,y:a.y,vx:p.random(-2,2),vy:p.random(-2,2),size:a.size/2,rot:0,rotSpeed:p.random(-0.05,0.05)});asteroids.push({x:a.x,y:a.y,vx:p.random(-2,2),vy:p.random(-2,2),size:a.size/2,rot:0,rotSpeed:p.random(-0.05,0.05)});}asteroids.splice(ai,1);score+=Math.floor(100/a.size*10);scoreEl.textContent=score;if(window.changePlanetColor)window.changePlanetColor();}});if(p.dist(ship.x,ship.y,a.x,a.y)<a.size+10){lives--;livesEl.textContent='❤️'.repeat(Math.max(0,lives));for(let i=0;i<30;i++){particles.push({x:ship.x,y:ship.y,vx:p.random(-5,5),vy:p.random(-5,5),life:50,color:[255,100,100]});}ship.x=W/2;ship.y=H/2;ship.vx=0;ship.vy=0;if(lives<=0){gameActive=false;p.textAlign(p.CENTER);p.fill(255,100,100);p.textSize(40);p.text('GAME OVER',W/2,H/2);p.textSize(20);p.text('Score: '+score,W/2,H/2+40);setTimeout(()=>{score=0;lives=3;scoreEl.textContent='0';livesEl.textContent='❤️❤️❤️';asteroids=[];spawnAsteroids(5);gameActive=true;},3000);}}});if(asteroids.length===0)spawnAsteroids(Math.min(10,5+Math.floor(score/500)));particles.forEach((pt,i)=>{pt.x+=pt.vx;pt.y+=pt.vy;pt.life--;pt.vx*=0.95;pt.vy*=0.95;if(pt.life<=0)particles.splice(i,1);});particles.forEach(pt=>{p.fill(pt.color[0],pt.color[1],pt.color[2],pt.life*6);p.noStroke();p.ellipse(pt.x,pt.y,pt.life/10);});asteroids.forEach(a=>{p.push();p.translate(a.x,a.y);p.rotate(a.rot);p.stroke(150,180,220);p.strokeWeight(2);p.noFill();p.beginShape();for(let i=0;i<8;i++){const ang=p.TWO_PI/8*i;const r=a.size*(0.8+p.noise(i)*0.4);p.vertex(Math.cos(ang)*r,Math.sin(ang)*r);}p.endShape(p.CLOSE);p.pop();});bullets.forEach(b=>{p.fill(100,255,200);p.noStroke();p.ellipse(b.x,b.y,6,6);p.fill(100,255,200,100);p.ellipse(b.x,b.y,10,10);});p.push();p.translate(ship.x,ship.y);p.rotate(ship.angle);p.stroke(100,200,255);p.strokeWeight(2);p.noFill();p.beginShape();p.vertex(20,0);p.vertex(-15,12);p.vertex(-8,0);p.vertex(-15,-12);p.endShape(p.CLOSE);if(ship.thrust){p.fill(255,200,50);p.noStroke();p.triangle(-10,0,-20,5,-20,-5);}p.pop();};p.keyPressed=()=>{if(p.keyCode===32&&gameActive){bullets.push({x:ship.x+Math.cos(ship.angle)*20,y:ship.y+Math.sin(ship.angle)*20,vx:Math.cos(ship.angle)*10+ship.vx,vy:Math.sin(ship.angle)*10+ship.vy,life:60});}};function drawStars(p){p.randomSeed(42);for(let i=0;i<50;i++){p.fill(255,255,255,p.random(100,200));p.noStroke();p.ellipse(p.random(W),p.random(H),p.random(1,3));}}function spawnAsteroids(n){for(let i=0;i<n;i++){let x,y;do{x=p.random(W);y=p.random(H);}while(p.dist(x,y,ship.x,ship.y)<100);asteroids.push({x,y,vx:p.random(-2,2),vy:p.random(-2,2),size:p.random(30,50),rot:0,rotSpeed:p.random(-0.03,0.03)});}}};p5Instance=new p5(sketch);}})();
+  </script>
+<div id="elephant" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 800; font-size: 100px; text-align: center; filter: drop-shadow(0 0 20px rgba(100, 150, 255, 0.5));">
+   🐘
+  </div>
+<div id="water-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 799; overflow: hidden;">
+</div>
+<style>
+   #elephant { animation: elephantBounce 2s ease-in-out infinite; } @keyframes elephantBounce { 0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); } 50% { transform: translate(-50%, -52%) rotate(5deg); } } .water-drop { position: absolute; font-size: 20px; pointer-events: none; animation: waterFall 2s ease-in forwards; } @keyframes waterFall { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.5) translateY(200px); } } .water-spray { position: absolute; width: 8px; height: 8px; background: radial-gradient(circle, #4a9eff, #88ccff); border-radius: 50%; pointer-events: none; animation: sprayAnim 1.5s ease-out forwards; } @keyframes sprayAnim { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.3); } }
+  </style>
+<script>
+   (function(){ const elephant = document.getElementById('elephant'); const waterContainer = document.getElementById('water-container'); function createWaterSpray() { const elephantRect = elephant.getBoundingClientRect(); const startX = elephantRect.left + elephantRect.width * 0.7; const startY = elephantRect.top + elephantRect.height * 0.2; for(let i = 0; i < 8; i++) { const drop = document.createElement('div'); drop.className = 'water-spray'; const angle = (Math.random() - 0.3) * Math.PI * 0.8 - Math.PI/4; const speed = 80 + Math.random() * 120; const vx = Math.cos(angle) * speed; const vy = Math.sin(angle) * speed - 50; drop.style.left = startX + 'px'; drop.style.top = startY + 'px'; waterContainer.appendChild(drop); let x = 0, y = 0, time = 0; const gravity = 150; function animateDrop() { time += 0.03; x = vx * time; y = vy * time + 0.5 * gravity * time * time; drop.style.transform = 'translate(' + x + 'px, ' + y + 'px)'; if(time < 1.5) { requestAnimationFrame(animateDrop); } else { drop.remove(); } } animateDrop(); } const splash = document.createElement('div'); splash.className = 'water-drop'; splash.textContent = '💦'; splash.style.left = (startX + Math.random() * 40) + 'px'; splash.style.top = (startY - 20) + 'px'; waterContainer.appendChild(splash); setTimeout(() => splash.remove(), 2000); } setInterval(createWaterSpray, 800); createWaterSpray(); })();
+  </script>
 </body>
 </html>
