@@ -302,6 +302,38 @@
   top: 0;
   left: 0;
 }
+
+.space-dog {
+  position: absolute;
+  font-size: 35px;
+  filter: drop-shadow(0 0 10px rgba(255, 150, 50, 0.8)) drop-shadow(0 0 20px rgba(255, 100, 50, 0.5));
+  z-index: 99;
+  transition: font-size 0.2s;
+  pointer-events: none;
+}
+.space-dog::before {
+  content: '💨';
+  position: absolute;
+  font-size: 14px;
+  right: -20px;
+  top: 8px;
+  animation: dogPuff 0.3s ease-in-out infinite alternate;
+  opacity: 0.7;
+}
+@keyframes dogPuff {
+  0% { opacity: 0.3; transform: translateX(0) scale(0.8); }
+  100% { opacity: 0.8; transform: translateX(5px) scale(1.2); }
+}
+.space-kitty.escaping {
+  filter: drop-shadow(0 0 15px rgba(255, 50, 50, 0.9)) drop-shadow(0 0 30px rgba(255, 200, 100, 0.7)) !important;
+}
+.space-kitty.escaping::before {
+  content: '⚡' !important;
+  animation: sparkle 0.1s ease-in-out infinite alternate !important;
+}
+.space-dog.chasing {
+  filter: drop-shadow(0 0 15px rgba(255, 50, 50, 0.9)) drop-shadow(0 0 25px rgba(255, 150, 50, 0.8));
+}
   </style>
 </head>
 <body>
@@ -332,6 +364,9 @@
    </div>
 <div class="kitty-trail">
 </div>
+<div class="space-dog">
+    🐕
+   </div>
 </div>
 <script>
    function toggleMusic() {
@@ -392,6 +427,73 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 <script>
    const container=document.getElementById('three-container');const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setSize(window.innerWidth,window.innerHeight);renderer.setPixelRatio(window.devicePixelRatio);container.appendChild(renderer.domElement);const sunGeometry=new THREE.SphereGeometry(2,64,64);const sunMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0},color1:{value:new THREE.Color(0xffdd00)},color2:{value:new THREE.Color(0xff6600)}},vertexShader:`varying vec2 vUv;varying vec3 vNormal;void main(){vUv=uv;vNormal=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;uniform vec3 color1;uniform vec3 color2;varying vec2 vUv;varying vec3 vNormal;void main(){float pulse=sin(time*2.0)*0.1+0.9;float fresnel=pow(1.0-dot(vNormal,vec3(0,0,1)),2.0);vec3 color=mix(color1,color2,vUv.y+sin(time+vUv.x*10.0)*0.1);color+=fresnel*vec3(1.0,0.5,0.0)*0.5;gl_FragColor=vec4(color*pulse,1.0);}`,transparent:true});const sun=new THREE.Mesh(sunGeometry,sunMaterial);sun.position.set(-8,5,-5);scene.add(sun);const coronaGeometry=new THREE.SphereGeometry(2.5,32,32);const coronaMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec3 vNormal;void main(){vNormal=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;varying vec3 vNormal;void main(){float intensity=pow(0.7-dot(vNormal,vec3(0,0,1)),2.0);float flicker=sin(time*5.0)*0.1+sin(time*13.0)*0.05+0.95;vec3 color=vec3(1.0,0.6,0.2)*intensity*flicker;gl_FragColor=vec4(color,intensity*0.6);}`,transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending});const corona=new THREE.Mesh(coronaGeometry,coronaMaterial);corona.position.copy(sun.position);scene.add(corona);const rayCount=12;for(let i=0;i<rayCount;i++){const rayGeometry=new THREE.PlaneGeometry(0.3,15);const rayMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0},index:{value:i}},vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;uniform float index;varying vec2 vUv;void main(){float alpha=(1.0-vUv.y)*0.3;alpha*=sin(time*2.0+index)*0.3+0.7;vec3 color=vec3(1.0,0.8,0.3);gl_FragColor=vec4(color,alpha*0.15);}`,transparent:true,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});const ray=new THREE.Mesh(rayGeometry,rayMaterial);ray.position.copy(sun.position);ray.rotation.z=(i/rayCount)*Math.PI*2;ray.position.z+=0.1;scene.add(ray);}const sunLight=new THREE.PointLight(0xffaa33,2,100);sunLight.position.copy(sun.position);scene.add(sunLight);const ambientLight=new THREE.AmbientLight(0x404040,0.3);scene.add(ambientLight);camera.position.z=10;function animate(){requestAnimationFrame(animate);const time=performance.now()*0.001;sunMaterial.uniforms.time.value=time;coronaMaterial.uniforms.time.value=time;scene.children.forEach(child=>{if(child.material&&child.material.uniforms&&child.material.uniforms.index!==undefined){child.material.uniforms.time.value=time;child.rotation.z+=0.001;}});sun.rotation.y+=0.005;sunLight.intensity=1.8+Math.sin(time*3)*0.2;renderer.render(scene,camera);}animate();window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+  </script>
+<script>
+   (function() {
+  const kitty = document.querySelector('.space-kitty');
+  const dog = document.querySelector('.space-dog');
+  const container = document.querySelector('.planet-container');
+  
+  let kittyAngle = 0;
+  let dogAngle = Math.PI; // Start opposite to kitty
+  let kittySpeed = 0.02;
+  let dogSpeed = 0.025; // Dog is slightly faster normally
+  const normalKittySpeed = 0.02;
+  const escapeSpeed = 0.08;
+  const orbitRadius = 220;
+  const catchDistance = 80;
+  
+  function updatePositions() {
+    // Calculate positions
+    const kittyX = Math.cos(kittyAngle) * orbitRadius;
+    const kittyY = Math.sin(kittyAngle) * orbitRadius;
+    const dogX = Math.cos(dogAngle) * (orbitRadius + 30);
+    const dogY = Math.sin(dogAngle) * (orbitRadius + 30);
+    
+    // Calculate distance
+    const dx = kittyX - dogX;
+    const dy = kittyY - dogY;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+    
+    // If dog is close, cat escapes!
+    if (distance < catchDistance) {
+      kittySpeed = escapeSpeed;
+      kitty.classList.add('escaping');
+      dog.classList.add('chasing');
+      kitty.style.fontSize = '50px';
+    } else {
+      kittySpeed += (normalKittySpeed - kittySpeed) * 0.05; // Gradually slow down
+      if (kittySpeed < normalKittySpeed + 0.005) {
+        kitty.classList.remove('escaping');
+        dog.classList.remove('chasing');
+        kitty.style.fontSize = '40px';
+      }
+    }
+    
+    // Update angles
+    kittyAngle += kittySpeed;
+    
+    // Dog always chases toward cat's position
+    let angleDiff = kittyAngle - dogAngle;
+    while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+    while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+    dogAngle += Math.sign(angleDiff) * dogSpeed;
+    
+    // Apply positions
+    kitty.style.animation = 'none';
+    kitty.style.transform = `rotate(${kittyAngle}rad) translateX(${orbitRadius}px) rotate(${-kittyAngle}rad) scale(${kittySpeed > normalKittySpeed + 0.01 ? 1.2 : 1})`;
+    
+    // Dog faces the direction it's moving
+    const dogRotation = angleDiff > 0 ? 1 : -1;
+    dog.style.transform = `rotate(${dogAngle}rad) translateX(${orbitRadius + 30}px) rotate(${-dogAngle}rad) scaleX(${dogRotation})`;
+    
+    requestAnimationFrame(updatePositions);
+  }
+  
+  // Disable CSS animation on kitty and start JS animation
+  kitty.style.animation = 'none';
+  updatePositions();
+})();
   </script>
 </body>
 </html>
