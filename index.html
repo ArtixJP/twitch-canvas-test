@@ -34,6 +34,12 @@
 <style>
    .doggy-orbit{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:380px;height:380px;z-index:19;pointer-events:none;}.doggy{position:absolute;font-size:28px;filter:drop-shadow(0 0 10px rgba(139,69,19,0.8));transition:transform 0.1s;}.doggy::after{content:'💨';position:absolute;top:5px;right:-20px;font-size:14px;opacity:0.7;animation:puff 0.3s ease-in-out infinite alternate;}@keyframes puff{0%{transform:translateX(0) scale(1);opacity:0.7;}100%{transform:translateX(5px) scale(0.8);opacity:0.3;}}.kitty.escaping{animation:kitty-escape 0.15s ease-in-out infinite alternate !important;}.kitty.escaping::after{content:'😱💨💨';font-size:10px;}@keyframes kitty-escape{0%{transform:translateX(-50%) translateY(0) rotate(-20deg) scale(1.1);}100%{transform:translateX(-50%) translateY(-12px) rotate(20deg) scale(1.1);}}
   </style>
+<style>
+   #dogScore{transition:transform 0.2s ease;}#catchAlert{text-shadow:2px 2px 4px rgba(0,0,0,0.2);}
+  </style>
+<style>
+   .planet.caught{animation:planet-color-shift 0.5s ease-out forwards!important;}.planet.color-1{background:linear-gradient(135deg,#9b59b6 0%,#8e44ad 30%,#6c3483 70%,#4a235a 100%)!important;}.planet.color-2{background:linear-gradient(135deg,#3498db 0%,#2980b9 30%,#1f618d 70%,#154360 100%)!important;}.planet.color-3{background:linear-gradient(135deg,#2ecc71 0%,#27ae60 30%,#1e8449 70%,#145a32 100%)!important;}.planet.color-4{background:linear-gradient(135deg,#f39c12 0%,#d68910 30%,#b9770e 70%,#7e5109 100%)!important;}.planet.color-5{background:linear-gradient(135deg,#1abc9c 0%,#16a085 30%,#117864 70%,#0b5345 100%)!important;}.planet.color-6{background:linear-gradient(135deg,#e91e63 0%,#c2185b 30%,#880e4f 70%,#560027 100%)!important;}@keyframes planet-color-shift{0%{transform:translate(-50%,-50%) rotate(0deg) scale(1);}50%{transform:translate(-50%,-50%) rotate(180deg) scale(1.1);filter:brightness(1.5);}100%{transform:translate(-50%,-50%) rotate(360deg) scale(1);filter:brightness(1);}}
+  </style>
 </head>
 <body>
 <h1>
@@ -69,6 +75,20 @@
     </div>
 </div>
 </div>
+<div id="scoreboard" style="position:fixed;top:20px;right:20px;background:rgba(139,69,19,0.8);backdrop-filter:blur(10px);padding:15px 25px;border-radius:20px;box-shadow:0 0 30px rgba(139,69,19,0.5);z-index:100;font-size:18px;display:flex;align-items:center;gap:10px;">
+<span style="font-size:28px;">
+    🐕
+   </span>
+<span id="dogScore" style="font-weight:bold;font-size:24px;">
+    0
+   </span>
+<span style="opacity:0.7;">
+    points
+   </span>
+</div>
+<div id="catchAlert" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(255,215,0,0.95);color:#333;padding:20px 40px;border-radius:20px;font-size:24px;font-weight:bold;z-index:200;box-shadow:0 0 50px rgba(255,215,0,0.8);transition:transform 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);pointer-events:none;">
+   🐕 GOT THE CAT! 🐱
+  </div>
 <div class="audio-controls" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:15px 25px;border-radius:50px;box-shadow:0 0 30px rgba(231,76,60,0.3);">
 <button id="playPauseBtn" onclick="toggleAudio()" style="width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(231,76,60,0.5);transition:all 0.3s ease;">
 <span id="playIcon">
@@ -213,6 +233,12 @@
   </style>
 <script>
    (function(){const kittyOrbit=document.querySelector('.kitty-orbit');const kitty=document.querySelector('.kitty');const doggyOrbit=document.querySelector('.doggy-orbit');const doggy=document.querySelector('.doggy');let kittyAngle=0;let doggyAngle=Math.PI;let kittySpeed=0.02;let doggySpeed=0.035;const normalKittySpeed=0.02;const escapeKittySpeed=0.12;const orbitRadius=175;const doggyOrbitRadius=190;const escapeDistance=80;function getPosition(angle,radius,centerX,centerY){return{x:centerX+Math.cos(angle)*radius,y:centerY+Math.sin(angle)*radius};}function getDistance(x1,y1,x2,y2){return Math.sqrt((x2-x1)**2+(y2-y1)**2);}function updatePositions(){const centerX=150;const centerY=150;const kittyPos=getPosition(kittyAngle,orbitRadius,centerX,centerY);const doggyPos=getPosition(doggyAngle,doggyOrbitRadius,centerX,centerY);const distance=getDistance(kittyPos.x,kittyPos.y,doggyPos.x,doggyPos.y);if(distance<escapeDistance){kittySpeed=escapeKittySpeed;kitty.classList.add('escaping');doggy.style.transform='scaleX(-1)';}else{kittySpeed+=(normalKittySpeed-kittySpeed)*0.05;if(kittySpeed<normalKittySpeed*1.5){kitty.classList.remove('escaping');}doggy.style.transform='scaleX(1)';}kittyAngle+=kittySpeed;doggyAngle+=doggySpeed;const kittyX=Math.cos(kittyAngle)*orbitRadius;const kittyY=Math.sin(kittyAngle)*orbitRadius;kitty.style.position='absolute';kitty.style.left=`calc(50% + ${kittyX}px)`;kitty.style.top=`calc(50% + ${kittyY}px)`;kitty.style.transform='translate(-50%, -50%)';const doggyX=Math.cos(doggyAngle)*doggyOrbitRadius;const doggyY=Math.sin(doggyAngle)*doggyOrbitRadius;doggy.style.left=`calc(50% + ${doggyX}px)`;doggy.style.top=`calc(50% + ${doggyY}px)`;const angleToCat=Math.atan2(kittyY-doggyY,kittyX-doggyX);const targetAngle=kittyAngle;const angleDiff=targetAngle-doggyAngle;if(Math.abs(angleDiff)>0.1){doggySpeed=0.04;}else{doggySpeed=0.035;}requestAnimationFrame(updatePositions);}kittyOrbit.style.animation='none';updatePositions();})();
+  </script>
+<script>
+   (function(){let dogPoints=0;const scoreDisplay=document.getElementById('dogScore');const catchAlert=document.getElementById('catchAlert');const catchDistance=40;let canCatch=true;const originalUpdate=window.updatePositions;function checkCatch(){const kitty=document.querySelector('.kitty');const doggy=document.querySelector('.doggy');if(!kitty||!doggy)return;const kittyRect=kitty.getBoundingClientRect();const doggyRect=doggy.getBoundingClientRect();const kittyX=kittyRect.left+kittyRect.width/2;const kittyY=kittyRect.top+kittyRect.height/2;const doggyX=doggyRect.left+doggyRect.width/2;const doggyY=doggyRect.top+doggyRect.height/2;const distance=Math.sqrt((kittyX-doggyX)**2+(kittyY-doggyY)**2);if(distance<catchDistance&&canCatch){dogPoints++;scoreDisplay.textContent=dogPoints;scoreDisplay.style.transform='scale(1.5)';setTimeout(()=>scoreDisplay.style.transform='scale(1)',200);catchAlert.style.transform='translate(-50%,-50%) scale(1)';setTimeout(()=>{catchAlert.style.transform='translate(-50%,-50%) scale(0)';},1500);canCatch=false;setTimeout(()=>canCatch=true,2000);const doggy=document.querySelector('.doggy');doggy.style.filter='drop-shadow(0 0 20px gold)';setTimeout(()=>doggy.style.filter='drop-shadow(0 0 10px rgba(139,69,19,0.8))',500);}requestAnimationFrame(checkCatch);}checkCatch();})();
+  </script>
+<script>
+   (function(){const planet=document.querySelector('.planet');const colors=['color-1','color-2','color-3','color-4','color-5','color-6'];let currentColorIndex=0;const originalCheckCatch=window.checkCatch;window.changePlanetColor=function(){planet.classList.remove(...colors);currentColorIndex=(currentColorIndex+1)%colors.length;planet.classList.add(colors[currentColorIndex]);planet.classList.add('caught');setTimeout(()=>planet.classList.remove('caught'),500);};const originalCatchAlert=document.getElementById('catchAlert');const observer=new MutationObserver((mutations)=>{mutations.forEach((mutation)=>{if(mutation.type==='attributes'&&mutation.attributeName==='style'){const transform=originalCatchAlert.style.transform;if(transform.includes('scale(1)')&&!transform.includes('scale(0)')){window.changePlanetColor();}}});});observer.observe(originalCatchAlert,{attributes:true,attributeFilter:['style']});})();
   </script>
 </body>
 </html>
