@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>
+   Twitch Versus Code
+  </title>
+<style>
+   body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
@@ -16,9 +19,96 @@
             color: white;
         }
         h1 { font-size: 3rem; text-align: center; }
-    </style>
+  </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1 style="position: absolute; top: 20px; z-index: 10; text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);">
+   🌍 Hello World
+  </h1>
+<div id="globe-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script>
+   (function() {
+  const container = document.getElementById('globe-container');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setPixelRatio(window.devicePixelRatio);
+  container.appendChild(renderer.domElement);
+  
+  // Earth sphere
+  const geometry = new THREE.SphereGeometry(2, 64, 64);
+  const textureLoader = new THREE.TextureLoader();
+  const earthTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-blue-marble.jpg');
+  const bumpTexture = textureLoader.load('https://unpkg.com/three-globe/example/img/earth-topology.png');
+  
+  const material = new THREE.MeshPhongMaterial({
+    map: earthTexture,
+    bumpMap: bumpTexture,
+    bumpScale: 0.05,
+    specular: new THREE.Color(0x333333),
+    shininess: 5
+  });
+  
+  const earth = new THREE.Mesh(geometry, material);
+  scene.add(earth);
+  
+  // Atmosphere glow
+  const atmosphereGeometry = new THREE.SphereGeometry(2.1, 64, 64);
+  const atmosphereMaterial = new THREE.MeshPhongMaterial({
+    color: 0x4444ff,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+  });
+  const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+  scene.add(atmosphere);
+  
+  // Stars background
+  const starsGeometry = new THREE.BufferGeometry();
+  const starPositions = [];
+  for(let i = 0; i < 2000; i++) {
+    starPositions.push((Math.random() - 0.5) * 200);
+    starPositions.push((Math.random() - 0.5) * 200);
+    starPositions.push((Math.random() - 0.5) * 200);
+  }
+  starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+  const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+  const stars = new THREE.Points(starsGeometry, starsMaterial);
+  scene.add(stars);
+  
+  // Lighting
+  const ambientLight = new THREE.AmbientLight(0x333333);
+  scene.add(ambientLight);
+  
+  const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+  sunLight.position.set(5, 3, 5);
+  scene.add(sunLight);
+  
+  camera.position.z = 5;
+  
+  // Animation
+  function animate() {
+    requestAnimationFrame(animate);
+    earth.rotation.y += 0.003;
+    atmosphere.rotation.y += 0.003;
+    stars.rotation.y += 0.0002;
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  // Resize handler
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+  </script>
 </body>
 </html>
