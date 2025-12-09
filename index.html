@@ -18,8 +18,60 @@
             margin: 0;
             background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #0d1b2a 100%);
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
         }
+        
+        /* NAVIGATION */
+        #mainNav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 9999;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+            padding: 15px 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+        }
+        .nav-btn {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255,255,255,0.4);
+        }
+        .nav-btn.active {
+            background: white;
+            color: #764ba2;
+            box-shadow: 0 0 40px rgba(255,255,255,0.6);
+        }
+        
+        /* SECTIONS */
+        .section {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding-top: 80px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .section.active {
+            display: flex;
+        }
+        
         h1 { 
             font-size: 3rem; 
             text-align: center; 
@@ -217,19 +269,14 @@
             transform: scale(0.95);
         }
         #elephant {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 80px;
-            z-index: 100;
+            font-size: 120px;
             cursor: pointer;
             filter: drop-shadow(0 0 20px rgba(128, 128, 128, 0.8));
             animation: elephantBounce 2s ease-in-out infinite;
             transition: transform 0.2s;
         }
         #elephant:hover {
-            transform: translate(-50%, -50%) scale(1.2);
+            transform: scale(1.2);
         }
         #elephant.spraying {
             animation: elephantSpray 0.5s ease-in-out;
@@ -252,15 +299,15 @@
             animation: streamFly 1s ease-out forwards;
         }
         @keyframes elephantBounce {
-            0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
-            50% { transform: translate(-50%, -52%) rotate(5deg); }
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
         }
         @keyframes elephantSpray {
-            0% { transform: translate(-50%, -50%) scale(1); }
-            25% { transform: translate(-50%, -50%) scale(1.1) rotate(-10deg); }
-            50% { transform: translate(-50%, -50%) scale(1.15) rotate(0deg); }
-            75% { transform: translate(-50%, -50%) scale(1.1) rotate(10deg); }
-            100% { transform: translate(-50%, -50%) scale(1); }
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1) rotate(-10deg); }
+            50% { transform: scale(1.15) rotate(0deg); }
+            75% { transform: scale(1.1) rotate(10deg); }
+            100% { transform: scale(1); }
         }
         @keyframes waterFly {
             0% { opacity: 1; transform: translate(0, 0) scale(1); }
@@ -296,24 +343,39 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
+        
+        /* Section Animaux */
+        #animalsSection .animals-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+        }
+        
+        /* Section Jeux */
+        #gamesSection #snakeGame {
+            position: relative;
+            bottom: auto;
+            right: auto;
+        }
   </style>
 </head>
 <body>
-<div id="scoreBoard" style="position: fixed; top: 20px; left: 20px; z-index: 1000; background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(205, 133, 63, 0.9)); padding: 15px 25px; border-radius: 15px; box-shadow: 0 0 30px rgba(255, 165, 0, 0.5); font-family: 'Comic Sans MS', cursive; font-size: 1.5rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
-<span>
-    🐕 Score:
-   </span>
-<span id="dogScore">
-    0
-   </span>
-</div>
+<nav id="mainNav">
+<button class="nav-btn active" onclick="showSection('space')">
+    🌌 Espace
+   </button>
+<button class="nav-btn" onclick="showSection('animals')">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" onclick="showSection('games')">
+    🎮 Jeux
+   </button>
+</nav>
+<section class="section active" id="spaceSection">
 <h1>
-   🌌 Hello World 🌌
-  </h1>
-<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
-</div>
-<div class="stars" id="stars">
-</div>
+    🌌 Exploration Spatiale 🌌
+   </h1>
 <div class="solar-system" style="position: relative; z-index: 5;">
 <div class="rings">
 </div>
@@ -327,16 +389,46 @@
 <div class="moon-2">
 </div>
 </div>
-<div class="kitty-orbit">
-<div class="kitty">
-     🐱
-    </div>
 </div>
-<div class="dog-orbit" id="dogOrbit">
-<div class="dog" id="dog">
-     🐕
-    </div>
+</section>
+<section class="section" id="animalsSection">
+<h1>
+    🐾 Le Zoo Cosmique 🐾
+   </h1>
+<div class="animals-container">
+<div id="elephantContainer">
+<p style="text-align:center; color:#aaa;">
+      Clique pour arroser!
+     </p>
 </div>
+<div id="chaseContainer" style="position: relative; width: 350px; height: 350px;">
+<div id="scoreBoard2" style="position: absolute; top: -60px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(205, 133, 63, 0.9)); padding: 10px 20px; border-radius: 15px; box-shadow: 0 0 30px rgba(255, 165, 0, 0.5); font-family: 'Comic Sans MS', cursive; font-size: 1.2rem; color: white;">
+      🐕 Score:
+      <span id="dogScore2">
+       0
+      </span>
+</div>
+<div class="kitty-orbit" id="kittyOrbit2">
+<div class="kitty" id="kitty2">
+       🐱
+      </div>
+</div>
+<div class="dog-orbit" id="dogOrbit2">
+<div class="dog" id="dog2">
+       🐕
+      </div>
+</div>
+</div>
+</div>
+</section>
+<section class="section" id="gamesSection">
+<h1>
+    🎮 Arcade Zone 🎮
+   </h1>
+</section>
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
+</div>
+<div class="stars" id="stars">
 </div>
 <div id="elephant" onclick="sprayWater()">
    🐘
@@ -503,205 +595,6 @@
   </script>
 <script>
    (function() {
-    const kittyOrbit = document.querySelector('.kitty-orbit');
-    const kitty = document.querySelector('.kitty');
-    const dogOrbit = document.getElementById('dogOrbit');
-    const dog = document.getElementById('dog');
-    
-    let catAngle = 0;
-    let dogAngle = Math.PI; // Start opposite to cat
-    const orbitRadius = 160;
-    const centerX = 150;
-    const centerY = 150;
-    
-    const normalCatSpeed = 0.015;
-    const escapeCatSpeed = 0.08;
-    const dogSpeed = 0.025;
-    const dangerDistance = 80;
-    
-    let currentCatSpeed = normalCatSpeed;
-    let isEscaping = false;
-    
-    function getPosition(angle) {
-        return {
-            x: centerX + Math.cos(angle) * orbitRadius,
-            y: centerY + Math.sin(angle) * orbitRadius
-        };
-    }
-    
-    function getDistance(pos1, pos2) {
-        return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
-    }
-    
-    function animate() {
-        const catPos = getPosition(catAngle);
-        const dogPos = getPosition(dogAngle);
-        const distance = getDistance(catPos, dogPos);
-        
-        // Check if dog is too close
-        if (distance < dangerDistance) {
-            currentCatSpeed = escapeCatSpeed;
-            isEscaping = true;
-            kitty.classList.add('scared');
-            dog.classList.add('chasing');
-        } else if (distance > dangerDistance * 2) {
-            currentCatSpeed = normalCatSpeed;
-            isEscaping = false;
-            kitty.classList.remove('scared');
-            dog.classList.remove('chasing');
-        }
-        
-        // Move cat
-        catAngle += currentCatSpeed;
-        
-        // Dog chases cat (moves toward cat's angle)
-        let angleDiff = catAngle - dogAngle;
-        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-        dogAngle += Math.sign(angleDiff) * dogSpeed;
-        
-        // Update positions
-        const newCatPos = getPosition(catAngle);
-        const newDogPos = getPosition(dogAngle);
-        
-        kittyOrbit.style.transform = `translate(-50%, -50%)`;
-        kitty.style.left = newCatPos.x + 'px';
-        kitty.style.top = newCatPos.y + 'px';
-        kitty.style.transform = 'translate(-50%, -50%)' + (isEscaping ? ' scale(1.2)' : '');
-        
-        dogOrbit.style.transform = `translate(-50%, -50%)`;
-        dog.style.left = newDogPos.x + 'px';
-        dog.style.top = newDogPos.y + 'px';
-        dog.style.transform = 'translate(-50%, -50%) scaleX(' + (angleDiff > 0 ? '1' : '-1') + ')';
-        
-        requestAnimationFrame(animate);
-    }
-    
-    animate();
-})();
-  </script>
-<div id="catchEffect" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; opacity: 0; z-index: 2000; pointer-events: none; transition: all 0.5s ease;">
-   🎉
-  </div>
-<script>
-   (function() {
-    const kittyOrbit = document.querySelector('.kitty-orbit');
-    const kitty = document.querySelector('.kitty');
-    const dogOrbit = document.getElementById('dogOrbit');
-    const dog = document.getElementById('dog');
-    const scoreDisplay = document.getElementById('dogScore');
-    const catchEffect = document.getElementById('catchEffect');
-    
-    let catAngle = 0;
-    let dogAngle = Math.PI;
-    const orbitRadius = 160;
-    const centerX = 150;
-    const centerY = 150;
-    
-    const normalCatSpeed = 0.015;
-    const escapeCatSpeed = 0.08;
-    const dogSpeed = 0.025;
-    const dangerDistance = 80;
-    const catchDistance = 35;
-    
-    let currentCatSpeed = normalCatSpeed;
-    let isEscaping = false;
-    let dogScore = 0;
-    let canCatch = true;
-    let catchCooldown = 2000;
-    
-    function getPosition(angle) {
-        return {
-            x: centerX + Math.cos(angle) * orbitRadius,
-            y: centerY + Math.sin(angle) * orbitRadius
-        };
-    }
-    
-    function getDistance(pos1, pos2) {
-        return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
-    }
-    
-    function showCatchEffect() {
-        catchEffect.style.opacity = '1';
-        catchEffect.style.transform = 'translate(-50%, -50%) scale(1.5)';
-        catchEffect.textContent = ['🎉', '💥', '⭐', '🌟', '😱'][Math.floor(Math.random() * 5)];
-        setTimeout(() => {
-            catchEffect.style.opacity = '0';
-            catchEffect.style.transform = 'translate(-50%, -50%) scale(1)';
-        }, 500);
-    }
-    
-    function catchCat() {
-        if (!canCatch) return;
-        
-        dogScore++;
-        scoreDisplay.textContent = dogScore;
-        scoreDisplay.style.transform = 'scale(1.5)';
-        setTimeout(() => scoreDisplay.style.transform = 'scale(1)', 300);
-        
-        showCatchEffect();
-        
-        // Teleport cat to opposite side
-        catAngle = dogAngle + Math.PI;
-        
-        canCatch = false;
-        setTimeout(() => canCatch = true, catchCooldown);
-    }
-    
-    function animateChase() {
-        const catPos = getPosition(catAngle);
-        const dogPos = getPosition(dogAngle);
-        const distance = getDistance(catPos, dogPos);
-        
-        // Check for catch!
-        if (distance < catchDistance && canCatch) {
-            catchCat();
-        }
-        
-        // Check if dog is too close
-        if (distance < dangerDistance) {
-            currentCatSpeed = escapeCatSpeed;
-            isEscaping = true;
-            kitty.classList.add('scared');
-            dog.classList.add('chasing');
-        } else if (distance > dangerDistance * 2) {
-            currentCatSpeed = normalCatSpeed;
-            isEscaping = false;
-            kitty.classList.remove('scared');
-            dog.classList.remove('chasing');
-        }
-        
-        // Move cat
-        catAngle += currentCatSpeed;
-        
-        // Dog chases cat
-        let angleDiff = catAngle - dogAngle;
-        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
-        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
-        dogAngle += Math.sign(angleDiff) * dogSpeed;
-        
-        // Update positions
-        const newCatPos = getPosition(catAngle);
-        const newDogPos = getPosition(dogAngle);
-        
-        kittyOrbit.style.transform = `translate(-50%, -50%)`;
-        kitty.style.left = newCatPos.x + 'px';
-        kitty.style.top = newCatPos.y + 'px';
-        kitty.style.transform = 'translate(-50%, -50%)' + (isEscaping ? ' scale(1.2)' : '');
-        
-        dogOrbit.style.transform = `translate(-50%, -50%)`;
-        dog.style.left = newDogPos.x + 'px';
-        dog.style.top = newDogPos.y + 'px';
-        dog.style.transform = 'translate(-50%, -50%) scaleX(' + (angleDiff > 0 ? '1' : '-1') + ')';
-        
-        requestAnimationFrame(animateChase);
-    }
-    
-    animateChase();
-})();
-  </script>
-<script>
-   (function() {
     const planet = document.querySelector('.planet');
     const planetColors = [
         { c1: '#ff6b35', c2: '#f7931e', c3: '#c84a1c', c4: '#8b2500', g1: 'rgba(255, 107, 53, 0.4)', g2: 'rgba(255, 107, 53, 0.2)' },
@@ -763,9 +656,6 @@
     🔄 Restart
    </button>
 </div>
-<script id="snakeScript">
-   (function(){const canvas=document.getElementById('snakeCanvas');const ctx=canvas.getContext('2d');const scoreEl=document.getElementById('snakeScore');const gridSize=15;const tileCount=canvas.width/gridSize;let snake,velocity,food,score,gameOver,gameSpeed,gameInterval;const colors=['#ff6b35','#6b35ff','#35ff6b','#ff35d4','#35d4ff','#ffd435'];function initGame(){snake=[{x:10,y:10}];velocity={x:1,y:0};score=0;gameOver=false;gameSpeed=100;scoreEl.textContent='0';placeFood();if(gameInterval)clearInterval(gameInterval);gameInterval=setInterval(gameLoop,gameSpeed);}function drawGame(){ctx.fillStyle='rgba(10,10,21,0.95)';ctx.fillRect(0,0,canvas.width,canvas.height);if(gameOver){ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#ff3535';ctx.font='bold 20px Arial';ctx.textAlign='center';ctx.fillText('GAME OVER!',canvas.width/2,canvas.height/2);ctx.fillStyle='#fff';ctx.font='14px Arial';ctx.fillText('Score: '+score,canvas.width/2,canvas.height/2+25);ctx.fillText('Clique Restart!',canvas.width/2,canvas.height/2+50);return;}snake.forEach((segment,index)=>{const gradient=ctx.createRadialGradient(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,0,segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,gridSize);if(index===0){gradient.addColorStop(0,'#ffd700');gradient.addColorStop(1,'#ff6b00');}else{gradient.addColorStop(0,colors[index%colors.length]);gradient.addColorStop(1,'#1a1a2e');}ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,gridSize/2-1,0,Math.PI*2);ctx.fill();});ctx.shadowBlur=20;ctx.shadowColor='#ffd700';ctx.fillStyle='#ffd700';ctx.font='15px Arial';ctx.textAlign='left';ctx.fillText('⭐',food.x*gridSize+2,food.y*gridSize+13);ctx.shadowBlur=0;}function updateGame(){if(gameOver)return;const head={x:snake[0].x+velocity.x,y:snake[0].y+velocity.y};if(head.x<0)head.x=tileCount-1;if(head.x>=tileCount)head.x=0;if(head.y<0)head.y=tileCount-1;if(head.y>=tileCount)head.y=0;for(let i=0;i<snake.length;i++){if(snake[i].x===head.x&&snake[i].y===head.y){gameOver=true;return;}}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;scoreEl.textContent=score;placeFood();}else{snake.pop();}}function placeFood(){food={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount)};for(let segment of snake){if(segment.x===food.x&&segment.y===food.y){placeFood();return;}}}function gameLoop(){updateGame();drawGame();}document.addEventListener('keydown',(e)=>{if(gameOver)return;switch(e.key){case'ArrowUp':if(velocity.y!==1){velocity={x:0,y:-1};}break;case'ArrowDown':if(velocity.y!==-1){velocity={x:0,y:1};}break;case'ArrowLeft':if(velocity.x!==1){velocity={x:-1,y:0};}break;case'ArrowRight':if(velocity.x!==-1){velocity={x:1,y:0};}break;}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();}});document.getElementById('restartSnake').onclick=function(){console.log('Restart clicked!');initGame();};initGame();})();
-  </script>
 <script id="elephantScript">
    function sprayWater() {
     const elephant = document.getElementById('elephant');
@@ -818,6 +708,230 @@
 
 // Auto spray every 4 seconds
 setInterval(sprayWater, 4000);
+  </script>
+<script id="navScript">
+   function showSection(section) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    if(section === 'space') {
+        document.getElementById('spaceSection').classList.add('active');
+        document.querySelectorAll('.nav-btn')[0].classList.add('active');
+    } else if(section === 'animals') {
+        document.getElementById('animalsSection').classList.add('active');
+        document.querySelectorAll('.nav-btn')[1].classList.add('active');
+    } else if(section === 'games') {
+        document.getElementById('gamesSection').classList.add('active');
+        document.querySelectorAll('.nav-btn')[2].classList.add('active');
+    }
+}
+  </script>
+<script id="animalChaseScript">
+   (function() {
+    const kittyOrbit = document.getElementById('kittyOrbit2');
+    const kitty = document.getElementById('kitty2');
+    const dogOrbit = document.getElementById('dogOrbit2');
+    const dog = document.getElementById('dog2');
+    const scoreDisplay = document.getElementById('dogScore2');
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI;
+    const orbitRadius = 140;
+    const centerX = 175;
+    const centerY = 175;
+    
+    const normalCatSpeed = 0.015;
+    const escapeCatSpeed = 0.08;
+    const dogSpeed = 0.025;
+    const dangerDistance = 80;
+    const catchDistance = 35;
+    
+    let currentCatSpeed = normalCatSpeed;
+    let isEscaping = false;
+    let dogScore = 0;
+    let canCatch = true;
+    
+    function getPosition(angle) {
+        return {
+            x: centerX + Math.cos(angle) * orbitRadius,
+            y: centerY + Math.sin(angle) * orbitRadius
+        };
+    }
+    
+    function getDistance(pos1, pos2) {
+        return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+    }
+    
+    function catchCat() {
+        if (!canCatch) return;
+        dogScore++;
+        scoreDisplay.textContent = dogScore;
+        catAngle = dogAngle + Math.PI;
+        canCatch = false;
+        setTimeout(() => canCatch = true, 2000);
+    }
+    
+    function animateChase() {
+        const catPos = getPosition(catAngle);
+        const dogPos = getPosition(dogAngle);
+        const distance = getDistance(catPos, dogPos);
+        
+        if (distance < catchDistance && canCatch) catchCat();
+        
+        if (distance < dangerDistance) {
+            currentCatSpeed = escapeCatSpeed;
+            isEscaping = true;
+            kitty.classList.add('scared');
+            dog.classList.add('chasing');
+        } else if (distance > dangerDistance * 2) {
+            currentCatSpeed = normalCatSpeed;
+            isEscaping = false;
+            kitty.classList.remove('scared');
+            dog.classList.remove('chasing');
+        }
+        
+        catAngle += currentCatSpeed;
+        
+        let angleDiff = catAngle - dogAngle;
+        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        dogAngle += Math.sign(angleDiff) * dogSpeed;
+        
+        const newCatPos = getPosition(catAngle);
+        const newDogPos = getPosition(dogAngle);
+        
+        kitty.style.left = newCatPos.x + 'px';
+        kitty.style.top = newCatPos.y + 'px';
+        kitty.style.transform = 'translate(-50%, -50%)' + (isEscaping ? ' scale(1.2)' : '');
+        
+        dog.style.left = newDogPos.x + 'px';
+        dog.style.top = newDogPos.y + 'px';
+        dog.style.transform = 'translate(-50%, -50%) scaleX(' + (angleDiff > 0 ? '1' : '-1') + ')';
+        
+        requestAnimationFrame(animateChase);
+    }
+    
+    animateChase();
+})();
+  </script>
+<script id="snakeScript2">
+   (function(){
+    const canvas = document.getElementById('snakeCanvas2');
+    const ctx = canvas.getContext('2d');
+    const scoreEl = document.getElementById('snakeScore2');
+    const gridSize = 20;
+    const tileCount = canvas.width / gridSize;
+    let snake, velocity, food, score, gameOver, gameInterval;
+    const colors = ['#ff6b35','#6b35ff','#35ff6b','#ff35d4','#35d4ff','#ffd435'];
+    
+    function initGame() {
+        snake = [{x:10, y:10}];
+        velocity = {x:1, y:0};
+        score = 0;
+        gameOver = false;
+        scoreEl.textContent = '0';
+        placeFood();
+        if(gameInterval) clearInterval(gameInterval);
+        gameInterval = setInterval(gameLoop, 100);
+    }
+    
+    function drawGame() {
+        ctx.fillStyle = 'rgba(10,10,21,0.95)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        if(gameOver) {
+            ctx.fillStyle = 'rgba(0,0,0,0.7)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ff3535';
+            ctx.font = 'bold 30px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER!', canvas.width/2, canvas.height/2);
+            ctx.fillStyle = '#fff';
+            ctx.font = '18px Arial';
+            ctx.fillText('Score: ' + score, canvas.width/2, canvas.height/2 + 35);
+            return;
+        }
+        
+        snake.forEach((segment, index) => {
+            const gradient = ctx.createRadialGradient(
+                segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, 0,
+                segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, gridSize
+            );
+            if(index === 0) {
+                gradient.addColorStop(0, '#ffd700');
+                gradient.addColorStop(1, '#ff6b00');
+            } else {
+                gradient.addColorStop(0, colors[index % colors.length]);
+                gradient.addColorStop(1, '#1a1a2e');
+            }
+            ctx.fillStyle = gradient;
+            ctx.beginPath();
+            ctx.arc(segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, gridSize/2 - 1, 0, Math.PI * 2);
+            ctx.fill();
+        });
+        
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = '#ffd700';
+        ctx.fillStyle = '#ffd700';
+        ctx.font = '20px Arial';
+        ctx.fillText('⭐', food.x * gridSize + 2, food.y * gridSize + 18);
+        ctx.shadowBlur = 0;
+    }
+    
+    function updateGame() {
+        if(gameOver) return;
+        const head = {x: snake[0].x + velocity.x, y: snake[0].y + velocity.y};
+        if(head.x < 0) head.x = tileCount - 1;
+        if(head.x >= tileCount) head.x = 0;
+        if(head.y < 0) head.y = tileCount - 1;
+        if(head.y >= tileCount) head.y = 0;
+        
+        for(let i = 0; i < snake.length; i++) {
+            if(snake[i].x === head.x && snake[i].y === head.y) {
+                gameOver = true;
+                return;
+            }
+        }
+        
+        snake.unshift(head);
+        if(head.x === food.x && head.y === food.y) {
+            score += 10;
+            scoreEl.textContent = score;
+            placeFood();
+        } else {
+            snake.pop();
+        }
+    }
+    
+    function placeFood() {
+        food = {x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount)};
+        for(let segment of snake) {
+            if(segment.x === food.x && segment.y === food.y) {
+                placeFood();
+                return;
+            }
+        }
+    }
+    
+    function gameLoop() {
+        updateGame();
+        drawGame();
+    }
+    
+    document.addEventListener('keydown', (e) => {
+        if(gameOver) return;
+        switch(e.key) {
+            case 'ArrowUp': if(velocity.y !== 1) velocity = {x:0, y:-1}; break;
+            case 'ArrowDown': if(velocity.y !== -1) velocity = {x:0, y:1}; break;
+            case 'ArrowLeft': if(velocity.x !== 1) velocity = {x:-1, y:0}; break;
+            case 'ArrowRight': if(velocity.x !== -1) velocity = {x:1, y:0}; break;
+        }
+        if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
+    });
+    
+    document.getElementById('restartSnake2').onclick = initGame;
+    initGame();
+})();
   </script>
 </body>
 </html>
