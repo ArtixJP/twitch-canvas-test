@@ -1179,5 +1179,64 @@ window.addEventListener('resize', () => {
     observer.observe(dogScoreEl, { childList: true, characterData: true, subtree: true });
 })();
   </script>
-</body>
+
+<button id="comfortBtn" style="position: fixed; bottom: 100px; left: 30px; z-index: 100; background: linear-gradient(135deg, #4a90d9, #2d5aa0); border: 2px solid rgba(100, 180, 255, 0.6); color: white; padding: 12px 24px; border-radius: 25px; cursor: pointer; font-size: 1rem; font-weight: bold; box-shadow: 0 0 20px rgba(74, 144, 217, 0.5); transition: all 0.3s ease;" onmouseenter="this.style.transform='scale(1.1)'; this.style.boxShadow='0 0 30px rgba(74, 144, 217, 0.8)'" onmouseleave="this.style.transform='scale(1)'; this.style.boxShadow='0 0 20px rgba(74, 144, 217, 0.5)'" onclick="showComfortBubble()">💙 Besoin de réconfort?</button>
+
+<div id="comfortBubble" style="position: fixed; bottom: 160px; left: 30px; z-index: 101; background: linear-gradient(135deg, rgba(74, 144, 217, 0.95), rgba(45, 90, 160, 0.95)); color: white; padding: 20px 25px; border-radius: 20px; max-width: 280px; box-shadow: 0 0 30px rgba(74, 144, 217, 0.6); font-family: system-ui, sans-serif; display: none; animation: bubbleAppear 0.4s ease-out;">
+  <div style="font-size: 1.1rem; line-height: 1.5;" id="comfortMessage">✨ Tu es incroyable exactement comme tu es. L'univers est vaste, mais ta place y est unique et précieuse. 💫</div>
+  <div style="position: absolute; bottom: -10px; left: 30px; width: 0; height: 0; border-left: 12px solid transparent; border-right: 12px solid transparent; border-top: 12px solid rgba(55, 100, 150, 0.95);"></div>
+</div>
+
+<style>
+@keyframes bubbleAppear {
+  0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes bubbleDisappear {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-10px) scale(0.9); }
+}
+</style>
+
+<script>
+const comfortMessages = [
+  "✨ Tu es incroyable exactement comme tu es. L'univers est vaste, mais ta place y est unique et précieuse. 💫",
+  "🌟 Respire doucement... Tout va bien se passer. Tu as surmonté tant de choses déjà! 💪",
+  "💜 Tu mérites l'amour et la gentillesse, surtout de toi-même. Sois doux avec toi. 🌸",
+  "🌈 Chaque étoile a commencé dans l'obscurité. Ta lumière brille même quand tu ne la vois pas. ⭐",
+  "🦋 Les moments difficiles sont temporaires. Tu es plus fort(e) que tu ne le penses! 💎",
+  "🌙 Prends ton temps. Il n'y a pas de course. Tu avances à ton propre rythme parfait. 🐢✨",
+  "💙 Quelqu'un, quelque part, est content que tu existes. Et ce quelqu'un a raison! 🥰",
+  "🌻 Aujourd'hui est un nouveau jour plein de possibilités. Tu peux y arriver! 🚀"
+];
+
+let bubbleVisible = false;
+let bubbleTimeout;
+
+function showComfortBubble() {
+  const bubble = document.getElementById('comfortBubble');
+  const messageEl = document.getElementById('comfortMessage');
+  
+  if (bubbleVisible) {
+    bubble.style.animation = 'bubbleDisappear 0.3s ease-out forwards';
+    setTimeout(() => { bubble.style.display = 'none'; }, 300);
+    bubbleVisible = false;
+    clearTimeout(bubbleTimeout);
+  } else {
+    messageEl.textContent = comfortMessages[Math.floor(Math.random() * comfortMessages.length)];
+    bubble.style.display = 'block';
+    bubble.style.animation = 'bubbleAppear 0.4s ease-out';
+    bubbleVisible = true;
+    
+    clearTimeout(bubbleTimeout);
+    bubbleTimeout = setTimeout(() => {
+      if (bubbleVisible) {
+        bubble.style.animation = 'bubbleDisappear 0.3s ease-out forwards';
+        setTimeout(() => { bubble.style.display = 'none'; }, 300);
+        bubbleVisible = false;
+      }
+    }, 8000);
+  }
+}
+</script></body>
 </html>
