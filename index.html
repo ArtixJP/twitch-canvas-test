@@ -571,6 +571,140 @@
             30% { transform: translate(-50%, -50%) scale(1.15); filter: brightness(1.5); }
             100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
         }
+   .elephant-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            pointer-events: none;
+        }
+        .elephant {
+            position: relative;
+            width: 120px;
+            height: 100px;
+        }
+        .elephant-body {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 55px;
+            background: linear-gradient(135deg, #8899aa 0%, #667788 100%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow: 0 0 20px rgba(136, 153, 170, 0.5);
+        }
+        .elephant-head {
+            position: absolute;
+            bottom: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 45px;
+            background: linear-gradient(135deg, #99aabb 0%, #778899 100%);
+            border-radius: 50%;
+        }
+        .elephant-ear {
+            position: absolute;
+            top: 5px;
+            width: 30px;
+            height: 35px;
+            background: linear-gradient(135deg, #8899aa 0%, #556677 100%);
+            border-radius: 50% 50% 40% 40%;
+        }
+        .elephant-ear.left { left: -20px; transform: rotate(-15deg); }
+        .elephant-ear.right { right: -20px; transform: rotate(15deg); }
+        .elephant-eye {
+            position: absolute;
+            top: 12px;
+            width: 8px;
+            height: 8px;
+            background: #2c2c2c;
+            border-radius: 50%;
+        }
+        .elephant-eye.left { left: 10px; }
+        .elephant-eye.right { right: 10px; }
+        .elephant-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+        }
+        .elephant-trunk {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 14px;
+            height: 45px;
+            background: linear-gradient(to bottom, #99aabb, #778899);
+            border-radius: 8px 8px 12px 12px;
+            transform-origin: top center;
+            animation: trunk-spray 2s ease-in-out infinite;
+        }
+        .elephant-trunk::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 8px;
+            background: #778899;
+            border-radius: 50%;
+        }
+        .elephant-leg {
+            position: absolute;
+            bottom: 0;
+            width: 15px;
+            height: 20px;
+            background: #667788;
+            border-radius: 5px 5px 8px 8px;
+        }
+        .elephant-leg:nth-child(1) { left: 15px; }
+        .elephant-leg:nth-child(2) { left: 35px; }
+        .elephant-leg:nth-child(3) { right: 35px; }
+        .elephant-leg:nth-child(4) { right: 15px; }
+        .water-spray {
+            position: absolute;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 80px;
+            pointer-events: none;
+        }
+        .water-drop {
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: linear-gradient(to bottom, #87CEEB, #00BFFF);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            opacity: 0;
+            animation: spray-drop 2s ease-out infinite;
+            box-shadow: 0 0 10px rgba(0, 191, 255, 0.6);
+        }
+        .water-drop:nth-child(1) { left: 26px; animation-delay: 0s; }
+        .water-drop:nth-child(2) { left: 15px; animation-delay: 0.1s; }
+        .water-drop:nth-child(3) { left: 37px; animation-delay: 0.15s; }
+        .water-drop:nth-child(4) { left: 5px; animation-delay: 0.2s; }
+        .water-drop:nth-child(5) { left: 47px; animation-delay: 0.25s; }
+        .water-drop:nth-child(6) { left: 20px; animation-delay: 0.3s; }
+        .water-drop:nth-child(7) { left: 32px; animation-delay: 0.35s; }
+        @keyframes trunk-spray {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        @keyframes spray-drop {
+            0% { opacity: 0; transform: translateY(0) scale(0.5); }
+            20% { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
+        }
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 </script>
@@ -612,6 +746,48 @@
 <div class="stars" id="stars">
 </div>
 <div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
+</div>
+<div class="elephant-container">
+<div class="elephant">
+<div class="elephant-ear left">
+</div>
+<div class="elephant-ear right">
+</div>
+<div class="elephant-head">
+<div class="elephant-eye left">
+</div>
+<div class="elephant-eye right">
+</div>
+</div>
+<div class="elephant-trunk">
+</div>
+<div class="elephant-body">
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+</div>
+<div class="water-spray">
+<div class="water-drop">
+</div>
+<div class="water-drop">
+</div>
+<div class="water-drop">
+</div>
+<div class="water-drop">
+</div>
+<div class="water-drop">
+</div>
+<div class="water-drop">
+</div>
+<div class="water-drop">
+</div>
+</div>
+</div>
 </div>
 <div class="solar-system">
 <div class="rings">
