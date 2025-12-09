@@ -121,9 +121,135 @@
             font-size: 0.8rem;
         }
    @keyframes matrix-flicker { 0%, 90%, 100% { opacity: 1; } 95% { opacity: 0.8; } }
+   /* Neon Glow Effect for All Text */
+        body {
+            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #a855f7;
+            animation: neon-pulse 2s ease-in-out infinite alternate;
+        }
+        
+        p, span, strong, a {
+            text-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+            animation: neon-flicker 3s ease-in-out infinite;
+        }
+        
+        button {
+            text-shadow: 0 0 10px #fff, 0 0 20px #ff6b6b, 0 0 30px #ff6b6b, 0 0 40px #e94560 !important;
+        }
+        
+        @keyframes neon-pulse {
+            0% {
+                text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #a855f7;
+                filter: brightness(1);
+            }
+            100% {
+                text-shadow: 0 0 5px #a855f7, 0 0 15px #a855f7, 0 0 30px #a855f7, 0 0 60px #a855f7, 0 0 100px #3b82f6;
+                filter: brightness(1.2);
+            }
+        }
+        
+        @keyframes neon-flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                text-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #3b82f6;
+                opacity: 1;
+            }
+            20%, 24%, 55% {
+                text-shadow: none;
+                opacity: 0.8;
+            }
+        }
+        
+        #counter-display {
+            text-shadow: 0 0 20px #ffd700, 0 0 40px #ff6b6b, 0 0 60px #a855f7, 0 0 80px #a855f7 !important;
+            -webkit-text-fill-color: transparent !important;
+            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+        }
+        
+        .info-section h2 {
+            text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #e94560;
+        }
+        
+        .footer p {
+            text-shadow: 0 0 5px #666, 0 0 10px #a855f7;
+            animation: neon-subtle 4s ease-in-out infinite alternate;
+        }
+        
+        @keyframes neon-subtle {
+            0% { text-shadow: 0 0 5px #666, 0 0 10px #a855f7; }
+            100% { text-shadow: 0 0 8px #888, 0 0 15px #3b82f6, 0 0 25px #a855f7; }
+        }
   </style>
 </head>
-<body>
+<body style="margin-left: 60px; transition: margin-left 0.3s ease;">
+<nav id="sidebar-menu" onmouseenter="this.style.width='200px'" onmouseleave="this.style.width='60px'" style="position: fixed; left: 0; top: 0; height: 100vh; width: 60px; background: rgba(0, 0, 0, 0.8); border-right: 2px solid #a855f7; display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 15px; z-index: 1000; transition: width 0.3s ease; overflow: hidden;">
+<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
+<span style="font-size: 1.5rem; min-width: 30px;">
+     🏠
+    </span>
+<span style="margin-left: 15px; white-space: nowrap; color: #a855f7; font-weight: bold;">
+     Home
+    </span>
+</div>
+<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
+<span style="font-size: 1.5rem; min-width: 30px;">
+     📋
+    </span>
+<span style="margin-left: 15px; white-space: nowrap; color: #3b82f6; font-weight: bold;">
+     Backlog
+    </span>
+</div>
+<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
+<span style="font-size: 1.5rem; min-width: 30px;">
+     🎮
+    </span>
+<span style="margin-left: 15px; white-space: nowrap; color: #00ff41; font-weight: bold;">
+     Chaos Zone
+    </span>
+</div>
+<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
+<span style="font-size: 1.5rem; min-width: 30px;">
+     ⚙️
+    </span>
+<span style="margin-left: 15px; white-space: nowrap; color: #ffd700; font-weight: bold;">
+     Settings
+    </span>
+</div>
+<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease; margin-top: auto; margin-bottom: 20px;">
+<span style="font-size: 1.5rem; min-width: 30px;">
+     📺
+    </span>
+<span style="margin-left: 15px; white-space: nowrap; color: #e94560; font-weight: bold;">
+     Twitch
+    </span>
+</div>
+<style>
+    #sidebar-menu .sidebar-item span:last-child {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    #sidebar-menu:hover .sidebar-item span:last-child {
+      opacity: 1;
+    }
+    #sidebar-menu::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background: linear-gradient(180deg, #a855f7, #3b82f6, #00ff41, #a855f7);
+      background-size: 100% 200%;
+      animation: sidebar-glow 3s linear infinite;
+    }
+    @keyframes sidebar-glow {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 0% 200%; }
+    }
+   </style>
+</nav>
 <div class="header" style="position: relative; z-index: 1;">
 <h1 style="font-family: 'Courier New', monospace; color: #00ff41; text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41; background: none; -webkit-background-clip: unset; -webkit-text-fill-color: #00ff41; animation: matrix-flicker 0.1s infinite;">
     ⟨ Welcome to the Matrix ⟩
@@ -223,8 +349,12 @@
 </div>
 <div class="footer">
 <p>
-    Twitch Emergent Coding • Expérience d'intelligence collective
-   </p>
+    © 2024 Twitch Emergent Coding • Expérience d'intelligence collective
+    <br/>
+<span style="font-size: 0.7rem; opacity: 0.6;">
+     All your base are belong to us 🎮
+    </span>
+</p>
 </div>
 <div id="particles-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;">
 </div>
