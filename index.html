@@ -231,9 +231,11 @@
 <h1>
    🌌 Hello World 🌌
   </h1>
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
+</div>
 <div class="stars" id="stars">
 </div>
-<div class="solar-system">
+<div class="solar-system" style="position: relative; z-index: 5;">
 <div class="rings">
 </div>
 <div class="planet">
@@ -273,6 +275,144 @@
   </button>
 <script>
    function toggleMusic(){const a=document.getElementById('bgMusic');const b=document.getElementById('musicToggle');if(a.paused){a.play();b.textContent='🎵 Pause';}else{a.pause();b.textContent='🎵 Play';}}
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script>
+   (function() {
+  const container = document.getElementById('three-container');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+  
+  // Sun geometry with glow
+  const sunGeometry = new THREE.SphereGeometry(0.8, 64, 64);
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffdd00,
+    transparent: true
+  });
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-3, 2, 0);
+  scene.add(sun);
+  
+  // Sun glow layers
+  const glowGeometry = new THREE.SphereGeometry(1.0, 32, 32);
+  const glowMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      c: { type: 'f', value: 0.5 },
+      p: { type: 'f', value: 4.0 },
+      glowColor: { type: 'c', value: new THREE.Color(0xffaa00) },
+      viewVector: { type: 'v3', value: camera.position }
+    },
+    vertexShader: `
+      uniform vec3 viewVector;
+      varying float intensity;
+      void main() {
+        vec3 vNormal = normalize(normalMatrix * normal);
+        vec3 vNormel = normalize(normalMatrix * viewVector);
+        intensity = pow(0.7 - dot(vNormal, vNormel), 2.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 glowColor;
+      varying float intensity;
+      void main() {
+        vec3 glow = glowColor * intensity;
+        gl_FragColor = vec4(glow, intensity * 0.8);
+      }
+    `,
+    side: THREE.FrontSide,
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+  const sunGlow = new THREE.Mesh(glowGeometry, glowMaterial);
+  sunGlow.position.copy(sun.position);
+  sunGlow.scale.multiplyScalar(1.5);
+  scene.add(sunGlow);
+  
+  // Second glow layer
+  const outerGlow = new THREE.Mesh(glowGeometry.clone(), glowMaterial.clone());
+  outerGlow.position.copy(sun.position);
+  outerGlow.scale.multiplyScalar(2.2);
+  outerGlow.material.uniforms.glowColor.value = new THREE.Color(0xff6600);
+  scene.add(outerGlow);
+  
+  // Point light from sun
+  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+  sunLight.position.copy(sun.position);
+  sunLight.castShadow = true;
+  scene.add(sunLight);
+  
+  // Ambient light
+  const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
+  scene.add(ambientLight);
+  
+  // Corona particles
+  const coronaGeometry = new THREE.BufferGeometry();
+  const coronaCount = 200;
+  const coronaPositions = new Float32Array(coronaCount * 3);
+  for(let i = 0; i < coronaCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    const r = 0.9 + Math.random() * 0.5;
+    coronaPositions[i * 3] = sun.position.x + r * Math.sin(phi) * Math.cos(theta);
+    coronaPositions[i * 3 + 1] = sun.position.y + r * Math.sin(phi) * Math.sin(theta);
+    coronaPositions[i * 3 + 2] = sun.position.z + r * Math.cos(phi);
+  }
+  coronaGeometry.setAttribute('position', new THREE.BufferAttribute(coronaPositions, 3));
+  const coronaMaterial = new THREE.PointsMaterial({
+    color: 0xffaa00,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending
+  });
+  const corona = new THREE.Points(coronaGeometry, coronaMaterial);
+  scene.add(corona);
+  
+  // Light rays effect on page
+  const rayOverlay = document.createElement('div');
+  rayOverlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:2;background:radial-gradient(ellipse at 20% 30%, rgba(255,220,100,0.15) 0%, transparent 50%);';
+  document.body.appendChild(rayOverlay);
+  
+  // Animation
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    // Sun pulsing
+    const pulse = 1 + Math.sin(time * 2) * 0.05;
+    sun.scale.set(pulse, pulse, pulse);
+    sunGlow.scale.set(1.5 * pulse, 1.5 * pulse, 1.5 * pulse);
+    
+    // Rotate corona
+    corona.rotation.y += 0.002;
+    corona.rotation.x += 0.001;
+    
+    // Light intensity variation
+    sunLight.intensity = 2 + Math.sin(time * 3) * 0.3;
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  // Resize handler
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
   </script>
 </body>
 </html>
