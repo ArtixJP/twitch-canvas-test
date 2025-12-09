@@ -275,16 +275,49 @@
         .planet-container {
             filter: drop-shadow(-20px -15px 30px rgba(255, 200, 100, 0.15));
         }
+        .planet {
+            position: relative;
+        }
+        .planet .sun-light {
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(255, 240, 180, 0.6) 0%, rgba(255, 200, 100, 0.3) 30%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sunLightPulse 4s ease-in-out infinite;
+        }
+        .planet .shadow-side {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(0,0,0,0.4) 60%, rgba(0,0,0,0.7) 100%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        @keyframes sunLightPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
+        }
         body::before {
             content: '';
             position: fixed;
-            top: -20%;
-            left: -20%;
-            width: 50%;
-            height: 50%;
-            background: radial-gradient(ellipse at center, rgba(255, 220, 100, 0.08) 0%, transparent 70%);
+            top: -15%;
+            left: -15%;
+            width: 60%;
+            height: 60%;
+            background: radial-gradient(ellipse at center, rgba(255, 220, 100, 0.15) 0%, rgba(255, 180, 50, 0.08) 40%, transparent 70%);
             pointer-events: none;
             z-index: 0;
+            animation: sunAmbientPulse 6s ease-in-out infinite;
+        }
+        @keyframes sunAmbientPulse {
+            0%, 100% { opacity: 0.8; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.1); }
         }
    .doggy-orbit {
             position: absolute;
@@ -395,6 +428,8 @@
 <div class="ring">
 </div>
 <div class="planet">
+<div class="sun-light"></div>
+<div class="shadow-side"></div>
 </div>
 <div class="moon-orbit">
 <div class="moon">
@@ -521,7 +556,7 @@ const sunMaterial = new THREE.MeshBasicMaterial({
     opacity: 0.95
 });
 const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-sun.position.set(-8, 5, -10);
+sun.position.set(-6, 4, -8);
 scene.add(sun);
 
 // Sun glow layers
@@ -540,9 +575,21 @@ glowSizes.forEach((size, i) => {
 });
 
 // Point light from sun
-const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+const sunLight = new THREE.PointLight(0xffdd88, 3, 150);
 sunLight.position.copy(sun.position);
 scene.add(sunLight);
+
+// Lens flare effect
+const flareGeometry = new THREE.PlaneGeometry(1, 1);
+const flareMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffffaa,
+    transparent: true,
+    opacity: 0.3,
+    side: THREE.DoubleSide
+});
+const flare = new THREE.Mesh(flareGeometry, flareMaterial);
+flare.position.set(-7, 4.5, -9);
+scene.add(flare);
 
 // Ambient light
 const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
