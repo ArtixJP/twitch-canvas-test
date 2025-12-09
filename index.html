@@ -342,7 +342,6 @@
   moon.position.x = 4;
   moonPivot.add(moon);
   
-  // Lueur de la lune
   const moonGlowGeom = new THREE.SphereGeometry(0.5, 32, 32);
   const moonGlowMat = new THREE.MeshBasicMaterial({
     color: 0xffffee,
@@ -385,12 +384,23 @@
 
   camera.position.z = 6;
 
+  // Écouter le changement de couleur
+  let targetColor = { main: 0x4a90d9, emissive: 0x112244, atmos: 0x88ccff };
+  window.addEventListener('planetColorChange', (e) => {
+    targetColor = e.detail;
+  });
+
   function animate() {
     requestAnimationFrame(animate);
     planet.rotation.y += 0.003;
     ring.rotation.z += 0.001;
     atmosphere.rotation.y += 0.002;
     stars.rotation.y += 0.0002;
+    
+    // Transition douce des couleurs
+    material.color.lerp(new THREE.Color(targetColor.main), 0.05);
+    material.emissive.lerp(new THREE.Color(targetColor.emissive), 0.05);
+    atmosMat.color.lerp(new THREE.Color(targetColor.atmos), 0.05);
     
     // Orbite de la lune
     moonPivot.rotation.y += 0.008;
@@ -885,5 +895,74 @@
 <script>
    (function() { setTimeout(() => { const container = document.getElementById('planet-container'); const dogScene = new THREE.Scene(); const dogCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); const dogRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); dogRenderer.setSize(window.innerWidth, window.innerHeight); dogRenderer.setClearColor(0x000000, 0); container.appendChild(dogRenderer.domElement); dogRenderer.domElement.style.position = 'absolute'; dogRenderer.domElement.style.top = '0'; dogRenderer.domElement.style.pointerEvents = 'none'; const light = new THREE.PointLight(0xffffff, 1.5); light.position.set(10, 5, 10); dogScene.add(light); dogScene.add(new THREE.AmbientLight(0x333366, 0.5)); const dogPivot = new THREE.Object3D(); dogScene.add(dogPivot); const dogMat = new THREE.MeshPhongMaterial({ color: 0xcc8844, emissive: 0x221100, specular: 0xffffff, shininess: 30 }); const whiteMat = new THREE.MeshPhongMaterial({ color: 0xffeedd, emissive: 0x111111 }); const dogBody = new THREE.Mesh(new THREE.SphereGeometry(0.3, 16, 16), dogMat); dogBody.scale.set(1.2, 0.9, 0.9); const dogHead = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), dogMat); dogHead.position.set(0.35, 0.1, 0); const snout = new THREE.Mesh(new THREE.SphereGeometry(0.12, 12, 12), whiteMat); snout.position.set(0.5, 0.05, 0); snout.scale.set(1.2, 0.8, 0.9); const nose = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), new THREE.MeshBasicMaterial({ color: 0x222222 })); nose.position.set(0.6, 0.08, 0); const earGeom = new THREE.SphereGeometry(0.1, 8, 8); const earL = new THREE.Mesh(earGeom, dogMat); const earR = new THREE.Mesh(earGeom, dogMat); earL.scale.set(0.6, 1.2, 0.4); earR.scale.set(0.6, 1.2, 0.4); earL.position.set(0.25, 0.05, -0.15); earR.position.set(0.25, 0.05, 0.15); const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 }); const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), eyeMat); const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), eyeMat); eyeL.position.set(0.45, 0.18, -0.1); eyeR.position.set(0.45, 0.18, 0.1); const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff }); const shineL = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), shineMat); const shineR = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), shineMat); shineL.position.set(0.48, 0.2, -0.11); shineR.position.set(0.48, 0.2, 0.09); const dogTail = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.06, 0.35, 8), dogMat); dogTail.position.set(-0.35, 0.15, 0); dogTail.rotation.z = -Math.PI / 4; const legGeom = new THREE.CylinderGeometry(0.04, 0.05, 0.2, 8); const legFL = new THREE.Mesh(legGeom, dogMat); const legFR = new THREE.Mesh(legGeom, dogMat); const legBL = new THREE.Mesh(legGeom, dogMat); const legBR = new THREE.Mesh(legGeom, dogMat); legFL.position.set(0.15, -0.25, -0.12); legFR.position.set(0.15, -0.25, 0.12); legBL.position.set(-0.15, -0.25, -0.12); legBR.position.set(-0.15, -0.25, 0.12); const tongue = new THREE.Mesh(new THREE.SphereGeometry(0.05, 8, 8), new THREE.MeshPhongMaterial({ color: 0xff6688 })); tongue.scale.set(0.6, 1, 0.3); tongue.position.set(0.55, -0.05, 0.05); const dog = new THREE.Group(); dog.add(dogBody, dogHead, snout, nose, earL, earR, eyeL, eyeR, shineL, shineR, dogTail, legFL, legFR, legBL, legBR, tongue); dog.position.x = 5.5; dog.scale.set(0.6, 0.6, 0.6); dogPivot.add(dog); const dustGeom = new THREE.BufferGeometry(); const dustPos = []; for(let i = 0; i < 40; i++) dustPos.push(0, 0, 0); dustGeom.setAttribute('position', new THREE.Float32BufferAttribute(dustPos, 3)); const dust = new THREE.Points(dustGeom, new THREE.PointsMaterial({ color: 0xddaa77, size: 0.08, transparent: true, opacity: 0.6 })); dogScene.add(dust); const dustHistory = []; dogCamera.position.z = 6; let dogAngle = Math.PI; let catAngle = 0; let dogSpeed = 0.018; let catSpeed = 0.012; let catEscapeSpeed = 0.04; let isEscaping = false; let escapeTimer = 0; function animateDog() { requestAnimationFrame(animateDog); const time = Date.now() * 0.001; let angleDiff = catAngle - dogAngle; while(angleDiff > Math.PI) angleDiff -= Math.PI * 2; while(angleDiff < -Math.PI) angleDiff += Math.PI * 2; const distance = Math.abs(angleDiff); if(angleDiff > 0) { dogAngle += dogSpeed; } else { dogAngle -= dogSpeed; } if(distance < 0.25 && !isEscaping) { isEscaping = true; escapeTimer = 60; if(window.addDogPoint) window.addDogPoint(); } if(isEscaping) { catAngle += catEscapeSpeed * (angleDiff > 0 ? 1 : -1); escapeTimer--; if(escapeTimer <= 0) isEscaping = false; } else { catAngle += catSpeed; } dogPivot.rotation.y = dogAngle; dogPivot.rotation.x = Math.sin(time * 2) * 0.15; dog.rotation.y = -dogAngle + Math.PI / 2; const runCycle = time * 15; legFL.rotation.x = Math.sin(runCycle) * 0.5; legFR.rotation.x = Math.sin(runCycle + Math.PI) * 0.5; legBL.rotation.x = Math.sin(runCycle + Math.PI) * 0.4; legBR.rotation.x = Math.sin(runCycle) * 0.4; dogTail.rotation.x = Math.sin(time * 20) * 0.4; dogTail.rotation.z = -Math.PI / 4 + Math.sin(time * 15) * 0.2; earL.rotation.x = Math.sin(time * 8) * 0.2; earR.rotation.x = Math.sin(time * 8 + 0.5) * 0.2; tongue.position.y = -0.05 + Math.sin(time * 12) * 0.02; tongue.scale.y = 1 + Math.sin(time * 10) * 0.2; const dogWorldPos = new THREE.Vector3(); dog.getWorldPosition(dogWorldPos); dustHistory.unshift(dogWorldPos.clone()); if(dustHistory.length > 40) dustHistory.pop(); const positions = dust.geometry.attributes.position.array; for(let i = 0; i < dustHistory.length; i++) { positions[i*3] = dustHistory[i].x + (Math.random()-0.5)*0.15; positions[i*3+1] = dustHistory[i].y - 0.2 + (Math.random()-0.5)*0.1; positions[i*3+2] = dustHistory[i].z + (Math.random()-0.5)*0.15; } dust.geometry.attributes.position.needsUpdate = true; window.chaseCatAngle = catAngle; window.dogAngleForScore = dogAngle; window.isCatEscaping = isEscaping; dogRenderer.render(dogScene, dogCamera); } animateDog(); window.addEventListener('resize', () => { dogCamera.aspect = window.innerWidth / window.innerHeight; dogCamera.updateProjectionMatrix(); dogRenderer.setSize(window.innerWidth, window.innerHeight); }); }, 800); })();
   </script>
+<script>
+   (function() {
+  // Couleurs de planète possibles
+  const planetColors = [
+    { main: 0x4a90d9, emissive: 0x112244, atmos: 0x88ccff },
+    { main: 0xd94a90, emissive: 0x441122, atmos: 0xff88cc },
+    { main: 0x90d94a, emissive: 0x224411, atmos: 0xccff88 },
+    { main: 0xd9904a, emissive: 0x442211, atmos: 0xffcc88 },
+    { main: 0x904ad9, emissive: 0x221144, atmos: 0xcc88ff },
+    { main: 0x4ad9d9, emissive: 0x114444, atmos: 0x88ffff },
+    { main: 0xd9d94a, emissive: 0x444411, atmos: 0xffff88 },
+    { main: 0xff6b6b, emissive: 0x331111, atmos: 0xffaaaa }
+  ];
+  let colorIndex = 0;
+  let dogScore = 0;
+  
+  // Fonction pour changer la couleur de la planète
+  window.changePlanetColor = function() {
+    colorIndex = (colorIndex + 1) % planetColors.length;
+    const newColor = planetColors[colorIndex];
+    
+    // Trouver tous les canvas Three.js et envoyer un événement
+    window.newPlanetColor = newColor;
+    window.dispatchEvent(new CustomEvent('planetColorChange', { detail: newColor }));
+  };
+  
+  // Fonction appelée quand le chien attrape le chat
+  window.addDogPoint = function() {
+    dogScore++;
+    const scoreEl = document.getElementById('dog-score');
+    const msgEl = document.getElementById('catch-message');
+    
+    if(scoreEl) {
+      scoreEl.textContent = dogScore;
+      scoreEl.style.animation = 'scorePulse 0.5s ease';
+      setTimeout(() => scoreEl.style.animation = '', 500);
+    }
+    
+    if(msgEl) {
+      msgEl.style.animation = 'scorePopup 1s ease forwards';
+      setTimeout(() => msgEl.style.animation = '', 1000);
+    }
+    
+    // Changer la couleur de la planète!
+    window.changePlanetColor();
+  };
+  
+  // Écouter l'événement de changement de couleur dans les scènes Three.js
+  window.addEventListener('planetColorChange', (e) => {
+    const color = e.detail;
+    
+    // Parcourir toutes les scènes Three.js pour trouver la planète
+    const container = document.getElementById('planet-container');
+    if(container && window.THREE) {
+      // Créer une animation de transition flash
+      const flash = document.createElement('div');
+      flash.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle,rgba(255,255,255,0.8) 0%,transparent 70%);z-index:50;pointer-events:none;animation:planetFlash 0.5s ease-out forwards;';
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 500);
+    }
+  });
+})();
+  </script>
+<style>
+   @keyframes planetFlash {
+  0% { opacity: 1; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(2); }
+}
+  </style>
 </body>
 </html>
