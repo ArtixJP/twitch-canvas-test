@@ -41,6 +41,7 @@
   { bg: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)', shadow: 'rgba(236, 72, 153, 0.4)', emoji: '🩷' }
 ];
 const labels = ['Clique-moi!', 'Moi aussi!', 'Et moi!'];
+let chestOpened = false;
 
 function cycleColor(btn) {
   let current = parseInt(btn.dataset.color);
@@ -50,7 +51,81 @@ function cycleColor(btn) {
   btn.style.boxShadow = '0 4px 15px ' + colors[next].shadow;
   const btnIndex = Array.from(document.querySelectorAll('button')).indexOf(btn);
   btn.innerHTML = colors[next].emoji + ' ' + labels[btnIndex];
+  checkMagicCombo();
 }
+
+function checkMagicCombo() {
+  const buttons = document.querySelectorAll('button');
+  const allPurple = Array.from(buttons).every(btn => parseInt(btn.dataset.color) === 1);
+  const chestContainer = document.getElementById('chest-container');
+  
+  if (allPurple && !chestOpened) {
+    chestContainer.style.display = 'block';
+    document.getElementById('chest').innerHTML = '🎁';
+    document.getElementById('treasure').style.display = 'none';
+    // Effet magique sur le titre
+    document.querySelector('h1').innerHTML = '✨ COMBINAISON MAGIQUE! ✨';
+    document.querySelector('h1').style.color = '#9b59b6';
+  } else if (!allPurple) {
+    chestContainer.style.display = 'none';
+    document.querySelector('h1').innerHTML = 'Hello World';
+    document.querySelector('h1').style.color = 'white';
+  }
+}
+
+function openChest() {
+  if (chestOpened) return;
+  chestOpened = true;
+  
+  const chest = document.getElementById('chest');
+  const treasure = document.getElementById('treasure');
+  
+  chest.innerHTML = '📦';
+  chest.style.animation = 'none';
+  
+  setTimeout(() => {
+    treasure.style.display = 'block';
+    treasure.innerHTML = '💎👑💰🏆⭐';
+    treasure.classList.add('treasure-revealed');
+    document.querySelector('h1').innerHTML = '🎉 TRÉSOR DÉCOUVERT! 🎉';
+    
+    // Confettis emoji
+    for(let i = 0; i < 20; i++) {
+      setTimeout(() => createConfetti(), i * 100);
+    }
+  }, 500);
+}
+
+function createConfetti() {
+  const emojis = ['💎', '⭐', '✨', '💫', '🌟', '💰', '👑'];
+  const confetti = document.createElement('div');
+  confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+  confetti.style.cssText = `
+    position: fixed;
+    top: -50px;
+    left: ${Math.random() * 100}vw;
+    font-size: 2rem;
+    pointer-events: none;
+    animation: fall 3s linear forwards;
+  `;
+  document.body.appendChild(confetti);
+  setTimeout(() => confetti.remove(), 3000);
+}
+
+// Ajouter l'animation de chute
+const style = document.createElement('style');
+style.textContent = '@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }';
+document.head.appendChild(style);
   </script>
+<div id="chest-container" style="display: none; margin-top: 30px; text-align: center;">
+<div id="chest" onclick="openChest()" style="font-size: 5rem; cursor: pointer; animation: float 2s ease-in-out infinite; transition: transform 0.3s;">
+    🎁
+   </div>
+<div id="treasure" style="display: none; font-size: 3rem; animation: sparkle 0.5s ease-out;">
+</div>
+</div>
+<style>
+   @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } } @keyframes sparkle { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } } @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } } #chest:hover { transform: scale(1.2) !important; } .treasure-revealed { animation: rainbow 2s linear infinite !important; }
+  </style>
 </body>
 </html>
