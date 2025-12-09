@@ -357,6 +357,70 @@ window.addEventListener('load', () => {
     ✕
    </button>
 </div>
+<div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; pointer-events: none;">
+<div id="elephant" style="font-size: 120px; animation: elephantBounce 2s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(100,150,200,0.5));">
+    🐘
+   </div>
+<div id="water-spray" style="position: absolute; top: -30px; left: 70%; transform: translateX(-50%);">
+</div>
+<div id="trunk-water" style="position: absolute; top: 10px; left: 75%; width: 8px; height: 60px; background: linear-gradient(180deg, rgba(100,200,255,0.8), rgba(100,200,255,0)); border-radius: 4px; transform: rotate(-30deg); transform-origin: bottom center; animation: waterStream 0.5s ease-in-out infinite;">
+</div>
+</div>
+<style>
+   @keyframes elephantBounce {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+
+@keyframes waterStream {
+  0%, 100% { height: 60px; opacity: 0.8; }
+  50% { height: 80px; opacity: 1; }
+}
+
+@keyframes waterDrop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(150px) scale(0.3); opacity: 0; }
+}
+
+@keyframes waterSpray {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0.2); opacity: 0; }
+}
+
+.water-particle {
+  position: absolute;
+  font-size: 20px;
+  animation: waterSpray 1.5s ease-out infinite;
+}
+  </style>
+<script>
+   (function() {
+  const spray = document.getElementById('water-spray');
+  const dropEmojis = ['💧', '💦', '🌊'];
+  
+  function createWaterParticle() {
+    const drop = document.createElement('div');
+    drop.className = 'water-particle';
+    drop.textContent = dropEmojis[Math.floor(Math.random() * dropEmojis.length)];
+    drop.style.setProperty('--tx', (Math.random() * 200 - 50) + 'px');
+    drop.style.setProperty('--ty', (Math.random() * 100 + 50) + 'px');
+    drop.style.left = Math.random() * 30 + 'px';
+    drop.style.animationDelay = Math.random() * 0.5 + 's';
+    drop.style.animationDuration = (1 + Math.random()) + 's';
+    spray.appendChild(drop);
+    
+    setTimeout(() => drop.remove(), 2000);
+  }
+  
+  // Créer des particules d'eau en continu
+  setInterval(createWaterParticle, 150);
+  
+  // Créer plusieurs particules au départ
+  for(let i = 0; i < 8; i++) {
+    setTimeout(createWaterParticle, i * 100);
+  }
+})();
+  </script>
 <button id="start-game-btn" onclick="startGame()" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.1)'" style="position: fixed; top: 20px; left: 20px; z-index: 100; padding: 15px 25px; border-radius: 30px; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 16px; cursor: pointer; box-shadow: 0 4px 20px rgba(102,126,234,0.5); transition: all 0.3s ease;">
    🎮 Jouer!
   </button>
