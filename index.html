@@ -216,6 +216,61 @@
         #musicToggle:active {
             transform: scale(0.95);
         }
+        #elephant {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 80px;
+            z-index: 100;
+            cursor: pointer;
+            filter: drop-shadow(0 0 20px rgba(128, 128, 128, 0.8));
+            animation: elephantBounce 2s ease-in-out infinite;
+            transition: transform 0.2s;
+        }
+        #elephant:hover {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        #elephant.spraying {
+            animation: elephantSpray 0.5s ease-in-out;
+        }
+        .water-drop {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 99;
+            animation: waterFly 1.5s ease-out forwards;
+        }
+        .water-stream {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #00bfff 0%, #1e90ff 50%, transparent 100%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99;
+            animation: streamFly 1s ease-out forwards;
+        }
+        @keyframes elephantBounce {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
+            50% { transform: translate(-50%, -52%) rotate(5deg); }
+        }
+        @keyframes elephantSpray {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            25% { transform: translate(-50%, -50%) scale(1.1) rotate(-10deg); }
+            50% { transform: translate(-50%, -50%) scale(1.15) rotate(0deg); }
+            75% { transform: translate(-50%, -50%) scale(1.1) rotate(10deg); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+        @keyframes waterFly {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.3); }
+        }
+        @keyframes streamFly {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            50% { opacity: 0.8; }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2); }
+        }
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.02); }
@@ -283,6 +338,9 @@
     </div>
 </div>
 </div>
+<div id="elephant" onclick="sprayWater()">
+   🐘
+  </div>
 <script>
    // Generate random stars
     const starsContainer = document.getElementById('stars');
@@ -707,6 +765,59 @@
 </div>
 <script id="snakeScript">
    (function(){const canvas=document.getElementById('snakeCanvas');const ctx=canvas.getContext('2d');const scoreEl=document.getElementById('snakeScore');const gridSize=15;const tileCount=canvas.width/gridSize;let snake,velocity,food,score,gameOver,gameSpeed,gameInterval;const colors=['#ff6b35','#6b35ff','#35ff6b','#ff35d4','#35d4ff','#ffd435'];function initGame(){snake=[{x:10,y:10}];velocity={x:1,y:0};score=0;gameOver=false;gameSpeed=100;scoreEl.textContent='0';placeFood();if(gameInterval)clearInterval(gameInterval);gameInterval=setInterval(gameLoop,gameSpeed);}function drawGame(){ctx.fillStyle='rgba(10,10,21,0.95)';ctx.fillRect(0,0,canvas.width,canvas.height);if(gameOver){ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#ff3535';ctx.font='bold 20px Arial';ctx.textAlign='center';ctx.fillText('GAME OVER!',canvas.width/2,canvas.height/2);ctx.fillStyle='#fff';ctx.font='14px Arial';ctx.fillText('Score: '+score,canvas.width/2,canvas.height/2+25);ctx.fillText('Clique Restart!',canvas.width/2,canvas.height/2+50);return;}snake.forEach((segment,index)=>{const gradient=ctx.createRadialGradient(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,0,segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,gridSize);if(index===0){gradient.addColorStop(0,'#ffd700');gradient.addColorStop(1,'#ff6b00');}else{gradient.addColorStop(0,colors[index%colors.length]);gradient.addColorStop(1,'#1a1a2e');}ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,gridSize/2-1,0,Math.PI*2);ctx.fill();});ctx.shadowBlur=20;ctx.shadowColor='#ffd700';ctx.fillStyle='#ffd700';ctx.font='15px Arial';ctx.textAlign='left';ctx.fillText('⭐',food.x*gridSize+2,food.y*gridSize+13);ctx.shadowBlur=0;}function updateGame(){if(gameOver)return;const head={x:snake[0].x+velocity.x,y:snake[0].y+velocity.y};if(head.x<0)head.x=tileCount-1;if(head.x>=tileCount)head.x=0;if(head.y<0)head.y=tileCount-1;if(head.y>=tileCount)head.y=0;for(let i=0;i<snake.length;i++){if(snake[i].x===head.x&&snake[i].y===head.y){gameOver=true;return;}}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;scoreEl.textContent=score;placeFood();}else{snake.pop();}}function placeFood(){food={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount)};for(let segment of snake){if(segment.x===food.x&&segment.y===food.y){placeFood();return;}}}function gameLoop(){updateGame();drawGame();}document.addEventListener('keydown',(e)=>{if(gameOver)return;switch(e.key){case'ArrowUp':if(velocity.y!==1){velocity={x:0,y:-1};}break;case'ArrowDown':if(velocity.y!==-1){velocity={x:0,y:1};}break;case'ArrowLeft':if(velocity.x!==1){velocity={x:-1,y:0};}break;case'ArrowRight':if(velocity.x!==-1){velocity={x:1,y:0};}break;}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){e.preventDefault();}});document.getElementById('restartSnake').onclick=function(){console.log('Restart clicked!');initGame();};initGame();})();
+  </script>
+<script id="elephantScript">
+   function sprayWater() {
+    const elephant = document.getElementById('elephant');
+    elephant.classList.add('spraying');
+    setTimeout(() => elephant.classList.remove('spraying'), 500);
+    
+    const rect = elephant.getBoundingClientRect();
+    const startX = rect.left + rect.width * 0.7;
+    const startY = rect.top + rect.height * 0.2;
+    
+    // Create water drops emoji
+    for(let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const drop = document.createElement('div');
+            drop.className = 'water-drop';
+            drop.textContent = ['💧', '💦', '🌊'][Math.floor(Math.random() * 3)];
+            drop.style.left = startX + 'px';
+            drop.style.top = startY + 'px';
+            const angle = -30 + Math.random() * 60;
+            const distance = 150 + Math.random() * 200;
+            const tx = Math.cos(angle * Math.PI / 180) * distance;
+            const ty = -Math.sin(angle * Math.PI / 180) * distance + 100;
+            drop.style.setProperty('--tx', tx + 'px');
+            drop.style.setProperty('--ty', ty + 'px');
+            document.body.appendChild(drop);
+            setTimeout(() => drop.remove(), 1500);
+        }, i * 50);
+    }
+    
+    // Create water stream particles
+    for(let i = 0; i < 30; i++) {
+        setTimeout(() => {
+            const stream = document.createElement('div');
+            stream.className = 'water-stream';
+            stream.style.left = (startX + Math.random() * 20) + 'px';
+            stream.style.top = (startY + Math.random() * 10) + 'px';
+            const angle = -45 + Math.random() * 90;
+            const distance = 100 + Math.random() * 250;
+            const tx = Math.cos(angle * Math.PI / 180) * distance;
+            const ty = -Math.sin(angle * Math.PI / 180) * distance + Math.random() * 150;
+            stream.style.setProperty('--tx', tx + 'px');
+            stream.style.setProperty('--ty', ty + 'px');
+            stream.style.width = (5 + Math.random() * 10) + 'px';
+            stream.style.height = (5 + Math.random() * 10) + 'px';
+            document.body.appendChild(stream);
+            setTimeout(() => stream.remove(), 1000);
+        }, i * 20);
+    }
+}
+
+// Auto spray every 4 seconds
+setInterval(sprayWater, 4000);
   </script>
 </body>
 </html>
