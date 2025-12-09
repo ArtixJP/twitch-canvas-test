@@ -22,10 +22,23 @@
   </style>
 </head>
 <body>
-<h1 style="position: absolute; top: 20px; z-index: 10; text-shadow: 0 0 20px rgba(255, 200, 100, 0.8), 0 0 40px rgba(255, 150, 50, 0.5);">
+<nav id="main-nav" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; display: flex; justify-content: center; gap: 10px; padding: 15px; background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+<button class="nav-btn active" data-section="space" onclick="showSection('space')" style="padding: 12px 25px; font-size: 16px; font-weight: bold; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.5);">
+    🌌 Espace
+   </button>
+<button class="nav-btn" data-section="animals" onclick="showSection('animals')" style="padding: 12px 25px; font-size: 16px; font-weight: bold; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; background: rgba(255,255,255,0.1); color: white;">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" data-section="games" onclick="showSection('games')" style="padding: 12px 25px; font-size: 16px; font-weight: bold; border: none; border-radius: 25px; cursor: pointer; transition: all 0.3s ease; background: rgba(255,255,255,0.1); color: white;">
+    🎮 Jeux
+   </button>
+</nav>
+<h1 style="position: absolute; top: 80px; z-index: 10; text-shadow: 0 0 20px rgba(255, 200, 100, 0.8), 0 0 40px rgba(255, 150, 50, 0.5); width: 100%; text-align: center;">
    Hello World ☀️
   </h1>
+<div class="content-section active" id="section-space" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%;">
 <div id="planet-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
    (function() {
@@ -876,18 +889,22 @@
   }, 800);
 })();
   </script>
-<div id="scoreboard" style="position: fixed; top: 20px; right: 30px; z-index: 100; background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%); padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); font-family: system-ui, sans-serif;">
+<div class="content-section" id="section-animals" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none;">
+<div id="animals-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
+</div>
+<div id="scoreboard" style="position: fixed; top: 80px; right: 30px; z-index: 100; background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%); padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); backdrop-filter: blur(10px); font-family: system-ui, sans-serif;">
 <div style="display: flex; align-items: center; gap: 15px;">
 <span style="font-size: 30px;">
-     🐕
-    </span>
+      🐕
+     </span>
 <span id="dog-score" style="font-size: 28px; font-weight: bold; color: #fff; text-shadow: 0 0 10px rgba(255,200,100,0.8);">
-     0
-    </span>
+      0
+     </span>
 </div>
 <div id="catch-message" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; opacity: 0; pointer-events: none; white-space: nowrap;">
-    🎉 ATTRAPÉ! 🎉
-   </div>
+     🎉 ATTRAPÉ! 🎉
+    </div>
+</div>
 </div>
 <style>
    @keyframes scorePopup { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } } @keyframes scorePulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); color: #ffdd44; } }
@@ -964,42 +981,62 @@
   100% { opacity: 0; transform: scale(2); }
 }
   </style>
+<div class="content-section" id="section-games" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; display: none; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding-top: 60px;">
+<h2 style="color: white; font-size: 48px; margin-bottom: 30px; text-shadow: 0 0 20px rgba(0, 198, 255, 0.8);">
+     🎮 Arcade Spatiale
+    </h2>
+<p style="color: rgba(255,255,255,0.7); font-size: 18px; margin-bottom: 40px;">
+     Pilotez votre vaisseau et détruisez les astéroïdes!
+    </p>
+<button id="start-game-btn" onclick="document.getElementById('game-overlay').style.display='block'; document.getElementById('play-game-btn').click();" style="padding: 20px 50px; font-size: 24px; font-weight: bold; background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border: none; color: white; border-radius: 30px; cursor: pointer; box-shadow: 0 6px 25px rgba(0, 198, 255, 0.5); transition: all 0.3s ease;">
+     🚀 LANCER LE JEU
+    </button>
+<div style="margin-top: 40px; color: rgba(255,255,255,0.5); font-size: 14px;">
+<p>
+      ⬆️ Avancer | ⬅️➡️ Tourner | ESPACE Tirer | ESC Quitter
+     </p>
+</div>
+</div>
+</div>
+<div id="game-overlay" style="display: none;">
 <div id="game-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: none; background: rgba(0,0,0,0.9);">
 <canvas id="game-canvas">
 </canvas>
 <div id="game-ui" style="position: absolute; top: 20px; left: 20px; color: white; font-family: 'Courier New', monospace; font-size: 18px; text-shadow: 0 0 10px #0ff;">
 <div>
-     SCORE:
-     <span id="game-score">
-      0
-     </span>
+      SCORE:
+      <span id="game-score">
+       0
+      </span>
 </div>
 <div>
-     VIES:
-     <span id="game-lives">
-      ❤️❤️❤️
-     </span>
+      VIES:
+      <span id="game-lives">
+       ❤️❤️❤️
+      </span>
 </div>
 </div>
 <div id="game-over" style="display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; color: white; font-family: system-ui;">
 <h2 style="font-size: 48px; color: #ff4444; text-shadow: 0 0 20px #ff0000;">
-     GAME OVER
-    </h2>
+      GAME OVER
+     </h2>
 <p style="font-size: 24px;">
-     Score final:
-     <span id="final-score">
-      0
-     </span>
+      Score final:
+      <span id="final-score">
+       0
+      </span>
 </p>
 <button onclick="restartGame()" style="padding: 15px 30px; font-size: 20px; background: linear-gradient(135deg, #667eea, #764ba2); border: none; color: white; border-radius: 10px; cursor: pointer; margin-top: 20px;">
-     REJOUER
+      REJOUER
+     </button>
+</div>
+<button id="close-game" onclick="closeGame(); document.getElementById('game-overlay').style.display='none';" style="position: absolute; top: 20px; right: 20px; background: rgba(255,100,100,0.8); border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+     ✕ FERMER
     </button>
 </div>
-<button id="close-game" onclick="closeGame()" style="position: absolute; top: 20px; right: 20px; background: rgba(255,100,100,0.8); border: none; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
-    ✕ FERMER
-   </button>
 </div>
-<button id="play-game-btn" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(0, 198, 255, 0.5)';" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 20px rgba(0, 198, 255, 0.7)';" style="position: fixed; bottom: 30px; left: 30px; z-index: 100; padding: 15px 25px; background: linear-gradient(135deg, #00c6ff 0%, #0072ff 100%); border: none; color: white; font-size: 18px; font-weight: bold; border-radius: 25px; cursor: pointer; box-shadow: 0 4px 15px rgba(0, 198, 255, 0.5); transition: all 0.3s ease;">
+<button id="play-game-btn" style="display: none;">
    🚀 JOUER
   </button>
 <script>
@@ -1404,10 +1441,106 @@
   window.addEventListener('resize', resizeCanvas);
 })();
   </script>
-<div id="elephant-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none;">
+<div data-parent="animals" id="elephant-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; pointer-events: none; display: none;">
 </div>
 <script>
    (function() { setTimeout(() => { const container = document.getElementById('elephant-container'); const elephantScene = new THREE.Scene(); const elephantCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); const elephantRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true }); elephantRenderer.setSize(window.innerWidth, window.innerHeight); elephantRenderer.setClearColor(0x000000, 0); container.appendChild(elephantRenderer.domElement); const light = new THREE.PointLight(0xffffff, 1.5); light.position.set(5, 5, 10); elephantScene.add(light); elephantScene.add(new THREE.AmbientLight(0x6688aa, 0.6)); const elephantMat = new THREE.MeshPhongMaterial({ color: 0x888899, emissive: 0x222233, specular: 0xaaaaaa, shininess: 20 }); const pinkMat = new THREE.MeshPhongMaterial({ color: 0xffaaaa, emissive: 0x331111 }); const elephant = new THREE.Group(); const body = new THREE.Mesh(new THREE.SphereGeometry(0.8, 32, 32), elephantMat); body.scale.set(1.2, 0.9, 0.9); elephant.add(body); const head = new THREE.Mesh(new THREE.SphereGeometry(0.5, 32, 32), elephantMat); head.position.set(0.9, 0.3, 0); elephant.add(head); const trunkSegments = []; const trunkMat = elephantMat.clone(); for(let i = 0; i < 8; i++) { const seg = new THREE.Mesh(new THREE.CylinderGeometry(0.12 - i*0.01, 0.14 - i*0.01, 0.2, 16), trunkMat); seg.position.set(1.3 + i*0.15, 0.1 - i*0.08, 0); seg.rotation.z = Math.PI/2 + i*0.15; trunkSegments.push(seg); elephant.add(seg); } const earL = new THREE.Mesh(new THREE.CircleGeometry(0.4, 32), elephantMat); earL.position.set(0.6, 0.5, -0.4); earL.rotation.y = -0.5; elephant.add(earL); const earLInner = new THREE.Mesh(new THREE.CircleGeometry(0.25, 32), pinkMat); earLInner.position.set(0.61, 0.5, -0.39); earLInner.rotation.y = -0.5; elephant.add(earLInner); const earR = new THREE.Mesh(new THREE.CircleGeometry(0.4, 32), elephantMat); earR.position.set(0.6, 0.5, 0.4); earR.rotation.y = 0.5; elephant.add(earR); const earRInner = new THREE.Mesh(new THREE.CircleGeometry(0.25, 32), pinkMat); earRInner.position.set(0.61, 0.5, 0.39); earRInner.rotation.y = 0.5; elephant.add(earRInner); const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 }); const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), eyeMat); eyeL.position.set(1.2, 0.5, -0.2); elephant.add(eyeL); const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.08, 16, 16), eyeMat); eyeR.position.set(1.2, 0.5, 0.2); elephant.add(eyeR); const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff }); const shineL = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), shineMat); shineL.position.set(1.25, 0.53, -0.22); elephant.add(shineL); const shineR = new THREE.Mesh(new THREE.SphereGeometry(0.03, 8, 8), shineMat); shineR.position.set(1.25, 0.53, 0.18); elephant.add(shineR); const legGeom = new THREE.CylinderGeometry(0.15, 0.18, 0.6, 16); const legFL = new THREE.Mesh(legGeom, elephantMat); legFL.position.set(0.4, -0.7, -0.35); elephant.add(legFL); const legFR = new THREE.Mesh(legGeom, elephantMat); legFR.position.set(0.4, -0.7, 0.35); elephant.add(legFR); const legBL = new THREE.Mesh(legGeom, elephantMat); legBL.position.set(-0.5, -0.7, -0.35); elephant.add(legBL); const legBR = new THREE.Mesh(legGeom, elephantMat); legBR.position.set(-0.5, -0.7, 0.35); elephant.add(legBR); const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.5, 8), elephantMat); tail.position.set(-1.1, -0.2, 0); tail.rotation.z = Math.PI/3; elephant.add(tail); const tailTuft = new THREE.Mesh(new THREE.SphereGeometry(0.08, 8, 8), new THREE.MeshPhongMaterial({color: 0x555566})); tailTuft.position.set(-1.3, -0.45, 0); elephant.add(tailTuft); elephant.position.set(0, 0, 0); elephant.scale.set(1.5, 1.5, 1.5); elephantScene.add(elephant); const waterParticles = []; const waterGeom = new THREE.SphereGeometry(0.05, 8, 8); const waterMat = new THREE.MeshPhongMaterial({ color: 0x44aaff, emissive: 0x113355, transparent: true, opacity: 0.8 }); function spawnWater() { const particle = new THREE.Mesh(waterGeom, waterMat.clone()); const trunkEnd = new THREE.Vector3(2.5, 0.8, 0); particle.position.copy(trunkEnd); const angle = Math.random() * 0.5 - 0.25; const upAngle = Math.random() * 0.3 + 0.3; particle.userData = { vx: Math.cos(angle) * 0.15, vy: Math.sin(upAngle) * 0.25 + 0.1, vz: Math.sin(angle) * 0.1, life: 80 + Math.random() * 40 }; waterParticles.push(particle); elephantScene.add(particle); } elephantCamera.position.z = 6; let time = 0; function animateElephant() { requestAnimationFrame(animateElephant); time += 0.016; elephant.rotation.y = Math.sin(time * 0.5) * 0.2; earL.rotation.x = Math.sin(time * 2) * 0.1; earR.rotation.x = Math.sin(time * 2 + 0.5) * 0.1; for(let i = 0; i < trunkSegments.length; i++) { trunkSegments[i].rotation.x = Math.sin(time * 3 + i * 0.3) * 0.2; trunkSegments[i].position.y = 0.1 - i*0.08 + Math.sin(time * 2 + i * 0.2) * 0.05; } tail.rotation.x = Math.sin(time * 4) * 0.3; if(Math.random() > 0.7) { spawnWater(); } for(let i = waterParticles.length - 1; i >= 0; i--) { const p = waterParticles[i]; p.position.x += p.userData.vx; p.position.y += p.userData.vy; p.position.z += p.userData.vz; p.userData.vy -= 0.008; p.userData.life--; p.material.opacity = Math.min(0.8, p.userData.life / 40); p.scale.setScalar(1 + (80 - p.userData.life) * 0.01); if(p.userData.life <= 0 || p.position.y < -3) { elephantScene.remove(p); waterParticles.splice(i, 1); } } elephantRenderer.render(elephantScene, elephantCamera); } animateElephant(); window.addEventListener('resize', () => { elephantCamera.aspect = window.innerWidth / window.innerHeight; elephantCamera.updateProjectionMatrix(); elephantRenderer.setSize(window.innerWidth, window.innerHeight); }); }, 1000); })();
+  </script>
+<script>
+   function showSection(sectionName) {
+  // Cacher toutes les sections
+  document.querySelectorAll('.content-section').forEach(s => {
+    s.style.display = 'none';
+  });
+  
+  // Afficher la section demandée
+  const section = document.getElementById('section-' + sectionName);
+  if(section) {
+    section.style.display = 'block';
+  }
+  
+  // Mettre à jour les boutons du menu
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if(btn.dataset.section === sectionName) {
+      btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+      btn.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.5)';
+      btn.classList.add('active');
+    } else {
+      btn.style.background = 'rgba(255,255,255,0.1)';
+      btn.style.boxShadow = 'none';
+      btn.classList.remove('active');
+    }
+  });
+  
+  // Gérer l'éléphant dans la section animaux
+  const elephantContainer = document.getElementById('elephant-container');
+  if(elephantContainer) {
+    elephantContainer.style.display = sectionName === 'animals' ? 'block' : 'none';
+  }
+}
+
+// Hover effects pour les boutons
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('mouseover', function() {
+    if(!this.classList.contains('active')) {
+      this.style.background = 'rgba(255,255,255,0.2)';
+    }
+  });
+  btn.addEventListener('mouseout', function() {
+    if(!this.classList.contains('active')) {
+      this.style.background = 'rgba(255,255,255,0.1)';
+    }
+  });
+});
+  </script>
+<script>
+   (function() {
+  const sections = ['space', 'animals', 'games'];
+  let currentIndex = 0;
+  let autoRotateInterval;
+  
+  function startAutoRotate() {
+    autoRotateInterval = setInterval(() => {
+      currentIndex = (currentIndex + 1) % sections.length;
+      showSection(sections[currentIndex]);
+    }, 30000);
+  }
+  
+  // Synchroniser l'index quand l'utilisateur clique manuellement
+  document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      currentIndex = sections.indexOf(btn.dataset.section);
+      // Reset le timer quand on clique manuellement
+      clearInterval(autoRotateInterval);
+      startAutoRotate();
+    });
+  });
+  
+  // Démarrer la rotation automatique
+  startAutoRotate();
+  
+  // Indicateur visuel du temps restant
+  const timerBar = document.createElement('div');
+  timerBar.id = 'section-timer';
+  timerBar.style.cssText = 'position: fixed; top: 60px; left: 0; height: 3px; background: linear-gradient(90deg, #667eea, #764ba2, #00c6ff); z-index: 1001; animation: timerProgress 30s linear infinite;';
+  document.body.appendChild(timerBar);
+  
+  const timerStyle = document.createElement('style');
+  timerStyle.textContent = '@keyframes timerProgress { 0% { width: 0%; } 100% { width: 100%; } }';
+  document.head.appendChild(timerStyle);
+  
+  // Reset l'animation de la barre quand on change de section
+  const originalShowSection = window.showSection;
+  window.showSection = function(sectionName) {
+    originalShowSection(sectionName);
+    const timer = document.getElementById('section-timer');
+    if(timer) {
+      timer.style.animation = 'none';
+      timer.offsetHeight; // Force reflow
+      timer.style.animation = 'timerProgress 30s linear infinite';
+    }
+  };
+})();
   </script>
 </body>
 </html>
