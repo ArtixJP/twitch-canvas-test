@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>
-   🌀 Emergent Canvas
+   💊 Welcome to the Matrix
   </title>
 <style>
    * {
@@ -17,7 +17,7 @@
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1e3a5f 0%, #4a1a6b 50%, #7b2d8e 100%);
+            background: linear-gradient(135deg, #1a1a4e 0%, #2d1b69 25%, #4a1a7a 50%, #6b21a8 75%, #7c3aed 100%);
             color: #e8e8e8;
             overflow-x: hidden;
         }
@@ -26,12 +26,12 @@
             text-align: center;
             padding: 2rem;
             background: rgba(0, 0, 0, 0.3);
-            border-bottom: 2px solid #9b59b6;
+            border-bottom: 2px solid #a855f7;
         }
         
         .header h1 {
             font-size: 2.5rem;
-            background: linear-gradient(90deg, #3498db, #9b59b6, #3498db);
+            background: linear-gradient(90deg, #a855f7, #3b82f6, #a855f7);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -60,8 +60,8 @@
         
         /* Zone de chaos - libre modification */
         #chaos-zone {
-            background: rgba(155, 89, 182, 0.15);
-            border: 2px dashed #9b59b6;
+            background: rgba(139, 92, 246, 0.15);
+            border: 2px dashed #a855f7;
             border-radius: 12px;
             padding: 2rem;
             min-height: 300px;
@@ -74,10 +74,10 @@
             position: absolute;
             top: -12px;
             left: 20px;
-            background: #2a1a4a;
+            background: #2d1b69;
             padding: 0 10px;
             font-size: 0.8rem;
-            color: #9b59b6;
+            color: #a855f7;
         }
         
         .chaos-content {
@@ -99,7 +99,7 @@
         }
         
         .info-section h2 {
-            color: #9b59b6;
+            color: #a855f7;
             margin-bottom: 1rem;
         }
         
@@ -116,10 +116,10 @@
         }
   </style>
 </head>
-<body>
-<div class="header">
+<body style="position: relative; z-index: 1;">
+<div class="header" style="position: relative; z-index: 2;">
 <h1>
-    ✨ Emergent Canvas ✨
+    💊 Welcome to the Matrix 💊
    </h1>
 <p>
     Une expérience de création collaborative
@@ -136,7 +136,7 @@
     ⏱️ Démarré
    </span>
 </div>
-<div class="main-content">
+<div class="main-content" style="position: relative; z-index: 2;">
 <!-- LLM-EDIT-START -->
 <div id="chaos-zone">
 <div class="chaos-content">
@@ -146,39 +146,47 @@
 <p>
       Proposez une idée dans le backlog !
      </p>
-<div class="counter-display" id="counter-box">
-<span class="counter-label">
-       🔢 Compteur
-      </span>
-<span class="counter-value" id="click-counter">
-       0
-      </span>
-</div>
-<button class="red-btn" onclick="incrementCounter()">
-      Click me
+<div id="counter-display" style="font-size: 4rem; font-weight: bold; background: linear-gradient(135deg, #a855f7, #3b82f6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 30px rgba(168, 85, 247, 0.5); margin: 1rem 0; font-family: 'Courier New', monospace;">
+      0
+     </div>
+<button id="chaos-btn" onclick="incrementCounter()" onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='0 4px 15px rgba(233, 69, 96, 0.4)'" onmouseover="this.style.transform='scale(1.1)'; this.style.boxShadow='0 6px 25px rgba(233, 69, 96, 0.6)'" style="background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%); color: white; border: none; padding: 1rem 2.5rem; font-size: 1.3rem; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(233, 69, 96, 0.4); transition: all 0.3s ease; margin-top: 1.5rem;">
+      🔴 CLICK ME (+1)
      </button>
-<style>
-      .red-btn{background:linear-gradient(135deg,#e94560,#ff6b6b);color:white;border:none;padding:1rem 2.5rem;font-size:1.3rem;font-weight:bold;border-radius:50px;cursor:pointer;box-shadow:0 4px 15px rgba(233,69,96,0.4);transition:all 0.3s ease;animation:pulse 2s infinite}.red-btn:hover{transform:scale(1.1);box-shadow:0 6px 25px rgba(233,69,96,0.6)}@keyframes pulse{0%,100%{box-shadow:0 4px 15px rgba(233,69,96,0.4)}50%{box-shadow:0 4px 30px rgba(233,69,96,0.8)}}
-.counter-display{display:flex;flex-direction:column;align-items:center;margin:1.5rem 0;padding:1rem 2rem;background:rgba(0,0,0,0.3);border-radius:15px;border:2px solid #9b59b6;}
-.counter-label{font-size:0.9rem;color:#9b59b6;margin-bottom:0.5rem;}
-.counter-value{font-size:3rem;font-weight:bold;background:linear-gradient(90deg,#3498db,#e94560);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 20px rgba(233,69,96,0.5);transition:transform 0.2s ease;}
-.counter-value.bump{transform:scale(1.3);}
-     </style>
 <script>
-      let count = 0;
+      let counter = 0;
 function incrementCounter() {
-  count++;
-  const counterEl = document.getElementById('click-counter');
-  counterEl.textContent = count;
-  counterEl.classList.add('bump');
-  setTimeout(() => counterEl.classList.remove('bump'), 200);
+  counter++;
+  const display = document.getElementById('counter-display');
+  display.textContent = counter;
+  display.style.transform = 'scale(1.2)';
+  display.style.transition = 'transform 0.1s ease';
+  setTimeout(() => { display.style.transform = 'scale(1)'; }, 100);
   
-  // Messages aléatoires sur le bouton
-  const btn = document.querySelector('.red-btn');
-  const messages = ['🎉 +1!', '✨ Nice!', '🔥 ' + count + '!', '💥 Boom!', '🚀 Go!'];
-  btn.textContent = messages[Math.floor(Math.random() * messages.length)];
+  // Effet de particules
+  for(let i = 0; i < 5; i++) {
+    const particle = document.createElement('span');
+    particle.textContent = '+1';
+    particle.style.cssText = `
+      position: absolute;
+      color: #ffd93d;
+      font-size: 1.5rem;
+      font-weight: bold;
+      pointer-events: none;
+      animation: float-up 1s ease-out forwards;
+      left: ${50 + (Math.random() - 0.5) * 40}%;
+      top: 50%;
+    `;
+    document.getElementById('chaos-zone').appendChild(particle);
+    setTimeout(() => particle.remove(), 1000);
+  }
 }
      </script>
+<style>
+      @keyframes float-up {
+  0% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-80px); }
+}
+     </style>
 </div>
 </div>
 <!-- LLM-EDIT-END -->
@@ -202,5 +210,13 @@ function incrementCounter() {
     Twitch Emergent Coding • Expérience d'intelligence collective
    </p>
 </div>
+<div id="particles-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden;">
+</div>
+<script>
+   (function() { const container = document.getElementById('particles-container'); const colors = ['#a855f7', '#3b82f6', '#ec4899', '#fbbf24', '#34d399']; const shapes = ['●', '◆', '★', '✦', '○']; function createParticle() { const particle = document.createElement('div'); const size = Math.random() * 12 + 4; const color = colors[Math.floor(Math.random() * colors.length)]; const shape = shapes[Math.floor(Math.random() * shapes.length)]; const startX = Math.random() * 100; const duration = Math.random() * 15 + 10; const delay = Math.random() * 5; particle.textContent = shape; particle.style.cssText = `position: absolute; left: ${startX}%; bottom: -20px; font-size: ${size}px; color: ${color}; opacity: ${Math.random() * 0.6 + 0.2}; animation: floatUp ${duration}s linear ${delay}s infinite; filter: blur(${Math.random() * 1}px); text-shadow: 0 0 ${size}px ${color};`; container.appendChild(particle); } for(let i = 0; i < 30; i++) { createParticle(); } })();
+  </script>
+<style>
+   @keyframes floatUp { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.7; } 100% { transform: translateY(-110vh) translateX(calc(sin(var(--drift, 1)) * 100px)) rotate(360deg); opacity: 0; } } #particles-container div { --drift: 1; } #particles-container div:nth-child(odd) { --drift: -1; animation-timing-function: ease-in-out; } #particles-container div:nth-child(3n) { animation-direction: normal; } #particles-container div:nth-child(5n) { filter: blur(2px); }
+  </style>
 </body>
 </html>
