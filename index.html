@@ -119,5 +119,53 @@
             starsContainer.appendChild(star);
         }
   </script>
+<div id="audio-player" style="position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 12px 20px; border-radius: 50px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);">
+<button id="play-pause-btn" onclick="toggleMusic()" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.1)'" style="width: 50px; height: 50px; border-radius: 50%; border: none; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);">
+    ⏸️
+   </button>
+<div style="color: white; font-size: 12px; max-width: 120px;">
+<div style="font-weight: bold;">
+     🎵 Animal Crossing
+    </div>
+<div style="opacity: 0.7;">
+     Off The Train
+    </div>
+</div>
+</div>
+<audio autoplay="" id="bg-music" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
+</audio>
+<script>
+   const music = document.getElementById('bg-music');
+  const btn = document.getElementById('play-pause-btn');
+  let isPlaying = true;
+  
+  // Autoplay peut être bloqué, on gère ça
+  music.play().catch(() => {
+    isPlaying = false;
+    btn.innerHTML = '▶️';
+  });
+  
+  function toggleMusic() {
+    if (isPlaying) {
+      music.pause();
+      btn.innerHTML = '▶️';
+    } else {
+      music.play();
+      btn.innerHTML = '⏸️';
+    }
+    isPlaying = !isPlaying;
+  }
+  
+  // Animation du bouton au rythme (subtile)
+  setInterval(() => {
+    if (isPlaying) {
+      btn.style.boxShadow = '0 4px 25px rgba(102, 126, 234, 0.6)';
+      setTimeout(() => {
+        btn.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.4)';
+      }, 300);
+    }
+  }, 600);
+  </script>
 </body>
 </html>
