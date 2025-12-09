@@ -40,13 +40,17 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #ff6b35 0%, #f7931e 30%, #c84a1c 70%, #8b2500 100%);
+            background: linear-gradient(135deg, var(--planet-color1, #ff6b35) 0%, var(--planet-color2, #f7931e) 30%, var(--planet-color3, #c84a1c) 70%, var(--planet-color4, #8b2500) 100%);
             box-shadow: 
                 inset -30px -20px 40px rgba(0,0,0,0.6),
                 inset 10px 10px 20px rgba(255,200,150,0.3),
-                0 0 60px rgba(255, 107, 53, 0.4),
-                0 0 120px rgba(255, 107, 53, 0.2);
+                0 0 60px var(--planet-glow, rgba(255, 107, 53, 0.4)),
+                0 0 120px var(--planet-glow2, rgba(255, 107, 53, 0.2));
             animation: pulse 4s ease-in-out infinite;
+            transition: all 0.5s ease;
+        }
+        .planet.color-change {
+            animation: pulse 4s ease-in-out infinite, planetFlash 0.5s ease;
         }
         .planet::before {
             content: '';
@@ -55,7 +59,7 @@
             left: 15%;
             width: 20px;
             height: 15px;
-            background: rgba(139, 37, 0, 0.5);
+            background: rgba(0, 0, 0, 0.3);
             border-radius: 50%;
             filter: blur(3px);
         }
@@ -66,7 +70,7 @@
             left: 30%;
             width: 40px;
             height: 25px;
-            background: rgba(139, 37, 0, 0.4);
+            background: rgba(0, 0, 0, 0.25);
             border-radius: 50%;
             filter: blur(5px);
         }
@@ -215,6 +219,11 @@
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.02); }
+        }
+        @keyframes planetFlash {
+            0% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
+            50% { transform: translate(-50%, -50%) scale(1.15); filter: brightness(1.5); }
+            100% { transform: translate(-50%, -50%) scale(1); filter: brightness(1); }
         }
         @keyframes orbit {
             from { transform: translate(-50%, -50%) rotate(0deg); }
@@ -631,6 +640,50 @@
     }
     
     animateChase();
+})();
+  </script>
+<script>
+   (function() {
+    const planet = document.querySelector('.planet');
+    const planetColors = [
+        { c1: '#ff6b35', c2: '#f7931e', c3: '#c84a1c', c4: '#8b2500', g1: 'rgba(255, 107, 53, 0.4)', g2: 'rgba(255, 107, 53, 0.2)' },
+        { c1: '#6b35ff', c2: '#931ef7', c3: '#4a1cc8', c4: '#25008b', g1: 'rgba(107, 53, 255, 0.4)', g2: 'rgba(107, 53, 255, 0.2)' },
+        { c1: '#35ff6b', c2: '#1ef793', c3: '#1cc84a', c4: '#008b25', g1: 'rgba(53, 255, 107, 0.4)', g2: 'rgba(53, 255, 107, 0.2)' },
+        { c1: '#ff35d4', c2: '#f71e93', c3: '#c81c6b', c4: '#8b0052', g1: 'rgba(255, 53, 212, 0.4)', g2: 'rgba(255, 53, 212, 0.2)' },
+        { c1: '#35d4ff', c2: '#1e93f7', c3: '#1c6bc8', c4: '#00528b', g1: 'rgba(53, 212, 255, 0.4)', g2: 'rgba(53, 212, 255, 0.2)' },
+        { c1: '#ffd435', c2: '#f7c31e', c3: '#c8a01c', c4: '#8b7000', g1: 'rgba(255, 212, 53, 0.4)', g2: 'rgba(255, 212, 53, 0.2)' },
+        { c1: '#ff3535', c2: '#f71e1e', c3: '#c81c1c', c4: '#8b0000', g1: 'rgba(255, 53, 53, 0.4)', g2: 'rgba(255, 53, 53, 0.2)' },
+        { c1: '#35ffff', c2: '#1ef7f7', c3: '#1cc8c8', c4: '#008b8b', g1: 'rgba(53, 255, 255, 0.4)', g2: 'rgba(53, 255, 255, 0.2)' }
+    ];
+    let currentColorIndex = 0;
+    
+    window.changePlanetColor = function() {
+        currentColorIndex = (currentColorIndex + 1) % planetColors.length;
+        const colors = planetColors[currentColorIndex];
+        
+        planet.style.setProperty('--planet-color1', colors.c1);
+        planet.style.setProperty('--planet-color2', colors.c2);
+        planet.style.setProperty('--planet-color3', colors.c3);
+        planet.style.setProperty('--planet-color4', colors.c4);
+        planet.style.setProperty('--planet-glow', colors.g1);
+        planet.style.setProperty('--planet-glow2', colors.g2);
+        
+        planet.classList.add('color-change');
+        setTimeout(() => planet.classList.remove('color-change'), 500);
+    };
+    
+    // Override the catch function to include color change
+    const originalCatchEffect = document.getElementById('catchEffect');
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'style') {
+                if (originalCatchEffect.style.opacity === '1') {
+                    window.changePlanetColor();
+                }
+            }
+        });
+    });
+    observer.observe(originalCatchEffect, { attributes: true });
 })();
   </script>
 </body>
