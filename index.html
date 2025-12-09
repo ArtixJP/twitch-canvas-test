@@ -14,6 +14,8 @@
 .blue-btn{display:inline-block;margin:20px 15px 0;padding:15px 40px;background:linear-gradient(180deg,#0984e3 0%,#0652DD 50%,#1B1464 100%);color:white;text-decoration:none;border-radius:8px;font-family:'Press Start 2P',cursive;font-size:0.7rem;transition:all 0.1s steps(2);box-shadow:0 6px 0 #0c2461,0 10px 20px rgba(9,132,227,0.5),0 0 30px rgba(9,132,227,0.3);cursor:pointer;border:3px solid #74b9ff;text-transform:uppercase;animation:blueGlow 2s ease-in-out infinite alternate}.blue-btn:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 10px 0 #0c2461,0 16px 40px rgba(9,132,227,0.7),0 0 50px rgba(116,185,255,0.6)}.blue-btn:active{transform:translateY(4px);box-shadow:0 2px 0 #0c2461}@keyframes blueGlow{0%{box-shadow:0 6px 0 #0c2461,0 10px 20px rgba(9,132,227,0.5),0 0 20px rgba(116,185,255,0.3)}100%{box-shadow:0 6px 0 #0c2461,0 10px 20px rgba(9,132,227,0.5),0 0 40px rgba(116,185,255,0.6)}}
 
 @keyframes surprise { 0% { transform: scale(1); } 50% { transform: scale(1.2); background-color: #ff6b6b; } 100% { transform: scale(1); background-color: linear-gradient(180deg,#0984e3 0%,#0652DD 50%,#1B1464 100%); } } .surprise-effect { animation: surprise 0.5s ease-in-out; }
+
+@keyframes slideIn { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } } .space-raccoon img { animation: bob 2s infinite alternate; } @keyframes bob { 0% { transform: translateY(0); } 50% { transform: translateY(-5px); } 100% { transform: translateY(0); } }
   </style>
 </head>
 <body>
@@ -127,5 +129,8 @@
    function toggleFoucault() { const bubble = document.getElementById('foucault-bubble'); bubble.classList.toggle('hidden'); bubble.classList.toggle('show'); }
    function surpriseEffect() { const btn = document.querySelector('.blue-btn'); btn.classList.add('surprise-effect'); setTimeout(() => btn.classList.remove('surprise-effect'), 500); }
   </script>
+<div class="space-raccoon" style="position:fixed;bottom:10px;right:10px;z-index:20;animation:slideIn 2s ease-in-out;">
+<img alt="Space Raccoon" src="https://example.com/space-raccoon.png" style="width:100px;height:auto;"/>
+</div>
 </body>
 </html>
