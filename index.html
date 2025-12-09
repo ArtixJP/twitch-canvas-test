@@ -8,1008 +8,287 @@
    Twitch Versus Code
   </title>
 <style>
-   * { box-sizing: border-box; }
-body { 
-    font-family: system-ui, sans-serif; 
-    display: flex; 
-    flex-direction: column;
-    justify-content: flex-start; 
-    align-items: center; 
-    min-height: 100vh; 
-    margin: 0;
-    background: linear-gradient(135deg, #0a0a1a 0%, #1a1a3e 50%, #0d1b2a 100%);
-    color: white;
-    overflow-x: hidden;
-}
-
-/* Navigation Menu */
-.nav-menu {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    padding: 15px;
-    background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, rgba(10,10,26,0.8) 100%);
-    backdrop-filter: blur(10px);
-    z-index: 1000;
-    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
-}
-
-.nav-btn {
-    padding: 12px 30px;
-    border: 2px solid transparent;
-    border-radius: 30px;
-    background: linear-gradient(135deg, #2d2d5a 0%, #1a1a3e 100%);
-    color: #8899aa;
-    font-size: 1rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.nav-btn:hover {
-    background: linear-gradient(135deg, #4a4a8a 0%, #2d2d5a 100%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
-}
-
-.nav-btn.active {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-color: rgba(255,255,255,0.3);
-    box-shadow: 0 5px 25px rgba(102, 126, 234, 0.5);
-}
-
-.nav-btn .emoji {
-    margin-right: 8px;
-    font-size: 1.2rem;
-}
-
-/* Sections */
-.section {
-    display: none;
-    width: 100%;
-    min-height: 100vh;
-    padding-top: 80px;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.5s ease;
-}
-
-.section.active {
-    display: flex;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-.section-title {
-    font-size: 2.5rem;
-    margin-bottom: 2rem;
-    text-shadow: 0 0 30px rgba(255,255,255,0.3);
-    text-align: center;
-}
-
-/* Space Section Styles */
-.solar-system {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin-bottom: 2rem;
-}
-.planet {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 120px;
-    height: 120px;
-    margin: -60px 0 0 -60px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #e67e22 0%, #d35400 30%, #a04000 70%, #6d2c00 100%);
-    box-shadow: 
-        inset -20px -10px 40px rgba(0,0,0,0.6),
-        inset 10px 10px 20px rgba(255,200,100,0.3),
-        0 0 60px rgba(230, 126, 34, 0.4);
-    animation: rotate-planet 20s linear infinite;
-    transition: background 0.5s ease, box-shadow 0.5s ease;
-}
-.planet::before {
-    content: '';
-    position: absolute;
-    top: 20%;
-    left: 10%;
-    width: 15px;
-    height: 10px;
-    background: rgba(255,150,50,0.4);
-    border-radius: 50%;
-    filter: blur(3px);
-}
-.planet::after {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 5%;
-    width: 90%;
-    height: 3px;
-    background: rgba(139, 69, 19, 0.5);
-    border-radius: 50%;
-    transform: rotate(-5deg);
-}
-.rings {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 200px;
-    height: 60px;
-    margin: -30px 0 0 -100px;
-    border: 8px solid transparent;
-    border-color: rgba(210, 180, 140, 0.6) transparent;
-    border-radius: 50%;
-    transform: rotateX(75deg);
-    animation: rotate-rings 20s linear infinite;
-}
-.rings::before {
-    content: '';
-    position: absolute;
-    top: -15px;
-    left: -15px;
-    right: -15px;
-    bottom: -15px;
-    border: 4px solid transparent;
-    border-color: rgba(180, 150, 120, 0.4) transparent;
-    border-radius: 50%;
-}
-.moon {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 20px;
-    height: 20px;
-    background: linear-gradient(135deg, #bdc3c7 0%, #7f8c8d 100%);
-    border-radius: 50%;
-    box-shadow: inset -5px -3px 10px rgba(0,0,0,0.5);
-    animation: orbit 4s linear infinite;
-}
-.moon-2 {
-    width: 14px;
-    height: 14px;
-    background: linear-gradient(135deg, #a8d8ea 0%, #5a9fd4 50%, #2c5f7c 100%);
-    box-shadow: 
-        inset -4px -2px 8px rgba(0,0,0,0.5),
-        0 0 10px rgba(168, 216, 234, 0.4);
-    animation: orbit-2 7s linear infinite;
-}
-.stars {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-}
-.star {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: white;
-    border-radius: 50%;
-    animation: twinkle 2s ease-in-out infinite;
-}
-@keyframes rotate-planet {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-@keyframes rotate-rings {
-    from { transform: rotateX(75deg) rotateZ(0deg); }
-    to { transform: rotateX(75deg) rotateZ(360deg); }
-}
-@keyframes orbit {
-    from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
-    to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
-}
-@keyframes orbit-2 {
-    from { transform: rotate(45deg) translateX(130px) rotate(-45deg); }
-    to { transform: rotate(405deg) translateX(130px) rotate(-405deg); }
-}
-@keyframes twinkle {
-    0%, 100% { opacity: 0.3; transform: scale(1); }
-    50% { opacity: 1; transform: scale(1.2); }
-}
-
-/* Animals Section */
-.animals-container {
-    position: relative;
-    width: 400px;
-    height: 400px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.kitty {
-    position: absolute;
-    width: 40px;
-    height: 30px;
-    animation: orbit-kitty 8s linear infinite;
-    z-index: 5;
-}
-.kitty-body {
-    position: absolute;
-    width: 28px;
-    height: 20px;
-    background: linear-gradient(135deg, #ffb347 0%, #ff9933 50%, #e67e22 100%);
-    border-radius: 50% 50% 45% 45%;
-    top: 10px;
-    left: 6px;
-    box-shadow: inset -3px -2px 5px rgba(0,0,0,0.2);
-}
-.kitty-head {
-    position: absolute;
-    width: 22px;
-    height: 18px;
-    background: linear-gradient(135deg, #ffb347 0%, #ff9933 100%);
-    border-radius: 50%;
-    top: 2px;
-    left: 0;
-    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.15);
-}
-.kitty-ear {
-    position: absolute;
-    width: 0;
-    height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 8px solid #ff9933;
-}
-.kitty-ear.left { top: -5px; left: 2px; transform: rotate(-15deg); }
-.kitty-ear.right { top: -5px; right: 2px; transform: rotate(15deg); }
-.kitty-face { position: relative; width: 100%; height: 100%; }
-.kitty-eye {
-    position: absolute;
-    width: 5px;
-    height: 6px;
-    background: #2c3e50;
-    border-radius: 50%;
-    top: 6px;
-    animation: blink 3s ease-in-out infinite;
-}
-.kitty-eye.left { left: 4px; }
-.kitty-eye.right { right: 4px; }
-.kitty-eye::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
-    border-radius: 50%;
-    top: 1px;
-    left: 1px;
-}
-.kitty-nose {
-    position: absolute;
-    width: 4px;
-    height: 3px;
-    background: #ffb6c1;
-    border-radius: 50%;
-    top: 11px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.kitty-whiskers {
-    position: absolute;
-    top: 12px;
-    width: 8px;
-    height: 1px;
-    background: #666;
-}
-.kitty-whiskers.left { left: -5px; transform: rotate(-10deg); }
-.kitty-whiskers.right { right: -5px; transform: rotate(10deg); }
-.kitty-tail {
-    position: absolute;
-    width: 20px;
-    height: 6px;
-    background: linear-gradient(90deg, #e67e22, #ff9933);
-    border-radius: 3px 10px 10px 3px;
-    top: 18px;
-    right: -12px;
-    transform-origin: left center;
-    animation: wag-tail 0.5s ease-in-out infinite;
-}
-@keyframes orbit-kitty {
-    from { transform: rotate(0deg) translateX(160px) rotate(0deg); }
-    to { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
-}
-@keyframes blink {
-    0%, 90%, 100% { transform: scaleY(1); }
-    95% { transform: scaleY(0.1); }
-}
-@keyframes wag-tail {
-    0%, 100% { transform: rotate(-15deg); }
-    50% { transform: rotate(15deg); }
-}
-
-.doggy {
-    position: absolute;
-    width: 50px;
-    height: 35px;
-    z-index: 4;
-}
-.doggy-body {
-    position: absolute;
-    width: 35px;
-    height: 22px;
-    background: linear-gradient(135deg, #8B4513 0%, #A0522D 50%, #6B3E26 100%);
-    border-radius: 50% 50% 45% 45%;
-    top: 10px;
-    left: 8px;
-    box-shadow: inset -3px -2px 5px rgba(0,0,0,0.3);
-}
-.doggy-head {
-    position: absolute;
-    width: 26px;
-    height: 22px;
-    background: linear-gradient(135deg, #A0522D 0%, #8B4513 100%);
-    border-radius: 50% 50% 40% 40%;
-    top: 0px;
-    left: -5px;
-    box-shadow: inset -2px -2px 4px rgba(0,0,0,0.2);
-}
-.doggy-ear {
-    position: absolute;
-    width: 12px;
-    height: 16px;
-    background: linear-gradient(180deg, #6B3E26, #8B4513);
-    border-radius: 50% 50% 30% 30%;
-    top: -4px;
-}
-.doggy-ear.left { left: 0px; transform: rotate(-20deg); }
-.doggy-ear.right { right: 0px; transform: rotate(20deg); }
-.doggy-face { position: relative; width: 100%; height: 100%; }
-.doggy-eye {
-    position: absolute;
-    width: 5px;
-    height: 6px;
-    background: #2c3e50;
-    border-radius: 50%;
-    top: 8px;
-}
-.doggy-eye.left { left: 5px; }
-.doggy-eye.right { right: 5px; }
-.doggy-eye::after {
-    content: '';
-    position: absolute;
-    width: 2px;
-    height: 2px;
-    background: white;
-    border-radius: 50%;
-    top: 1px;
-    left: 1px;
-}
-.doggy-nose {
-    position: absolute;
-    width: 8px;
-    height: 6px;
-    background: #2c2c2c;
-    border-radius: 50%;
-    top: 13px;
-    left: 50%;
-    transform: translateX(-50%);
-}
-.doggy-tongue {
-    position: absolute;
-    width: 6px;
-    height: 8px;
-    background: #ff6b6b;
-    border-radius: 0 0 50% 50%;
-    top: 18px;
-    left: 50%;
-    transform: translateX(-50%);
-    animation: pant 0.3s ease-in-out infinite;
-}
-.doggy-tail {
-    position: absolute;
-    width: 18px;
-    height: 8px;
-    background: linear-gradient(90deg, #6B3E26, #8B4513);
-    border-radius: 5px 15px 15px 5px;
-    top: 12px;
-    right: -10px;
-    transform-origin: left center;
-    animation: wag-dog-tail 0.2s ease-in-out infinite;
-}
-.doggy-legs {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-}
-.doggy .leg {
-    position: absolute;
-    width: 5px;
-    height: 12px;
-    background: #8B4513;
-    border-radius: 3px;
-    bottom: -5px;
-}
-.leg.front-left { left: 12px; animation: run-front 0.15s ease-in-out infinite; }
-.leg.front-right { left: 18px; animation: run-front 0.15s ease-in-out infinite 0.075s; }
-.leg.back-left { left: 30px; animation: run-back 0.15s ease-in-out infinite; }
-.leg.back-right { left: 36px; animation: run-back 0.15s ease-in-out infinite 0.075s; }
-@keyframes pant {
-    0%, 100% { height: 8px; }
-    50% { height: 12px; }
-}
-@keyframes wag-dog-tail {
-    0%, 100% { transform: rotate(-25deg); }
-    50% { transform: rotate(25deg); }
-}
-@keyframes run-front {
-    0%, 100% { transform: rotate(-20deg); }
-    50% { transform: rotate(20deg); }
-}
-@keyframes run-back {
-    0%, 100% { transform: rotate(20deg); }
-    50% { transform: rotate(-20deg); }
-}
-
-/* Elephant */
-.elephant { position: relative; width: 120px; height: 100px; animation: elephant-bounce 2s ease-in-out infinite; }
-.elephant-body { position: absolute; width: 80px; height: 55px; background: linear-gradient(135deg, #7b8b9a 0%, #5d6d7e 50%, #4a5568 100%); border-radius: 50% 50% 45% 45%; top: 25px; left: 20px; box-shadow: inset -8px -5px 15px rgba(0,0,0,0.3); }
-.elephant-head { position: absolute; width: 50px; height: 45px; background: linear-gradient(135deg, #8899aa 0%, #6b7b8a 100%); border-radius: 50%; top: 15px; left: -5px; box-shadow: inset -5px -3px 10px rgba(0,0,0,0.25); }
-.elephant-ear { position: absolute; width: 25px; height: 30px; background: linear-gradient(135deg, #6b7b8a, #5a6a7a); border-radius: 50% 50% 40% 40%; }
-.elephant-ear.left { left: -12px; top: 5px; transform: rotate(-20deg); }
-.elephant-ear.right { right: -8px; top: 5px; transform: rotate(20deg); }
-.elephant-eye { position: absolute; width: 6px; height: 7px; background: #2c3e50; border-radius: 50%; top: 12px; }
-.elephant-eye.left { left: 10px; }
-.elephant-eye.right { right: 12px; }
-.elephant-eye::after { content: ''; position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; top: 1px; left: 1px; }
-.elephant-trunk { position: absolute; width: 12px; height: 40px; background: linear-gradient(180deg, #7b8b9a, #6b7b8a); border-radius: 6px 6px 10px 10px; bottom: -25px; left: 50%; transform: translateX(-50%); transform-origin: top center; animation: trunk-spray 3s ease-in-out infinite; }
-.elephant-trunk::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 16px; height: 8px; background: #6b7b8a; border-radius: 0 0 50% 50%; }
-.water-spray { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; }
-.elephant-legs { position: absolute; bottom: -15px; left: 25px; width: 70px; display: flex; justify-content: space-between; }
-.elephant-leg { width: 12px; height: 20px; background: linear-gradient(180deg, #5d6d7e, #4a5568); border-radius: 5px 5px 8px 8px; }
-.elephant-tail { position: absolute; width: 4px; height: 20px; background: #5d6d7e; right: 15px; top: 35px; border-radius: 2px; transform-origin: top center; animation: tail-wag 1s ease-in-out infinite; }
-.elephant-tail::after { content: ''; position: absolute; bottom: -5px; left: -3px; width: 10px; height: 8px; background: #4a5568; border-radius: 50%; }
-@keyframes elephant-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-@keyframes trunk-spray { 0%, 100% { transform: translateX(-50%) rotate(0deg); } 25% { transform: translateX(-50%) rotate(15deg); } 50% { transform: translateX(-50%) rotate(-10deg); } 75% { transform: translateX(-50%) rotate(20deg); } }
-@keyframes water-drop { 0% { opacity: 0; transform: translateY(0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-60px) translateX(20px) scale(1.2); } }
-@keyframes tail-wag { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
-
-/* Games Section */
-#gameContainer {
-    position: relative;
-    margin: 20px;
-}
-
-#musicToggle {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    font-size: 1.5rem;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-    transition: all 0.3s ease;
-    animation: pulse-btn 2s ease-in-out infinite;
-}
-#musicToggle:hover {
-    transform: scale(1.1);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
-#musicToggle.paused {
-    background: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
-    animation: none;
-}
-@keyframes pulse-btn {
-    0%, 100% { box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); }
-    50% { box-shadow: 0 4px 25px rgba(102, 126, 234, 0.7); }
-}
-
-/* Scoreboard */
-#scoreboard {
-    display: flex;
-    gap: 30px;
-    margin-bottom: 20px;
-}
-.score-item {
-    background: linear-gradient(135deg, #8B4513, #A0522D);
-    padding: 10px 20px;
-    border-radius: 15px;
-    box-shadow: 0 4px 15px rgba(139,69,19,0.5);
-}
+   body { 
+            font-family: system-ui, sans-serif; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #16213e 100%);
+            color: white;
+            overflow: hidden;
+        }
+        h1 { 
+            font-size: 3rem; 
+            text-align: center; 
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        .solar-system {
+            position: relative;
+            width: 300px;
+            height: 300px;
+        }
+        .planet {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 30%, #c0392b 70%, #922b21 100%);
+            box-shadow: 
+                inset -30px -20px 40px rgba(0,0,0,0.6),
+                inset 10px 10px 20px rgba(255,200,100,0.3),
+                0 0 60px rgba(230, 126, 34, 0.4);
+            animation: rotate-planet 20s linear infinite;
+        }
+        .planet::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 15%;
+            width: 20px;
+            height: 15px;
+            background: rgba(255,180,100,0.4);
+            border-radius: 50%;
+            filter: blur(5px);
+        }
+        .planet::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            width: 40px;
+            height: 8px;
+            background: rgba(139,69,19,0.5);
+            border-radius: 50%;
+            filter: blur(3px);
+        }
+        .rings {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            width: 250px;
+            height: 250px;
+            border: 15px solid transparent;
+            border-radius: 50%;
+            background: 
+                linear-gradient(transparent 40%, rgba(210,180,140,0.6) 45%, rgba(180,150,100,0.4) 50%, transparent 55%) border-box;
+            -webkit-mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) padding-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            animation: rotate-rings 30s linear infinite;
+        }
+        .rings::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            border: 8px solid rgba(180,150,100,0.3);
+            border-radius: 50%;
+        }
+        .moon-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 220px;
+            height: 220px;
+            animation: orbit 8s linear infinite;
+        }
+        .moon {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #bdc3c7 0%, #7f8c8d 50%, #5d6d7e 100%);
+            box-shadow: 
+                inset -5px -5px 10px rgba(0,0,0,0.5),
+                0 0 15px rgba(189, 195, 199, 0.3);
+        }
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        @keyframes rotate-planet {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes rotate-rings {
+            from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
+            to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
+        }
+        @keyframes orbit {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+   .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+        .music-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4);
+        }
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 25px rgba(230, 126, 34, 0.6);
+        }
+        .music-btn:active {
+            transform: scale(0.95);
+        }
+        .music-label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            max-width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .music-visualizer {
+            display: flex;
+            gap: 3px;
+            align-items: flex-end;
+            height: 20px;
+        }
+        .music-visualizer span {
+            width: 4px;
+            background: #e67e22;
+            border-radius: 2px;
+            animation: visualizer 0.5s ease-in-out infinite alternate;
+        }
+        .music-visualizer span:nth-child(1) { height: 8px; animation-delay: 0s; }
+        .music-visualizer span:nth-child(2) { height: 15px; animation-delay: 0.1s; }
+        .music-visualizer span:nth-child(3) { height: 10px; animation-delay: 0.2s; }
+        .music-visualizer span:nth-child(4) { height: 18px; animation-delay: 0.3s; }
+        .music-visualizer.paused span {
+            animation: none;
+            height: 4px !important;
+        }
+        @keyframes visualizer {
+            0% { transform: scaleY(0.5); }
+            100% { transform: scaleY(1.5); }
+        }
   </style>
 </head>
 <body>
-<!-- Navigation Menu -->
-<nav class="nav-menu">
-<button class="nav-btn active" data-section="space">
-<span class="emoji">
-     🌌
-    </span>
-    Espace
-   </button>
-<button class="nav-btn" data-section="animals">
-<span class="emoji">
-     🐾
-    </span>
-    Animaux
-   </button>
-<button class="nav-btn" data-section="games">
-<span class="emoji">
-     🎮
-    </span>
-    Jeux
-   </button>
-</nav>
-<!-- Stars Background -->
+<h1>
+   🪐 Hello World
+  </h1>
 <div class="stars" id="stars">
 </div>
-<!-- SPACE SECTION -->
-<section class="section active" id="space-section">
-<h1 class="section-title">
-    🌌 Exploration Spatiale
-   </h1>
-<div id="sun-container">
-</div>
 <div class="solar-system">
-<div class="planet">
-</div>
 <div class="rings">
 </div>
+<div class="planet">
+</div>
+<div class="moon-orbit">
 <div class="moon">
 </div>
-<div class="moon moon-2">
 </div>
 </div>
-</section>
-<!-- ANIMALS SECTION -->
-<section class="section" id="animals-section">
-<h1 class="section-title">
-    🐾 Nos Amis les Animaux
-   </h1>
-<div id="scoreboard">
-<div class="score-item">
-<span style="font-size: 1.5rem;">
-      🐕
-     </span>
-<span id="dogScore" style="font-size: 1.8rem; font-weight: bold; margin-left: 8px;">
-      0
-     </span>
+<script>
+   // Generate random stars
+    const starsContainer = document.getElementById('stars');
+    for(let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.width = star.style.height = (Math.random() * 3 + 1) + 'px';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        starsContainer.appendChild(star);
+    }
+  </script>
+<div class="music-control">
+<div class="music-visualizer" id="visualizer">
+<span>
+</span>
+<span>
+</span>
+<span>
+</span>
+<span>
+</span>
 </div>
-<div id="catchNotif" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a); padding: 8px 16px; border-radius: 20px; font-size: 1rem; opacity: 0; transition: all 0.3s ease;">
-     🎯 CATCH!
-    </div>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+    ▶
+   </button>
+<span class="music-label">
+    🎵 London Streets
+   </span>
 </div>
-<div class="animals-container">
-<div class="elephant">
-<div class="elephant-body">
-</div>
-<div class="elephant-head">
-<div class="elephant-ear left">
-</div>
-<div class="elephant-ear right">
-</div>
-<div class="elephant-eye left">
-</div>
-<div class="elephant-eye right">
-</div>
-<div class="elephant-trunk">
-<div class="water-spray">
-</div>
-</div>
-</div>
-<div class="elephant-legs">
-<div class="elephant-leg">
-</div>
-<div class="elephant-leg">
-</div>
-<div class="elephant-leg">
-</div>
-<div class="elephant-leg">
-</div>
-</div>
-<div class="elephant-tail">
-</div>
-</div>
-<div class="kitty">
-<div class="kitty-body">
-</div>
-<div class="kitty-head">
-<div class="kitty-ear left">
-</div>
-<div class="kitty-ear right">
-</div>
-<div class="kitty-face">
-<div class="kitty-eye left">
-</div>
-<div class="kitty-eye right">
-</div>
-<div class="kitty-nose">
-</div>
-<div class="kitty-whiskers left">
-</div>
-<div class="kitty-whiskers right">
-</div>
-</div>
-</div>
-<div class="kitty-tail">
-</div>
-</div>
-<div class="doggy">
-<div class="doggy-body">
-</div>
-<div class="doggy-head">
-<div class="doggy-ear left">
-</div>
-<div class="doggy-ear right">
-</div>
-<div class="doggy-face">
-<div class="doggy-eye left">
-</div>
-<div class="doggy-eye right">
-</div>
-<div class="doggy-nose">
-</div>
-<div class="doggy-tongue">
-</div>
-</div>
-</div>
-<div class="doggy-tail">
-</div>
-<div class="doggy-legs">
-<div class="leg front-left">
-</div>
-<div class="leg front-right">
-</div>
-<div class="leg back-left">
-</div>
-<div class="leg back-right">
-</div>
-</div>
-</div>
-</div>
-</section>
-<!-- GAMES SECTION -->
-<section class="section" id="games-section">
-<h1 class="section-title">
-    🎮 Space Shooter
-   </h1>
-<div id="gameContainer">
-<canvas id="spaceGame" style="border-radius: 15px; box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);">
-</canvas>
-<div id="gameUI" style="position: absolute; top: 10px; left: 10px; color: #0ff; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #0ff;">
-<div>
-      🎮 SCORE:
-      <span id="gameScore">
-       0
-      </span>
-</div>
-<div>
-      ❤️ LIVES:
-      <span id="gameLives">
-       3
-      </span>
-</div>
-</div>
-<button id="gameToggle" style="position: absolute; top: -40px; right: 0; background: linear-gradient(135deg, #00d4ff, #0099cc); border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);">
-     🚀 PLAY
-    </button>
-</div>
-</section>
-<!-- Music Controls -->
-<audio autoplay="" id="bgMusic" loop="" preload="auto">
+<audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
-<button id="musicToggle" title="Play/Pause Music">
-   🎵
-  </button>
 <script>
-   // Navigation System
-(function() {
-    const navBtns = document.querySelectorAll('.nav-btn');
-    const sections = document.querySelectorAll('.section');
-    
-    function switchSection(sectionId) {
-        navBtns.forEach(btn => btn.classList.remove('active'));
-        sections.forEach(sec => sec.classList.remove('active'));
-        
-        const targetBtn = document.querySelector(`[data-section="${sectionId}"]`);
-        const targetSection = document.getElementById(`${sectionId}-section`);
-        
-        if (targetBtn) targetBtn.classList.add('active');
-        if (targetSection) targetSection.classList.add('active');
+   let isPlaying = false;
+const music = document.getElementById('bgMusic');
+const btn = document.getElementById('musicBtn');
+const visualizer = document.getElementById('visualizer');
+
+function toggleMusic() {
+    if (isPlaying) {
+        music.pause();
+        btn.textContent = '▶';
+        visualizer.classList.add('paused');
+    } else {
+        music.play();
+        btn.textContent = '⏸';
+        visualizer.classList.remove('paused');
     }
-    
-    navBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            switchSection(btn.dataset.section);
-        });
-    });
-    
-    // Expose for external use
-    window.switchSection = switchSection;
-})();
-  </script>
-<script>
-   // Stars generator
-const starsContainer = document.getElementById('stars');
-for(let i = 0; i < 100; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
-    star.style.animationDelay = Math.random() * 2 + 's';
-    star.style.width = (Math.random() * 2 + 1) + 'px';
-    star.style.height = star.style.width;
-    starsContainer.appendChild(star);
+    isPlaying = !isPlaying;
 }
-  </script>
-<script>
-   // Music controller
-(function(){
-    const music = document.getElementById('bgMusic');
-    const btn = document.getElementById('musicToggle');
-    let isPlaying = false;
-    
-    function tryAutoPlay() {
-        music.play().then(() => {
-            isPlaying = true;
-            btn.textContent = '⏸️';
-            btn.classList.remove('paused');
-        }).catch(() => {
-            btn.classList.add('paused');
-        });
-    }
-    
-    tryAutoPlay();
-    
-    btn.addEventListener('click', function() {
-        if (isPlaying) {
-            music.pause();
-            btn.textContent = '🎵';
-            btn.classList.add('paused');
-        } else {
-            music.play();
-            btn.textContent = '⏸️';
-            btn.classList.remove('paused');
-        }
-        isPlaying = !isPlaying;
-    });
-    
-    music.volume = 0.5;
-})();
-  </script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-</script>
-<script>
-   // Sun 3D
-(function() {
-    const container = document.getElementById('sun-container');
-    if (!container) return;
-    
-    container.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;z-index:1;pointer-events:none;';
-    
-    const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setClearColor(0x000000, 0);
-    container.appendChild(renderer.domElement);
 
-    const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
-    const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00, transparent: true, opacity: 0.95 });
-    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-    sun.position.set(-8, 5, -15);
-    scene.add(sun);
-
-    const haloGeometry = new THREE.SphereGeometry(2.5, 32, 32);
-    const haloMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.3, side: THREE.BackSide });
-    const halo = new THREE.Mesh(haloGeometry, haloMaterial);
-    sun.add(halo);
-
-    const coronaGeometry = new THREE.SphereGeometry(4, 32, 32);
-    const coronaMaterial = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.15, side: THREE.BackSide });
-    const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
-    sun.add(corona);
-
-    camera.position.z = 10;
-
-    let time = 0;
-    function animate() {
-        requestAnimationFrame(animate);
-        time += 0.016;
-        const pulse = 1 + Math.sin(time * 2) * 0.05;
-        sun.scale.set(pulse, pulse, pulse);
-        corona.material.opacity = 0.1 + Math.sin(time * 1.5) * 0.05;
-        halo.material.opacity = 0.25 + Math.sin(time * 2.5) * 0.1;
-        renderer.render(scene, camera);
-    }
-    animate();
-
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-})();
-  </script>
-<script>
-   // Animals chase game
-(function() {
-    const kitty = document.querySelector('.kitty');
-    const doggy = document.querySelector('.doggy');
-    const container = document.querySelector('.animals-container');
-    if (!kitty || !doggy || !container) return;
-    
-    const centerX = container.offsetWidth / 2;
-    const centerY = container.offsetHeight / 2;
-    
-    let catAngle = 0;
-    let dogAngle = Math.PI;
-    let catRadius = 160;
-    let dogRadius = 140;
-    let catSpeed = 0.015;
-    let dogSpeed = 0.022;
-    let catEscapeSpeed = 0.06;
-    let isEscaping = false;
-    
-    kitty.style.animation = 'none';
-    
-    function getDistance(angle1, radius1, angle2, radius2) {
-        const x1 = Math.cos(angle1) * radius1;
-        const y1 = Math.sin(angle1) * radius1;
-        const x2 = Math.cos(angle2) * radius2;
-        const y2 = Math.sin(angle2) * radius2;
-        return Math.sqrt((x2-x1)**2 + (y2-y1)**2);
-    }
-    
-    function updatePositions() {
-        const distance = getDistance(catAngle, catRadius, dogAngle, dogRadius);
-        
-        if (distance < 30) {
-            if (window.dogCatch) window.dogCatch();
-            catAngle += Math.PI;
-        }
-        
-        if (distance < 60 && !isEscaping) {
-            isEscaping = true;
-            setTimeout(() => { isEscaping = false; }, 1500);
-        }
-        
-        const currentCatSpeed = isEscaping ? catEscapeSpeed : catSpeed;
-        catAngle += currentCatSpeed;
-        
-        const angleDiff = catAngle - dogAngle;
-        const normalizedDiff = Math.atan2(Math.sin(angleDiff), Math.cos(angleDiff));
-        dogAngle += dogSpeed * Math.sign(normalizedDiff);
-        
-        const catX = centerX + Math.cos(catAngle) * catRadius - 20;
-        const catY = centerY + Math.sin(catAngle) * catRadius - 15;
-        kitty.style.left = catX + 'px';
-        kitty.style.top = catY + 'px';
-        
-        const dogX = centerX + Math.cos(dogAngle) * dogRadius - 25;
-        const dogY = centerY + Math.sin(dogAngle) * dogRadius - 17;
-        doggy.style.left = dogX + 'px';
-        doggy.style.top = dogY + 'px';
-        
-        requestAnimationFrame(updatePositions);
-    }
-    
-    updatePositions();
-    
-    window.dogCatch = function() {
-        const scoreEl = document.getElementById('dogScore');
-        if (scoreEl) {
-            scoreEl.textContent = parseInt(scoreEl.textContent) + 1;
-        }
-        const notif = document.getElementById('catchNotif');
-        if (notif) {
-            notif.style.opacity = '1';
-            setTimeout(() => { notif.style.opacity = '0'; }, 800);
-        }
-    };
-})();
-  </script>
-<script>
-   // Space Game
-(function(){
-    const W=300,H=200,canvas=document.getElementById('spaceGame'),ctx=canvas.getContext('2d');
-    canvas.width=W;canvas.height=H;
-    let gameActive=false,score=0,lives=3,ship={x:W/2,y:H-30,w:20,h:15,speed:5},bullets=[],asteroids=[],particles=[],keys={},lastShot=0;
-    const colors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6b9d'];
-    
-    function init(){score=0;lives=3;ship.x=W/2;bullets=[];asteroids=[];particles=[];updateUI();}
-    function updateUI(){document.getElementById('gameScore').textContent=score;document.getElementById('gameLives').textContent='❤️'.repeat(Math.max(0,lives));}
-    function spawnAsteroid(){asteroids.push({x:Math.random()*W,y:-20,r:10+Math.random()*15,speed:1+Math.random()*2,rot:0,rotSpeed:(Math.random()-0.5)*0.1,color:colors[Math.floor(Math.random()*colors.length)]});}
-    function createExplosion(x,y,color){for(let i=0;i<10;i++){particles.push({x,y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:30,color});}}
-    function drawShip(){ctx.save();ctx.translate(ship.x,ship.y);ctx.fillStyle='#0ff';ctx.beginPath();ctx.moveTo(0,-ship.h);ctx.lineTo(-ship.w/2,ship.h/2);ctx.lineTo(0,ship.h/4);ctx.lineTo(ship.w/2,ship.h/2);ctx.closePath();ctx.fill();ctx.fillStyle='#ff0';ctx.beginPath();ctx.moveTo(-5,ship.h/2);ctx.lineTo(0,ship.h/2+8+Math.random()*5);ctx.lineTo(5,ship.h/2);ctx.closePath();ctx.fill();ctx.restore();}
-    function update(){if(!gameActive)return;if(keys['ArrowLeft']||keys['a'])ship.x-=ship.speed;if(keys['ArrowRight']||keys['d'])ship.x+=ship.speed;ship.x=Math.max(ship.w/2,Math.min(W-ship.w/2,ship.x));if((keys[' ']||keys['ArrowUp'])&&Date.now()-lastShot>200){bullets.push({x:ship.x,y:ship.y-ship.h,vy:-8});lastShot=Date.now();}bullets=bullets.filter(b=>{b.y+=b.vy;return b.y>0;});if(Math.random()<0.03)spawnAsteroid();asteroids.forEach(a=>{a.y+=a.speed;a.rot+=a.rotSpeed;});asteroids=asteroids.filter(a=>{if(a.y>H+a.r){return false;}let hit=false;bullets=bullets.filter(b=>{const dx=b.x-a.x,dy=b.y-a.y;if(Math.sqrt(dx*dx+dy*dy)<a.r){hit=true;score+=10;createExplosion(a.x,a.y,a.color);updateUI();return false;}return true;});if(hit)return false;const dx=ship.x-a.x,dy=ship.y-a.y;if(Math.sqrt(dx*dx+dy*dy)<a.r+10){lives--;createExplosion(ship.x,ship.y,'#0ff');updateUI();if(lives<=0){gameActive=false;document.getElementById('gameToggle').textContent='🔄 RETRY';}return false;}return true;});particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;return p.life>0;});}
-    function draw(){ctx.fillStyle='rgba(10,10,30,0.3)';ctx.fillRect(0,0,W,H);for(let i=0;i<3;i++){ctx.fillStyle='rgba(255,255,255,'+(0.3+Math.random()*0.5)+')';ctx.fillRect(Math.random()*W,Math.random()*H,1,1);}if(gameActive)drawShip();ctx.fillStyle='#0ff';bullets.forEach(b=>{ctx.fillRect(b.x-2,b.y,4,10);});asteroids.forEach(a=>{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.rot);ctx.fillStyle=a.color;ctx.beginPath();for(let i=0;i<6;i++){const angle=i*Math.PI/3;const r=a.r*(0.8+Math.random()*0.2);ctx.lineTo(Math.cos(angle)*r,Math.sin(angle)*r);}ctx.closePath();ctx.fill();ctx.restore();});particles.forEach(p=>{ctx.fillStyle=p.color;ctx.globalAlpha=p.life/30;ctx.fillRect(p.x-2,p.y-2,4,4);});ctx.globalAlpha=1;if(!gameActive&&lives<=0){ctx.fillStyle='#ff6b6b';ctx.font='bold 20px Courier New';ctx.textAlign='center';ctx.fillText('GAME OVER',W/2,H/2);ctx.font='12px Courier New';ctx.fillText('Score: '+score,W/2,H/2+20);}}
-    function gameLoop(){update();draw();requestAnimationFrame(gameLoop);}
-    document.addEventListener('keydown',e=>{keys[e.key]=true;if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();});
-    document.addEventListener('keyup',e=>keys[e.key]=false);
-    document.getElementById('gameToggle').addEventListener('click',function(){if(!gameActive){init();gameActive=true;this.textContent='⏸️ PAUSE';}else{gameActive=false;this.textContent='🚀 PLAY';}});
-    canvas.addEventListener('click',function(){if(!gameActive){init();gameActive=true;document.getElementById('gameToggle').textContent='⏸️ PAUSE';}});
-    ctx.fillStyle='#0a0a1e';ctx.fillRect(0,0,W,H);ctx.fillStyle='#0ff';ctx.font='14px Courier New';ctx.textAlign='center';ctx.fillText('🚀 Click to Start!',W/2,H/2);ctx.font='10px Courier New';ctx.fillText('← → to move, SPACE to shoot',W/2,H/2+20);
-    gameLoop();
-})();
-  </script>
-<script>
-   // Elephant water spray
-(function(){
-    const spray = document.querySelector('.water-spray');
-    if (!spray) return;
-    setInterval(()=>{
-        for(let i=0;i<3;i++){
-            const drop=document.createElement('span');
-            drop.textContent='💧';
-            drop.style.cssText='position:absolute;font-size:'+(10+Math.random()*8)+'px;animation:water-drop '+(1+Math.random()*0.5)+'s ease-out forwards;left:'+(Math.random()*30-15)+'px;';
-            spray.appendChild(drop);
-            setTimeout(()=>drop.remove(),1500);
-        }
-    },800);
-})();
-  </script>
-<script>
-   // Auto-rotation des sections toutes les 30 secondes
-(function() {
-    const sections = ['space', 'animals', 'games'];
-    let currentIndex = 0;
-    
-    function rotateSection() {
-        currentIndex = (currentIndex + 1) % sections.length;
-        if (window.switchSection) {
-            window.switchSection(sections[currentIndex]);
-        }
-    }
-    
-    // Démarrer la rotation automatique
-    const autoRotateInterval = setInterval(rotateSection, 30000);
-    
-    // Synchroniser l'index quand l'utilisateur clique manuellement
-    document.querySelectorAll('.nav-btn').forEach((btn, index) => {
-        btn.addEventListener('click', () => {
-            currentIndex = sections.indexOf(btn.dataset.section);
-        });
-    });
-    
-    // Indicateur visuel du timer
-    const timerIndicator = document.createElement('div');
-    timerIndicator.id = 'autoRotateTimer';
-    timerIndicator.style.cssText = 'position: fixed; bottom: 20px; left: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; z-index: 1000; box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4); display: flex; align-items: center; gap: 8px;';
-    timerIndicator.innerHTML = '<span>🔄</span><span id="timerCountdown">30</span>s';
-    document.body.appendChild(timerIndicator);
-    
-    let countdown = 30;
-    setInterval(() => {
-        countdown--;
-        if (countdown <= 0) countdown = 30;
-        const countdownEl = document.getElementById('timerCountdown');
-        if (countdownEl) countdownEl.textContent = countdown;
-    }, 1000);
-    
-    // Exposer pour contrôle externe
-    window.autoRotate = {
-        stop: () => clearInterval(autoRotateInterval),
-        getCurrentSection: () => sections[currentIndex]
-    };
-})();
+visualizer.classList.add('paused');
   </script>
 </body>
 </html>
