@@ -499,8 +499,64 @@
    .planet { transition: background 0.5s ease, box-shadow 0.5s ease; }
 .planet.caught { animation: planet-flash 0.3s ease-out; }
 @keyframes planet-flash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
+   .elephant { position: relative; width: 120px; height: 100px; animation: elephant-bounce 2s ease-in-out infinite; }
+.elephant-body { position: absolute; width: 80px; height: 55px; background: linear-gradient(135deg, #7b8b9a 0%, #5d6d7e 50%, #4a5568 100%); border-radius: 50% 50% 45% 45%; top: 25px; left: 20px; box-shadow: inset -8px -5px 15px rgba(0,0,0,0.3); }
+.elephant-head { position: absolute; width: 50px; height: 45px; background: linear-gradient(135deg, #8899aa 0%, #6b7b8a 100%); border-radius: 50%; top: 15px; left: -5px; box-shadow: inset -5px -3px 10px rgba(0,0,0,0.25); }
+.elephant-ear { position: absolute; width: 25px; height: 30px; background: linear-gradient(135deg, #6b7b8a, #5a6a7a); border-radius: 50% 50% 40% 40%; }
+.elephant-ear.left { left: -12px; top: 5px; transform: rotate(-20deg); }
+.elephant-ear.right { right: -8px; top: 5px; transform: rotate(20deg); }
+.elephant-eye { position: absolute; width: 6px; height: 7px; background: #2c3e50; border-radius: 50%; top: 12px; }
+.elephant-eye.left { left: 10px; }
+.elephant-eye.right { right: 12px; }
+.elephant-eye::after { content: ''; position: absolute; width: 2px; height: 2px; background: white; border-radius: 50%; top: 1px; left: 1px; }
+.elephant-trunk { position: absolute; width: 12px; height: 40px; background: linear-gradient(180deg, #7b8b9a, #6b7b8a); border-radius: 6px 6px 10px 10px; bottom: -25px; left: 50%; transform: translateX(-50%); transform-origin: top center; animation: trunk-spray 3s ease-in-out infinite; }
+.elephant-trunk::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 16px; height: 8px; background: #6b7b8a; border-radius: 0 0 50% 50%; }
+.water-spray { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); width: 4px; height: 4px; }
+.water-spray::before, .water-spray::after { content: '💧'; position: absolute; font-size: 12px; animation: water-drop 1.5s ease-out infinite; opacity: 0; }
+.water-spray::before { animation-delay: 0s; }
+.water-spray::after { animation-delay: 0.5s; left: 10px; }
+.elephant-legs { position: absolute; bottom: -15px; left: 25px; width: 70px; display: flex; justify-content: space-between; }
+.elephant-leg { width: 12px; height: 20px; background: linear-gradient(180deg, #5d6d7e, #4a5568); border-radius: 5px 5px 8px 8px; }
+.elephant-tail { position: absolute; width: 4px; height: 20px; background: #5d6d7e; right: 15px; top: 35px; border-radius: 2px; transform-origin: top center; animation: tail-wag 1s ease-in-out infinite; }
+.elephant-tail::after { content: ''; position: absolute; bottom: -5px; left: -3px; width: 10px; height: 8px; background: #4a5568; border-radius: 50%; }
+@keyframes elephant-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+@keyframes trunk-spray { 0%, 100% { transform: translateX(-50%) rotate(0deg); } 25% { transform: translateX(-50%) rotate(15deg); } 50% { transform: translateX(-50%) rotate(-10deg); } 75% { transform: translateX(-50%) rotate(20deg); } }
+@keyframes water-drop { 0% { opacity: 0; transform: translateY(0) scale(0.5); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-60px) translateX(20px) scale(1.2); } }
+@keyframes tail-wag { 0%, 100% { transform: rotate(-10deg); } 50% { transform: rotate(10deg); } }
   </style>
 </head>
+<div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; pointer-events: none;">
+<div class="elephant">
+<div class="elephant-body">
+</div>
+<div class="elephant-head">
+<div class="elephant-ear left">
+</div>
+<div class="elephant-ear right">
+</div>
+<div class="elephant-eye left">
+</div>
+<div class="elephant-eye right">
+</div>
+<div class="elephant-trunk">
+<div class="water-spray">
+</div>
+</div>
+</div>
+<div class="elephant-legs">
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+</div>
+<div class="elephant-tail">
+</div>
+</div>
+</div>
 <body>
 <div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none;">
 </div>
@@ -993,6 +1049,9 @@
 </div>
 <script>
    (function(){const W=300,H=200,canvas=document.getElementById('spaceGame'),ctx=canvas.getContext('2d');canvas.width=W;canvas.height=H;let gameActive=false,score=0,lives=3,ship={x:W/2,y:H-30,w:20,h:15,speed:5},bullets=[],asteroids=[],particles=[],keys={},lastShot=0;const colors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6b9d'];function init(){score=0;lives=3;ship.x=W/2;bullets=[];asteroids=[];particles=[];updateUI();}function updateUI(){document.getElementById('gameScore').textContent=score;document.getElementById('gameLives').textContent='❤️'.repeat(Math.max(0,lives));}function spawnAsteroid(){asteroids.push({x:Math.random()*W,y:-20,r:10+Math.random()*15,speed:1+Math.random()*2,rot:0,rotSpeed:(Math.random()-0.5)*0.1,color:colors[Math.floor(Math.random()*colors.length)]});}function createExplosion(x,y,color){for(let i=0;i<10;i++){particles.push({x,y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:30,color});}}function drawShip(){ctx.save();ctx.translate(ship.x,ship.y);ctx.fillStyle='#0ff';ctx.beginPath();ctx.moveTo(0,-ship.h);ctx.lineTo(-ship.w/2,ship.h/2);ctx.lineTo(0,ship.h/4);ctx.lineTo(ship.w/2,ship.h/2);ctx.closePath();ctx.fill();ctx.fillStyle='#ff0';ctx.beginPath();ctx.moveTo(-5,ship.h/2);ctx.lineTo(0,ship.h/2+8+Math.random()*5);ctx.lineTo(5,ship.h/2);ctx.closePath();ctx.fill();ctx.restore();}function update(){if(!gameActive)return;if(keys['ArrowLeft']||keys['a'])ship.x-=ship.speed;if(keys['ArrowRight']||keys['d'])ship.x+=ship.speed;ship.x=Math.max(ship.w/2,Math.min(W-ship.w/2,ship.x));if((keys[' ']||keys['ArrowUp'])&&Date.now()-lastShot>200){bullets.push({x:ship.x,y:ship.y-ship.h,vy:-8});lastShot=Date.now();}bullets=bullets.filter(b=>{b.y+=b.vy;return b.y>0;});if(Math.random()<0.03)spawnAsteroid();asteroids.forEach(a=>{a.y+=a.speed;a.rot+=a.rotSpeed;});asteroids=asteroids.filter(a=>{if(a.y>H+a.r){return false;}let hit=false;bullets=bullets.filter(b=>{const dx=b.x-a.x,dy=b.y-a.y;if(Math.sqrt(dx*dx+dy*dy)<a.r){hit=true;score+=10;createExplosion(a.x,a.y,a.color);updateUI();return false;}return true;});if(hit)return false;const dx=ship.x-a.x,dy=ship.y-a.y;if(Math.sqrt(dx*dx+dy*dy)<a.r+10){lives--;createExplosion(ship.x,ship.y,'#0ff');updateUI();if(lives<=0){gameActive=false;document.getElementById('gameToggle').textContent='🔄 RETRY';}return false;}return true;});particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;return p.life>0;});}function draw(){ctx.fillStyle='rgba(10,10,30,0.3)';ctx.fillRect(0,0,W,H);for(let i=0;i<3;i++){ctx.fillStyle='rgba(255,255,255,'+(0.3+Math.random()*0.5)+')';ctx.fillRect(Math.random()*W,Math.random()*H,1,1);}if(gameActive)drawShip();ctx.fillStyle='#0ff';bullets.forEach(b=>{ctx.fillRect(b.x-2,b.y,4,10);});asteroids.forEach(a=>{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.rot);ctx.fillStyle=a.color;ctx.beginPath();for(let i=0;i<6;i++){const angle=i*Math.PI/3;const r=a.r*(0.8+Math.random()*0.2);ctx.lineTo(Math.cos(angle)*r,Math.sin(angle)*r);}ctx.closePath();ctx.fill();ctx.restore();});particles.forEach(p=>{ctx.fillStyle=p.color;ctx.globalAlpha=p.life/30;ctx.fillRect(p.x-2,p.y-2,4,4);});ctx.globalAlpha=1;if(!gameActive&&lives<=0){ctx.fillStyle='#ff6b6b';ctx.font='bold 20px Courier New';ctx.textAlign='center';ctx.fillText('GAME OVER',W/2,H/2);ctx.font='12px Courier New';ctx.fillText('Score: '+score,W/2,H/2+20);}}function gameLoop(){update();draw();requestAnimationFrame(gameLoop);}document.addEventListener('keydown',e=>{keys[e.key]=true;if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();});document.addEventListener('keyup',e=>keys[e.key]=false);document.getElementById('gameToggle').addEventListener('click',function(){if(!gameActive){init();gameActive=true;this.textContent='⏸️ PAUSE';}else{gameActive=false;this.textContent='🚀 PLAY';}});canvas.addEventListener('click',function(){if(!gameActive){init();gameActive=true;document.getElementById('gameToggle').textContent='⏸️ PAUSE';}});ctx.fillStyle='#0a0a1e';ctx.fillRect(0,0,W,H);ctx.fillStyle='#0ff';ctx.font='14px Courier New';ctx.textAlign='center';ctx.fillText('🚀 Click to Start!',W/2,H/2);ctx.font='10px Courier New';ctx.fillText('← → to move, SPACE to shoot',W/2,H/2+20);gameLoop();})();
+  </script>
+<script>
+   (function(){const container=document.getElementById('elephant-container');const spray=container.querySelector('.water-spray');setInterval(()=>{for(let i=0;i<3;i++){const drop=document.createElement('span');drop.textContent='💧';drop.style.cssText='position:absolute;font-size:'+(10+Math.random()*8)+'px;animation:water-drop '+(1+Math.random()*0.5)+'s ease-out forwards;left:'+(Math.random()*30-15)+'px;';spray.appendChild(drop);setTimeout(()=>drop.remove(),1500);}},800);})();
   </script>
 </body>
 </html>
