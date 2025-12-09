@@ -48,6 +48,7 @@
             transform: translate(-50%, -50%);
             animation: planetRotate 20s linear infinite;
             overflow: hidden;
+            z-index: 5;
         }
         .planet::before {
             content: '';
@@ -84,6 +85,7 @@
                 0 0 20px rgba(200, 220, 255, 0.2),
                 inset 0 0 20px rgba(200, 220, 255, 0.1);
             animation: ringGlow 4s ease-in-out infinite;
+            z-index: 6;
         }
         .ring::before {
             content: '';
@@ -93,6 +95,51 @@
             right: -8px;
             bottom: -8px;
             border: 2px solid rgba(180, 200, 255, 0.2);
+            border-radius: 50%;
+        }
+        .moon-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            transform: translate(-50%, -50%);
+            animation: moonOrbit 8s linear infinite;
+            z-index: 10;
+        }
+        .moon {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 30%, #888888 70%, #555555 100%);
+            box-shadow: 
+                inset -8px -8px 20px rgba(0,0,0,0.4),
+                inset 3px 3px 10px rgba(255,255,255,0.3),
+                0 0 20px rgba(200, 200, 220, 0.4),
+                0 0 40px rgba(150, 150, 180, 0.2);
+        }
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            background: rgba(100, 100, 100, 0.5);
+            border-radius: 50%;
+        }
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 5px;
+            height: 5px;
+            background: rgba(80, 80, 80, 0.4);
             border-radius: 50%;
         }
         .stars {
@@ -173,6 +220,10 @@
             0%, 100% { box-shadow: 0 0 10px rgba(100, 200, 255, 0.3); }
             50% { box-shadow: 0 0 25px rgba(100, 200, 255, 0.6); }
         }
+        @keyframes moonOrbit {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
   </style>
 </head>
 <body>
@@ -185,6 +236,10 @@
 <div class="ring">
 </div>
 <div class="planet">
+</div>
+<div class="moon-orbit">
+<div class="moon">
+</div>
 </div>
 </div>
 <script>
