@@ -28,7 +28,274 @@
 <div id="planet-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-</script>
+   (function() {
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  document.getElementById('planet-container').appendChild(renderer.domElement);
+
+  // Planète
+  const geometry = new THREE.SphereGeometry(2, 64, 64);
+  const material = new THREE.MeshPhongMaterial({
+    color: 0x4a90d9,
+    emissive: 0x112244,
+    specular: 0x333333,
+    shininess: 25
+  });
+  const planet = new THREE.Mesh(geometry, material);
+  scene.add(planet);
+
+  // Atmosphère
+  const atmosGeom = new THREE.SphereGeometry(2.15, 64, 64);
+  const atmosMat = new THREE.MeshPhongMaterial({
+    color: 0x88ccff,
+    transparent: true,
+    opacity: 0.15,
+    side: THREE.BackSide
+  });
+  const atmosphere = new THREE.Mesh(atmosGeom, atmosMat);
+  scene.add(atmosphere);
+
+  // Lune orbitante
+  const moonPivot = new THREE.Object3D();
+  scene.add(moonPivot);
+  
+  const moonGeom = new THREE.SphereGeometry(0.4, 32, 32);
+  const moonMat = new THREE.MeshPhongMaterial({
+    color: 0xcccccc,
+    emissive: 0x222222,
+    specular: 0x444444,
+    shininess: 10
+  });
+  const moon = new THREE.Mesh(moonGeom, moonMat);
+  moon.position.x = 4;
+  moonPivot.add(moon);
+  
+  const moonGlowGeom = new THREE.SphereGeometry(0.5, 32, 32);
+  const moonGlowMat = new THREE.MeshBasicMaterial({
+    color: 0xffffee,
+    transparent: true,
+    opacity: 0.15
+  });
+  const moonGlow = new THREE.Mesh(moonGlowGeom, moonGlowMat);
+  moonGlow.position.x = 4;
+  moonPivot.add(moonGlow);
+
+  // === CUTE KITTY ===
+  const kittyPivot = new THREE.Object3D();
+  scene.add(kittyPivot);
+  
+  const kittyMat = new THREE.MeshPhongMaterial({ color: 0xffaa88, emissive: 0x331111, specular: 0xffffff, shininess: 30 });
+  const body = new THREE.Mesh(new THREE.SphereGeometry(0.25, 16, 16), kittyMat);
+  const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), kittyMat);
+  head.position.set(0.2, 0.15, 0);
+  const earL = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.15, 4), kittyMat);
+  const earR = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.15, 4), kittyMat);
+  earL.position.set(0.25, 0.35, -0.08); earR.position.set(0.25, 0.35, 0.08);
+  const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+  const eyeL = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), eyeMat);
+  const eyeR = new THREE.Mesh(new THREE.SphereGeometry(0.04, 8, 8), eyeMat);
+  eyeL.position.set(0.35, 0.2, -0.08); eyeR.position.set(0.35, 0.2, 0.08);
+  const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+  const shineL = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), shineMat);
+  const shineR = new THREE.Mesh(new THREE.SphereGeometry(0.015, 8, 8), shineMat);
+  shineL.position.set(0.37, 0.22, -0.09); shineR.position.set(0.37, 0.22, 0.07);
+  const tail = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.05, 0.4, 8), kittyMat);
+  tail.position.set(-0.3, 0.1, 0); tail.rotation.z = Math.PI / 3;
+  
+  const kitty = new THREE.Group();
+  kitty.add(body, head, earL, earR, eyeL, eyeR, shineL, shineR, tail);
+  kitty.position.x = 5;
+  kitty.scale.set(0.7, 0.7, 0.7);
+  kittyPivot.add(kitty);
+  
+  // Traînée d'étoiles sparkle
+  const sparkleGeom = new THREE.BufferGeometry();
+  const sparklePos = [];
+  for(let i = 0; i < 30; i++) sparklePos.push(0, 0, 0);
+  sparkleGeom.setAttribute('position', new THREE.Float32BufferAttribute(sparklePos, 3));
+  const sparkles = new THREE.Points(sparkleGeom, new THREE.PointsMaterial({ color: 0xffff99, size: 0.1, transparent: true, opacity: 0.8 }));
+  scene.add(sparkles);
+  const sparkleHistory = [];
+
+  // Anneau
+  const ringGeom = new THREE.RingGeometry(2.8, 4, 64);
+  const ringMat = new THREE.MeshBasicMaterial({ color: 0x9966cc, side: THREE.DoubleSide, transparent: true, opacity: 0.6 });
+  const ring = new THREE.Mesh(ringGeom, ringMat);
+  ring.rotation.x = Math.PI / 2.5;
+  scene.add(ring);
+
+  // Lumières
+  const light = new THREE.PointLight(0xffffff, 1.5);
+  light.position.set(10, 5, 10);
+  scene.add(light);
+  scene.add(new THREE.AmbientLight(0x333366, 0.5));
+
+  // Étoiles
+  const starsGeom = new THREE.BufferGeometry();
+  const starPositions = [];
+  for(let i = 0; i < 2000; i++) {
+    starPositions.push((Math.random() - 0.5) * 200, (Math.random() - 0.5) * 200, (Math.random() - 0.5) * 200);
+  }
+  starsGeom.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+  const stars = new THREE.Points(starsGeom, new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 }));
+  scene.add(stars);
+
+  camera.position.z = 6;
+
+  function animate() {
+    requestAnimationFrame(animate);
+    planet.rotation.y += 0.003;
+    ring.rotation.z += 0.001;
+    atmosphere.rotation.y += 0.002;
+    stars.rotation.y += 0.0002;
+    moonPivot.rotation.y += 0.008;
+    moonPivot.rotation.x = Math.sin(Date.now() * 0.0005) * 0.2;
+    moon.rotation.y += 0.01;
+    
+    // Kitty orbit!
+    kittyPivot.rotation.y += 0.012;
+    kittyPivot.rotation.x = Math.sin(Date.now() * 0.001) * 0.3;
+    kitty.rotation.y = -kittyPivot.rotation.y + Math.PI / 2;
+    tail.rotation.x = Math.sin(Date.now() * 0.01) * 0.3;
+    
+    // Update sparkle trail
+    const kittyWorldPos = new THREE.Vector3();
+    kitty.getWorldPosition(kittyWorldPos);
+    sparkleHistory.unshift(kittyWorldPos.clone());
+    if(sparkleHistory.length > 30) sparkleHistory.pop();
+    const positions = sparkles.geometry.attributes.position.array;
+    for(let i = 0; i < sparkleHistory.length; i++) {
+      positions[i*3] = sparkleHistory[i].x + (Math.random()-0.5)*0.1;
+      positions[i*3+1] = sparkleHistory[i].y + (Math.random()-0.5)*0.1;
+      positions[i*3+2] = sparkleHistory[i].z + (Math.random()-0.5)*0.1;
+    }
+    sparkles.geometry.attributes.position.needsUpdate = true;
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+  </script>
+<script>
+   (function() {
+  // Attendre que Three.js soit chargé
+  const checkScene = setInterval(() => {
+    const container = document.getElementById('planet-container');
+    if (container && container.children.length > 0) {
+      clearInterval(checkScene);
+      addKittyToScene();
+    }
+  }, 100);
+
+  function addKittyToScene() {
+    // Récupérer la scène existante
+    const scene = window.kittyScene || (function() {
+      // Créer une nouvelle scène pour le kitty qui utilise le même renderer
+      const container = document.getElementById('planet-container');
+      const canvas = container.querySelector('canvas');
+      
+      // On va ajouter le kitty via un nouveau pivot dans le DOM
+      const kittyPivot = new THREE.Object3D();
+      kittyPivot.name = 'kittyOrbit';
+      
+      // Créer le corps du chat
+      const bodyGeom = new THREE.SphereGeometry(0.25, 16, 16);
+      const kittyMat = new THREE.MeshPhongMaterial({
+        color: 0xffaa88,
+        emissive: 0x331111,
+        specular: 0xffffff,
+        shininess: 30
+      });
+      const body = new THREE.Mesh(bodyGeom, kittyMat);
+      
+      // Tête du chat
+      const headGeom = new THREE.SphereGeometry(0.2, 16, 16);
+      const head = new THREE.Mesh(headGeom, kittyMat);
+      head.position.set(0.2, 0.15, 0);
+      
+      // Oreilles
+      const earGeom = new THREE.ConeGeometry(0.08, 0.15, 4);
+      const earMat = new THREE.MeshPhongMaterial({ color: 0xffaa88, emissive: 0x331111 });
+      const earL = new THREE.Mesh(earGeom, earMat);
+      const earR = new THREE.Mesh(earGeom, earMat);
+      earL.position.set(0.25, 0.35, -0.08);
+      earR.position.set(0.25, 0.35, 0.08);
+      earL.rotation.z = -0.2;
+      earR.rotation.z = -0.2;
+      
+      // Yeux kawaii
+      const eyeGeom = new THREE.SphereGeometry(0.04, 8, 8);
+      const eyeMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
+      const eyeL = new THREE.Mesh(eyeGeom, eyeMat);
+      const eyeR = new THREE.Mesh(eyeGeom, eyeMat);
+      eyeL.position.set(0.35, 0.2, -0.08);
+      eyeR.position.set(0.35, 0.2, 0.08);
+      
+      // Brillance des yeux
+      const shineGeom = new THREE.SphereGeometry(0.015, 8, 8);
+      const shineMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      const shineL = new THREE.Mesh(shineGeom, shineMat);
+      const shineR = new THREE.Mesh(shineGeom, shineMat);
+      shineL.position.set(0.37, 0.22, -0.09);
+      shineR.position.set(0.37, 0.22, 0.07);
+      
+      // Queue
+      const tailGeom = new THREE.CylinderGeometry(0.03, 0.05, 0.4, 8);
+      const tail = new THREE.Mesh(tailGeom, kittyMat);
+      tail.position.set(-0.3, 0.1, 0);
+      tail.rotation.z = Math.PI / 3;
+      
+      // Assembler le chat
+      const kitty = new THREE.Group();
+      kitty.add(body, head, earL, earR, eyeL, eyeR, shineL, shineR, tail);
+      kitty.position.x = 5.5;
+      kitty.scale.set(0.8, 0.8, 0.8);
+      
+      kittyPivot.add(kitty);
+      
+      // Traînée d'étoiles
+      const trailGeom = new THREE.BufferGeometry();
+      const trailPositions = [];
+      for(let i = 0; i < 50; i++) {
+        const angle = (i / 50) * Math.PI * 0.5;
+        trailPositions.push(
+          Math.cos(angle) * 5.5 - Math.random() * 0.3,
+          Math.sin(i * 0.1) * 0.2,
+          Math.sin(angle) * 5.5 - Math.random() * 0.3
+        );
+      }
+      trailGeom.setAttribute('position', new THREE.Float32BufferAttribute(trailPositions, 3));
+      const trail = new THREE.Points(trailGeom, new THREE.PointsMaterial({ 
+        color: 0xffff88, 
+        size: 0.08,
+        transparent: true,
+        opacity: 0.7
+      }));
+      kittyPivot.add(trail);
+      
+      // Ajouter à la scène Three.js existante
+      const renderer = container.querySelector('canvas').__three_renderer;
+      if (renderer && renderer.info) {
+        // Accès direct impossible, on utilise une autre méthode
+      }
+      
+      // Stocker pour l'animation
+      window.kittyData = { pivot: kittyPivot, kitty: kitty, tail: tail, trail: trail };
+      
+      return kittyPivot;
+    })();
+  }
+})();
+  </script>
 <script>
    (function() {
   const scene = new THREE.Scene();
@@ -59,6 +326,32 @@
   });
   const atmosphere = new THREE.Mesh(atmosGeom, atmosMat);
   scene.add(atmosphere);
+
+  // Lune orbitante
+  const moonPivot = new THREE.Object3D();
+  scene.add(moonPivot);
+  
+  const moonGeom = new THREE.SphereGeometry(0.4, 32, 32);
+  const moonMat = new THREE.MeshPhongMaterial({
+    color: 0xcccccc,
+    emissive: 0x222222,
+    specular: 0x444444,
+    shininess: 10
+  });
+  const moon = new THREE.Mesh(moonGeom, moonMat);
+  moon.position.x = 4;
+  moonPivot.add(moon);
+  
+  // Lueur de la lune
+  const moonGlowGeom = new THREE.SphereGeometry(0.5, 32, 32);
+  const moonGlowMat = new THREE.MeshBasicMaterial({
+    color: 0xffffee,
+    transparent: true,
+    opacity: 0.15
+  });
+  const moonGlow = new THREE.Mesh(moonGlowGeom, moonGlowMat);
+  moonGlow.position.x = 4;
+  moonPivot.add(moonGlow);
 
   // Anneau
   const ringGeom = new THREE.RingGeometry(2.8, 4, 64);
@@ -98,6 +391,12 @@
     ring.rotation.z += 0.001;
     atmosphere.rotation.y += 0.002;
     stars.rotation.y += 0.0002;
+    
+    // Orbite de la lune
+    moonPivot.rotation.y += 0.008;
+    moonPivot.rotation.x = Math.sin(Date.now() * 0.0005) * 0.2;
+    moon.rotation.y += 0.01;
+    
     renderer.render(scene, camera);
   }
   animate();
