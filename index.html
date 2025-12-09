@@ -217,13 +217,207 @@
             0% { transform: scaleY(0.5); }
             100% { transform: scaleY(1.5); }
         }
+   .moon-orbit-2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 280px;
+            height: 280px;
+            animation: orbit-reverse 12s linear infinite;
+        }
+        .moon-2 {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ecf0f1 0%, #95a5a6 50%, #7f8c8d 100%);
+            box-shadow: 
+                inset -3px -3px 6px rgba(0,0,0,0.5),
+                0 0 10px rgba(236, 240, 241, 0.4);
+        }
+        .moon-2::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 4px;
+            height: 4px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+        }
+        @keyframes orbit-reverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+   .cat-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            animation: orbit 15s linear infinite;
+        }
+        .kitty {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(90deg);
+            width: 40px;
+            height: 30px;
+        }
+        .cat-body {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 16px;
+            background: linear-gradient(135deg, #f4a460 0%, #daa520 100%);
+            border-radius: 50% 50% 45% 45%;
+            box-shadow: 0 0 10px rgba(244, 164, 96, 0.5);
+        }
+        .cat-head {
+            position: absolute;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 16px;
+            background: linear-gradient(135deg, #f4a460 0%, #daa520 100%);
+            border-radius: 50% 50% 45% 45%;
+        }
+        .cat-ear {
+            position: absolute;
+            top: -6px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-bottom: 8px solid #f4a460;
+        }
+        .cat-ear.left { left: 0; transform: rotate(-15deg); }
+        .cat-ear.right { right: 0; transform: rotate(15deg); }
+        .cat-ear::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: -2px;
+            width: 0;
+            height: 0;
+            border-left: 2px solid transparent;
+            border-right: 2px solid transparent;
+            border-bottom: 4px solid #ffb6c1;
+        }
+        .cat-face {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+        }
+        .cat-eye {
+            position: absolute;
+            top: 0;
+            width: 4px;
+            height: 5px;
+            background: #2c2c2c;
+            border-radius: 50%;
+            animation: blink 3s ease-in-out infinite;
+        }
+        .cat-eye.left { left: 3px; }
+        .cat-eye.right { right: 3px; }
+        .cat-eye::after {
+            content: '';
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            width: 1.5px;
+            height: 1.5px;
+            background: white;
+            border-radius: 50%;
+        }
+        .cat-nose {
+            position: absolute;
+            top: 6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 2px;
+            background: #ffb6c1;
+            border-radius: 50%;
+        }
+        .cat-whiskers {
+            position: absolute;
+            top: 7px;
+            width: 8px;
+            height: 1px;
+            background: rgba(0,0,0,0.3);
+        }
+        .cat-whiskers.left { left: -6px; transform: rotate(-10deg); }
+        .cat-whiskers.right { right: -6px; transform: rotate(10deg); }
+        .cat-whiskers::before, .cat-whiskers::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: rgba(0,0,0,0.3);
+        }
+        .cat-whiskers::before { top: -3px; }
+        .cat-whiskers::after { top: 3px; }
+        .cat-tail {
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-30deg);
+            width: 4px;
+            height: 18px;
+            background: linear-gradient(to top, #f4a460, #daa520);
+            border-radius: 3px;
+            transform-origin: top center;
+            animation: tail-wag 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+        @keyframes tail-wag {
+            0% { transform: translateX(-50%) rotate(-40deg); }
+            100% { transform: translateX(-50%) rotate(-20deg); }
+        }
+   #sun-container canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+        .solar-system {
+            z-index: 1;
+        }
+        /* Light effect on planet from sun */
+        .planet {
+            box-shadow: 
+                inset -30px -20px 40px rgba(0,0,0,0.6),
+                inset 10px 10px 20px rgba(255,200,100,0.3),
+                0 0 60px rgba(230, 126, 34, 0.4),
+                -40px -20px 60px rgba(255, 170, 50, 0.3);
+        }
   </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
 </head>
 <body>
 <h1>
    🪐 Hello World
   </h1>
 <div class="stars" id="stars">
+</div>
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
 </div>
 <div class="solar-system">
 <div class="rings">
@@ -232,6 +426,36 @@
 </div>
 <div class="moon-orbit">
 <div class="moon">
+</div>
+</div>
+<div class="moon-orbit-2">
+<div class="moon-2">
+</div>
+</div>
+<div class="cat-orbit">
+<div class="kitty">
+<div class="cat-body">
+</div>
+<div class="cat-head">
+<div class="cat-ear left">
+</div>
+<div class="cat-ear right">
+</div>
+<div class="cat-face">
+<div class="cat-eye left">
+</div>
+<div class="cat-eye right">
+</div>
+<div class="cat-nose">
+</div>
+<div class="cat-whiskers left">
+</div>
+<div class="cat-whiskers right">
+</div>
+</div>
+</div>
+<div class="cat-tail">
+</div>
 </div>
 </div>
 </div>
@@ -289,6 +513,173 @@ function toggleMusic() {
 }
 
 visualizer.classList.add('paused');
+
+// Auto-play music on page load with a slight delay
+window.addEventListener('load', function() {
+    setTimeout(function() {
+        music.play().then(() => {
+            isPlaying = true;
+            btn.textContent = '⏸';
+            visualizer.classList.remove('paused');
+        }).catch(err => {
+            console.log('Autoplay blocked by browser, click play to start music');
+        });
+    }, 500);
+});
+  </script>
+<script>
+   (function() {
+    const container = document.getElementById('sun-container');
+    
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setClearColor(0x000000, 0);
+    container.appendChild(renderer.domElement);
+    
+    // Sun geometry
+    const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
+    
+    // Sun material with custom shader for glow effect
+    const sunMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 },
+            color1: { value: new THREE.Color(0xffdd00) },
+            color2: { value: new THREE.Color(0xff6600) }
+        },
+        vertexShader: `
+            varying vec3 vNormal;
+            varying vec2 vUv;
+            void main() {
+                vNormal = normalize(normalMatrix * normal);
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float time;
+            uniform vec3 color1;
+            uniform vec3 color2;
+            varying vec3 vNormal;
+            varying vec2 vUv;
+            
+            float noise(vec2 p) {
+                return fract(sin(dot(p, vec2(12.9898, 78.233))) * 43758.5453);
+            }
+            
+            void main() {
+                float intensity = pow(0.7 - dot(vNormal, vec3(0, 0, 1.0)), 2.0);
+                float pulse = sin(time * 2.0) * 0.1 + 0.9;
+                vec3 color = mix(color1, color2, vUv.y + sin(time + vUv.x * 10.0) * 0.1);
+                float n = noise(vUv * 50.0 + time * 0.5) * 0.1;
+                gl_FragColor = vec4(color + n, 1.0) * pulse;
+            }
+        `
+    });
+    
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    sun.position.set(-6, 3, -5);
+    scene.add(sun);
+    
+    // Sun glow (outer corona)
+    const glowGeometry = new THREE.SphereGeometry(2.5, 32, 32);
+    const glowMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 }
+        },
+        vertexShader: `
+            varying vec3 vNormal;
+            void main() {
+                vNormal = normalize(normalMatrix * normal);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float time;
+            varying vec3 vNormal;
+            void main() {
+                float intensity = pow(0.65 - dot(vNormal, vec3(0, 0, 1.0)), 3.0);
+                float pulse = sin(time * 1.5) * 0.2 + 0.8;
+                vec3 color = vec3(1.0, 0.6, 0.1);
+                gl_FragColor = vec4(color, intensity * pulse * 0.6);
+            }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide
+    });
+    
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    glow.position.copy(sun.position);
+    scene.add(glow);
+    
+    // Light rays
+    const rayGeometry = new THREE.SphereGeometry(4, 32, 32);
+    const rayMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float time;
+            varying vec2 vUv;
+            void main() {
+                float angle = atan(vUv.y - 0.5, vUv.x - 0.5);
+                float rays = sin(angle * 12.0 + time * 2.0) * 0.5 + 0.5;
+                float dist = length(vUv - 0.5);
+                float alpha = rays * (1.0 - dist * 2.0) * 0.3;
+                gl_FragColor = vec4(1.0, 0.8, 0.3, alpha * (sin(time) * 0.2 + 0.8));
+            }
+        `,
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+        side: THREE.DoubleSide
+    });
+    
+    const rays = new THREE.Mesh(rayGeometry, rayMaterial);
+    rays.position.copy(sun.position);
+    scene.add(rays);
+    
+    // Point light for scene illumination
+    const sunLight = new THREE.PointLight(0xffaa33, 2, 100);
+    sunLight.position.copy(sun.position);
+    scene.add(sunLight);
+    
+    camera.position.z = 10;
+    
+    // Animation
+    let time = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.016;
+        
+        sunMaterial.uniforms.time.value = time;
+        glowMaterial.uniforms.time.value = time;
+        rayMaterial.uniforms.time.value = time;
+        
+        sun.rotation.y += 0.002;
+        rays.rotation.z += 0.005;
+        
+        renderer.render(scene, camera);
+    }
+    
+    animate();
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
   </script>
 </body>
 </html>
