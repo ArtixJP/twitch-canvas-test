@@ -137,6 +137,36 @@
                 inset -4px -4px 8px rgba(0,0,0,0.5),
                 0 0 15px rgba(232, 212, 168, 0.4);
         }
+        .kitty-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 320px;
+            height: 320px;
+            animation: kitty-float 8s linear infinite;
+        }
+        .kitty {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
+            animation: kitty-spin 8s linear infinite, kitty-bounce 0.5s ease-in-out infinite;
+        }
+        @keyframes kitty-float {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes kitty-spin {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+        }
+        @keyframes kitty-bounce {
+            0%, 100% { margin-top: 0; }
+            50% { margin-top: -5px; }
+        }
         .stars {
             position: fixed;
             top: 0;
@@ -215,6 +245,11 @@
 <div class="moon-orbit-2">
 <div class="moon-2">
 </div>
+</div>
+<div class="kitty-orbit">
+<div class="kitty">
+     🐱
+    </div>
 </div>
 </div>
 <script>
