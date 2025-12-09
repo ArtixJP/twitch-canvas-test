@@ -727,5 +727,43 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
   </script>
+<script>
+   // Auto-rotation des sections toutes les 30 secondes
+(function() {
+  const sections = ['space', 'animals', 'games'];
+  let currentIndex = 0;
+  
+  function switchToNextSection() {
+    currentIndex = (currentIndex + 1) % sections.length;
+    const targetSection = sections[currentIndex];
+    
+    // Mise à jour des boutons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.section === targetSection) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // Mise à jour des sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById('section-' + targetSection).classList.add('active');
+    
+    console.log('🔄 Auto-switch vers:', targetSection);
+  }
+  
+  // Démarrer la rotation automatique
+  setInterval(switchToNextSection, 30000);
+  
+  // Synchroniser avec les clics manuels
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentIndex = sections.indexOf(btn.dataset.section);
+    });
+  });
+  
+  console.log('✅ Auto-rotation activée (30s)');
+})();
+  </script>
 </body>
 </html>
