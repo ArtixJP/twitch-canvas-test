@@ -1,131 +1,198 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>
-   Twitch Versus Code
-  </title>
+<title>Twitch Versus Code - 3D Globe</title>
 <style>
-   body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-        }
-        h1 { font-size: 3rem; text-align: center; }
-  </style>
-</head>
-<body style="font-family: system-ui, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; gap: 30px;">
-<h1>
-   Hello World
-  </h1>
-<button data-color="0" onclick="cycleColor(this)" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4); transition: all 0.3s ease; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
-   🔴 Clique-moi!
-  </button>
-<button data-color="1" onclick="cycleColor(this)" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4); transition: all 0.3s ease; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
-   🟣 Moi aussi!
-  </button>
-<button data-color="2" onclick="cycleColor(this)" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); color: white; border: none; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer; box-shadow: 0 4px 15px rgba(236, 72, 153, 0.4); transition: all 0.3s ease; text-transform: uppercase; font-weight: bold; letter-spacing: 2px;">
-   🩷 Et moi!
-  </button>
-<script>
-   const colors = [
-  { bg: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)', shadow: 'rgba(231, 76, 60, 0.4)', emoji: '🔴' },
-  { bg: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%)', shadow: 'rgba(155, 89, 182, 0.4)', emoji: '🟣' },
-  { bg: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)', shadow: 'rgba(236, 72, 153, 0.4)', emoji: '🩷' }
-];
-const labels = ['Clique-moi!', 'Moi aussi!', 'Et moi!'];
-let chestOpened = false;
-
-function cycleColor(btn) {
-  let current = parseInt(btn.dataset.color);
-  let next = (current + 1) % 3;
-  btn.dataset.color = next;
-  btn.style.background = colors[next].bg;
-  btn.style.boxShadow = '0 4px 15px ' + colors[next].shadow;
-  const btnIndex = Array.from(document.querySelectorAll('button')).indexOf(btn);
-  btn.innerHTML = colors[next].emoji + ' ' + labels[btnIndex];
-  checkMagicCombo();
-}
-
-function checkMagicCombo() {
-  const buttons = document.querySelectorAll('button');
-  const allPurple = Array.from(buttons).every(btn => parseInt(btn.dataset.color) === 1);
-  const chestContainer = document.getElementById('chest-container');
-  
-  if (allPurple && !chestOpened) {
-    chestContainer.style.display = 'block';
-    document.getElementById('chest').innerHTML = '🎁';
-    document.getElementById('treasure').style.display = 'none';
-    // Effet magique sur le titre
-    document.querySelector('h1').innerHTML = '✨ COMBINAISON MAGIQUE! ✨';
-    document.querySelector('h1').style.color = '#9b59b6';
-  } else if (!allPurple) {
-    chestContainer.style.display = 'none';
-    document.querySelector('h1').innerHTML = 'Hello World';
-    document.querySelector('h1').style.color = 'white';
-  }
-}
-
-function openChest() {
-  if (chestOpened) return;
-  chestOpened = true;
-  
-  const chest = document.getElementById('chest');
-  const treasure = document.getElementById('treasure');
-  
-  chest.innerHTML = '📦';
-  chest.style.animation = 'none';
-  
-  setTimeout(() => {
-    treasure.style.display = 'block';
-    treasure.innerHTML = '💎👑💰🏆⭐';
-    treasure.classList.add('treasure-revealed');
-    document.querySelector('h1').innerHTML = '🎉 TRÉSOR DÉCOUVERT! 🎉';
-    
-    // Confettis emoji
-    for(let i = 0; i < 20; i++) {
-      setTimeout(() => createConfetti(), i * 100);
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+        font-family: system-ui, sans-serif; 
+        min-height: 100vh; 
+        background: #000;
+        color: white;
+        overflow: hidden;
     }
-  }, 500);
-}
-
-function createConfetti() {
-  const emojis = ['💎', '⭐', '✨', '💫', '🌟', '💰', '👑'];
-  const confetti = document.createElement('div');
-  confetti.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
-  confetti.style.cssText = `
-    position: fixed;
-    top: -50px;
-    left: ${Math.random() * 100}vw;
-    font-size: 2rem;
-    pointer-events: none;
-    animation: fall 3s linear forwards;
-  `;
-  document.body.appendChild(confetti);
-  setTimeout(() => confetti.remove(), 3000);
-}
-
-// Ajouter l'animation de chute
-const style = document.createElement('style');
-style.textContent = '@keyframes fall { to { transform: translateY(110vh) rotate(720deg); } }';
-document.head.appendChild(style);
-  </script>
-<div id="chest-container" style="display: none; margin-top: 30px; text-align: center;">
-<div id="chest" onclick="openChest()" style="font-size: 5rem; cursor: pointer; animation: float 2s ease-in-out infinite; transition: transform 0.3s;">
-    🎁
-   </div>
-<div id="treasure" style="display: none; font-size: 3rem; animation: sparkle 0.5s ease-out;">
+    #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        pointer-events: none;
+        z-index: 2;
+    }
+    h1 { 
+        font-size: 3rem; 
+        text-align: center; 
+        text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+        margin-bottom: 1rem;
+    }
+    .subtitle {
+        font-size: 1.2rem;
+        opacity: 0.7;
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    .credits {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        font-size: 0.9rem;
+        opacity: 0.5;
+        z-index: 3;
+    }
+</style>
+</head>
+<body>
+<div id="canvas-container" data-llm-id="e2"></div>
+<div class="overlay">
+    <h1 data-llm-id="e1">🌍 World Explorer</h1>
+    <p class="subtitle" data-llm-id="e3">requested by @artix187</p>
 </div>
-</div>
-<style>
-   @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } } @keyframes sparkle { 0% { transform: scale(0) rotate(-180deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } } @keyframes rainbow { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(360deg); } } #chest:hover { transform: scale(1.2) !important; } .treasure-revealed { animation: rainbow 2s linear infinite !important; }
-  </style>
+<p class="credits" data-llm-id="e4">Drag to rotate • Scroll to zoom</p>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function() {
+    const container = document.getElementById('canvas-container');
+    
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+    
+    // Stars background
+    const starsGeometry = new THREE.BufferGeometry();
+    const starPositions = [];
+    for(let i = 0; i < 2000; i++) {
+        starPositions.push((Math.random() - 0.5) * 2000);
+        starPositions.push((Math.random() - 0.5) * 2000);
+        starPositions.push((Math.random() - 0.5) * 2000);
+    }
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+    const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+    
+    // Earth sphere
+    const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
+    
+    // Create gradient material for earth
+    const earthMaterial = new THREE.MeshPhongMaterial({
+        color: 0x1a5fb4,
+        emissive: 0x072534,
+        specular: 0x555555,
+        shininess: 25
+    });
+    
+    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+    scene.add(earth);
+    
+    // Wireframe overlay for "digital" look
+    const wireframeGeometry = new THREE.SphereGeometry(5.05, 32, 32);
+    const wireframeMaterial = new THREE.MeshBasicMaterial({ 
+        color: 0x00ffff, 
+        wireframe: true,
+        transparent: true,
+        opacity: 0.15
+    });
+    const wireframe = new THREE.Mesh(wireframeGeometry, wireframeMaterial);
+    earth.add(wireframe);
+    
+    // Atmosphere glow
+    const atmosphereGeometry = new THREE.SphereGeometry(5.5, 64, 64);
+    const atmosphereMaterial = new THREE.MeshBasicMaterial({
+        color: 0x00aaff,
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.BackSide
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    scene.add(atmosphere);
+    
+    // Lights
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    scene.add(ambientLight);
+    
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1);
+    sunLight.position.set(10, 5, 10);
+    scene.add(sunLight);
+    
+    const blueLight = new THREE.PointLight(0x00aaff, 0.5, 50);
+    blueLight.position.set(-10, 0, -10);
+    scene.add(blueLight);
+    
+    camera.position.z = 15;
+    
+    // Mouse interaction
+    let isDragging = false;
+    let previousMousePosition = { x: 0, y: 0 };
+    let autoRotate = true;
+    let rotationSpeed = { x: 0, y: 0.005 };
+    
+    container.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        autoRotate = false;
+    });
+    
+    container.addEventListener('mousemove', (e) => {
+        if(isDragging) {
+            const deltaX = e.clientX - previousMousePosition.x;
+            const deltaY = e.clientY - previousMousePosition.y;
+            
+            earth.rotation.y += deltaX * 0.01;
+            earth.rotation.x += deltaY * 0.01;
+        }
+        previousMousePosition = { x: e.clientX, y: e.clientY };
+    });
+    
+    container.addEventListener('mouseup', () => {
+        isDragging = false;
+        setTimeout(() => { autoRotate = true; }, 2000);
+    });
+    
+    container.addEventListener('wheel', (e) => {
+        camera.position.z += e.deltaY * 0.01;
+        camera.position.z = Math.max(8, Math.min(30, camera.position.z));
+    });
+    
+    // Animation loop
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        if(autoRotate) {
+            earth.rotation.y += rotationSpeed.y;
+        }
+        
+        stars.rotation.y += 0.0001;
+        
+        renderer.render(scene, camera);
+    }
+    
+    // Handle resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    animate();
+})();
+</script>
 </body>
 </html>
