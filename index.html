@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code - 3D Globe</title>
+<title>
+   Twitch Versus Code - 3D Globe
+  </title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+   * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
         font-family: system-ui, sans-serif; 
         min-height: 100vh; 
@@ -53,19 +56,26 @@
         opacity: 0.5;
         z-index: 3;
     }
-</style>
+  </style>
 </head>
 <body>
-<div id="canvas-container" data-llm-id="e2"></div>
-<div class="overlay">
-    <h1 data-llm-id="e1">🌍 World Explorer</h1>
-    <p class="subtitle" data-llm-id="e3">requested by @artix187</p>
+<div id="canvas-container">
 </div>
-<p class="credits" data-llm-id="e4">Drag to rotate • Scroll to zoom</p>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div class="overlay">
+<h1>
+    🌍 World Explorer 🚶‍♂️
+   </h1>
+<p class="subtitle">
+    requested by @artix187
+   </p>
+</div>
+<p class="credits">
+   Drag to rotate • Scroll to zoom
+  </p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
 <script>
-(function() {
+   (function() {
     const container = document.getElementById('canvas-container');
     
     // Scene setup
@@ -91,8 +101,6 @@
     
     // Earth sphere
     const earthGeometry = new THREE.SphereGeometry(5, 64, 64);
-    
-    // Create gradient material for earth
     const earthMaterial = new THREE.MeshPhongMaterial({
         color: 0x1a5fb4,
         emissive: 0x072534,
@@ -103,7 +111,7 @@
     const earth = new THREE.Mesh(earthGeometry, earthMaterial);
     scene.add(earth);
     
-    // Wireframe overlay for "digital" look
+    // Wireframe overlay
     const wireframeGeometry = new THREE.SphereGeometry(5.05, 32, 32);
     const wireframeMaterial = new THREE.MeshBasicMaterial({ 
         color: 0x00ffff, 
@@ -125,8 +133,73 @@
     const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
     scene.add(atmosphere);
     
+    // === CUTE STICKMAN ===
+    const stickman = new THREE.Group();
+    
+    // Head (happy face!)
+    const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+    const headMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+    const head = new THREE.Mesh(headGeometry, headMaterial);
+    head.position.y = 0.7;
+    stickman.add(head);
+    
+    // Eyes
+    const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+    const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+    const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    leftEye.position.set(-0.08, 0.75, 0.2);
+    stickman.add(leftEye);
+    const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+    rightEye.position.set(0.08, 0.75, 0.2);
+    stickman.add(rightEye);
+    
+    // Smile (curved line)
+    const smileCurve = new THREE.EllipseCurve(0, 0.65, 0.12, 0.08, Math.PI * 0.1, Math.PI * 0.9, false, 0);
+    const smilePoints = smileCurve.getPoints(20);
+    const smileGeometry = new THREE.BufferGeometry().setFromPoints(smilePoints.map(p => new THREE.Vector3(p.x, p.y, 0.22)));
+    const smileMaterial = new THREE.LineBasicMaterial({ color: 0x000000, linewidth: 2 });
+    const smile = new THREE.Line(smileGeometry, smileMaterial);
+    stickman.add(smile);
+    
+    // Body
+    const bodyMaterial = new THREE.MeshBasicMaterial({ color: 0xff6b6b });
+    const bodyGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.5, 8);
+    const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+    body.position.y = 0.35;
+    stickman.add(body);
+    
+    // Arms
+    const armMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+    const armGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.35, 8);
+    
+    const leftArm = new THREE.Mesh(armGeometry, armMaterial);
+    leftArm.position.set(-0.2, 0.45, 0);
+    leftArm.rotation.z = Math.PI / 4;
+    stickman.add(leftArm);
+    
+    const rightArm = new THREE.Mesh(armGeometry, armMaterial);
+    rightArm.position.set(0.2, 0.45, 0);
+    rightArm.rotation.z = -Math.PI / 4;
+    stickman.add(rightArm);
+    
+    // Legs
+    const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8);
+    const leftLeg = new THREE.Mesh(legGeometry, armMaterial);
+    leftLeg.position.set(-0.1, -0.05, 0);
+    stickman.add(leftLeg);
+    
+    const rightLeg = new THREE.Mesh(legGeometry, armMaterial);
+    rightLeg.position.set(0.1, -0.05, 0);
+    stickman.add(rightLeg);
+    
+    // Position stickman on globe surface
+    const stickmanPivot = new THREE.Group();
+    stickmanPivot.add(stickman);
+    stickman.position.y = 5.3; // On top of globe
+    earth.add(stickmanPivot);
+    
     // Lights
-    const ambientLight = new THREE.AmbientLight(0x333333);
+    const ambientLight = new THREE.AmbientLight(0x666666);
     scene.add(ambientLight);
     
     const sunLight = new THREE.DirectionalLight(0xffffff, 1);
@@ -154,7 +227,6 @@
         if(isDragging) {
             const deltaX = e.clientX - previousMousePosition.x;
             const deltaY = e.clientY - previousMousePosition.y;
-            
             earth.rotation.y += deltaX * 0.01;
             earth.rotation.x += deltaY * 0.01;
         }
@@ -172,8 +244,29 @@
     });
     
     // Animation loop
+    let walkTime = 0;
     function animate() {
         requestAnimationFrame(animate);
+        
+        walkTime += 0.05;
+        
+        // Stickman walks around the globe
+        stickmanPivot.rotation.z += 0.008;
+        stickmanPivot.rotation.x = Math.sin(walkTime * 0.3) * 0.2;
+        
+        // Walking animation - legs swing
+        leftLeg.rotation.x = Math.sin(walkTime * 3) * 0.5;
+        rightLeg.rotation.x = Math.sin(walkTime * 3 + Math.PI) * 0.5;
+        
+        // Arms swing opposite to legs
+        leftArm.rotation.x = Math.sin(walkTime * 3 + Math.PI) * 0.4;
+        rightArm.rotation.x = Math.sin(walkTime * 3) * 0.4;
+        
+        // Little bounce while walking
+        stickman.position.y = 5.3 + Math.abs(Math.sin(walkTime * 3)) * 0.1;
+        
+        // Happy head bobbing
+        head.rotation.z = Math.sin(walkTime * 2) * 0.1;
         
         if(autoRotate) {
             earth.rotation.y += rotationSpeed.y;
@@ -184,7 +277,6 @@
         renderer.render(scene, camera);
     }
     
-    // Handle resize
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
@@ -193,6 +285,6 @@
     
     animate();
 })();
-</script>
+  </script>
 </body>
 </html>
