@@ -26,11 +26,21 @@
 <style>
    @keyframes orbit-reverse{from{transform:translate(-50%,-50%) rotate(360deg)}to{transform:translate(-50%,-50%) rotate(0deg)}}.moon-orbit-2{z-index:10;}
   </style>
+<style>
+   .kitty-orbit{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:350px;height:350px;animation:orbit 12s linear infinite;z-index:20;}.kitty{position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:30px;animation:kitty-bounce 0.5s ease-in-out infinite alternate;filter:drop-shadow(0 0 10px rgba(255,182,193,0.8));cursor:pointer;transition:transform 0.2s;}.kitty:hover{transform:translateX(-50%) scale(1.3);}.kitty::after{content:'💕';position:absolute;top:-15px;right:-10px;font-size:12px;animation:hearts 1s ease-in-out infinite;}@keyframes kitty-bounce{0%{transform:translateX(-50%) translateY(0) rotate(-10deg);}100%{transform:translateX(-50%) translateY(-8px) rotate(10deg);}}@keyframes hearts{0%,100%{opacity:0;transform:translateY(0) scale(0.5);}50%{opacity:1;transform:translateY(-10px) scale(1);}}
+  </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<style>
+   .doggy-orbit{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:380px;height:380px;z-index:19;pointer-events:none;}.doggy{position:absolute;font-size:28px;filter:drop-shadow(0 0 10px rgba(139,69,19,0.8));transition:transform 0.1s;}.doggy::after{content:'💨';position:absolute;top:5px;right:-20px;font-size:14px;opacity:0.7;animation:puff 0.3s ease-in-out infinite alternate;}@keyframes puff{0%{transform:translateX(0) scale(1);opacity:0.7;}100%{transform:translateX(5px) scale(0.8);opacity:0.3;}}.kitty.escaping{animation:kitty-escape 0.15s ease-in-out infinite alternate !important;}.kitty.escaping::after{content:'😱💨💨';font-size:10px;}@keyframes kitty-escape{0%{transform:translateX(-50%) translateY(0) rotate(-20deg) scale(1.1);}100%{transform:translateX(-50%) translateY(-12px) rotate(20deg) scale(1.1);}}
+  </style>
 </head>
 <body>
 <h1>
    🌌 Space Explorer
   </h1>
+<div id="sun-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;">
+</div>
 <div class="solar-system">
 <div class="planet">
 <div class="ring">
@@ -48,6 +58,16 @@
 <div class="moon-2" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#ecf0f1 0%,#bdc3c7 50%,#95a5a6 100%);box-shadow:inset -4px -4px 8px rgba(0,0,0,0.4),0 0 10px rgba(255,255,255,0.4);">
 </div>
 </div>
+<div class="kitty-orbit">
+<div class="kitty" title="Meow! 🐱">
+     🐱
+    </div>
+</div>
+<div class="doggy-orbit">
+<div class="doggy" title="Woof! 🐕">
+     🐕
+    </div>
+</div>
 </div>
 <div class="audio-controls" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:15px 25px;border-radius:50px;box-shadow:0 0 30px rgba(231,76,60,0.3);">
 <button id="playPauseBtn" onclick="toggleAudio()" style="width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(231,76,60,0.5);transition:all 0.3s ease;">
@@ -64,6 +84,135 @@
 </div>
 <script>
    const audio=document.getElementById('bgMusic');const playIcon=document.getElementById('playIcon');const playBtn=document.getElementById('playPauseBtn');let isPlaying=false;function toggleAudio(){if(isPlaying){audio.pause();playIcon.textContent='▶️';playBtn.style.background='linear-gradient(135deg,#27ae60,#2ecc71)';}else{audio.play();playIcon.textContent='⏸️';playBtn.style.background='linear-gradient(135deg,#e74c3c,#c0392b)';}isPlaying=!isPlaying;}window.addEventListener('load',function(){audio.volume=0.5;const playPromise=audio.play();if(playPromise!==undefined){playPromise.then(()=>{isPlaying=true;playIcon.textContent='⏸️';}).catch(()=>{document.addEventListener('click',function initAudio(){audio.play();isPlaying=true;playIcon.textContent='⏸️';},{once:true});});}});playBtn.addEventListener('mouseenter',()=>playBtn.style.transform='scale(1.1)');playBtn.addEventListener('mouseleave',()=>playBtn.style.transform='scale(1)');
+  </script>
+<script>
+   (function(){
+  const container = document.getElementById('sun-container');
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({alpha:true, antialias:true});
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+  
+  // Sun geometry
+  const sunGeo = new THREE.SphereGeometry(2, 64, 64);
+  const sunMat = new THREE.MeshBasicMaterial({
+    color: 0xffdd00,
+    transparent: true,
+    opacity: 0.9
+  });
+  const sun = new THREE.Mesh(sunGeo, sunMat);
+  sun.position.set(-8, 5, -10);
+  scene.add(sun);
+  
+  // Sun glow
+  const glowGeo = new THREE.SphereGeometry(2.5, 32, 32);
+  const glowMat = new THREE.ShaderMaterial({
+    uniforms: {
+      time: {value: 0},
+      color1: {value: new THREE.Color(0xffff00)},
+      color2: {value: new THREE.Color(0xff6600)}
+    },
+    vertexShader: `
+      varying vec3 vNormal;
+      void main(){
+        vNormal = normalize(normalMatrix * normal);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform float time;
+      uniform vec3 color1;
+      uniform vec3 color2;
+      varying vec3 vNormal;
+      void main(){
+        float intensity = pow(0.7 - dot(vNormal, vec3(0,0,1.0)), 2.0);
+        vec3 color = mix(color1, color2, sin(time) * 0.5 + 0.5);
+        gl_FragColor = vec4(color, intensity * 0.8);
+      }
+    `,
+    transparent: true,
+    side: THREE.BackSide,
+    blending: THREE.AdditiveBlending
+  });
+  const glow = new THREE.Mesh(glowGeo, glowMat);
+  glow.position.copy(sun.position);
+  scene.add(glow);
+  
+  // Corona rays
+  const rayCount = 12;
+  const rays = [];
+  for(let i=0; i<rayCount; i++){
+    const rayGeo = new THREE.ConeGeometry(0.3, 3, 8);
+    const rayMat = new THREE.MeshBasicMaterial({color: 0xffaa00, transparent: true, opacity: 0.4});
+    const ray = new THREE.Mesh(rayGeo, rayMat);
+    ray.position.copy(sun.position);
+    ray.rotation.z = (i/rayCount) * Math.PI * 2;
+    rays.push(ray);
+    scene.add(ray);
+  }
+  
+  // Point light for shadows
+  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+  sunLight.position.copy(sun.position);
+  sunLight.castShadow = true;
+  scene.add(sunLight);
+  
+  // Ambient light
+  const ambient = new THREE.AmbientLight(0x404040, 0.5);
+  scene.add(ambient);
+  
+  camera.position.z = 5;
+  
+  // Light rays overlay
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;background:radial-gradient(ellipse at 15% 25%, rgba(255,220,100,0.15) 0%, transparent 50%);z-index:0;';
+  document.body.appendChild(overlay);
+  
+  let time = 0;
+  function animate(){
+    requestAnimationFrame(animate);
+    time += 0.02;
+    
+    glowMat.uniforms.time.value = time;
+    
+    sun.rotation.y += 0.005;
+    glow.scale.setScalar(1 + Math.sin(time*2) * 0.1);
+    
+    rays.forEach((ray, i) => {
+      ray.scale.y = 1 + Math.sin(time * 3 + i) * 0.3;
+      ray.material.opacity = 0.3 + Math.sin(time * 2 + i * 0.5) * 0.2;
+    });
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+  </script>
+<style>
+   .solar-system {
+    filter: drop-shadow(-20px -15px 30px rgba(255, 200, 50, 0.3));
+  }
+  .planet {
+    box-shadow: inset -30px -30px 60px rgba(0,0,0,0.5), 
+                0 0 60px rgba(231,76,60,0.4),
+                -40px -30px 50px rgba(255,200,100,0.2);
+  }
+  @keyframes sun-pulse {
+    0%, 100% { opacity: 0.15; }
+    50% { opacity: 0.25; }
+  }
+  </style>
+<script>
+   (function(){const kittyOrbit=document.querySelector('.kitty-orbit');const kitty=document.querySelector('.kitty');const doggyOrbit=document.querySelector('.doggy-orbit');const doggy=document.querySelector('.doggy');let kittyAngle=0;let doggyAngle=Math.PI;let kittySpeed=0.02;let doggySpeed=0.035;const normalKittySpeed=0.02;const escapeKittySpeed=0.12;const orbitRadius=175;const doggyOrbitRadius=190;const escapeDistance=80;function getPosition(angle,radius,centerX,centerY){return{x:centerX+Math.cos(angle)*radius,y:centerY+Math.sin(angle)*radius};}function getDistance(x1,y1,x2,y2){return Math.sqrt((x2-x1)**2+(y2-y1)**2);}function updatePositions(){const centerX=150;const centerY=150;const kittyPos=getPosition(kittyAngle,orbitRadius,centerX,centerY);const doggyPos=getPosition(doggyAngle,doggyOrbitRadius,centerX,centerY);const distance=getDistance(kittyPos.x,kittyPos.y,doggyPos.x,doggyPos.y);if(distance<escapeDistance){kittySpeed=escapeKittySpeed;kitty.classList.add('escaping');doggy.style.transform='scaleX(-1)';}else{kittySpeed+=(normalKittySpeed-kittySpeed)*0.05;if(kittySpeed<normalKittySpeed*1.5){kitty.classList.remove('escaping');}doggy.style.transform='scaleX(1)';}kittyAngle+=kittySpeed;doggyAngle+=doggySpeed;const kittyX=Math.cos(kittyAngle)*orbitRadius;const kittyY=Math.sin(kittyAngle)*orbitRadius;kitty.style.position='absolute';kitty.style.left=`calc(50% + ${kittyX}px)`;kitty.style.top=`calc(50% + ${kittyY}px)`;kitty.style.transform='translate(-50%, -50%)';const doggyX=Math.cos(doggyAngle)*doggyOrbitRadius;const doggyY=Math.sin(doggyAngle)*doggyOrbitRadius;doggy.style.left=`calc(50% + ${doggyX}px)`;doggy.style.top=`calc(50% + ${doggyY}px)`;const angleToCat=Math.atan2(kittyY-doggyY,kittyX-doggyX);const targetAngle=kittyAngle;const angleDiff=targetAngle-doggyAngle;if(Math.abs(angleDiff)>0.1){doggySpeed=0.04;}else{doggySpeed=0.035;}requestAnimationFrame(updatePositions);}kittyOrbit.style.animation='none';updatePositions();})();
   </script>
 </body>
 </html>
