@@ -1,24 +1,224 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-        }
-        h1 { font-size: 3rem; text-align: center; }
-    </style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bienvenue sur le Stream ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
+<style>
+    * { box-sizing: border-box; }
+    
+    body { 
+        font-family: 'Nunito', sans-serif; 
+        display: flex; 
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        margin: 0;
+        padding: 20px;
+        background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a2e 100%);
+        color: white;
+        overflow: hidden;
+    }
+    
+    .container {
+        text-align: center;
+        max-width: 800px;
+        z-index: 10;
+    }
+    
+    .welcome-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #9146ff 0%, #772ce8 100%);
+        padding: 8px 20px;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+        animation: pulse 2s ease-in-out infinite;
+        box-shadow: 0 4px 20px rgba(145, 70, 255, 0.4);
+    }
+    
+    .live-dot {
+        display: inline-block;
+        width: 8px;
+        height: 8px;
+        background: #ff4d4d;
+        border-radius: 50%;
+        margin-right: 8px;
+        animation: blink 1.5s ease-in-out infinite;
+    }
+    
+    h1 {
+        font-size: 3.5rem;
+        font-weight: 800;
+        margin: 0 0 15px 0;
+        background: linear-gradient(135deg, #fff 0%, #e8d5ff 50%, #fff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-shadow: none;
+        animation: float 4s ease-in-out infinite;
+    }
+    
+    .emoji-wave {
+        display: inline-block;
+        animation: wave 1.5s ease-in-out infinite;
+        transform-origin: 70% 70%;
+    }
+    
+    .subtitle {
+        font-size: 1.3rem;
+        color: #c9b8e8;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+    
+    .cozy-box {
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin: 20px 0;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    }
+    
+    .message {
+        font-size: 1.1rem;
+        line-height: 1.8;
+        color: #e8e0f0;
+    }
+    
+    .message .highlight {
+        color: #bf94ff;
+        font-weight: 700;
+    }
+    
+    .hearts {
+        margin-top: 25px;
+        font-size: 1.5rem;
+    }
+    
+    .heart {
+        display: inline-block;
+        margin: 0 5px;
+        animation: heartbeat 1.2s ease-in-out infinite;
+    }
+    
+    .heart:nth-child(2) { animation-delay: 0.2s; }
+    .heart:nth-child(3) { animation-delay: 0.4s; }
+    .heart:nth-child(4) { animation-delay: 0.6s; }
+    .heart:nth-child(5) { animation-delay: 0.8s; }
+    
+    .floating-emojis {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    .float-emoji {
+        position: absolute;
+        font-size: 2rem;
+        opacity: 0.3;
+        animation: floatUp 15s linear infinite;
+    }
+    
+    .cta-button {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #9146ff 0%, #772ce8 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(145, 70, 255, 0.4);
+        cursor: pointer;
+        border: none;
+    }
+    
+    .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(145, 70, 255, 0.6);
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    
+    @keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.3; }
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
+    
+    @keyframes wave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(20deg); }
+        75% { transform: rotate(-10deg); }
+    }
+    
+    @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+    
+    @keyframes floatUp {
+        0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+        10% { opacity: 0.3; }
+        90% { opacity: 0.3; }
+        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+    }
+</style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="floating-emojis">
+<span class="float-emoji" style="left: 5%; animation-delay: 0s;">✨</span>
+<span class="float-emoji" style="left: 15%; animation-delay: 3s;">💜</span>
+<span class="float-emoji" style="left: 25%; animation-delay: 7s;">🌟</span>
+<span class="float-emoji" style="left: 40%; animation-delay: 2s;">☕</span>
+<span class="float-emoji" style="left: 55%; animation-delay: 5s;">🎮</span>
+<span class="float-emoji" style="left: 70%; animation-delay: 1s;">💫</span>
+<span class="float-emoji" style="left: 85%; animation-delay: 4s;">🌙</span>
+<span class="float-emoji" style="left: 95%; animation-delay: 6s;">💜</span>
+</div>
+<div class="container">
+<div class="welcome-badge">
+<span class="live-dot"></span>EN DIRECT
+    </div>
+<h1>Bienvenue chez nous <span class="emoji-wave">👋</span></h1>
+<p class="subtitle">Installe-toi confortablement, tu es au bon endroit ✨</p>
+<div class="cozy-box">
+<p class="message">
+            Hey toi ! <span class="highlight">Merci d'être là</span> 💜<br/><br/>
+            Ici, c'est un espace bienveillant où tout le monde est le bienvenu.<br/>
+            Prends ton thé ☕, ton plaid préféré, et profite du moment.<br/><br/>
+<span class="highlight">Tu fais partie de la famille maintenant.</span><br/>
+            N'hésite pas à participer, poser des questions, ou juste chiller avec nous !
+        </p>
+<div class="hearts">
+<span class="heart">💜</span>
+<span class="heart">💜</span>
+<span class="heart">💜</span>
+<span class="heart">💜</span>
+<span class="heart">💜</span>
+</div>
+</div>
+<button class="cta-button" onclick="this.textContent='Merci d\'être là ! 💜'; this.style.background='linear-gradient(135deg, #ff6b9d 0%, #c44569 100%)';">Dis bonjour dans le chat ! 💬</button>
+</div>
 </body>
 </html>
