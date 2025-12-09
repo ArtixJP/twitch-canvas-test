@@ -335,10 +335,16 @@ window.addEventListener('load', () => {
 <canvas height="400" id="game-canvas" style="border-radius: 20px; box-shadow: 0 0 50px rgba(255,182,193,0.5), 0 0 100px rgba(102,126,234,0.3); background: linear-gradient(180deg, #0a0a20 0%, #1a1a3e 100%);" width="600">
 </canvas>
 <div style="position: absolute; top: 10px; left: 20px; font-size: 18px; color: #fff; text-shadow: 0 0 10px #f0f;">
-    Score:
+    🐱 Score:
     <span id="game-score">
      0
     </span>
+<span style="margin-left: 20px; color: #ff6666;">
+     🐕 Score:
+     <span id="dog-score-display">
+      0
+     </span>
+</span>
 </div>
 <div style="position: absolute; top: 10px; right: 20px; font-size: 18px; color: #fff; text-shadow: 0 0 10px #0ff;">
     ⏱️
@@ -359,8 +365,13 @@ window.addEventListener('load', () => {
     Game Over!
    </h2>
 <p style="font-size: 24px; margin-bottom: 30px;">
-    Score final:
+    🐱 Score:
     <span id="final-score" style="color: #ffdd44; font-weight: bold;">
+     0
+    </span>
+<br/>
+    🐕 Score:
+    <span id="final-dog-score" style="color: #ff6666; font-weight: bold;">
      0
     </span>
 </p>
@@ -374,10 +385,12 @@ window.addEventListener('load', () => {
 <script>
    let gameRunning = false;
 let gameScore = 0;
+let dogScore = 0;
 let gameTime = 30;
 let gameInterval;
 let timerInterval;
-let cat = { x: 300, y: 350, size: 40, speed: 8 };
+let cat = { x: 300, y: 350, size: 40, speed: 8, baseSpeed: 8, escapeSpeed: 18, isEscaping: false };
+let dog = { x: 100, y: 100, size: 45, speed: 4, baseSpeed: 4 };
 let stars = [];
 let particles = [];
 let keys = {};
@@ -387,11 +400,14 @@ function startGame() {
     document.getElementById('start-game-btn').style.display = 'none';
     gameRunning = true;
     gameScore = 0;
+    dogScore = 0;
     gameTime = 30;
-    cat = { x: 300, y: 350, size: 40, speed: 8 };
+    cat = { x: 300, y: 350, size: 40, speed: 8, baseSpeed: 8, escapeSpeed: 18, isEscaping: false };
+    dog = { x: 100, y: 100, size: 45, speed: 4, baseSpeed: 4 };
     stars = [];
     particles = [];
     document.getElementById('game-score').textContent = '0';
+    document.getElementById('dog-score-display').textContent = '0';
     document.getElementById('game-time').textContent = '30';
     
     const canvas = document.getElementById('game-canvas');
@@ -413,8 +429,27 @@ function startGame() {
     // Mouse control
     canvas.onmousemove = (e) => {
         const rect = canvas.getBoundingClientRect();
-        cat.x = e.clientX - rect.left;
-        cat.y = e.clientY - rect.top;
+        const targetX = e.clientX - rect.left;
+        const targetY = e.clientY - rect.top;
+        
+        // Check distance to dog for escape mechanic
+        const distToDog = Math.hypot(cat.x - dog.x, cat.y - dog.y);
+        if(distToDog < 100) {
+            cat.isEscaping = true;
+            cat.speed = cat.escapeSpeed;
+        } else {
+            cat.isEscaping = false;
+            cat.speed = cat.baseSpeed;
+        }
+        
+        // Move cat towards mouse with current speed
+        const dx = targetX - cat.x;
+        const dy = targetY - cat.y;
+        const dist = Math.hypot(dx, dy);
+        if(dist > 5) {
+            cat.x += (dx / dist) * cat.speed;
+            cat.y += (dy / dist) * cat.speed;
+        }
     };
 }
 
@@ -447,6 +482,34 @@ function spawnParticle(x, y, color) {
     }
 }
 
+function updateDog() {
+    // Dog chases cat
+    const dx = cat.x - dog.x;
+    const dy = cat.y - dog.y;
+    const dist = Math.hypot(dx, dy);
+    
+    if(dist > 0) {
+        // Accelerate when cat is escaping
+        dog.speed = cat.isEscaping ? 5.5 : dog.baseSpeed;
+        
+        dog.x += (dx / dist) * dog.speed;
+        dog.y += (dy / dist) * dog.speed;
+    }
+    
+    // Check if dog catches cat
+    if(dist < 35) {
+        dogScore++;
+        document.getElementById('dog-score-display').textContent = dogScore;
+        spawnParticle(cat.x, cat.y, '#ff4444');
+        // Teleport cat away
+        cat.x = Math.random() * 500 + 50;
+        cat.y = Math.random() * 300 + 50;
+        // Reset dog position
+        dog.x = dog.x > 300 ? 50 : 550;
+        dog.y = dog.y > 200 ? 50 : 350;
+    }
+}
+
 function gameLoop(ctx, canvas) {
     if(!gameRunning) return;
     
@@ -463,6 +526,9 @@ function gameLoop(ctx, canvas) {
         ctx.arc(bx, by, 1, 0, Math.PI * 2);
         ctx.fill();
     }
+    
+    // Update dog
+    updateDog();
     
     // Update and draw falling stars
     for(let i = stars.length - 1; i >= 0; i--) {
@@ -507,16 +573,41 @@ function gameLoop(ctx, canvas) {
         if(p.life <= 0) particles.splice(i, 1);
     }
     
-    // Draw cat
+    // Draw dog with glow
+    ctx.shadowBlur = 15;
+    ctx.shadowColor = 'rgba(255,100,100,0.8)';
+    ctx.font = dog.size + 'px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('🐕', dog.x, dog.y);
+    ctx.shadowBlur = 0;
+    
+    // Draw cat with escape effect
+    ctx.shadowBlur = cat.isEscaping ? 40 : 20;
+    ctx.shadowColor = cat.isEscaping ? 'rgba(0,255,255,0.9)' : 'rgba(255,182,193,0.8)';
     ctx.font = cat.size + 'px Arial';
     ctx.textAlign = 'center';
     ctx.fillText('🐱', cat.x, cat.y);
-    
-    // Glow effect around cat
-    ctx.shadowBlur = 20;
-    ctx.shadowColor = 'rgba(255,182,193,0.8)';
-    ctx.fillText('🐱', cat.x, cat.y);
     ctx.shadowBlur = 0;
+    
+    // Speed indicator
+    if(cat.isEscaping) {
+        ctx.font = '12px Arial';
+        ctx.fillStyle = '#00ffff';
+        ctx.fillText('⚡TURBO!⚡', cat.x, cat.y - 30);
+    }
+    
+    // Distance warning
+    const distToDog = Math.hypot(cat.x - dog.x, cat.y - dog.y);
+    if(distToDog < 120 && distToDog > 35) {
+        ctx.strokeStyle = `rgba(255,0,0,${(120 - distToDog) / 120})`;
+        ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(cat.x, cat.y);
+        ctx.lineTo(dog.x, dog.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+    }
 }
 
 function endGame() {
@@ -525,6 +616,7 @@ function endGame() {
     clearInterval(timerInterval);
     document.getElementById('game-container').style.display = 'none';
     document.getElementById('final-score').textContent = gameScore;
+    document.getElementById('final-dog-score').textContent = dogScore;
     document.getElementById('game-over-screen').style.display = 'block';
 }
 
