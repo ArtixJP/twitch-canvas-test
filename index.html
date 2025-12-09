@@ -467,13 +467,210 @@
     50% { filter: brightness(1.5) hue-rotate(180deg); }
     100% { filter: brightness(1) hue-rotate(var(--hue-shift, 0deg)); }
 }
+   /* ELEPHANT STYLES */
+.elephant-container {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 50;
+    pointer-events: none;
+}
+.elephant {
+    position: relative;
+    width: 120px;
+    height: 100px;
+    animation: elephantBounce 2s ease-in-out infinite;
+}
+.elephant-body {
+    position: absolute;
+    width: 80px;
+    height: 60px;
+    background: linear-gradient(135deg, #8899aa 0%, #667788 50%, #556677 100%);
+    border-radius: 50% 50% 45% 45%;
+    top: 30px;
+    left: 20px;
+    box-shadow: inset -10px -5px 20px rgba(0,0,0,0.3);
+}
+.elephant-head {
+    position: absolute;
+    width: 50px;
+    height: 45px;
+    background: linear-gradient(135deg, #99aabb 0%, #778899 100%);
+    border-radius: 50%;
+    top: 15px;
+    left: 0px;
+}
+.elephant-ear {
+    position: absolute;
+    width: 30px;
+    height: 35px;
+    background: linear-gradient(135deg, #8899aa 0%, #667788 100%);
+    border-radius: 50%;
+    top: 5px;
+    left: -15px;
+    animation: earFlap 1s ease-in-out infinite alternate;
+}
+.elephant-ear-inner {
+    position: absolute;
+    width: 20px;
+    height: 25px;
+    background: linear-gradient(135deg, #ffcccc 0%, #ffaaaa 100%);
+    border-radius: 50%;
+    top: 5px;
+    left: 5px;
+}
+.elephant-eye {
+    position: absolute;
+    width: 8px;
+    height: 10px;
+    background: #222;
+    border-radius: 50%;
+    top: 12px;
+    left: 30px;
+}
+.elephant-eye::after {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+}
+.elephant-trunk {
+    position: absolute;
+    width: 15px;
+    height: 50px;
+    background: linear-gradient(90deg, #8899aa 0%, #778899 50%, #8899aa 100%);
+    border-radius: 0 0 50% 50%;
+    top: 25px;
+    left: 15px;
+    transform-origin: top center;
+    animation: trunkSpray 3s ease-in-out infinite;
+}
+.elephant-trunk-tip {
+    position: absolute;
+    width: 20px;
+    height: 12px;
+    background: linear-gradient(135deg, #99aabb 0%, #778899 100%);
+    border-radius: 50%;
+    bottom: -5px;
+    left: -2px;
+}
+.elephant-legs {
+    position: absolute;
+    bottom: 0;
+    left: 25px;
+    display: flex;
+    gap: 15px;
+}
+.elephant-leg {
+    width: 15px;
+    height: 25px;
+    background: linear-gradient(180deg, #667788 0%, #556677 100%);
+    border-radius: 5px 5px 8px 8px;
+}
+.elephant-tail {
+    position: absolute;
+    width: 5px;
+    height: 20px;
+    background: #556677;
+    border-radius: 3px;
+    top: 45px;
+    right: 15px;
+    transform-origin: top;
+    animation: tailSwing 1s ease-in-out infinite alternate;
+}
+.elephant-tail::after {
+    content: '';
+    position: absolute;
+    width: 10px;
+    height: 8px;
+    background: #445566;
+    border-radius: 50%;
+    bottom: -5px;
+    left: -2px;
+}
+/* WATER SPRAY */
+.water-container {
+    position: absolute;
+    top: 20px;
+    left: 5px;
+    width: 60px;
+    height: 80px;
+    pointer-events: none;
+}
+.water-drop {
+    position: absolute;
+    width: 8px;
+    height: 12px;
+    background: linear-gradient(180deg, rgba(100,200,255,0.9) 0%, rgba(50,150,255,0.7) 100%);
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation: waterSpray 1.5s ease-out infinite;
+    opacity: 0;
+}
+.water-drop:nth-child(1) { left: 10px; animation-delay: 0s; }
+.water-drop:nth-child(2) { left: 20px; animation-delay: 0.1s; }
+.water-drop:nth-child(3) { left: 30px; animation-delay: 0.2s; }
+.water-drop:nth-child(4) { left: 15px; animation-delay: 0.3s; }
+.water-drop:nth-child(5) { left: 25px; animation-delay: 0.4s; }
+.water-drop:nth-child(6) { left: 35px; animation-delay: 0.5s; }
+.water-drop:nth-child(7) { left: 12px; animation-delay: 0.6s; }
+.water-drop:nth-child(8) { left: 28px; animation-delay: 0.7s; }
+.water-splash {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    background: rgba(100,200,255,0.8);
+    border-radius: 50%;
+    animation: splash 1s ease-out infinite;
+}
+@keyframes elephantBounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+@keyframes earFlap {
+    0% { transform: rotate(-5deg); }
+    100% { transform: rotate(5deg); }
+}
+@keyframes trunkSpray {
+    0%, 40% { transform: rotate(0deg); }
+    50% { transform: rotate(-30deg); }
+    60%, 100% { transform: rotate(0deg); }
+}
+@keyframes tailSwing {
+    0% { transform: rotate(-10deg); }
+    100% { transform: rotate(10deg); }
+}
+@keyframes waterSpray {
+    0% { transform: translateY(0) scale(0.5); opacity: 0; }
+    20% { opacity: 1; }
+    100% { transform: translateY(-80px) translateX(var(--tx, 10px)) scale(1); opacity: 0; }
+}
+@keyframes splash {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; }
+}
   </style>
 </head>
 <body>
 <div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
 </div>
-<h1>
-   Hello World
+<nav id="main-nav" style="position: fixed; top: 0; left: 0; right: 0; z-index: 200; background: linear-gradient(135deg, rgba(10,10,30,0.95) 0%, rgba(30,30,60,0.95) 100%); padding: 15px 30px; display: flex; justify-content: center; gap: 20px; box-shadow: 0 4px 30px rgba(138,43,226,0.4); border-bottom: 2px solid rgba(138,43,226,0.5);">
+<button class="nav-btn active" data-section="space" onclick="showSection('space')" style="background: linear-gradient(135deg, #8a2be2 0%, #4a0080 100%); border: none; color: white; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; font-family: 'Comic Sans MS', cursive; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(138,43,226,0.5);">
+    🌌 Espace
+   </button>
+<button class="nav-btn" data-section="animals" onclick="showSection('animals')" style="background: linear-gradient(135deg, #444 0%, #222 100%); border: none; color: white; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; font-family: 'Comic Sans MS', cursive; transition: all 0.3s ease;">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" data-section="games" onclick="showSection('games')" style="background: linear-gradient(135deg, #444 0%, #222 100%); border: none; color: white; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; font-family: 'Comic Sans MS', cursive; transition: all 0.3s ease;">
+    🎮 Jeux
+   </button>
+</nav>
+<h1 style="margin-top: 80px; font-size: 3rem; text-align: center; text-shadow: 0 0 20px rgba(138, 43, 226, 0.5); z-index: 10;">
+   Twitch Versus Code
   </h1>
 <div id="scoreboard" style="position: fixed; top: 20px; left: 20px; z-index: 100; background: linear-gradient(135deg, rgba(139, 69, 19, 0.9) 0%, rgba(160, 82, 45, 0.9) 100%); padding: 15px 25px; border-radius: 15px; box-shadow: 0 4px 20px rgba(139, 69, 19, 0.5), 0 0 30px rgba(139, 69, 19, 0.3); font-family: 'Comic Sans MS', cursive, sans-serif;">
 <div style="display: flex; align-items: center; gap: 10px;">
@@ -491,6 +688,7 @@
     🎉 Attrapé!
    </div>
 </div>
+<section class="content-section" id="section-space" style="display: block;">
 <div class="solar-system">
 <div class="rings">
 </div>
@@ -561,6 +759,7 @@
 </div>
 </div>
 </div>
+</section>
 <div class="stars" id="stars" style="z-index: 1;">
 </div>
 <script>
@@ -972,26 +1171,158 @@ document.addEventListener('DOMContentLoaded', function() {
     checkScoreChange();
 })();
   </script>
-<div id="game-container" style="position: fixed; bottom: 20px; left: 20px; z-index: 100; background: rgba(10, 10, 30, 0.95); border-radius: 15px; padding: 10px; box-shadow: 0 0 30px rgba(138, 43, 226, 0.5), inset 0 0 20px rgba(138, 43, 226, 0.2); border: 2px solid rgba(138, 43, 226, 0.6);">
-<div style="color: #fff; font-family: 'Comic Sans MS', cursive; text-align: center; margin-bottom: 5px; font-size: 14px;">
-    🐍 Space Snake 🌟
-   </div>
-<canvas height="280" id="snake-game" style="border-radius: 10px; background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 100%);" width="280">
+<section class="content-section" id="section-games" style="display: none;">
+<div id="game-container" style="position: relative; background: rgba(10, 10, 30, 0.95); border-radius: 15px; padding: 20px; box-shadow: 0 0 30px rgba(138, 43, 226, 0.5), inset 0 0 20px rgba(138, 43, 226, 0.2); border: 2px solid rgba(138, 43, 226, 0.6); max-width: 320px; margin: 0 auto;">
+<div style="color: #fff; font-family: 'Comic Sans MS', cursive; text-align: center; margin-bottom: 10px; font-size: 18px;">
+     🐍 Space Snake 🌟
+    </div>
+<canvas height="280" id="snake-game" style="border-radius: 10px; background: linear-gradient(135deg, #0a0a2e 0%, #1a1a4e 100%); display: block; margin: 0 auto;" width="280">
 </canvas>
-<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-<span id="snake-score" style="color: #ffdd00; font-family: monospace; font-size: 14px;">
-     Score: 0
-    </span>
-<button id="snake-restart" style="background: linear-gradient(135deg, #8a2be2, #4a0080); border: none; color: white; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-size: 12px;">
-     🔄 Restart
-    </button>
+<div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+<span id="snake-score" style="color: #ffdd00; font-family: monospace; font-size: 16px;">
+      Score: 0
+     </span>
+<button id="snake-restart" style="background: linear-gradient(135deg, #8a2be2, #4a0080); border: none; color: white; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px;">
+      🔄 Restart
+     </button>
 </div>
-<div style="color: #888; font-size: 10px; text-align: center; margin-top: 5px;">
-    Flèches ou WASD pour jouer
-   </div>
+<div style="color: #888; font-size: 12px; text-align: center; margin-top: 8px;">
+     Flèches ou WASD pour jouer
+    </div>
 </div>
+</section>
 <script>
    (function(){const canvas=document.getElementById('snake-game');const ctx=canvas.getContext('2d');const gridSize=14;const tileCount=20;let snake=[{x:10,y:10}];let velocity={x:0,y:0};let food={x:15,y:15};let stars=[];let score=0;let gameLoop;let gameSpeed=100;let particles=[];function createStars(){stars=[];for(let i=0;i<30;i++){stars.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,size:Math.random()*2+0.5,twinkle:Math.random()*Math.PI*2});}}createStars();function spawnFood(){food={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount),pulse:0};}function createParticles(x,y){for(let i=0;i<8;i++){particles.push({x:x*gridSize+gridSize/2,y:y*gridSize+gridSize/2,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:1,color:`hsl(${Math.random()*60+30},100%,70%)`});}}function drawStars(){ctx.save();stars.forEach(star=>{star.twinkle+=0.05;const alpha=0.3+Math.sin(star.twinkle)*0.3;ctx.fillStyle=`rgba(255,255,255,${alpha})`;ctx.beginPath();ctx.arc(star.x,star.y,star.size,0,Math.PI*2);ctx.fill();});ctx.restore();}function drawSnake(){snake.forEach((segment,index)=>{const gradient=ctx.createRadialGradient(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,0,segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,gridSize/2);if(index===0){gradient.addColorStop(0,'#00ff88');gradient.addColorStop(1,'#00aa55');}else{const hue=120+index*5;gradient.addColorStop(0,`hsl(${hue},100%,60%)`);gradient.addColorStop(1,`hsl(${hue},100%,35%)`);}ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2,gridSize/2-1,0,Math.PI*2);ctx.fill();if(index===0){ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(segment.x*gridSize+gridSize/2-3,segment.y*gridSize+gridSize/2-2,2,0,Math.PI*2);ctx.arc(segment.x*gridSize+gridSize/2+3,segment.y*gridSize+gridSize/2-2,2,0,Math.PI*2);ctx.fill();}});}function drawFood(){food.pulse+=0.15;const size=gridSize/2+Math.sin(food.pulse)*3;const gradient=ctx.createRadialGradient(food.x*gridSize+gridSize/2,food.y*gridSize+gridSize/2,0,food.x*gridSize+gridSize/2,food.y*gridSize+gridSize/2,size);gradient.addColorStop(0,'#ffff00');gradient.addColorStop(0.5,'#ffaa00');gradient.addColorStop(1,'rgba(255,100,0,0)');ctx.fillStyle=gradient;ctx.beginPath();ctx.arc(food.x*gridSize+gridSize/2,food.y*gridSize+gridSize/2,size,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fff';ctx.font='12px Arial';ctx.textAlign='center';ctx.fillText('⭐',food.x*gridSize+gridSize/2,food.y*gridSize+gridSize/2+4);}function drawParticles(){particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life-=0.03;if(p.life>0){ctx.fillStyle=p.color;ctx.globalAlpha=p.life;ctx.beginPath();ctx.arc(p.x,p.y,3*p.life,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;return true;}return false;});}function update(){const head={x:snake[0].x+velocity.x,y:snake[0].y+velocity.y};if(head.x<0)head.x=tileCount-1;if(head.x>=tileCount)head.x=0;if(head.y<0)head.y=tileCount-1;if(head.y>=tileCount)head.y=0;for(let i=0;i<snake.length;i++){if(head.x===snake[i].x&&head.y===snake[i].y){gameOver();return;}}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;createParticles(food.x,food.y);document.getElementById('snake-score').textContent='Score: '+score;spawnFood();if(gameSpeed>50)gameSpeed-=2;}else{snake.pop();}}function draw(){ctx.fillStyle='rgba(10,10,30,0.3)';ctx.fillRect(0,0,canvas.width,canvas.height);drawStars();drawParticles();drawFood();drawSnake();}function gameOver(){clearInterval(gameLoop);ctx.fillStyle='rgba(0,0,0,0.7)';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#ff4444';ctx.font='bold 20px Arial';ctx.textAlign='center';ctx.fillText('GAME OVER',canvas.width/2,canvas.height/2-10);ctx.fillStyle='#ffdd00';ctx.font='16px Arial';ctx.fillText('Score: '+score,canvas.width/2,canvas.height/2+15);}function startGame(){snake=[{x:10,y:10}];velocity={x:0,y:0};score=0;gameSpeed=100;particles=[];document.getElementById('snake-score').textContent='Score: 0';spawnFood();clearInterval(gameLoop);gameLoop=setInterval(()=>{if(velocity.x!==0||velocity.y!==0)update();draw();},gameSpeed);}document.addEventListener('keydown',e=>{switch(e.key){case'ArrowUp':case'w':case'W':if(velocity.y!==1){velocity={x:0,y:-1};}break;case'ArrowDown':case's':case'S':if(velocity.y!==-1){velocity={x:0,y:1};}break;case'ArrowLeft':case'a':case'A':if(velocity.x!==1){velocity={x:-1,y:0};}break;case'ArrowRight':case'd':case'D':if(velocity.x!==-1){velocity={x:1,y:0};}break;}if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','w','a','s','d','W','A','S','D'].includes(e.key)){e.preventDefault();}});document.getElementById('snake-restart').addEventListener('click',startGame);startGame();})();
   </script>
+<section class="content-section" id="section-animals" style="display: none;">
+<div class="elephant-container" id="elephant-container" style="position: relative; display: flex; justify-content: center; align-items: center; min-height: 300px;">
+<div class="elephant">
+<div class="elephant-body">
+</div>
+<div class="elephant-head">
+<div class="elephant-ear">
+<div class="elephant-ear-inner">
+</div>
+</div>
+<div class="elephant-eye">
+</div>
+<div class="elephant-trunk">
+<div class="elephant-trunk-tip">
+</div>
+<div class="water-container" id="water-spray">
+<div class="water-drop" style="--tx: -20px;">
+</div>
+<div class="water-drop" style="--tx: -5px;">
+</div>
+<div class="water-drop" style="--tx: 15px;">
+</div>
+<div class="water-drop" style="--tx: -15px;">
+</div>
+<div class="water-drop" style="--tx: 5px;">
+</div>
+<div class="water-drop" style="--tx: 20px;">
+</div>
+<div class="water-drop" style="--tx: -10px;">
+</div>
+<div class="water-drop" style="--tx: 10px;">
+</div>
+</div>
+</div>
+</div>
+<div class="elephant-legs">
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+<div class="elephant-leg">
+</div>
+</div>
+<div class="elephant-tail">
+</div>
+</div>
+</div>
+<p style="text-align: center; color: #aaa; font-size: 1.2rem; margin-top: 20px;">
+    🐘 L'éléphant arrose la planète! 💦
+   </p>
+</section>
+<script>
+   (function() {
+    const waterContainer = document.getElementById('water-spray');
+    
+    // Add continuous water splash particles
+    setInterval(() => {
+        const splash = document.createElement('div');
+        splash.className = 'water-splash';
+        splash.style.left = (Math.random() * 40 + 5) + 'px';
+        splash.style.top = (-Math.random() * 60 - 20) + 'px';
+        waterContainer.appendChild(splash);
+        setTimeout(() => splash.remove(), 1000);
+    }, 200);
+})();
+  </script>
+<script>
+   function showSection(sectionName) {
+  // Hide all sections
+  document.querySelectorAll('.content-section').forEach(section => {
+    section.style.display = 'none';
+  });
+  
+  // Show selected section
+  const targetSection = document.getElementById('section-' + sectionName);
+  if (targetSection) {
+    targetSection.style.display = 'block';
+  }
+  
+  // Update nav buttons
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    if (btn.dataset.section === sectionName) {
+      btn.style.background = 'linear-gradient(135deg, #8a2be2 0%, #4a0080 100%)';
+      btn.style.boxShadow = '0 4px 15px rgba(138,43,226,0.5)';
+      btn.classList.add('active');
+    } else {
+      btn.style.background = 'linear-gradient(135deg, #444 0%, #222 100%)';
+      btn.style.boxShadow = 'none';
+      btn.classList.remove('active');
+    }
+  });
+}
+
+// Add hover effects to nav buttons
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('mouseenter', function() {
+    if (!this.classList.contains('active')) {
+      this.style.transform = 'scale(1.05)';
+      this.style.background = 'linear-gradient(135deg, #666 0%, #333 100%)';
+    }
+  });
+  btn.addEventListener('mouseleave', function() {
+    if (!this.classList.contains('active')) {
+      this.style.transform = 'scale(1)';
+      this.style.background = 'linear-gradient(135deg, #444 0%, #222 100%)';
+    }
+  });
+});
+  </script>
+<style>
+   .content-section {
+  animation: fadeIn 0.5s ease-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.nav-btn {
+  transition: all 0.3s ease !important;
+}
+.nav-btn:hover {
+  transform: scale(1.05);
+}
+#section-animals .elephant-container {
+  position: relative !important;
+  transform: none !important;
+}
+  </style>
 </body>
 </html>
