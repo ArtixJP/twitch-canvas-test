@@ -9,208 +9,35 @@
   </title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
 <style>
-   * { box-sizing: border-box; }
-    
-    body { 
-        font-family: 'Nunito', sans-serif; 
-        display: flex; 
-        flex-direction: column;
-        justify-content: center; 
-        align-items: center; 
-        min-height: 100vh; 
-        margin: 0;
-        padding: 20px;
-        background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a2e 100%);
-        color: white;
-        overflow: hidden;
-    }
-    
-    .container {
-        text-align: center;
-        max-width: 800px;
-        z-index: 10;
-    }
-    
-    .welcome-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #9146ff 0%, #772ce8 100%);
-        padding: 8px 20px;
-        border-radius: 20px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        margin-bottom: 20px;
-        animation: pulse 2s ease-in-out infinite;
-        box-shadow: 0 4px 20px rgba(145, 70, 255, 0.4);
-    }
-    
-    .live-dot {
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        background: #ff4d4d;
-        border-radius: 50%;
-        margin-right: 8px;
-        animation: blink 1.5s ease-in-out infinite;
-    }
-    
-    h1 {
-        font-size: 3.5rem;
-        font-weight: 800;
-        margin: 0 0 15px 0;
-        background: linear-gradient(135deg, #fff 0%, #e8d5ff 50%, #fff 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        text-shadow: none;
-        animation: float 4s ease-in-out infinite;
-    }
-    
-    .emoji-wave {
-        display: inline-block;
-        animation: wave 1.5s ease-in-out infinite;
-        transform-origin: 70% 70%;
-    }
-    
-    .subtitle {
-        font-size: 1.3rem;
-        color: #c9b8e8;
-        margin-bottom: 30px;
-        line-height: 1.6;
-    }
-    
-    .cozy-box {
-        background: rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(10px);
-        border-radius: 20px;
-        padding: 30px;
-        margin: 20px 0;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    }
-    
-    .message {
-        font-size: 1.1rem;
-        line-height: 1.8;
-        color: #e8e0f0;
-    }
-    
-    .message .highlight {
-        color: #bf94ff;
-        font-weight: 700;
-    }
-    
-    .hearts {
-        margin-top: 25px;
-        font-size: 1.5rem;
-    }
-    
-    .heart {
-        display: inline-block;
-        margin: 0 5px;
-        animation: heartbeat 1.2s ease-in-out infinite;
-    }
-    
-    .heart:nth-child(2) { animation-delay: 0.2s; }
-    .heart:nth-child(3) { animation-delay: 0.4s; }
-    .heart:nth-child(4) { animation-delay: 0.6s; }
-    .heart:nth-child(5) { animation-delay: 0.8s; }
-    
-    .floating-emojis {
-        position: fixed;
-        width: 100%;
-        height: 100%;
-        top: 0;
-        left: 0;
-        pointer-events: none;
-        z-index: 1;
-    }
-    
-    .float-emoji {
-        position: absolute;
-        font-size: 2rem;
-        opacity: 0.3;
-        animation: floatUp 15s linear infinite;
-    }
-    
-    .cta-button {
-        display: inline-block;
-        margin-top: 30px;
-        padding: 15px 40px;
-        background: linear-gradient(135deg, #9146ff 0%, #772ce8 100%);
-        color: white;
-        text-decoration: none;
-        border-radius: 30px;
-        font-weight: 700;
-        font-size: 1.1rem;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 20px rgba(145, 70, 255, 0.4);
-        cursor: pointer;
-        border: none;
-    }
-    
-    .cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(145, 70, 255, 0.6);
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-    }
-    
-    @keyframes blink {
-        0%, 100% { opacity: 1; }
-        50% { opacity: 0.3; }
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
-    }
-    
-    @keyframes wave {
-        0%, 100% { transform: rotate(0deg); }
-        25% { transform: rotate(20deg); }
-        75% { transform: rotate(-10deg); }
-    }
-    
-    @keyframes heartbeat {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.2); }
-    }
-    
-    @keyframes floatUp {
-        0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-        10% { opacity: 0.3; }
-        90% { opacity: 0.3; }
-        100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
-    }
-
-.foucault-btn { display: block; margin: 20px auto 0; padding: 12px 30px; background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); color: #dfe6e9; border: 2px solid #74b9ff; border-radius: 25px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Nunito', sans-serif; } .foucault-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(116, 185, 255, 0.5); border-color: #a29bfe; } .foucault-bubble { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(15px); border-radius: 20px; padding: 40px; max-width: 600px; width: 90%; border: 2px solid #74b9ff; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(116, 185, 255, 0.3); z-index: 1000; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); } .foucault-bubble.show { transform: translate(-50%, -50%) scale(1); } .foucault-bubble.hidden { transform: translate(-50%, -50%) scale(0); pointer-events: none; } .bubble-content { position: relative; } .close-btn { position: absolute; top: -25px; right: -15px; font-size: 1.5rem; cursor: pointer; color: #74b9ff; transition: all 0.2s; } .close-btn:hover { color: #ff6b6b; transform: rotate(90deg); } .quote { font-size: 1.1rem; line-height: 1.8; color: #dfe6e9; font-style: italic; border-left: 3px solid #a29bfe; padding-left: 20px; margin-bottom: 20px; } .author { text-align: right; color: #a29bfe; font-weight: 600; } .foucault-bubble::before { content: '🎓'; position: absolute; top: -20px; left: 20px; font-size: 2.5rem; animation: float 3s ease-in-out infinite; }
+   @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;600;700;800&display=swap');*{box-sizing:border-box}body{font-family:'Nunito',sans-serif;display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;margin:0;padding:20px;background:linear-gradient(180deg,#1a0a2e 0%,#2d1b4e 30%,#0d0d1a 100%);color:white;overflow:hidden;image-rendering:pixelated}.pixel-grid{position:fixed;top:0;left:0;width:100%;height:100%;background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,0.03) 2px,rgba(255,255,255,0.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,0.03) 2px,rgba(255,255,255,0.03) 4px);pointer-events:none;z-index:0}.container{text-align:center;max-width:800px;z-index:10;position:relative}.welcome-badge{display:inline-block;background:linear-gradient(135deg,#ff6b6b 0%,#ee5a24 100%);padding:8px 20px;border-radius:8px;font-family:'Press Start 2P',cursive;font-size:0.6rem;margin-bottom:20px;animation:pulse 2s ease-in-out infinite;box-shadow:0 4px 20px rgba(255,107,107,0.5),inset 0 -4px 0 rgba(0,0,0,0.2);border:3px solid #fff;text-transform:uppercase;letter-spacing:2px}.live-dot{display:inline-block;width:10px;height:10px;background:#00ff88;border-radius:2px;margin-right:10px;animation:blink 0.8s step-start infinite;box-shadow:0 0 10px #00ff88}h1{font-family:'Press Start 2P',cursive;font-size:1.8rem;margin:0 0 20px 0;background:linear-gradient(180deg,#ffeaa7 0%,#fdcb6e 50%,#e17055 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-shadow:none;animation:float 4s ease-in-out infinite;line-height:1.6}.emoji-wave{display:inline-block;animation:wave 1s steps(3) infinite;transform-origin:70% 70%}.subtitle{font-size:1.1rem;color:#a29bfe;margin-bottom:30px;line-height:1.6;text-shadow:0 0 20px rgba(162,155,254,0.5)}.cozy-box{background:linear-gradient(135deg,rgba(108,92,231,0.2) 0%,rgba(162,155,254,0.1) 100%);backdrop-filter:blur(10px);border-radius:12px;padding:30px;margin:20px 0;border:4px solid #6c5ce7;box-shadow:0 0 30px rgba(108,92,231,0.3),inset 0 0 60px rgba(108,92,231,0.1);position:relative}.cozy-box::before{content:'';position:absolute;top:-2px;left:-2px;right:-2px;bottom:-2px;background:linear-gradient(45deg,#ff6b6b,#feca57,#48dbfb,#ff9ff3,#6c5ce7);border-radius:14px;z-index:-1;animation:borderGlow 3s linear infinite;filter:blur(4px);opacity:0.6}.message{font-size:1.1rem;line-height:1.8;color:#dfe6e9}.message .highlight{color:#ffeaa7;font-weight:700;text-shadow:0 0 10px rgba(255,234,167,0.5)}.hearts{margin-top:25px;font-size:1.5rem}.heart{display:inline-block;margin:0 5px;animation:heartbeat 0.6s steps(2) infinite}.heart:nth-child(2){animation-delay:0.1s}.heart:nth-child(3){animation-delay:0.2s}.heart:nth-child(4){animation-delay:0.3s}.heart:nth-child(5){animation-delay:0.4s}.floating-emojis{position:fixed;width:100%;height:100%;top:0;left:0;pointer-events:none;z-index:1}.float-emoji{position:absolute;font-size:2rem;opacity:0.4;animation:floatUp 12s steps(30) infinite}.cta-button{display:inline-block;margin-top:30px;padding:15px 40px;background:linear-gradient(180deg,#00b894 0%,#00a085 100%);color:white;text-decoration:none;border-radius:8px;font-family:'Press Start 2P',cursive;font-size:0.7rem;transition:all 0.1s steps(2);box-shadow:0 6px 0 #007a63,0 10px 20px rgba(0,184,148,0.4);cursor:pointer;border:none;text-transform:uppercase}.cta-button:hover{transform:translateY(-2px);box-shadow:0 8px 0 #007a63,0 14px 30px rgba(0,184,148,0.6)}.cta-button:active{transform:translateY(4px);box-shadow:0 2px 0 #007a63}.foucault-btn{display:block;margin:20px auto 0;padding:12px 30px;background:linear-gradient(180deg,#636e72 0%,#2d3436 100%);color:#ffeaa7;border:3px solid #ffeaa7;border-radius:8px;font-family:'Press Start 2P',cursive;font-size:0.55rem;cursor:pointer;transition:all 0.1s steps(2);box-shadow:0 4px 0 #1e272e}.foucault-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 #1e272e,0 0 20px rgba(255,234,167,0.4)}.foucault-bubble{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:linear-gradient(135deg,rgba(45,52,54,0.98) 0%,rgba(30,39,46,0.98) 100%);backdrop-filter:blur(15px);border-radius:12px;padding:40px;max-width:600px;width:90%;border:4px solid #ffeaa7;box-shadow:0 0 40px rgba(255,234,167,0.3),inset 0 0 60px rgba(0,0,0,0.3);z-index:1000;transition:all 0.3s steps(5)}.foucault-bubble.show{transform:translate(-50%,-50%) scale(1)}.foucault-bubble.hidden{transform:translate(-50%,-50%) scale(0);pointer-events:none}.bubble-content{position:relative}.close-btn{position:absolute;top:-25px;right:-15px;font-size:1.5rem;cursor:pointer;color:#ff6b6b;transition:all 0.1s}.close-btn:hover{color:#fff;text-shadow:0 0 10px #ff6b6b}.quote{font-size:1rem;line-height:1.8;color:#dfe6e9;font-style:italic;border-left:4px solid #6c5ce7;padding-left:20px;margin-bottom:20px}.author{text-align:right;color:#a29bfe;font-weight:600}.foucault-bubble::before{content:'🎮';position:absolute;top:-25px;left:20px;font-size:2.5rem;animation:float 2s steps(4) infinite}@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}@keyframes blink{0%,100%{opacity:1}50%{opacity:0.2}}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}@keyframes wave{0%,100%{transform:rotate(0deg)}50%{transform:rotate(25deg)}}@keyframes heartbeat{0%,100%{transform:scale(1)}50%{transform:scale(1.3)}}@keyframes floatUp{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:0.4}90%{opacity:0.4}100%{transform:translateY(-100vh) rotate(360deg);opacity:0}}@keyframes borderGlow{0%{filter:blur(4px) hue-rotate(0deg)}100%{filter:blur(4px) hue-rotate(360deg)}}.scanlines{position:fixed;top:0;left:0;width:100%;height:100%;background:repeating-linear-gradient(0deg,rgba(0,0,0,0.1) 0px,rgba(0,0,0,0.1) 1px,transparent 1px,transparent 2px);pointer-events:none;z-index:9999;opacity:0.3}
   </style>
 </head>
 <body>
+<div class="pixel-grid">
+</div>
+<div class="scanlines">
+</div>
 <div class="floating-emojis">
 <span class="float-emoji" style="left: 5%; animation-delay: 0s;">
-    ✨
+    ⭐
    </span>
 <span class="float-emoji" style="left: 15%; animation-delay: 3s;">
     💜
    </span>
 <span class="float-emoji" style="left: 25%; animation-delay: 7s;">
-    🌟
+    🕹️
    </span>
 <span class="float-emoji" style="left: 40%; animation-delay: 2s;">
-    ☕
+    🍕
    </span>
 <span class="float-emoji" style="left: 55%; animation-delay: 5s;">
-    🎮
+    👾
    </span>
 <span class="float-emoji" style="left: 70%; animation-delay: 1s;">
-    💫
+    🎯
    </span>
 <span class="float-emoji" style="left: 85%; animation-delay: 4s;">
-    🌙
+    🌈
    </span>
 <span class="float-emoji" style="left: 95%; animation-delay: 6s;">
     💜
@@ -220,55 +47,56 @@
 <div class="welcome-badge">
 <span class="live-dot">
 </span>
-    EN DIRECT
+    🎮 LIVE NOW
    </div>
 <h1>
-    Bienvenue chez nous
-    <span class="emoji-wave">
-     👋
+    WELCOME HOME
+    <br/>
+<span class="emoji-wave">
+     👾
     </span>
 </h1>
 <p class="subtitle">
-    Installe-toi confortablement, tu es au bon endroit ✨
+    Grab your controller &amp; get comfy 🕹️✨
    </p>
 <div class="cozy-box">
 <p class="message">
-     Hey !
+     Hey player!
      <span class="highlight">
-      Bienvenue
+      Welcome to the party
      </span>
-     💜
+     🎮
      <br/>
 <br/>
-     Espace chill, prends ton thé ☕ et profite.
+     This is your safe zone. Grab some snacks 🍕 and chill.
      <br/>
 <span class="highlight">
-      Tu fais partie de la famille.
+      You're part of the squad now!
      </span>
 </p>
 <div class="hearts">
 <span class="heart">
-      💜
+      ❤️
      </span>
 <span class="heart">
-      💜
+      🧡
      </span>
 <span class="heart">
-      💜
+      💛
      </span>
 <span class="heart">
-      💜
+      💚
      </span>
 <span class="heart">
       💜
      </span>
 </div>
 </div>
-<button class="cta-button" onclick="this.textContent='Merci d\'être là ! 💜'; this.style.background='linear-gradient(135deg, #ff6b9d 0%, #c44569 100%)';">
-    Dis bonjour dans le chat ! 💬
+<button class="cta-button" onclick="this.textContent='GG! 💜'; this.style.background='linear-gradient(180deg, #e17055 0%, #d63031 100%)';">
+    SAY HI IN CHAT! 💬
    </button>
 <button class="foucault-btn" onclick="toggleFoucault()">
-    📚 Sagesse de Foucault
+    🎓 WISDOM DROP
    </button>
 <div class="foucault-bubble hidden" id="foucault-bubble">
 <div class="bubble-content">
