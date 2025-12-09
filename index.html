@@ -95,6 +95,40 @@
                 inset -5px -3px 10px rgba(0,0,0,0.5),
                 0 0 15px rgba(255,255,255,0.2);
         }
+        .moon-orbit-2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            margin: -140px;
+            animation: orbit-reverse 12s linear infinite;
+            transform-origin: center center;
+        }
+        .moon-2 {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 18px;
+            height: 18px;
+            margin-top: -9px;
+            margin-left: -9px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c9a86c 0%, #8b7355 50%, #5c4a3d 100%);
+            box-shadow: 
+                inset -4px -2px 8px rgba(0,0,0,0.5),
+                0 0 10px rgba(201, 168, 108, 0.3);
+        }
+        .moon-2::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 4px;
+            width: 4px;
+            height: 4px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+        }
         .stars {
             position: fixed;
             top: 0;
@@ -117,6 +151,10 @@
         @keyframes orbit {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-reverse {
+            from { transform: rotate(45deg); }
+            to { transform: rotate(405deg); }
         }
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; }
@@ -152,9 +190,131 @@
             0%, 100% { box-shadow: 0 4px 20px rgba(138, 43, 226, 0.5), 0 0 40px rgba(138, 43, 226, 0.3); }
             50% { box-shadow: 0 4px 30px rgba(138, 43, 226, 0.8), 0 0 60px rgba(138, 43, 226, 0.5); }
         }
+   .kitty-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 180px;
+            height: 180px;
+            margin: -90px;
+            animation: orbit 6s linear infinite;
+            z-index: 5;
+        }
+        .kitty {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: kittyFloat 1s ease-in-out infinite;
+        }
+        .kitty-body {
+            width: 20px;
+            height: 14px;
+            background: linear-gradient(135deg, #ff9966 0%, #ff6633 100%);
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+        }
+        .kitty-head {
+            width: 18px;
+            height: 16px;
+            background: linear-gradient(135deg, #ff9966 0%, #ff7744 100%);
+            border-radius: 50% 50% 45% 45%;
+            position: absolute;
+            top: -10px;
+            left: 1px;
+        }
+        .kitty-ear {
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-bottom: 8px solid #ff9966;
+            position: absolute;
+            top: -5px;
+        }
+        .kitty-ear.left { left: 1px; transform: rotate(-15deg); }
+        .kitty-ear.right { right: 1px; transform: rotate(15deg); }
+        .kitty-ear::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: -2px;
+            border-left: 2px solid transparent;
+            border-right: 2px solid transparent;
+            border-bottom: 4px solid #ffb6c1;
+        }
+        .kitty-face {
+            position: relative;
+            top: 4px;
+        }
+        .kitty-eye {
+            width: 4px;
+            height: 5px;
+            background: #333;
+            border-radius: 50%;
+            position: absolute;
+            animation: kittyBlink 3s ease-in-out infinite;
+        }
+        .kitty-eye.left { left: 3px; }
+        .kitty-eye.right { right: 3px; }
+        .kitty-eye::after {
+            content: '';
+            width: 1.5px;
+            height: 1.5px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+        }
+        .kitty-nose {
+            width: 3px;
+            height: 2px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 5px;
+        }
+        .kitty-mouth {
+            width: 6px;
+            height: 3px;
+            border-bottom: 1.5px solid #ff6b6b;
+            border-radius: 0 0 50% 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 7px;
+        }
+        .kitty-tail {
+            width: 3px;
+            height: 15px;
+            background: linear-gradient(to top, #ff6633, #ff9966);
+            border-radius: 3px;
+            position: absolute;
+            right: -2px;
+            top: 2px;
+            transform-origin: bottom;
+            animation: tailWag 0.5s ease-in-out infinite alternate;
+        }
+        @keyframes kittyFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-3px); }
+        }
+        @keyframes kittyBlink {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+        @keyframes tailWag {
+            0% { transform: rotate(-20deg); }
+            100% { transform: rotate(20deg); }
+        }
   </style>
 </head>
 <body>
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+</div>
 <h1>
    Hello World
   </h1>
@@ -167,8 +327,36 @@
 <div class="moon">
 </div>
 </div>
+<div class="moon-orbit-2">
+<div class="moon-2">
 </div>
-<div class="stars" id="stars">
+</div>
+<div class="kitty-orbit">
+<div class="kitty">
+<div class="kitty-body">
+</div>
+<div class="kitty-head">
+<div class="kitty-ear left">
+</div>
+<div class="kitty-ear right">
+</div>
+<div class="kitty-face">
+<div class="kitty-eye left">
+</div>
+<div class="kitty-eye right">
+</div>
+<div class="kitty-nose">
+</div>
+<div class="kitty-mouth">
+</div>
+</div>
+</div>
+<div class="kitty-tail">
+</div>
+</div>
+</div>
+</div>
+<div class="stars" id="stars" style="z-index: 1;">
 </div>
 <script>
    // Generate random stars
@@ -223,6 +411,140 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script>
+   (function() {
+    const container = document.getElementById('three-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.z = 50;
+    
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+    
+    // Create the Sun
+    const sunGeometry = new THREE.SphereGeometry(8, 64, 64);
+    const sunMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffdd00,
+        transparent: true,
+        opacity: 0.95
+    });
+    const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    sun.position.set(-35, 25, -20);
+    scene.add(sun);
+    
+    // Sun glow effect (multiple layers)
+    const glowColors = [0xffaa00, 0xff8800, 0xff6600];
+    const glowSizes = [10, 12, 15];
+    glowColors.forEach((color, i) => {
+        const glowGeometry = new THREE.SphereGeometry(glowSizes[i], 32, 32);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: color,
+            transparent: true,
+            opacity: 0.15 - (i * 0.03)
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        glow.position.copy(sun.position);
+        scene.add(glow);
+    });
+    
+    // Point light from sun
+    const sunLight = new THREE.PointLight(0xffdd88, 2, 200);
+    sunLight.position.copy(sun.position);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
+    
+    // Ambient light
+    const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
+    scene.add(ambientLight);
+    
+    // Sun rays (light beams)
+    const rayCount = 12;
+    const rays = [];
+    for (let i = 0; i < rayCount; i++) {
+        const rayGeometry = new THREE.CylinderGeometry(0.1, 2, 25, 8);
+        const rayMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffee88,
+            transparent: true,
+            opacity: 0.1
+        });
+        const ray = new THREE.Mesh(rayGeometry, rayMaterial);
+        const angle = (i / rayCount) * Math.PI * 2;
+        ray.position.set(
+            sun.position.x + Math.cos(angle) * 15,
+            sun.position.y + Math.sin(angle) * 15,
+            sun.position.z
+        );
+        ray.rotation.z = angle + Math.PI / 2;
+        rays.push(ray);
+        scene.add(ray);
+    }
+    
+    // Corona particles
+    const particleCount = 100;
+    const particleGeometry = new THREE.BufferGeometry();
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i++) {
+        const theta = Math.random() * Math.PI * 2;
+        const phi = Math.random() * Math.PI;
+        const r = 9 + Math.random() * 4;
+        positions[i * 3] = sun.position.x + r * Math.sin(phi) * Math.cos(theta);
+        positions[i * 3 + 1] = sun.position.y + r * Math.sin(phi) * Math.sin(theta);
+        positions[i * 3 + 2] = sun.position.z + r * Math.cos(phi);
+    }
+    particleGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+    const particleMaterial = new THREE.PointsMaterial({
+        color: 0xffaa44,
+        size: 0.5,
+        transparent: true,
+        opacity: 0.6
+    });
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);
+    
+    // Animation
+    let time = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.02;
+        
+        // Pulsing sun
+        const pulse = 1 + Math.sin(time * 2) * 0.05;
+        sun.scale.set(pulse, pulse, pulse);
+        
+        // Rotating rays
+        rays.forEach((ray, i) => {
+            ray.rotation.z += 0.002;
+            ray.material.opacity = 0.08 + Math.sin(time + i) * 0.04;
+        });
+        
+        // Animate particles
+        const pos = particles.geometry.attributes.position.array;
+        for (let i = 0; i < particleCount; i++) {
+            pos[i * 3 + 1] += Math.sin(time + i * 0.1) * 0.02;
+        }
+        particles.geometry.attributes.position.needsUpdate = true;
+        particles.rotation.z += 0.001;
+        
+        // Light intensity variation
+        sunLight.intensity = 1.8 + Math.sin(time * 3) * 0.3;
+        
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    // Resize handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+})();
   </script>
 </body>
 </html>
