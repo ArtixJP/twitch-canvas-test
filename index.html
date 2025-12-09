@@ -154,9 +154,159 @@
   0%, 100% { box-shadow: 0 0 20px rgba(100, 255, 150, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1); }
   50% { box-shadow: 0 0 40px rgba(100, 255, 200, 0.6), inset 0 0 30px rgba(255, 255, 255, 0.2); }
 }
+
+@keyframes inviteClick {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(255, 200, 100, 0.6); }
+  50% { transform: scale(1.15); box-shadow: 0 0 40px rgba(255, 200, 100, 0.9), 0 0 60px rgba(255, 150, 50, 0.5); }
+}
+#music-toggle.invite {
+  background: linear-gradient(135deg, rgba(255, 200, 100, 0.5), rgba(255, 150, 100, 0.5));
+  border-color: rgba(255, 200, 100, 0.6);
+}
+
+.moon-2 {
+  width: 25px;
+  height: 25px;
+  background: radial-gradient(circle at 35% 35%, #f5e6d3 0%, #c9a87c 40%, #8b7355 70%, #5a4a3a 100%);
+  animation: orbit2 12s linear infinite;
+  box-shadow: inset -4px -4px 8px rgba(0,0,0,0.6), 0 0 15px rgba(255,200,100,0.3);
+}
+.moon-3 {
+  width: 18px;
+  height: 18px;
+  background: radial-gradient(circle at 25% 25%, #e8e8ff 0%, #a0a0c0 50%, #606080 100%);
+  animation: orbit3 5s linear infinite reverse;
+  box-shadow: inset -3px -3px 6px rgba(0,0,0,0.5), 0 0 10px rgba(150,150,255,0.4);
+}
+@keyframes orbit2 {
+  from { transform: rotate(120deg) translateX(260px) rotate(-120deg); }
+  to { transform: rotate(480deg) translateX(260px) rotate(-480deg); }
+}
+@keyframes orbit3 {
+  from { transform: rotate(240deg) translateX(160px) rotate(-240deg); }
+  to { transform: rotate(-120deg) translateX(160px) rotate(120deg); }
+}
+.moon {
+  filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+}
+.moon::after {
+  content: '';
+  position: absolute;
+  width: 20%;
+  height: 20%;
+  background: rgba(0,0,0,0.3);
+  border-radius: 50%;
+  top: 40%;
+  left: 30%;
+}
+.moon-2::after {
+  width: 15%;
+  height: 15%;
+  top: 50%;
+  left: 45%;
+}
+
+.space-kitty {
+  position: absolute;
+  font-size: 40px;
+  animation: kittyOrbit 10s linear infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 200, 255, 0.8)) drop-shadow(0 0 20px rgba(255, 150, 200, 0.5));
+  z-index: 100;
+  transform-origin: center;
+}
+.space-kitty::before {
+  content: '✨';
+  position: absolute;
+  font-size: 16px;
+  left: -20px;
+  top: 5px;
+  animation: sparkle 0.5s ease-in-out infinite alternate;
+}
+.space-kitty::after {
+  content: '🌟';
+  position: absolute;
+  font-size: 12px;
+  left: -35px;
+  top: 10px;
+  animation: sparkle 0.7s ease-in-out infinite alternate-reverse;
+}
+@keyframes kittyOrbit {
+  0% { transform: rotate(0deg) translateX(220px) rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) translateX(220px) rotate(-90deg) scale(1.1); }
+  50% { transform: rotate(180deg) translateX(220px) rotate(-180deg) scale(1); }
+  75% { transform: rotate(270deg) translateX(220px) rotate(-270deg) scale(1.1); }
+  100% { transform: rotate(360deg) translateX(220px) rotate(-360deg) scale(1); }
+}
+@keyframes sparkle {
+  0% { opacity: 0.3; transform: scale(0.5) rotate(0deg); }
+  100% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+.kitty-trail {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, rgba(255,182,193,0.8), transparent);
+  border-radius: 50%;
+  animation: kittyOrbit 10s linear infinite, trailFade 0.5s ease-out infinite;
+  opacity: 0.6;
+}
+.kitty-trail::before, .kitty-trail::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, rgba(255,200,255,0.6), transparent);
+  border-radius: 50%;
+}
+.kitty-trail::before {
+  animation: kittyOrbit 10s linear infinite;
+  animation-delay: -0.3s;
+}
+.kitty-trail::after {
+  animation: kittyOrbit 10s linear infinite;
+  animation-delay: -0.6s;
+}
+@keyframes trailFade {
+  0% { opacity: 0.8; }
+  100% { opacity: 0.2; }
+}
+.space-kitty:hover {
+  animation-play-state: paused;
+  cursor: pointer;
+  transform: scale(1.5);
+}
+
+.planet-container {
+  filter: drop-shadow(-30px -20px 40px rgba(255, 170, 50, 0.3));
+}
+.planet {
+  box-shadow: 
+    inset -30px -30px 60px rgba(0,0,0,0.8),
+    inset 20px 20px 40px rgba(255,200,100,0.3),
+    0 0 60px rgba(100,150,255,0.4),
+    -40px -25px 50px rgba(255, 170, 50, 0.2);
+}
+.planet-surface::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255,200,100,0.15) 0%, transparent 50%, rgba(0,0,30,0.3) 100%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+#three-container canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
   </style>
 </head>
 <body>
+<div id="three-container" style="position:fixed;top:0;left:0;width:100%;height:100%;z-index:-3;pointer-events:none;">
+</div>
 <h1>
    🌌 Hello World 🌌
   </h1>
@@ -173,6 +323,15 @@
 </div>
 <div class="moon">
 </div>
+<div class="moon moon-2">
+</div>
+<div class="moon moon-3">
+</div>
+<div class="space-kitty">
+    🐱
+   </div>
+<div class="kitty-trail">
+</div>
 </div>
 <script>
    function toggleMusic() {
@@ -188,6 +347,40 @@
     btn.classList.remove('playing');
   }
 }
+
+// Auto-play on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const audio = document.getElementById('bg-music');
+  const btn = document.getElementById('music-toggle');
+  
+  // Try to autoplay
+  const playPromise = audio.play();
+  
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      // Autoplay started
+      btn.textContent = '🎵 Pause';
+      btn.classList.add('playing');
+    }).catch(() => {
+      // Autoplay blocked - show invitation to click
+      btn.textContent = '🎵 Click to Start!';
+      btn.style.animation = 'inviteClick 0.5s ease-in-out infinite';
+      
+      // Start on first user interaction anywhere
+      const startOnInteraction = () => {
+        audio.play().then(() => {
+          btn.textContent = '🎵 Pause';
+          btn.classList.add('playing');
+          btn.style.animation = '';
+        });
+        document.removeEventListener('click', startOnInteraction);
+        document.removeEventListener('keydown', startOnInteraction);
+      };
+      document.addEventListener('click', startOnInteraction);
+      document.addEventListener('keydown', startOnInteraction);
+    });
+  }
+});
   </script>
 <audio id="bg-music" loop="" preload="auto">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
@@ -195,5 +388,10 @@
 <button id="music-toggle" onclick="toggleMusic()">
    🎵 Play Music
   </button>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<script>
+   const container=document.getElementById('three-container');const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setSize(window.innerWidth,window.innerHeight);renderer.setPixelRatio(window.devicePixelRatio);container.appendChild(renderer.domElement);const sunGeometry=new THREE.SphereGeometry(2,64,64);const sunMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0},color1:{value:new THREE.Color(0xffdd00)},color2:{value:new THREE.Color(0xff6600)}},vertexShader:`varying vec2 vUv;varying vec3 vNormal;void main(){vUv=uv;vNormal=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;uniform vec3 color1;uniform vec3 color2;varying vec2 vUv;varying vec3 vNormal;void main(){float pulse=sin(time*2.0)*0.1+0.9;float fresnel=pow(1.0-dot(vNormal,vec3(0,0,1)),2.0);vec3 color=mix(color1,color2,vUv.y+sin(time+vUv.x*10.0)*0.1);color+=fresnel*vec3(1.0,0.5,0.0)*0.5;gl_FragColor=vec4(color*pulse,1.0);}`,transparent:true});const sun=new THREE.Mesh(sunGeometry,sunMaterial);sun.position.set(-8,5,-5);scene.add(sun);const coronaGeometry=new THREE.SphereGeometry(2.5,32,32);const coronaMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:`varying vec3 vNormal;void main(){vNormal=normal;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;varying vec3 vNormal;void main(){float intensity=pow(0.7-dot(vNormal,vec3(0,0,1)),2.0);float flicker=sin(time*5.0)*0.1+sin(time*13.0)*0.05+0.95;vec3 color=vec3(1.0,0.6,0.2)*intensity*flicker;gl_FragColor=vec4(color,intensity*0.6);}`,transparent:true,side:THREE.BackSide,blending:THREE.AdditiveBlending});const corona=new THREE.Mesh(coronaGeometry,coronaMaterial);corona.position.copy(sun.position);scene.add(corona);const rayCount=12;for(let i=0;i<rayCount;i++){const rayGeometry=new THREE.PlaneGeometry(0.3,15);const rayMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0},index:{value:i}},vertexShader:`varying vec2 vUv;void main(){vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;uniform float index;varying vec2 vUv;void main(){float alpha=(1.0-vUv.y)*0.3;alpha*=sin(time*2.0+index)*0.3+0.7;vec3 color=vec3(1.0,0.8,0.3);gl_FragColor=vec4(color,alpha*0.15);}`,transparent:true,blending:THREE.AdditiveBlending,side:THREE.DoubleSide});const ray=new THREE.Mesh(rayGeometry,rayMaterial);ray.position.copy(sun.position);ray.rotation.z=(i/rayCount)*Math.PI*2;ray.position.z+=0.1;scene.add(ray);}const sunLight=new THREE.PointLight(0xffaa33,2,100);sunLight.position.copy(sun.position);scene.add(sunLight);const ambientLight=new THREE.AmbientLight(0x404040,0.3);scene.add(ambientLight);camera.position.z=10;function animate(){requestAnimationFrame(animate);const time=performance.now()*0.001;sunMaterial.uniforms.time.value=time;coronaMaterial.uniforms.time.value=time;scene.children.forEach(child=>{if(child.material&&child.material.uniforms&&child.material.uniforms.index!==undefined){child.material.uniforms.time.value=time;child.rotation.z+=0.001;}});sun.rotation.y+=0.005;sunLight.intensity=1.8+Math.sin(time*3)*0.2;renderer.render(scene,camera);}animate();window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+  </script>
 </body>
 </html>
