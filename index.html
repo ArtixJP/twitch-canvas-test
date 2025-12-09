@@ -5,7 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>
-   🔴 Welcome to the Matrix
+   🌀 Emergent Canvas
   </title>
 <style>
    * {
@@ -17,27 +17,21 @@
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a4e 0%, #2d1b69 35%, #4a1a8a 65%, #6b21a8 100%);
+            background: linear-gradient(135deg, #1e3a5f 0%, #4a1a6b 50%, #7b2d8e 100%);
             color: #e8e8e8;
             overflow-x: hidden;
-            animation: bg-shift 15s ease-in-out infinite alternate;
-        }
-        
-        @keyframes bg-shift {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
         }
         
         .header {
             text-align: center;
             padding: 2rem;
             background: rgba(0, 0, 0, 0.3);
-            border-bottom: 2px solid #a855f7;
+            border-bottom: 2px solid #9b59b6;
         }
         
         .header h1 {
             font-size: 2.5rem;
-            background: linear-gradient(90deg, #a855f7, #3b82f6, #a855f7);
+            background: linear-gradient(90deg, #3498db, #9b59b6, #3498db);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -66,8 +60,8 @@
         
         /* Zone de chaos - libre modification */
         #chaos-zone {
-            background: rgba(139, 92, 246, 0.1);
-            border: 2px dashed #a855f7;
+            background: rgba(155, 89, 182, 0.15);
+            border: 2px dashed #9b59b6;
             border-radius: 12px;
             padding: 2rem;
             min-height: 300px;
@@ -80,10 +74,10 @@
             position: absolute;
             top: -12px;
             left: 20px;
-            background: #1a1a4e;
+            background: #2a1a4a;
             padding: 0 10px;
             font-size: 0.8rem;
-            color: #a855f7;
+            color: #9b59b6;
         }
         
         .chaos-content {
@@ -105,7 +99,7 @@
         }
         
         .info-section h2 {
-            color: #a855f7;
+            color: #9b59b6;
             margin-bottom: 1rem;
         }
         
@@ -120,226 +114,12 @@
             color: #666;
             font-size: 0.8rem;
         }
-   @keyframes matrix-flicker { 0%, 90%, 100% { opacity: 1; } 95% { opacity: 0.8; } }
-   /* Neon Glow Effect for All Text */
-        body {
-            text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor;
-        }
-        
-        h1, h2, h3, h4, h5, h6 {
-            text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #a855f7;
-            animation: neon-pulse 2s ease-in-out infinite alternate;
-        }
-        
-        p, span, strong, a {
-            text-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #3b82f6;
-            animation: neon-flicker 3s ease-in-out infinite;
-        }
-        
-        button {
-            text-shadow: 0 0 10px #fff, 0 0 20px #ff6b6b, 0 0 30px #ff6b6b, 0 0 40px #e94560 !important;
-        }
-        
-        @keyframes neon-pulse {
-            0% {
-                text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #a855f7;
-                filter: brightness(1);
-            }
-            100% {
-                text-shadow: 0 0 5px #a855f7, 0 0 15px #a855f7, 0 0 30px #a855f7, 0 0 60px #a855f7, 0 0 100px #3b82f6;
-                filter: brightness(1.2);
-            }
-        }
-        
-        @keyframes neon-flicker {
-            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                text-shadow: 0 0 5px #3b82f6, 0 0 10px #3b82f6, 0 0 20px #3b82f6;
-                opacity: 1;
-            }
-            20%, 24%, 55% {
-                text-shadow: none;
-                opacity: 0.8;
-            }
-        }
-        
-        #counter-display {
-            text-shadow: 0 0 20px #ffd700, 0 0 40px #ff6b6b, 0 0 60px #a855f7, 0 0 80px #a855f7 !important;
-            -webkit-text-fill-color: transparent !important;
-            filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
-        }
-        
-        .info-section h2 {
-            text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #e94560;
-        }
-        
-        .footer p {
-            text-shadow: 0 0 5px #666, 0 0 10px #a855f7;
-            animation: neon-subtle 4s ease-in-out infinite alternate;
-        }
-        
-        @keyframes neon-subtle {
-            0% { text-shadow: 0 0 5px #666, 0 0 10px #a855f7; }
-            100% { text-shadow: 0 0 8px #888, 0 0 15px #3b82f6, 0 0 25px #a855f7; }
-        }
-   /* WIGGLE EFFECT ON HOVER - CHAOS MODE */
-@keyframes wiggle {
-  0%, 100% { transform: rotate(0deg); }
-  10% { transform: rotate(-3deg) scale(1.02); }
-  20% { transform: rotate(3deg); }
-  30% { transform: rotate(-2deg); }
-  40% { transform: rotate(2deg); }
-  50% { transform: rotate(-1deg) scale(1.01); }
-  60% { transform: rotate(1deg); }
-  70% { transform: rotate(-0.5deg); }
-  80% { transform: rotate(0.5deg); }
-  90% { transform: rotate(-0.25deg); }
-}
-
-@keyframes wiggle-intense {
-  0%, 100% { transform: rotate(0deg) scale(1); }
-  10% { transform: rotate(-5deg) scale(1.05); }
-  20% { transform: rotate(5deg) translateX(2px); }
-  30% { transform: rotate(-4deg) translateY(2px); }
-  40% { transform: rotate(4deg) scale(1.03); }
-  50% { transform: rotate(-3deg) translateX(-2px); }
-  60% { transform: rotate(3deg); }
-  70% { transform: rotate(-2deg) translateY(-2px); }
-  80% { transform: rotate(2deg); }
-  90% { transform: rotate(-1deg); }
-}
-
-@keyframes wiggle-subtle {
-  0%, 100% { transform: rotate(0deg); }
-  25% { transform: rotate(-1deg); }
-  50% { transform: rotate(1deg); }
-  75% { transform: rotate(-0.5deg); }
-}
-
-/* Apply wiggle to all hoverable elements */
-body *:hover {
-  animation: wiggle 0.5s ease-in-out;
-}
-
-h1:hover, h2:hover, h3:hover {
-  animation: wiggle-intense 0.6s ease-in-out infinite !important;
-}
-
-button:hover, .sidebar-item:hover {
-  animation: wiggle-intense 0.4s ease-in-out infinite !important;
-}
-
-p:hover, span:hover {
-  animation: wiggle-subtle 0.3s ease-in-out infinite !important;
-}
-
-#counter-display:hover {
-  animation: wiggle-intense 0.3s ease-in-out infinite !important;
-}
-
-.info-section:hover, #chaos-zone:hover {
-  animation: wiggle 0.8s ease-in-out infinite !important;
-}
-
-.header:hover {
-  animation: wiggle 1s ease-in-out infinite !important;
-}
-
-/* Emoji wiggle special effect */
-.sidebar-item span:first-child:hover {
-  animation: wiggle-intense 0.2s ease-in-out infinite !important;
-  display: inline-block;
-}
-
-/* Footer wiggle */
-.footer:hover {
-  animation: wiggle-subtle 0.5s ease-in-out infinite !important;
-}
   </style>
 </head>
-<body style="margin-left: 60px; transition: margin-left 0.3s ease;">
-<nav id="sidebar-menu" onmouseenter="this.style.width='200px'" onmouseleave="this.style.width='60px'" style="position: fixed; left: 0; top: 0; height: 100vh; width: 60px; background: rgba(0, 0, 0, 0.8); border-right: 2px solid #a855f7; display: flex; flex-direction: column; align-items: center; padding-top: 20px; gap: 15px; z-index: 1000; transition: width 0.3s ease; overflow: hidden;">
-<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
-<span style="font-size: 1.5rem; min-width: 30px;">
-     🏠
-    </span>
-<span style="margin-left: 15px; white-space: nowrap; color: #a855f7; font-weight: bold;">
-     Home
-    </span>
-</div>
-<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
-<span style="font-size: 1.5rem; min-width: 30px;">
-     📋
-    </span>
-<span style="margin-left: 15px; white-space: nowrap; color: #3b82f6; font-weight: bold;">
-     Backlog
-    </span>
-</div>
-<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
-<span style="font-size: 1.5rem; min-width: 30px;">
-     🎮
-    </span>
-<span style="margin-left: 15px; white-space: nowrap; color: #00ff41; font-weight: bold;">
-     Chaos Zone
-    </span>
-</div>
-<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease;">
-<span style="font-size: 1.5rem; min-width: 30px;">
-     ⚙️
-    </span>
-<span style="margin-left: 15px; white-space: nowrap; color: #ffd700; font-weight: bold;">
-     Settings
-    </span>
-</div>
-<div class="sidebar-item" onmouseenter="this.style.background='rgba(168, 85, 247, 0.3)'" onmouseleave="this.style.background='transparent'" style="display: flex; align-items: center; width: 100%; padding: 12px 15px; cursor: pointer; transition: all 0.3s ease; margin-top: auto; margin-bottom: 20px;">
-<span style="font-size: 1.5rem; min-width: 30px;">
-     📺
-    </span>
-<span style="margin-left: 15px; white-space: nowrap; color: #e94560; font-weight: bold;">
-     Twitch
-    </span>
-</div>
-<style>
-    #sidebar-menu .sidebar-item span:last-child {
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    #sidebar-menu:hover .sidebar-item span:last-child {
-      opacity: 1;
-    }
-    #sidebar-menu::after {
-      content: '';
-      position: absolute;
-      right: 0;
-      top: 0;
-      height: 100%;
-      width: 2px;
-      background: linear-gradient(180deg, #a855f7, #3b82f6, #00ff41, #a855f7);
-      background-size: 100% 200%;
-      animation: sidebar-glow 3s linear infinite;
-    }
-    @keyframes sidebar-glow {
-      0% { background-position: 0% 0%; }
-      100% { background-position: 0% 200%; }
-    }
-   </style>
-</nav>
-<div class="header" style="position: relative; z-index: 1;">
-<button id="dark-mode-toggle" onclick="toggleDarkMode()" style="position: absolute; top: 15px; right: 20px; background: rgba(0,0,0,0.5); border: 2px solid #a855f7; border-radius: 30px; padding: 8px 16px; cursor: pointer; font-size: 1.2rem; transition: all 0.3s ease; z-index: 100;">
-<span id="mode-icon">
-     🌙
-    </span>
-<span id="mode-text" style="margin-left: 8px; color: #a855f7; font-weight: bold;">
-     Dark
-    </span>
-</button>
-<style>
-    #dark-mode-toggle:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(168, 85, 247, 0.6); } body.light-mode { background: linear-gradient(135deg, #e8e8ff 0%, #d4c4f5 35%, #c9b8e8 65%, #b8a8d8 100%) !important; color: #1a1a4e !important; } body.light-mode .header { background: rgba(255, 255, 255, 0.7) !important; } body.light-mode #sidebar-menu { background: rgba(255, 255, 255, 0.9) !important; } body.light-mode #chaos-zone { background: rgba(168, 85, 247, 0.15) !important; } body.light-mode .info-section { background: rgba(0, 0, 0, 0.05) !important; } body.light-mode .status-bar span, body.light-mode p, body.light-mode .info-section p { color: #333 !important; } body.light-mode .footer p { color: #666 !important; } body.light-mode h1, body.light-mode h2 { -webkit-text-fill-color: #4a1a8a !important; color: #4a1a8a !important; } body.light-mode #dark-mode-toggle { background: rgba(255,255,255,0.8); }
-   </style>
-<script>
-    function toggleDarkMode() { document.body.classList.toggle('light-mode'); const isLight = document.body.classList.contains('light-mode'); document.getElementById('mode-icon').textContent = isLight ? '☀️' : '🌙'; document.getElementById('mode-text').textContent = isLight ? 'Light' : 'Dark'; localStorage.setItem('darkMode', isLight ? 'light' : 'dark'); const btn = document.getElementById('dark-mode-toggle'); btn.style.transform = 'rotate(360deg) scale(1.2)'; setTimeout(() => btn.style.transform = '', 500); } (function() { if(localStorage.getItem('darkMode') === 'light') { document.body.classList.add('light-mode'); document.getElementById('mode-icon').textContent = '☀️'; document.getElementById('mode-text').textContent = 'Light'; } })();
-   </script>
-<h1 style="font-family: 'Courier New', monospace; color: #00ff41; text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41; background: none; -webkit-background-clip: unset; -webkit-text-fill-color: #00ff41; animation: matrix-flicker 0.1s infinite;" title="🎭 Hover me for wiggles!">
-    ⟨ Welcome to the Matrix ⟩
+<body>
+<div class="header">
+<h1>
+    ✨ Emergent Canvas ✨
    </h1>
 <p>
     Une expérience de création collaborative
@@ -356,7 +136,7 @@ p:hover, span:hover {
     ⏱️ Démarré
    </span>
 </div>
-<div class="main-content" style="position: relative; z-index: 1;">
+<div class="main-content">
 <!-- LLM-EDIT-START -->
 <div id="chaos-zone">
 <div class="chaos-content">
@@ -366,55 +146,38 @@ p:hover, span:hover {
 <p>
       Proposez une idée dans le backlog !
      </p>
-<div id="counter-display" style="font-size: 4rem; font-weight: bold; background: linear-gradient(135deg, #ffd700, #ff6b6b, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease;">
-      0
-     </div>
-<button id="click-me-btn" style="background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%); color: white; border: none; padding: 1.2rem 3rem; font-size: 1.5rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5); transition: all 0.3s ease; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 2px;">
-      ✨ Click Me ✨
+<div class="counter-display" id="counter-box">
+<span class="counter-label">
+       🔢 Compteur
+      </span>
+<span class="counter-value" id="click-counter">
+       0
+      </span>
+</div>
+<button class="red-btn" onclick="incrementCounter()">
+      Click me
      </button>
 <style>
-      #click-me-btn:hover { transform: scale(1.1) rotate(2deg); box-shadow: 0 12px 35px rgba(233, 69, 96, 0.7); } #click-me-btn:active { transform: scale(0.95); } @keyframes pulse { 0%, 100% { box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5); } 50% { box-shadow: 0 8px 40px rgba(233, 69, 96, 0.8), 0 0 60px rgba(233, 69, 96, 0.4); } }
+      .red-btn{background:linear-gradient(135deg,#e94560,#ff6b6b);color:white;border:none;padding:1rem 2.5rem;font-size:1.3rem;font-weight:bold;border-radius:50px;cursor:pointer;box-shadow:0 4px 15px rgba(233,69,96,0.4);transition:all 0.3s ease;animation:pulse 2s infinite}.red-btn:hover{transform:scale(1.1);box-shadow:0 6px 25px rgba(233,69,96,0.6)}@keyframes pulse{0%,100%{box-shadow:0 4px 15px rgba(233,69,96,0.4)}50%{box-shadow:0 4px 30px rgba(233,69,96,0.8)}}
+.counter-display{display:flex;flex-direction:column;align-items:center;margin:1.5rem 0;padding:1rem 2rem;background:rgba(0,0,0,0.3);border-radius:15px;border:2px solid #9b59b6;}
+.counter-label{font-size:0.9rem;color:#9b59b6;margin-bottom:0.5rem;}
+.counter-value{font-size:3rem;font-weight:bold;background:linear-gradient(90deg,#3498db,#e94560);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 20px rgba(233,69,96,0.5);transition:transform 0.2s ease;}
+.counter-value.bump{transform:scale(1.3);}
      </style>
 <script>
-      let clickCount = 0;
-      const btn = document.getElementById('click-me-btn');
-      const counter = document.getElementById('counter-display');
-      
-      btn.addEventListener('click', function() {
-        clickCount++;
-        counter.textContent = clickCount;
-        counter.style.transform = 'scale(1.3)';
-        setTimeout(() => counter.style.transform = 'scale(1)', 200);
-        
-        this.style.background = 'linear-gradient(135deg, hsl(' + Math.random()*360 + ', 70%, 50%) 0%, hsl(' + Math.random()*360 + ', 70%, 60%) 100%)';
-        
-        const emojis = ['🎉', '🚀', '💥', '⚡', '🌟', '🔥', '💫', '🎨'];
-        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-        this.textContent = emoji + ' ' + clickCount + ' clicks! ' + emoji;
-        setTimeout(() => { this.textContent = '✨ Click Me ✨'; }, 1000);
-        
-        // Confetti burst effect
-        for(let i = 0; i < 8; i++) {
-          const confetti = document.createElement('div');
-          confetti.style.cssText = 'position:absolute;width:10px;height:10px;background:hsl('+Math.random()*360+',80%,60%);border-radius:50%;pointer-events:none;';
-          confetti.style.left = '50%';
-          confetti.style.top = '40%';
-          document.getElementById('chaos-zone').appendChild(confetti);
-          const angle = (i/8) * Math.PI * 2;
-          const velocity = 100 + Math.random() * 50;
-          let x = 0, y = 0, opacity = 1;
-          const animate = () => {
-            x += Math.cos(angle) * 5;
-            y += Math.sin(angle) * 5 + 2;
-            opacity -= 0.02;
-            confetti.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
-            confetti.style.opacity = opacity;
-            if(opacity > 0) requestAnimationFrame(animate);
-            else confetti.remove();
-          };
-          requestAnimationFrame(animate);
-        }
-      });
+      let count = 0;
+function incrementCounter() {
+  count++;
+  const counterEl = document.getElementById('click-counter');
+  counterEl.textContent = count;
+  counterEl.classList.add('bump');
+  setTimeout(() => counterEl.classList.remove('bump'), 200);
+  
+  // Messages aléatoires sur le bouton
+  const btn = document.querySelector('.red-btn');
+  const messages = ['🎉 +1!', '✨ Nice!', '🔥 ' + count + '!', '💥 Boom!', '🚀 Go!'];
+  btn.textContent = messages[Math.floor(Math.random() * messages.length)];
+}
      </script>
 </div>
 </div>
@@ -436,91 +199,8 @@ p:hover, span:hover {
 </div>
 <div class="footer">
 <p>
-    © 2024 Twitch Emergent Coding • Expérience d'intelligence collective
-    <br/>
-<span style="font-size: 0.7rem; opacity: 0.6;">
-     All your base are belong to us 🎮
-    </span>
-</p>
+    Twitch Emergent Coding • Expérience d'intelligence collective
+   </p>
 </div>
-<div id="particles-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;">
-</div>
-<script>
-   (function() {
-  const container = document.getElementById('particles-container');
-  const particleCount = 50;
-  
-  for(let i = 0; i < particleCount; i++) {
-    const particle = document.createElement('div');
-    const size = Math.random() * 6 + 2;
-    const duration = Math.random() * 20 + 15;
-    const delay = Math.random() * 10;
-    const startX = Math.random() * 100;
-    const drift = (Math.random() - 0.5) * 30;
-    const hue = Math.random() > 0.5 ? '260' : '210';
-    const opacity = Math.random() * 0.5 + 0.2;
-    
-    particle.style.cssText = `
-      position: absolute;
-      width: ${size}px;
-      height: ${size}px;
-      background: radial-gradient(circle, hsla(${hue}, 80%, 70%, ${opacity}) 0%, transparent 70%);
-      border-radius: 50%;
-      left: ${startX}%;
-      bottom: -20px;
-      animation: floatUp${i} ${duration}s linear ${delay}s infinite;
-      box-shadow: 0 0 ${size * 2}px hsla(${hue}, 80%, 60%, 0.3);
-    `;
-    
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes floatUp${i} {
-        0% {
-          transform: translateY(0) translateX(0) scale(1);
-          opacity: 0;
-        }
-        10% {
-          opacity: ${opacity};
-        }
-        90% {
-          opacity: ${opacity};
-        }
-        100% {
-          transform: translateY(-110vh) translateX(${drift}vw) scale(${Math.random() * 0.5 + 0.5});
-          opacity: 0;
-        }
-      }
-    `;
-    document.head.appendChild(style);
-    container.appendChild(particle);
-  }
-  
-  // Particules scintillantes fixes
-  for(let i = 0; i < 30; i++) {
-    const star = document.createElement('div');
-    const size = Math.random() * 3 + 1;
-    star.style.cssText = `
-      position: absolute;
-      width: ${size}px;
-      height: ${size}px;
-      background: white;
-      border-radius: 50%;
-      left: ${Math.random() * 100}%;
-      top: ${Math.random() * 100}%;
-      animation: twinkle ${Math.random() * 3 + 2}s ease-in-out ${Math.random() * 2}s infinite;
-    `;
-    container.appendChild(star);
-  }
-  
-  const twinkleStyle = document.createElement('style');
-  twinkleStyle.textContent = `
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.2; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.5); }
-    }
-  `;
-  document.head.appendChild(twinkleStyle);
-})();
-  </script>
 </body>
 </html>
