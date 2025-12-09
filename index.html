@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code</title>
+<title>
+   Twitch Versus Code
+  </title>
 <style>
-  body { 
+   body { 
     font-family: system-ui, sans-serif; 
     display: flex; 
     flex-direction: column;
@@ -168,96 +171,180 @@
     font-size: 14px;
     z-index: 100;
   }
-</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
+<style>
+   @keyframes elephant-bounce{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-10px) rotate(2deg);}}@keyframes water-drop{0%{transform:translate(0,0) scale(1);opacity:1;}100%{transform:translate(var(--tx),var(--ty)) scale(0.3);opacity:0;}}#elephant:hover{animation:elephant-spray 0.3s ease-in-out infinite;}@keyframes elephant-spray{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}.water-particle{position:absolute;font-size:20px;animation:water-drop 1.5s ease-out forwards;pointer-events:none;}
+  </style>
+<style>
+   .nav-menu{background:linear-gradient(180deg,rgba(0,0,0,0.8) 0%,rgba(0,0,0,0.4) 100%)!important;border-bottom:1px solid rgba(231,76,60,0.3);}.nav-btn{position:relative;overflow:hidden;}.nav-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transition:left 0.5s;}.nav-btn:hover::before{left:100%;}.nav-btn.active{box-shadow:0 0 20px rgba(231,76,60,0.5);}.section{opacity:0;transition:opacity 0.5s ease;}.section.active{opacity:1;}
+  </style>
 </head>
 <body>
-
 <!-- Navigation Menu -->
 <nav class="nav-menu">
-  <button class="nav-btn active" onclick="showSection('espace')">🌌 Espace</button>
-  <button class="nav-btn" onclick="showSection('animaux')">🐾 Animaux</button>
-  <button class="nav-btn" onclick="showSection('jeux')">🎮 Jeux</button>
+<div style="display:flex;align-items:center;gap:8px;margin-right:20px;">
+<span style="font-size:24px;">
+     🚀
+    </span>
+<span style="font-weight:bold;background:linear-gradient(135deg,#e74c3c,#f39c12);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+     TVC Explorer
+    </span>
+</div>
+<button class="nav-btn active" onclick="showSection('espace')">
+    🌌 Espace
+   </button>
+<button class="nav-btn" onclick="showSection('animaux')">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" onclick="showSection('jeux')">
+    🎮 Jeux
+   </button>
 </nav>
-
 <!-- Section Timer -->
-<div class="section-timer">⏱️ Section suivante dans: <span id="timer-display">30</span>s</div>
-
+<div class="section-timer">
+   🔄 Auto-rotation:
+   <span id="timer-display">
+    30
+   </span>
+   s
+  </div>
 <!-- SECTION ESPACE -->
 <section class="section active" id="section-espace">
-  <h1>🌌 Space Explorer</h1>
-  <div id="sun-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;"></div>
-  <div class="solar-system">
-    <div class="planet">
-      <div class="ring"></div>
-      <div class="ring ring-2"></div>
-      <div class="surface"></div>
-    </div>
-    <div class="moon-orbit">
-      <div class="moon"></div>
-    </div>
-    <div class="moon-orbit-2" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;animation:orbit-reverse 5s linear infinite;">
-      <div class="moon-2" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#ecf0f1 0%,#bdc3c7 50%,#95a5a6 100%);box-shadow:inset -4px -4px 8px rgba(0,0,0,0.4),0 0 10px rgba(255,255,255,0.4);"></div>
-    </div>
-  </div>
+<h1>
+    🌌 Space Explorer
+   </h1>
+<div id="sun-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;">
+</div>
+<div class="solar-system">
+<div class="planet">
+<div class="ring">
+</div>
+<div class="ring ring-2">
+</div>
+<div class="surface">
+</div>
+</div>
+<div class="moon-orbit">
+<div class="moon">
+</div>
+</div>
+<div class="moon-orbit-2" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;animation:orbit-reverse 5s linear infinite;">
+<div class="moon-2" style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:18px;height:18px;border-radius:50%;background:linear-gradient(135deg,#ecf0f1 0%,#bdc3c7 50%,#95a5a6 100%);box-shadow:inset -4px -4px 8px rgba(0,0,0,0.4),0 0 10px rgba(255,255,255,0.4);">
+</div>
+</div>
+</div>
 </section>
-
 <!-- SECTION ANIMAUX -->
 <section class="section" id="section-animaux">
-  <h1>🐾 Animal Chase</h1>
-  <div class="solar-system" id="animal-arena">
-    <div class="planet">
-      <div class="ring"></div>
-      <div class="ring ring-2"></div>
-      <div class="surface"></div>
-    </div>
-    <div class="kitty-orbit">
-      <div class="kitty" title="Meow! 🐱">🐱</div>
-    </div>
-    <div class="doggy-orbit">
-      <div class="doggy" title="Woof! 🐕">🐕</div>
-    </div>
-  </div>
-  <div id="scoreboard" style="margin-top:30px;background:rgba(139,69,19,0.8);backdrop-filter:blur(10px);padding:15px 25px;border-radius:20px;box-shadow:0 0 30px rgba(139,69,19,0.5);font-size:18px;display:flex;align-items:center;gap:10px;">
-    <span style="font-size:28px;">🐕</span>
-    <span id="dogScore" style="font-weight:bold;font-size:24px;">0</span>
-    <span style="opacity:0.7;">points</span>
-  </div>
-  <div id="catchAlert" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(255,215,0,0.95);color:#333;padding:20px 40px;border-radius:20px;font-size:24px;font-weight:bold;z-index:200;box-shadow:0 0 50px rgba(255,215,0,0.8);transition:transform 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);pointer-events:none;">🐕 GOT THE CAT! 🐱</div>
+<h1>
+    🐾 Animal Chase
+   </h1>
+<div class="solar-system" id="animal-arena">
+<div class="planet">
+<div class="ring">
+</div>
+<div class="ring ring-2">
+</div>
+<div class="surface">
+</div>
+</div>
+<div class="kitty-orbit">
+<div class="kitty" title="Meow! 🐱">
+      🐱
+     </div>
+</div>
+<div class="doggy-orbit">
+<div class="doggy" title="Woof! 🐕">
+      🐕
+     </div>
+</div>
+<div id="elephant-container" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);z-index:50;">
+<div id="elephant" style="font-size:80px;animation:elephant-bounce 1s ease-in-out infinite;cursor:pointer;filter:drop-shadow(0 0 20px rgba(128,128,128,0.5));">
+      🐘
+     </div>
+<div id="water-spray" style="position:absolute;top:-30px;left:60px;pointer-events:none;">
+</div>
+</div>
+</div>
+<div id="scoreboard" style="margin-top:30px;background:rgba(139,69,19,0.8);backdrop-filter:blur(10px);padding:15px 25px;border-radius:20px;box-shadow:0 0 30px rgba(139,69,19,0.5);font-size:18px;display:flex;align-items:center;gap:10px;">
+<span style="font-size:28px;">
+     🐕
+    </span>
+<span id="dogScore" style="font-weight:bold;font-size:24px;">
+     0
+    </span>
+<span style="opacity:0.7;">
+     points
+    </span>
+</div>
+<div id="catchAlert" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);background:rgba(255,215,0,0.95);color:#333;padding:20px 40px;border-radius:20px;font-size:24px;font-weight:bold;z-index:200;box-shadow:0 0 50px rgba(255,215,0,0.8);transition:transform 0.3s cubic-bezier(0.68,-0.55,0.265,1.55);pointer-events:none;">
+    🐕 GOT THE CAT! 🐱
+   </div>
 </section>
-
 <!-- SECTION JEUX -->
 <section class="section" id="section-jeux">
-  <h1>🎮 Space Snake</h1>
-  <div id="snake-game-container">
-    <div class="game-info">
-      <span>🏆 Score: <strong id="snake-score">0</strong></span>
-      <span>⭐ High Score: <strong id="snake-highscore">0</strong></span>
-      <span>🚀 Speed: <strong id="snake-speed">1</strong></span>
-    </div>
-    <canvas id="snake-canvas" width="400" height="400"></canvas>
-    <div class="game-controls">
-      <button class="game-btn" onclick="startSnakeGame()">▶️ Start</button>
-      <button class="game-btn" onclick="pauseSnakeGame()">⏸️ Pause</button>
-      <button class="game-btn" onclick="resetSnakeGame()">🔄 Reset</button>
-    </div>
-    <p class="game-instructions">🎯 Utilisez les flèches ⬆️⬇️⬅️➡️ ou WASD pour diriger le serpent spatial!<br>Mangez les étoiles ⭐ pour grandir. Évitez les murs et votre queue!</p>
-  </div>
+<h1>
+    🎮 Space Snake
+   </h1>
+<div id="snake-game-container">
+<div class="game-info">
+<span>
+      🏆 Score:
+      <strong id="snake-score">
+       0
+      </strong>
+</span>
+<span>
+      ⭐ High Score:
+      <strong id="snake-highscore">
+       0
+      </strong>
+</span>
+<span>
+      🚀 Speed:
+      <strong id="snake-speed">
+       1
+      </strong>
+</span>
+</div>
+<canvas height="400" id="snake-canvas" width="400">
+</canvas>
+<div class="game-controls">
+<button class="game-btn" onclick="startSnakeGame()">
+      ▶️ Start
+     </button>
+<button class="game-btn" onclick="pauseSnakeGame()">
+      ⏸️ Pause
+     </button>
+<button class="game-btn" onclick="resetSnakeGame()">
+      🔄 Reset
+     </button>
+</div>
+<p class="game-instructions">
+     🎯 Utilisez les flèches ⬆️⬇️⬅️➡️ ou WASD pour diriger le serpent spatial!
+     <br/>
+     Mangez les étoiles ⭐ pour grandir. Évitez les murs et votre queue!
+    </p>
+</div>
 </section>
-
 <!-- Audio Controls -->
 <div class="audio-controls" style="position:fixed;bottom:30px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:15px;background:rgba(255,255,255,0.1);backdrop-filter:blur(10px);padding:15px 25px;border-radius:50px;box-shadow:0 0 30px rgba(231,76,60,0.3);z-index:500;">
-  <button id="playPauseBtn" onclick="toggleAudio()" style="width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(231,76,60,0.5);transition:all 0.3s ease;">
-    <span id="playIcon">⏸️</span>
-  </button>
-  <div style="color:white;font-size:14px;">🎵 Professor Layton - London Streets</div>
-  <audio id="bgMusic" loop>
-    <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
-  </audio>
+<button id="playPauseBtn" onclick="toggleAudio()" style="width:50px;height:50px;border-radius:50%;border:none;background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 20px rgba(231,76,60,0.5);transition:all 0.3s ease;">
+<span id="playIcon">
+     ⏸️
+    </span>
+</button>
+<div style="color:white;font-size:14px;">
+    🎵 Professor Layton - London Streets
+   </div>
+<audio id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+</audio>
 </div>
-
 <script>
-// Navigation & Auto-rotation
+   // Navigation & Auto-rotation
 const sections = ['espace', 'animaux', 'jeux'];
 let currentSectionIndex = 0;
 let sectionTimer = 30;
@@ -656,7 +743,9 @@ ctx.fillStyle = 'white';
 ctx.font = '24px system-ui';
 ctx.textAlign = 'center';
 ctx.fillText('🐍 Press START to play!', snakeCanvas.width/2, snakeCanvas.height/2);
-</script>
-
+  </script>
+<script>
+   (function(){const elephant=document.getElementById('elephant');const sprayContainer=document.getElementById('water-spray');if(!elephant||!sprayContainer)return;function createWaterSpray(){const particles=['💧','💦','🌊','💙'];for(let i=0;i<5;i++){setTimeout(()=>{const drop=document.createElement('span');drop.className='water-particle';drop.textContent=particles[Math.floor(Math.random()*particles.length)];drop.style.setProperty('--tx',(Math.random()*150-30)+'px');drop.style.setProperty('--ty',(-Math.random()*100-50)+'px');drop.style.left=Math.random()*20+'px';drop.style.top=Math.random()*10+'px';sprayContainer.appendChild(drop);setTimeout(()=>drop.remove(),1500);},i*100);}}setInterval(createWaterSpray,800);elephant.addEventListener('click',()=>{for(let j=0;j<3;j++){setTimeout(createWaterSpray,j*200);}});})();
+  </script>
 </body>
 </html>
