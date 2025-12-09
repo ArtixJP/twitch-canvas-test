@@ -40,6 +40,10 @@
                 0 0 60px rgba(74, 144, 217, 0.4);
             animation: float 4s ease-in-out infinite;
             position: relative;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+        .planet.caught {
+            animation: float 4s ease-in-out infinite, planetPulse 0.5s ease-out;
         }
         .planet::before {
             content: '';
@@ -62,6 +66,7 @@
             background: rgba(30, 87, 153, 0.6);
             border-radius: 50%;
             transform: rotate(-5deg);
+            transition: background 0.5s ease;
         }
         .moon-orbit {
             position: absolute;
@@ -158,6 +163,11 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
         }
+        @keyframes planetPulse {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
         .stars {
             position: fixed;
             top: 0;
@@ -188,6 +198,15 @@
   position: relative;
   z-index: 1;
 }
+   @keyframes catchPop {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+    100% { opacity: 0; transform: translate(-50%, -150%) scale(1); }
+}
+#dogScore {
+    transition: transform 0.3s, color 0.3s;
+    font-weight: bold;
+}
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 </script>
@@ -196,10 +215,18 @@
 <h1>
    Hello World
   </h1>
+<div id="scoreBoard" style="font-size: 1.5rem; margin-bottom: 1rem; display: flex; gap: 2rem; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 15px; backdrop-filter: blur(10px);">
+<span>
+    🐕 Dog:
+    <span id="dogScore">
+     0
+    </span>
+</span>
+</div>
 <div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
 </div>
 <div class="planet-system">
-<div class="planet">
+<div class="planet" id="planet">
 </div>
 <div class="moon-orbit">
 <div class="moon">
@@ -481,6 +508,146 @@ function updateChase() {
 }
 
 updateChase();
+  </script>
+<script>
+   // Score system
+let dogPoints = 0;
+const dogScoreEl = document.getElementById('dogScore');
+const catchDistance = 0.3; // Radians - how close to count as a catch
+let catchCooldown = false;
+
+function checkCatch() {
+    if (catchCooldown) return;
+    
+    // Get current angles from the chase system
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const doggyOrbit = document.querySelector('.doggy-orbit');
+    
+    // Extract rotation values
+    const catTransform = kittyOrbit.style.transform;
+    const dogTransform = doggyOrbit.style.transform;
+    
+    const catMatch = catTransform.match(/rotate\(([\d.-]+)rad\)/);
+    const dogMatch = dogTransform.match(/rotate\(([\d.-]+)rad\)/);
+    
+    if (catMatch && dogMatch) {
+        const catAng = parseFloat(catMatch[1]);
+        const dogAng = parseFloat(dogMatch[1]);
+        
+        let angleDiff = catAng - dogAng;
+        while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+        while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+        
+        const distance = Math.abs(angleDiff);
+        
+        if (distance < catchDistance) {
+            // Dog caught the cat!
+            dogPoints++;
+            dogScoreEl.textContent = dogPoints;
+            
+            // Visual feedback
+            dogScoreEl.style.transform = 'scale(1.5)';
+            dogScoreEl.style.color = '#ffdd00';
+            setTimeout(() => {
+                dogScoreEl.style.transform = 'scale(1)';
+                dogScoreEl.style.color = 'white';
+            }, 300);
+            
+            // Show catch effect
+            const catchEffect = document.createElement('div');
+            catchEffect.textContent = '+1 🐕';
+            catchEffect.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffdd00; text-shadow: 0 0 20px #ff6600; animation: catchPop 1s ease-out forwards; z-index: 100;';
+            document.body.appendChild(catchEffect);
+            setTimeout(() => catchEffect.remove(), 1000);
+            
+            // Cooldown to prevent multiple catches
+            catchCooldown = true;
+            setTimeout(() => { catchCooldown = false; }, 2000);
+        }
+    }
+    
+    requestAnimationFrame(checkCatch);
+}
+
+checkCatch();
+  </script>
+<script>
+   // Planet color change on catch
+const planetColors = [
+    { gradient: 'linear-gradient(135deg, #ff6b6b 0%, #c92a2a 50%, #5c0a0a 100%)', glow: 'rgba(255, 107, 107, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #51cf66 0%, #2f9e44 50%, #0d3d14 100%)', glow: 'rgba(81, 207, 102, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #ffd43b 0%, #fab005 50%, #5c4200 100%)', glow: 'rgba(255, 212, 59, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #cc5de8 0%, #9c36b5 50%, #3d0d4a 100%)', glow: 'rgba(204, 93, 232, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #ff922b 0%, #e8590c 50%, #5c2200 100%)', glow: 'rgba(255, 146, 43, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #22b8cf 0%, #1098ad 50%, #043d45 100%)', glow: 'rgba(34, 184, 207, 0.4)' },
+    { gradient: 'linear-gradient(135deg, #f06595 0%, #d6336c 50%, #5c0d2a 100%)', glow: 'rgba(240, 101, 149, 0.4)' }
+];
+const originalColor = { gradient: 'linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5c 100%)', glow: 'rgba(74, 144, 217, 0.4)' };
+
+function changePlanetColor() {
+    const planet = document.getElementById('planet');
+    if (!planet) return;
+    
+    // Pick a random color
+    const randomColor = planetColors[Math.floor(Math.random() * planetColors.length)];
+    
+    // Apply the new color
+    planet.style.background = randomColor.gradient;
+    planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.5), inset 10px 10px 40px rgba(255,255,255,0.2), 0 0 60px ${randomColor.glow}`;
+    
+    // Add pulse animation class
+    planet.classList.add('caught');
+    
+    // Return to original color after 2 seconds
+    setTimeout(() => {
+        planet.style.background = originalColor.gradient;
+        planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.5), inset 10px 10px 40px rgba(255,255,255,0.2), 0 0 60px ${originalColor.glow}`;
+        planet.classList.remove('caught');
+    }, 2000);
+}
+
+// Override the catch detection to include planet color change
+const originalCheckCatch = checkCatch;
+let catchCooldownPlanet = false;
+
+function checkCatchWithPlanet() {
+    if (catchCooldownPlanet) {
+        requestAnimationFrame(checkCatchWithPlanet);
+        return;
+    }
+    
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const doggyOrbit = document.querySelector('.doggy-orbit');
+    
+    const catTransform = kittyOrbit.style.transform;
+    const dogTransform = doggyOrbit.style.transform;
+    
+    const catMatch = catTransform.match(/rotate\(([\d.-]+)rad\)/);
+    const dogMatch = dogTransform.match(/rotate\(([\d.-]+)rad\)/);
+    
+    if (catMatch && dogMatch) {
+        const catAng = parseFloat(catMatch[1]);
+        const dogAng = parseFloat(dogMatch[1]);
+        
+        let angleDiff = catAng - dogAng;
+        while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+        while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+        
+        const distance = Math.abs(angleDiff);
+        
+        if (distance < 0.3) {
+            // Change planet color!
+            changePlanetColor();
+            
+            catchCooldownPlanet = true;
+            setTimeout(() => { catchCooldownPlanet = false; }, 2000);
+        }
+    }
+    
+    requestAnimationFrame(checkCatchWithPlanet);
+}
+
+checkCatchWithPlanet();
   </script>
 </body>
 </html>
