@@ -722,6 +722,24 @@
 </div>
 </div>
 <body>
+<nav id="section-nav" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; gap: 10px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.2);">
+<button class="nav-btn active" data-section="space" style="padding: 10px 20px; border: none; border-radius: 25px; background: linear-gradient(135deg, #e67e22, #d35400); color: white; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+    🪐 Espace
+   </button>
+<button class="nav-btn" data-section="animals" style="padding: 10px 20px; border: none; border-radius: 25px; background: rgba(255,255,255,0.1); color: white; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+    🐱🐕 Animaux
+   </button>
+<button class="nav-btn" data-section="elephant" style="padding: 10px 20px; border: none; border-radius: 25px; background: rgba(255,255,255,0.1); color: white; cursor: pointer; font-size: 0.9rem; transition: all 0.3s;">
+    🐘 Éléphant
+   </button>
+</nav>
+<div id="auto-timer" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 200; font-size: 0.7rem; color: rgba(255,255,255,0.5);">
+   Prochaine section dans:
+   <span id="countdown">
+    30
+   </span>
+   s
+  </div>
 <div id="scoreboard" style="position: fixed; top: 20px; left: 20px; z-index: 100; background: rgba(139, 69, 19, 0.8); backdrop-filter: blur(10px); padding: 15px 25px; border-radius: 20px; border: 2px solid rgba(255,255,255,0.3); box-shadow: 0 8px 32px rgba(0,0,0,0.3); font-family: system-ui, sans-serif;">
 <div style="display: flex; align-items: center; gap: 10px;">
 <span style="font-size: 2rem;">
@@ -1502,6 +1520,105 @@ window.addEventListener('load', function() {
         gameContainer.style.display = 'none';
         if(gameLoop) clearInterval(gameLoop);
     });
+})();
+  </script>
+<script>
+   (function() {
+  const sections = ['space', 'animals', 'elephant'];
+  let currentIndex = 0;
+  let countdown = 30;
+  const countdownEl = document.getElementById('countdown');
+  const navBtns = document.querySelectorAll('.nav-btn');
+  
+  const solarSystem = document.querySelector('.solar-system');
+  const catOrbit = document.querySelector('.cat-orbit');
+  const dogOrbit = document.querySelector('.dog-orbit');
+  const scoreboard = document.getElementById('scoreboard');
+  const elephant = document.querySelector('.elephant-container');
+  const title = document.querySelector('h1');
+  
+  function showSection(sectionName) {
+    // Reset visibility
+    solarSystem.style.opacity = '0.2';
+    solarSystem.style.transform = 'scale(0.5)';
+    catOrbit.style.opacity = '0';
+    dogOrbit.style.opacity = '0';
+    scoreboard.style.opacity = '0';
+    elephant.style.opacity = '0';
+    elephant.style.transform = 'translate(-50%, -50%) scale(0.5)';
+    
+    // Update nav buttons
+    navBtns.forEach(btn => {
+      btn.style.background = 'rgba(255,255,255,0.1)';
+      btn.classList.remove('active');
+    });
+    const activeBtn = document.querySelector(`[data-section="${sectionName}"]`);
+    if(activeBtn) {
+      activeBtn.style.background = 'linear-gradient(135deg, #e67e22, #d35400)';
+      activeBtn.classList.add('active');
+    }
+    
+    switch(sectionName) {
+      case 'space':
+        solarSystem.style.opacity = '1';
+        solarSystem.style.transform = 'scale(1)';
+        title.innerHTML = '🪐 Système Solaire';
+        break;
+      case 'animals':
+        solarSystem.style.opacity = '1';
+        solarSystem.style.transform = 'scale(1)';
+        catOrbit.style.opacity = '1';
+        dogOrbit.style.opacity = '1';
+        scoreboard.style.opacity = '1';
+        title.innerHTML = '🐱🐕 Course Poursuite!';
+        break;
+      case 'elephant':
+        elephant.style.opacity = '1';
+        elephant.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        title.innerHTML = '🐘 Éléphant Magique';
+        break;
+    }
+  }
+  
+  function nextSection() {
+    currentIndex = (currentIndex + 1) % sections.length;
+    showSection(sections[currentIndex]);
+    countdown = 30;
+  }
+  
+  // Add CSS transitions
+  const style = document.createElement('style');
+  style.textContent = `
+    .solar-system, .cat-orbit, .dog-orbit, #scoreboard, .elephant-container {
+      transition: opacity 0.8s ease, transform 0.8s ease !important;
+    }
+    .nav-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(230,126,34,0.4);
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Manual navigation
+  navBtns.forEach((btn, index) => {
+    btn.addEventListener('click', () => {
+      currentIndex = index;
+      showSection(sections[currentIndex]);
+      countdown = 30;
+    });
+  });
+  
+  // Auto-rotate every 30 seconds
+  setInterval(() => {
+    countdown--;
+    countdownEl.textContent = countdown;
+    if(countdown <= 0) {
+      nextSection();
+    }
+  }, 1000);
+  
+  // Initialize
+  showSection(sections[0]);
 })();
   </script>
 </body>
