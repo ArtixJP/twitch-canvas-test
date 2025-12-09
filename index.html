@@ -217,6 +217,101 @@ body {
 .planet.color-shift-1{background:linear-gradient(135deg,#ff6b6b 0%,#ee5a24 30%,#ff7675 60%,#d63031 80%,#e74c3c 100%)!important;box-shadow:inset -20px -20px 40px rgba(0,0,0,0.5),0 0 50px rgba(255,107,107,0.5)!important}
 .planet.color-shift-2{background:linear-gradient(135deg,#a29bfe 0%,#6c5ce7 30%,#74b9ff 60%,#0984e3 80%,#5f27cd 100%)!important;box-shadow:inset -20px -20px 40px rgba(0,0,0,0.5),0 0 50px rgba(162,155,254,0.5)!important}
   </style>
+<style>
+   /* Centrage amélioré global */
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 100px;
+}
+
+.section.active {
+  display: flex;
+}
+
+.section-title {
+  text-align: center;
+  width: 100%;
+}
+
+/* Space Section - meilleur centrage */
+.solar-system {
+  margin: 80px auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sun-glow, .sun-rays {
+  left: 50px;
+}
+
+/* Animals Section - centrage amélioré */
+#section-animals {
+  align-items: center;
+}
+
+.animals-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+#scoreboard {
+  position: relative;
+  top: auto;
+  right: auto;
+  margin: 30px auto;
+  text-align: center;
+}
+
+.elephant {
+  margin: 60px auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Games Section - centrage amélioré */
+#section-games {
+  position: relative;
+}
+
+#game-ui {
+  position: relative;
+  top: auto;
+  left: auto;
+  margin: 20px auto 30px;
+  text-align: center;
+}
+
+#game-stats {
+  justify-content: center;
+}
+
+#game-canvas {
+  display: block;
+  margin: 0 auto;
+  max-width: 90%;
+  border-radius: 15px;
+  box-shadow: 0 0 30px rgba(100,150,255,0.3);
+}
+
+/* Navigation - centrage parfait */
+.nav-menu {
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* Music button - ajustement */
+#music-toggle {
+  bottom: 30px;
+  right: 30px;
+}
+  </style>
 </head>
 <body>
 <!-- Navigation Menu -->
