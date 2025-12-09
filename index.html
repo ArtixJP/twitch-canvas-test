@@ -496,6 +496,9 @@
   100% { opacity: 0; transform: translateY(100px) rotate(360deg); }
 }
 #dogScore { transition: transform 0.3s ease, color 0.3s ease; }
+   .planet { transition: background 0.5s ease, box-shadow 0.5s ease; }
+.planet.caught { animation: planet-flash 0.3s ease-out; }
+@keyframes planet-flash { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
   </style>
 </head>
 <body>
@@ -908,6 +911,88 @@
     
     updatePositions();
 })();
+  </script>
+<script>
+   (function() {
+    const planet = document.querySelector('.planet');
+    const planetColors = [
+        { main: 'linear-gradient(135deg, #e67e22 0%, #d35400 30%, #a04000 70%, #6d2c00 100%)', shadow: 'rgba(230, 126, 34, 0.4)' },
+        { main: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 30%, #6c3483 70%, #4a235a 100%)', shadow: 'rgba(155, 89, 182, 0.4)' },
+        { main: 'linear-gradient(135deg, #3498db 0%, #2980b9 30%, #1a5276 70%, #0e3a5c 100%)', shadow: 'rgba(52, 152, 219, 0.4)' },
+        { main: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 30%, #922b21 70%, #641e16 100%)', shadow: 'rgba(231, 76, 60, 0.4)' },
+        { main: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 30%, #1e8449 70%, #145a32 100%)', shadow: 'rgba(46, 204, 113, 0.4)' },
+        { main: 'linear-gradient(135deg, #f39c12 0%, #d68910 30%, #9a7d0a 70%, #7d6608 100%)', shadow: 'rgba(243, 156, 18, 0.4)' },
+        { main: 'linear-gradient(135deg, #1abc9c 0%, #16a085 30%, #0e6655 70%, #0b5345 100%)', shadow: 'rgba(26, 188, 156, 0.4)' },
+        { main: 'linear-gradient(135deg, #e91e63 0%, #c2185b 30%, #880e4f 70%, #560027 100%)', shadow: 'rgba(233, 30, 99, 0.4)' }
+    ];
+    let colorIndex = 0;
+    
+    window.dogCatch = window.dogCatch || function() {};
+    const originalCatch = window.dogCatch;
+    
+    window.dogCatch = function() {
+        originalCatch();
+        
+        // Changer la couleur de la planète
+        colorIndex = (colorIndex + 1) % planetColors.length;
+        const newColor = planetColors[colorIndex];
+        
+        planet.style.background = newColor.main;
+        planet.style.boxShadow = `inset -20px -10px 40px rgba(0,0,0,0.6), inset 10px 10px 20px rgba(255,200,100,0.3), 0 0 60px ${newColor.shadow}`;
+        
+        // Animation flash
+        planet.classList.add('caught');
+        setTimeout(() => planet.classList.remove('caught'), 300);
+        
+        // Mettre à jour le score
+        const scoreEl = document.getElementById('dogScore');
+        if (scoreEl) {
+            const currentScore = parseInt(scoreEl.textContent) || 0;
+            scoreEl.textContent = currentScore + 1;
+            scoreEl.style.transform = 'scale(1.3)';
+            scoreEl.style.color = newColor.shadow.replace('0.4', '1');
+            setTimeout(() => {
+                scoreEl.style.transform = 'scale(1)';
+                scoreEl.style.color = 'white';
+            }, 200);
+        }
+        
+        // Notification
+        const notif = document.getElementById('catchNotif');
+        if (notif) {
+            notif.style.opacity = '1';
+            notif.style.transform = 'translateX(-50%) scale(1.1)';
+            setTimeout(() => {
+                notif.style.opacity = '0';
+                notif.style.transform = 'translateX(-50%) scale(1)';
+            }, 800);
+        }
+    };
+})();
+  </script>
+<div id="gameContainer" style="position: fixed; bottom: 80px; right: 20px; z-index: 500;">
+<canvas id="spaceGame" style="border-radius: 15px; box-shadow: 0 0 30px rgba(102, 126, 234, 0.6);">
+</canvas>
+<div id="gameUI" style="position: absolute; top: 10px; left: 10px; color: #0ff; font-family: 'Courier New', monospace; text-shadow: 0 0 10px #0ff;">
+<div>
+     🎮 SCORE:
+     <span id="gameScore">
+      0
+     </span>
+</div>
+<div>
+     ❤️ LIVES:
+     <span id="gameLives">
+      3
+     </span>
+</div>
+</div>
+<button id="gameToggle" style="position: absolute; top: -40px; right: 0; background: linear-gradient(135deg, #00d4ff, #0099cc); border: none; padding: 8px 16px; border-radius: 20px; color: white; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 212, 255, 0.4);">
+    🚀 PLAY
+   </button>
+</div>
+<script>
+   (function(){const W=300,H=200,canvas=document.getElementById('spaceGame'),ctx=canvas.getContext('2d');canvas.width=W;canvas.height=H;let gameActive=false,score=0,lives=3,ship={x:W/2,y:H-30,w:20,h:15,speed:5},bullets=[],asteroids=[],particles=[],keys={},lastShot=0;const colors=['#ff6b6b','#ffd93d','#6bcb77','#4d96ff','#ff6b9d'];function init(){score=0;lives=3;ship.x=W/2;bullets=[];asteroids=[];particles=[];updateUI();}function updateUI(){document.getElementById('gameScore').textContent=score;document.getElementById('gameLives').textContent='❤️'.repeat(Math.max(0,lives));}function spawnAsteroid(){asteroids.push({x:Math.random()*W,y:-20,r:10+Math.random()*15,speed:1+Math.random()*2,rot:0,rotSpeed:(Math.random()-0.5)*0.1,color:colors[Math.floor(Math.random()*colors.length)]});}function createExplosion(x,y,color){for(let i=0;i<10;i++){particles.push({x,y,vx:(Math.random()-0.5)*4,vy:(Math.random()-0.5)*4,life:30,color});}}function drawShip(){ctx.save();ctx.translate(ship.x,ship.y);ctx.fillStyle='#0ff';ctx.beginPath();ctx.moveTo(0,-ship.h);ctx.lineTo(-ship.w/2,ship.h/2);ctx.lineTo(0,ship.h/4);ctx.lineTo(ship.w/2,ship.h/2);ctx.closePath();ctx.fill();ctx.fillStyle='#ff0';ctx.beginPath();ctx.moveTo(-5,ship.h/2);ctx.lineTo(0,ship.h/2+8+Math.random()*5);ctx.lineTo(5,ship.h/2);ctx.closePath();ctx.fill();ctx.restore();}function update(){if(!gameActive)return;if(keys['ArrowLeft']||keys['a'])ship.x-=ship.speed;if(keys['ArrowRight']||keys['d'])ship.x+=ship.speed;ship.x=Math.max(ship.w/2,Math.min(W-ship.w/2,ship.x));if((keys[' ']||keys['ArrowUp'])&&Date.now()-lastShot>200){bullets.push({x:ship.x,y:ship.y-ship.h,vy:-8});lastShot=Date.now();}bullets=bullets.filter(b=>{b.y+=b.vy;return b.y>0;});if(Math.random()<0.03)spawnAsteroid();asteroids.forEach(a=>{a.y+=a.speed;a.rot+=a.rotSpeed;});asteroids=asteroids.filter(a=>{if(a.y>H+a.r){return false;}let hit=false;bullets=bullets.filter(b=>{const dx=b.x-a.x,dy=b.y-a.y;if(Math.sqrt(dx*dx+dy*dy)<a.r){hit=true;score+=10;createExplosion(a.x,a.y,a.color);updateUI();return false;}return true;});if(hit)return false;const dx=ship.x-a.x,dy=ship.y-a.y;if(Math.sqrt(dx*dx+dy*dy)<a.r+10){lives--;createExplosion(ship.x,ship.y,'#0ff');updateUI();if(lives<=0){gameActive=false;document.getElementById('gameToggle').textContent='🔄 RETRY';}return false;}return true;});particles=particles.filter(p=>{p.x+=p.vx;p.y+=p.vy;p.life--;return p.life>0;});}function draw(){ctx.fillStyle='rgba(10,10,30,0.3)';ctx.fillRect(0,0,W,H);for(let i=0;i<3;i++){ctx.fillStyle='rgba(255,255,255,'+(0.3+Math.random()*0.5)+')';ctx.fillRect(Math.random()*W,Math.random()*H,1,1);}if(gameActive)drawShip();ctx.fillStyle='#0ff';bullets.forEach(b=>{ctx.fillRect(b.x-2,b.y,4,10);});asteroids.forEach(a=>{ctx.save();ctx.translate(a.x,a.y);ctx.rotate(a.rot);ctx.fillStyle=a.color;ctx.beginPath();for(let i=0;i<6;i++){const angle=i*Math.PI/3;const r=a.r*(0.8+Math.random()*0.2);ctx.lineTo(Math.cos(angle)*r,Math.sin(angle)*r);}ctx.closePath();ctx.fill();ctx.restore();});particles.forEach(p=>{ctx.fillStyle=p.color;ctx.globalAlpha=p.life/30;ctx.fillRect(p.x-2,p.y-2,4,4);});ctx.globalAlpha=1;if(!gameActive&&lives<=0){ctx.fillStyle='#ff6b6b';ctx.font='bold 20px Courier New';ctx.textAlign='center';ctx.fillText('GAME OVER',W/2,H/2);ctx.font='12px Courier New';ctx.fillText('Score: '+score,W/2,H/2+20);}}function gameLoop(){update();draw();requestAnimationFrame(gameLoop);}document.addEventListener('keydown',e=>{keys[e.key]=true;if([' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key))e.preventDefault();});document.addEventListener('keyup',e=>keys[e.key]=false);document.getElementById('gameToggle').addEventListener('click',function(){if(!gameActive){init();gameActive=true;this.textContent='⏸️ PAUSE';}else{gameActive=false;this.textContent='🚀 PLAY';}});canvas.addEventListener('click',function(){if(!gameActive){init();gameActive=true;document.getElementById('gameToggle').textContent='⏸️ PAUSE';}});ctx.fillStyle='#0a0a1e';ctx.fillRect(0,0,W,H);ctx.fillStyle='#0ff';ctx.font='14px Courier New';ctx.textAlign='center';ctx.fillText('🚀 Click to Start!',W/2,H/2);ctx.font='10px Courier New';ctx.fillText('← → to move, SPACE to shoot',W/2,H/2+20);gameLoop();})();
   </script>
 </body>
 </html>
