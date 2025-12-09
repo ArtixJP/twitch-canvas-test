@@ -235,6 +235,14 @@
   </style>
 </head>
 <body>
+<div id="scoreBoard" style="position: fixed; top: 20px; left: 20px; z-index: 1000; background: linear-gradient(135deg, rgba(139, 69, 19, 0.9), rgba(205, 133, 63, 0.9)); padding: 15px 25px; border-radius: 15px; box-shadow: 0 0 30px rgba(255, 165, 0, 0.5); font-family: 'Comic Sans MS', cursive; font-size: 1.5rem; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">
+<span>
+    🐕 Score:
+   </span>
+<span id="dogScore">
+    0
+   </span>
+</div>
 <h1>
    🌌 Hello World 🌌
   </h1>
@@ -503,6 +511,126 @@
     }
     
     animate();
+})();
+  </script>
+<div id="catchEffect" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 5rem; opacity: 0; z-index: 2000; pointer-events: none; transition: all 0.5s ease;">
+   🎉
+  </div>
+<script>
+   (function() {
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const kitty = document.querySelector('.kitty');
+    const dogOrbit = document.getElementById('dogOrbit');
+    const dog = document.getElementById('dog');
+    const scoreDisplay = document.getElementById('dogScore');
+    const catchEffect = document.getElementById('catchEffect');
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI;
+    const orbitRadius = 160;
+    const centerX = 150;
+    const centerY = 150;
+    
+    const normalCatSpeed = 0.015;
+    const escapeCatSpeed = 0.08;
+    const dogSpeed = 0.025;
+    const dangerDistance = 80;
+    const catchDistance = 35;
+    
+    let currentCatSpeed = normalCatSpeed;
+    let isEscaping = false;
+    let dogScore = 0;
+    let canCatch = true;
+    let catchCooldown = 2000;
+    
+    function getPosition(angle) {
+        return {
+            x: centerX + Math.cos(angle) * orbitRadius,
+            y: centerY + Math.sin(angle) * orbitRadius
+        };
+    }
+    
+    function getDistance(pos1, pos2) {
+        return Math.sqrt(Math.pow(pos1.x - pos2.x, 2) + Math.pow(pos1.y - pos2.y, 2));
+    }
+    
+    function showCatchEffect() {
+        catchEffect.style.opacity = '1';
+        catchEffect.style.transform = 'translate(-50%, -50%) scale(1.5)';
+        catchEffect.textContent = ['🎉', '💥', '⭐', '🌟', '😱'][Math.floor(Math.random() * 5)];
+        setTimeout(() => {
+            catchEffect.style.opacity = '0';
+            catchEffect.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 500);
+    }
+    
+    function catchCat() {
+        if (!canCatch) return;
+        
+        dogScore++;
+        scoreDisplay.textContent = dogScore;
+        scoreDisplay.style.transform = 'scale(1.5)';
+        setTimeout(() => scoreDisplay.style.transform = 'scale(1)', 300);
+        
+        showCatchEffect();
+        
+        // Teleport cat to opposite side
+        catAngle = dogAngle + Math.PI;
+        
+        canCatch = false;
+        setTimeout(() => canCatch = true, catchCooldown);
+    }
+    
+    function animateChase() {
+        const catPos = getPosition(catAngle);
+        const dogPos = getPosition(dogAngle);
+        const distance = getDistance(catPos, dogPos);
+        
+        // Check for catch!
+        if (distance < catchDistance && canCatch) {
+            catchCat();
+        }
+        
+        // Check if dog is too close
+        if (distance < dangerDistance) {
+            currentCatSpeed = escapeCatSpeed;
+            isEscaping = true;
+            kitty.classList.add('scared');
+            dog.classList.add('chasing');
+        } else if (distance > dangerDistance * 2) {
+            currentCatSpeed = normalCatSpeed;
+            isEscaping = false;
+            kitty.classList.remove('scared');
+            dog.classList.remove('chasing');
+        }
+        
+        // Move cat
+        catAngle += currentCatSpeed;
+        
+        // Dog chases cat
+        let angleDiff = catAngle - dogAngle;
+        while (angleDiff > Math.PI) angleDiff -= Math.PI * 2;
+        while (angleDiff < -Math.PI) angleDiff += Math.PI * 2;
+        dogAngle += Math.sign(angleDiff) * dogSpeed;
+        
+        // Update positions
+        const newCatPos = getPosition(catAngle);
+        const newDogPos = getPosition(dogAngle);
+        
+        kittyOrbit.style.transform = `translate(-50%, -50%)`;
+        kitty.style.left = newCatPos.x + 'px';
+        kitty.style.top = newCatPos.y + 'px';
+        kitty.style.transform = 'translate(-50%, -50%)' + (isEscaping ? ' scale(1.2)' : '');
+        
+        dogOrbit.style.transform = `translate(-50%, -50%)`;
+        dog.style.left = newDogPos.x + 'px';
+        dog.style.top = newDogPos.y + 'px';
+        dog.style.transform = 'translate(-50%, -50%) scaleX(' + (angleDiff > 0 ? '1' : '-1') + ')';
+        
+        requestAnimationFrame(animateChase);
+    }
+    
+    animateChase();
 })();
   </script>
 </body>
