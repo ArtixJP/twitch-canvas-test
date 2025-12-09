@@ -360,13 +360,16 @@
   </script>
 <section class="content-section" id="section-jeux" style="display: none;">
 <div id="snake-game-container" style="position: relative; z-index: 100; margin-top: 50px;">
-<canvas height="300" id="snakeCanvas" style="border: 2px solid rgba(255,255,255,0.3); border-radius: 15px; background: rgba(0,0,0,0.5); backdrop-filter: blur(10px);" width="300">
+<canvas height="400" id="snakeCanvas" style="border: 2px solid rgba(100,150,255,0.5); border-radius: 15px; background: radial-gradient(ellipse at center, #0a0a2e 0%, #000010 100%); box-shadow: 0 0 30px rgba(100,150,255,0.3), inset 0 0 50px rgba(50,100,200,0.1);" width="400">
 </canvas>
-<div style="color: white; text-align: center; margin-top: 10px; font-size: 0.9rem;">
-     🎮 Use Arrow Keys to Play Snake!
+<div style="color: white; text-align: center; margin-top: 15px; font-size: 1rem;">
+     🚀 Pilote ton vaisseau avec les flèches ! Collecte les ⭐ et évite les ☄️
      <br/>
-<span id="snakeScore">
+<span id="snakeScore" style="font-size: 1.3rem; color: #ffcc00; text-shadow: 0 0 10px rgba(255,200,0,0.8);">
       Score: 0
+     </span>
+<span id="spaceLevel" style="margin-left: 20px; color: #4ecdc4;">
+      Niveau: 1
      </span>
 </div>
 </div>
@@ -459,6 +462,336 @@
   setInterval(autoSwitchSection, 30000);
   
   console.log('Auto-switch activé : changement de section toutes les 30 secondes');
+})();
+  </script>
+<script>
+   (function(){
+const canvas=document.getElementById('snakeCanvas');
+const ctx=canvas.getContext('2d');
+const gridSize=20;
+const tileCount=20;
+
+let spaceship=[{x:10,y:10}];
+let star={x:15,y:15};
+let asteroids=[];
+let dx=0;
+let dy=0;
+let score=0;
+let level=1;
+let gameSpeed=120;
+let gameLoop;
+let particles=[];
+let bgStars=[];
+
+// Créer étoiles de fond
+for(let i=0;i<100;i++){
+  bgStars.push({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    size:Math.random()*2+0.5,
+    twinkle:Math.random()*Math.PI*2,
+    speed:Math.random()*0.02+0.01
+  });
+}
+
+// Créer astéroïdes initiaux
+function spawnAsteroids(){
+  asteroids=[];
+  const count=Math.min(3+level,10);
+  for(let i=0;i<count;i++){
+    let pos;
+    do{
+      pos={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount)};
+    }while(isOccupied(pos.x,pos.y));
+    asteroids.push({...pos,rotation:Math.random()*Math.PI*2,rotSpeed:Math.random()*0.1-0.05});
+  }
+}
+
+function isOccupied(x,y){
+  if(star.x===x&&star.y===y)return true;
+  for(let s of spaceship)if(s.x===x&&s.y===y)return true;
+  for(let a of asteroids)if(a.x===x&&a.y===y)return true;
+  return false;
+}
+
+function createParticle(x,y,color,type){
+  const count=type==='collect'?15:8;
+  for(let i=0;i<count;i++){
+    particles.push({
+      x:x*gridSize+gridSize/2,
+      y:y*gridSize+gridSize/2,
+      vx:(Math.random()-0.5)*8,
+      vy:(Math.random()-0.5)*8,
+      life:1,
+      color:color,
+      size:type==='collect'?4:2
+    });
+  }
+}
+
+function drawGame(){
+  // Fond spatial
+  ctx.fillStyle='rgba(5,5,20,0.3)';
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // Étoiles de fond animées
+  bgStars.forEach(s=>{
+    s.twinkle+=s.speed;
+    const alpha=0.3+Math.sin(s.twinkle)*0.4;
+    ctx.fillStyle=`rgba(255,255,255,${alpha})`;
+    ctx.beginPath();
+    ctx.arc(s.x,s.y,s.size,0,Math.PI*2);
+    ctx.fill();
+  });
+  
+  // Nébuleuse subtile
+  const gradient=ctx.createRadialGradient(200,200,50,200,200,200);
+  gradient.addColorStop(0,'rgba(100,50,150,0.05)');
+  gradient.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle=gradient;
+  ctx.fillRect(0,0,canvas.width,canvas.height);
+  
+  // Astéroïdes
+  asteroids.forEach(a=>{
+    a.rotation+=a.rotSpeed;
+    ctx.save();
+    ctx.translate(a.x*gridSize+gridSize/2,a.y*gridSize+gridSize/2);
+    ctx.rotate(a.rotation);
+    ctx.fillStyle='#666';
+    ctx.shadowColor='#ff6600';
+    ctx.shadowBlur=5;
+    ctx.beginPath();
+    ctx.moveTo(-8,-6);
+    ctx.lineTo(0,-10);
+    ctx.lineTo(8,-4);
+    ctx.lineTo(10,4);
+    ctx.lineTo(4,10);
+    ctx.lineTo(-6,8);
+    ctx.lineTo(-10,0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle='#888';
+    ctx.stroke();
+    ctx.restore();
+  });
+  
+  // Étoile à collecter
+  ctx.save();
+  ctx.translate(star.x*gridSize+gridSize/2,star.y*gridSize+gridSize/2);
+  const starPulse=1+Math.sin(Date.now()*0.005)*0.2;
+  ctx.scale(starPulse,starPulse);
+  ctx.fillStyle='#ffdd00';
+  ctx.shadowColor='#ffdd00';
+  ctx.shadowBlur=20;
+  drawStar(ctx,0,0,5,8,4);
+  ctx.fill();
+  ctx.restore();
+  
+  // Particules
+  particles=particles.filter(p=>{
+    p.x+=p.vx;
+    p.y+=p.vy;
+    p.life-=0.03;
+    p.vx*=0.95;
+    p.vy*=0.95;
+    if(p.life>0){
+      ctx.fillStyle=p.color.replace('1)',p.life+')');
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+      ctx.fill();
+      return true;
+    }
+    return false;
+  });
+  
+  // Vaisseau spatial (serpent)
+  spaceship.forEach((segment,index)=>{
+    const alpha=1-index*0.04;
+    ctx.save();
+    ctx.translate(segment.x*gridSize+gridSize/2,segment.y*gridSize+gridSize/2);
+    
+    if(index===0){
+      // Tête du vaisseau
+      let angle=0;
+      if(dx===1)angle=0;
+      else if(dx===-1)angle=Math.PI;
+      else if(dy===1)angle=Math.PI/2;
+      else if(dy===-1)angle=-Math.PI/2;
+      ctx.rotate(angle);
+      
+      // Corps du vaisseau
+      ctx.fillStyle='#4ecdc4';
+      ctx.shadowColor='#4ecdc4';
+      ctx.shadowBlur=15;
+      ctx.beginPath();
+      ctx.moveTo(12,0);
+      ctx.lineTo(-8,-8);
+      ctx.lineTo(-4,0);
+      ctx.lineTo(-8,8);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Cockpit
+      ctx.fillStyle='#88ffff';
+      ctx.beginPath();
+      ctx.arc(2,0,4,0,Math.PI*2);
+      ctx.fill();
+      
+      // Réacteur
+      if(dx!==0||dy!==0){
+        ctx.fillStyle=`rgba(255,150,50,${0.5+Math.random()*0.5})`;
+        ctx.beginPath();
+        ctx.moveTo(-8,0);
+        ctx.lineTo(-15-Math.random()*5,-3);
+        ctx.lineTo(-15-Math.random()*5,3);
+        ctx.closePath();
+        ctx.fill();
+      }
+    }else{
+      // Traînée d'énergie
+      const hue=180+index*5;
+      ctx.fillStyle=`hsla(${hue},80%,60%,${alpha*0.7})`;
+      ctx.shadowColor=`hsl(${hue},80%,60%)`;
+      ctx.shadowBlur=10;
+      ctx.beginPath();
+      ctx.arc(0,0,(gridSize/2-2)*(1-index*0.03),0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.restore();
+  });
+}
+
+function drawStar(ctx,cx,cy,spikes,outerR,innerR){
+  let rot=Math.PI/2*3;
+  let x=cx;
+  let y=cy;
+  const step=Math.PI/spikes;
+  ctx.beginPath();
+  ctx.moveTo(cx,cy-outerR);
+  for(let i=0;i<spikes;i++){
+    x=cx+Math.cos(rot)*outerR;
+    y=cy+Math.sin(rot)*outerR;
+    ctx.lineTo(x,y);
+    rot+=step;
+    x=cx+Math.cos(rot)*innerR;
+    y=cy+Math.sin(rot)*innerR;
+    ctx.lineTo(x,y);
+    rot+=step;
+  }
+  ctx.lineTo(cx,cy-outerR);
+  ctx.closePath();
+}
+
+function moveSnake(){
+  if(dx===0&&dy===0)return;
+  const head={x:spaceship[0].x+dx,y:spaceship[0].y+dy};
+  
+  // Wrap around
+  if(head.x<0)head.x=tileCount-1;
+  if(head.x>=tileCount)head.x=0;
+  if(head.y<0)head.y=tileCount-1;
+  if(head.y>=tileCount)head.y=0;
+  
+  // Collision avec soi-même
+  for(let i=0;i<spaceship.length;i++){
+    if(head.x===spaceship[i].x&&head.y===spaceship[i].y){
+      createParticle(head.x,head.y,'rgba(255,100,100,1)','crash');
+      resetGame();
+      return;
+    }
+  }
+  
+  // Collision avec astéroïdes
+  for(let a of asteroids){
+    if(head.x===a.x&&head.y===a.y){
+      createParticle(head.x,head.y,'rgba(255,150,50,1)','crash');
+      resetGame();
+      return;
+    }
+  }
+  
+  spaceship.unshift(head);
+  
+  // Collecte étoile
+  if(head.x===star.x&&head.y===star.y){
+    score+=10*level;
+    createParticle(star.x,star.y,'rgba(255,220,0,1)','collect');
+    document.getElementById('snakeScore').textContent='Score: '+score;
+    
+    if(score>0&&score%(50*level)===0){
+      level++;
+      document.getElementById('spaceLevel').textContent='Niveau: '+level;
+      spawnAsteroids();
+      if(gameSpeed>60){
+        gameSpeed-=5;
+        clearInterval(gameLoop);
+        gameLoop=setInterval(gameStep,gameSpeed);
+      }
+    }
+    placeStar();
+  }else{
+    spaceship.pop();
+  }
+  
+  // Traînée de particules
+  if(spaceship.length>1){
+    const tail=spaceship[spaceship.length-1];
+    if(Math.random()>0.7){
+      particles.push({
+        x:tail.x*gridSize+gridSize/2+(Math.random()-0.5)*10,
+        y:tail.y*gridSize+gridSize/2+(Math.random()-0.5)*10,
+        vx:(Math.random()-0.5)*2,
+        vy:(Math.random()-0.5)*2,
+        life:0.5,
+        color:'rgba(78,205,196,1)',
+        size:3
+      });
+    }
+  }
+}
+
+function placeStar(){
+  do{
+    star={x:Math.floor(Math.random()*tileCount),y:Math.floor(Math.random()*tileCount)};
+  }while(isOccupied(star.x,star.y));
+}
+
+function resetGame(){
+  spaceship=[{x:10,y:10}];
+  dx=0;
+  dy=0;
+  score=0;
+  level=1;
+  gameSpeed=120;
+  document.getElementById('snakeScore').textContent='Score: 0';
+  document.getElementById('spaceLevel').textContent='Niveau: 1';
+  placeStar();
+  spawnAsteroids();
+  clearInterval(gameLoop);
+  gameLoop=setInterval(gameStep,gameSpeed);
+}
+
+function gameStep(){
+  moveSnake();
+  drawGame();
+}
+
+document.addEventListener('keydown',(e)=>{
+  if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)){
+    e.preventDefault();
+  }
+  switch(e.key){
+    case'ArrowUp':if(dy!==1){dx=0;dy=-1;}break;
+    case'ArrowDown':if(dy!==-1){dx=0;dy=1;}break;
+    case'ArrowLeft':if(dx!==1){dx=-1;dy=0;}break;
+    case'ArrowRight':if(dx!==-1){dx=1;dy=0;}break;
+  }
+});
+
+placeStar();
+spawnAsteroids();
+gameLoop=setInterval(gameStep,gameSpeed);
+drawGame();
 })();
   </script>
 </body>
