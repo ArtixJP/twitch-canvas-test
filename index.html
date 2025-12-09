@@ -1,24 +1,204 @@
 <!DOCTYPE html>
-<html lang="en">
+
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bienvenue ! ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    body { 
+        font-family: 'Nunito', system-ui, sans-serif; 
+        min-height: 100vh; 
+        background: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a2e 100%);
+        color: white;
+        overflow-x: hidden;
+    }
+    
+    .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 2rem;
+        text-align: center;
+    }
+    
+    .welcome-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border-radius: 24px;
+        padding: 3rem 4rem;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        max-width: 600px;
+        animation: floatIn 1s ease-out;
+    }
+    
+    @keyframes floatIn {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
         }
-        h1 { font-size: 3rem; text-align: center; }
-    </style>
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .emoji-header {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+        animation: wave 2s ease-in-out infinite;
+    }
+    
+    @keyframes wave {
+        0%, 100% { transform: rotate(0deg); }
+        25% { transform: rotate(20deg); }
+        75% { transform: rotate(-10deg); }
+    }
+    
+    h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, #a855f7, #ec4899, #f97316);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .subtitle {
+        font-size: 1.3rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
+    
+    .hearts {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+    
+    .heart {
+        font-size: 1.5rem;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+    
+    .heart:nth-child(2) { animation-delay: 0.2s; }
+    .heart:nth-child(3) { animation-delay: 0.4s; }
+    .heart:nth-child(4) { animation-delay: 0.6s; }
+    .heart:nth-child(5) { animation-delay: 0.8s; }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+    
+    .message {
+        background: rgba(168, 85, 247, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #a855f7;
+    }
+    
+    .message p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1rem;
+    }
+    
+    .feature {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 0.8rem 1.2rem;
+        border-radius: 50px;
+        font-size: 0.95rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: transform 0.2s, background 0.2s;
+    }
+    
+    .feature:hover {
+        transform: scale(1.05);
+        background: rgba(255, 255, 255, 0.12);
+    }
+    
+    .glow-orb {
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        pointer-events: none;
+        animation: drift 8s ease-in-out infinite;
+    }
+    
+    .orb-1 {
+        background: #a855f7;
+        top: 10%;
+        left: 10%;
+    }
+    
+    .orb-2 {
+        background: #ec4899;
+        bottom: 10%;
+        right: 10%;
+        animation-delay: -4s;
+    }
+    
+    @keyframes drift {
+        0%, 100% { transform: translate(0, 0); }
+        50% { transform: translate(30px, 20px); }
+    }
+</style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="glow-orb orb-1"></div>
+<div class="glow-orb orb-2"></div>
+<div class="container">
+<div class="welcome-card">
+<div class="emoji-header">👋</div>
+<h1>Bienvenue chez nous !</h1>
+<p class="subtitle">On est super contents de te voir ici ✨</p>
+<div class="hearts">
+<span class="heart">💜</span>
+<span class="heart">💖</span>
+<span class="heart">🧡</span>
+<span class="heart">💛</span>
+<span class="heart">💚</span>
+</div>
+<div class="message">
+<p>Installe-toi confortablement, prends un thé ou un café ☕<br/>
+            Ici c'est un espace bienveillant où tout le monde est le bienvenu.<br/>
+            N'hésite pas à participer, poser des questions, ou juste profiter du moment ! 🌟</p>
+</div>
+<div class="features">
+<span class="feature">🎮 Chill vibes</span>
+<span class="feature">💬 Chat sympa</span>
+<span class="feature">🤗 Bienveillance</span>
+<span class="feature">✨ Bonne humeur</span>
+</div>
+</div>
+</div>
 </body>
 </html>
