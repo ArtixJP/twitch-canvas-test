@@ -151,8 +151,8 @@
             width: 40px;
             height: 30px;
             margin: -15px -20px;
-            animation: kitty-orbit 6s linear infinite;
             z-index: 10;
+            transition: none;
         }
         
         .kitty-body {
@@ -160,6 +160,10 @@
             width: 100%;
             height: 100%;
             animation: kitty-float 0.5s ease-in-out infinite;
+        }
+        
+        .kitty.escaping .kitty-body {
+            animation: kitty-float 0.2s ease-in-out infinite;
         }
         
         .kitty-head {
@@ -272,6 +276,10 @@
             animation: tail-wag 0.4s ease-in-out infinite;
         }
         
+        .kitty.escaping .kitty-tail {
+            animation: tail-wag-fast 0.15s ease-in-out infinite;
+        }
+        
         .kitty-tail::after {
             content: '';
             position: absolute;
@@ -294,6 +302,161 @@
         .kitty-paw.front-right { bottom: -4px; left: 18px; animation: paw-move 0.3s ease-in-out infinite 0.15s; }
         .kitty-paw.back-left { bottom: -2px; left: 6px; animation: paw-move 0.3s ease-in-out infinite 0.15s; }
         .kitty-paw.back-right { bottom: -2px; left: 24px; animation: paw-move 0.3s ease-in-out infinite; }
+        
+        .kitty.escaping .kitty-paw { animation-duration: 0.1s; }
+        
+        /* DOG STYLES */
+        .dog {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 45px;
+            height: 35px;
+            margin: -17px -22px;
+            z-index: 9;
+        }
+        
+        .dog-body {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            animation: dog-float 0.4s ease-in-out infinite;
+        }
+        
+        .dog-head {
+            position: absolute;
+            width: 22px;
+            height: 20px;
+            background: linear-gradient(135deg, #c4a574 0%, #8b6914 100%);
+            border-radius: 45% 45% 50% 50%;
+            top: -3px;
+            left: 0px;
+            z-index: 2;
+        }
+        
+        .dog-ear {
+            position: absolute;
+            width: 10px;
+            height: 14px;
+            background: #6b4c1a;
+            top: -2px;
+            border-radius: 50% 50% 40% 40%;
+        }
+        
+        .dog-ear.left { left: -2px; transform: rotate(-20deg); }
+        .dog-ear.right { right: -2px; transform: rotate(20deg); }
+        
+        .dog-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .dog-eye {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #222;
+            border-radius: 50%;
+            top: 6px;
+        }
+        
+        .dog-eye.left { left: 4px; }
+        .dog-eye.right { right: 4px; }
+        
+        .dog-eye::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            top: 0px;
+            left: 1px;
+        }
+        
+        .dog-nose {
+            position: absolute;
+            width: 6px;
+            height: 5px;
+            background: #222;
+            border-radius: 50%;
+            top: 11px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .dog-tongue {
+            position: absolute;
+            width: 6px;
+            height: 8px;
+            background: #ff6b8a;
+            border-radius: 0 0 50% 50%;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: tongue-pant 0.3s ease-in-out infinite;
+        }
+        
+        .dog-torso {
+            position: absolute;
+            width: 28px;
+            height: 18px;
+            background: linear-gradient(135deg, #c4a574 0%, #8b6914 100%);
+            border-radius: 50% 50% 45% 45%;
+            top: 10px;
+            left: 8px;
+        }
+        
+        .dog-tail {
+            position: absolute;
+            width: 14px;
+            height: 8px;
+            background: #8b6914;
+            border-radius: 4px;
+            top: 8px;
+            right: -6px;
+            transform-origin: left center;
+            animation: dog-tail-wag 0.2s ease-in-out infinite;
+        }
+        
+        .dog-paw {
+            position: absolute;
+            width: 7px;
+            height: 9px;
+            background: #d4b896;
+            border-radius: 50%;
+        }
+        
+        .dog-paw.front-left { bottom: -5px; left: 10px; animation: dog-paw-move 0.2s ease-in-out infinite; }
+        .dog-paw.front-right { bottom: -5px; left: 20px; animation: dog-paw-move 0.2s ease-in-out infinite 0.1s; }
+        .dog-paw.back-left { bottom: -3px; left: 6px; animation: dog-paw-move 0.2s ease-in-out infinite 0.1s; }
+        .dog-paw.back-right { bottom: -3px; left: 28px; animation: dog-paw-move 0.2s ease-in-out infinite; }
+        
+        @keyframes dog-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+        
+        @keyframes tongue-pant {
+            0%, 100% { height: 8px; }
+            50% { height: 10px; }
+        }
+        
+        @keyframes dog-tail-wag {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(25deg); }
+        }
+        
+        @keyframes dog-paw-move {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes tail-wag-fast {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(25deg); }
+        }
         
         @keyframes kitty-orbit {
             from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
@@ -346,6 +509,12 @@
         }
   </style>
 </head>
+<div id="scoreboard" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); padding: 15px 30px; border-radius: 15px; border: 2px solid rgba(100, 200, 255, 0.5); z-index: 1000; font-size: 1.5rem; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8);">
+  🐕 Dog Score:
+  <span id="dog-score">
+   0
+  </span>
+</div>
 <body>
 <div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
 </div>
@@ -355,7 +524,7 @@
 <div class="stars" id="stars">
 </div>
 <div class="solar-system" id="planet-system">
-<div class="planet">
+<div class="planet" id="main-planet">
 </div>
 <div class="rings">
 </div>
@@ -392,6 +561,38 @@
 <div class="kitty-paw back-left">
 </div>
 <div class="kitty-paw back-right">
+</div>
+</div>
+</div>
+<div class="dog" id="orbiting-dog">
+<div class="dog-body">
+<div class="dog-head">
+<div class="dog-ear left">
+</div>
+<div class="dog-ear right">
+</div>
+<div class="dog-face">
+<div class="dog-eye left">
+</div>
+<div class="dog-eye right">
+</div>
+<div class="dog-nose">
+</div>
+<div class="dog-tongue">
+</div>
+</div>
+</div>
+<div class="dog-torso">
+</div>
+<div class="dog-tail">
+</div>
+<div class="dog-paw front-left">
+</div>
+<div class="dog-paw front-right">
+</div>
+<div class="dog-paw back-left">
+</div>
+<div class="dog-paw back-right">
 </div>
 </div>
 </div>
@@ -597,6 +798,149 @@ window.addEventListener('load', () => {
     }
   }
   setInterval(updateShadows, 50);
+})();
+  </script>
+<script id="chase-script">
+   (function() {
+  const kitty = document.getElementById('orbiting-kitty');
+  const dog = document.getElementById('orbiting-dog');
+  const scoreDisplay = document.getElementById('dog-score');
+  const planet = document.getElementById('main-planet');
+  
+  const orbitRadius = 100;
+  const dogOrbitRadius = 110;
+  
+  let kittyAngle = 0;
+  let dogAngle = Math.PI;
+  
+  let kittySpeed = 0.02;
+  let dogSpeed = 0.025;
+  
+  const normalKittySpeed = 0.02;
+  const escapeKittySpeed = 0.08;
+  const dangerDistance = 60;
+  const catchDistance = 25;
+  
+  let isEscaping = false;
+  let escapeTimer = 0;
+  let dogScore = 0;
+  let catchCooldown = 0;
+  
+  // Planet color palette
+  const planetColors = [
+    { main: '#4a90a4', dark: '#2d5a6b', darker: '#1a3a45', darkest: '#0d1f26', glow: 'rgba(74, 144, 164, 0.4)' },
+    { main: '#a44a90', dark: '#6b2d5a', darker: '#451a3a', darkest: '#260d1f', glow: 'rgba(164, 74, 144, 0.4)' },
+    { main: '#90a44a', dark: '#5a6b2d', darker: '#3a451a', darkest: '#1f260d', glow: 'rgba(144, 164, 74, 0.4)' },
+    { main: '#a4904a', dark: '#6b5a2d', darker: '#453a1a', darkest: '#261f0d', glow: 'rgba(164, 144, 74, 0.4)' },
+    { main: '#4aa490', dark: '#2d6b5a', darker: '#1a453a', darkest: '#0d261f', glow: 'rgba(74, 164, 144, 0.4)' },
+    { main: '#904aa4', dark: '#5a2d6b', darker: '#3a1a45', darkest: '#1f0d26', glow: 'rgba(144, 74, 164, 0.4)' },
+    { main: '#a4504a', dark: '#6b352d', darker: '#45221a', darkest: '#26120d', glow: 'rgba(164, 80, 74, 0.4)' },
+    { main: '#4a70a4', dark: '#2d456b', darker: '#1a2d45', darkest: '#0d1726', glow: 'rgba(74, 112, 164, 0.4)' }
+  ];
+  let currentColorIndex = 0;
+  
+  function changePlanetColor() {
+    currentColorIndex = (currentColorIndex + 1) % planetColors.length;
+    const color = planetColors[currentColorIndex];
+    
+    planet.style.transition = 'all 0.5s ease';
+    planet.style.background = `linear-gradient(135deg, ${color.main} 0%, ${color.dark} 30%, ${color.darker} 70%, ${color.darkest} 100%)`;
+    planet.style.boxShadow = `inset -20px -20px 40px rgba(0,0,0,0.6), inset 10px 10px 20px rgba(100,200,255,0.2), 0 0 60px ${color.glow}, 0 0 100px ${color.glow}`;
+    
+    // Flash effect
+    planet.style.filter = 'brightness(1.5)';
+    setTimeout(() => {
+      planet.style.filter = 'brightness(1)';
+    }, 200);
+  }
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    const dx = pos1.x - pos2.x;
+    const dy = pos1.y - pos2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  
+  function showCatchEffect() {
+    const effect = document.createElement('div');
+    effect.innerHTML = '🎉 +1';
+    effect.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: gold; text-shadow: 0 0 20px orange; z-index: 2000; animation: catchPop 1s ease-out forwards; pointer-events: none;';
+    document.body.appendChild(effect);
+    setTimeout(() => effect.remove(), 1000);
+  }
+  
+  // Add catch animation style
+  if (!document.getElementById('catch-style')) {
+    const style = document.createElement('style');
+    style.id = 'catch-style';
+    style.textContent = '@keyframes catchPop { 0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); } 50% { transform: translate(-50%, -100%) scale(1.5); } 100% { opacity: 0; transform: translate(-50%, -150%) scale(1); } }';
+    document.head.appendChild(style);
+  }
+  
+  function updatePositions() {
+    const kittyPos = getPosition(kittyAngle, orbitRadius);
+    const dogPos = getPosition(dogAngle, dogOrbitRadius);
+    
+    const distance = getDistance(kittyPos, dogPos);
+    
+    // Check for catch
+    if (catchCooldown > 0) catchCooldown--;
+    
+    if (distance < catchDistance && catchCooldown === 0) {
+      dogScore++;
+      scoreDisplay.textContent = dogScore;
+      showCatchEffect();
+      changePlanetColor(); // Change planet color on catch!
+      catchCooldown = 120; // 2 second cooldown
+      
+      // Teleport cat to opposite side
+      kittyAngle = dogAngle + Math.PI;
+      
+      // Flash scoreboard
+      const scoreboard = document.getElementById('scoreboard');
+      scoreboard.style.background = 'rgba(255, 200, 0, 0.6)';
+      setTimeout(() => scoreboard.style.background = 'rgba(0,0,0,0.6)', 300);
+    }
+    
+    // Check if dog is too close
+    if (distance < dangerDistance && !isEscaping) {
+      isEscaping = true;
+      escapeTimer = 60;
+      kitty.classList.add('escaping');
+    }
+    
+    if (isEscaping) {
+      kittySpeed = escapeKittySpeed;
+      escapeTimer--;
+      if (escapeTimer <= 0 && distance > dangerDistance * 1.5) {
+        isEscaping = false;
+        kittySpeed = normalKittySpeed;
+        kitty.classList.remove('escaping');
+      }
+    }
+    
+    kittyAngle += kittySpeed;
+    dogAngle += dogSpeed;
+    
+    if (kittyAngle > Math.PI * 2) kittyAngle -= Math.PI * 2;
+    if (dogAngle > Math.PI * 2) dogAngle -= Math.PI * 2;
+    
+    const kittyRotation = (kittyAngle * 180 / Math.PI);
+    kitty.style.transform = `rotate(${kittyRotation}deg) translateX(${orbitRadius}px) rotate(${-kittyRotation}deg)`;
+    
+    const dogRotation = (dogAngle * 180 / Math.PI);
+    dog.style.transform = `rotate(${dogRotation}deg) translateX(${dogOrbitRadius}px) rotate(${-dogRotation}deg)`;
+    
+    requestAnimationFrame(updatePositions);
+  }
+  
+  updatePositions();
 })();
   </script>
 </body>
