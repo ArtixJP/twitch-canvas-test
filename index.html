@@ -22,8 +22,8 @@
   </style>
 </head>
 <body>
-<h1 style="position: absolute; top: 20px; z-index: 10; text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);">
-   Hello World
+<h1 style="position: absolute; top: 20px; z-index: 10; text-shadow: 0 0 20px rgba(255, 200, 100, 0.8), 0 0 40px rgba(255, 150, 50, 0.5);">
+   Hello World ☀️
   </h1>
 <div id="planet-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;">
 </div>
@@ -451,6 +451,209 @@
     @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
    </style>
 </div>
+<script>
+   (function() {
+  // Attendre que Three.js soit prêt
+  setTimeout(() => {
+    const container = document.getElementById('planet-container');
+    const canvases = container.querySelectorAll('canvas');
+    
+    // Créer une nouvelle scène pour le soleil
+    const sunScene = new THREE.Scene();
+    const sunCamera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const sunRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    sunRenderer.setSize(window.innerWidth, window.innerHeight);
+    sunRenderer.setClearColor(0x000000, 0);
+    sunRenderer.shadowMap.enabled = true;
+    sunRenderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.insertBefore(sunRenderer.domElement, container.firstChild);
+    sunRenderer.domElement.style.position = 'absolute';
+    sunRenderer.domElement.style.pointerEvents = 'none';
+    
+    // Soleil principal
+    const sunGeom = new THREE.SphereGeometry(1.5, 64, 64);
+    const sunMat = new THREE.MeshBasicMaterial({
+      color: 0xffdd44,
+    });
+    const sun = new THREE.Mesh(sunGeom, sunMat);
+    sun.position.set(-15, 8, -10);
+    sunScene.add(sun);
+    
+    // Couronne solaire (glow)
+    const coronaGeom = new THREE.SphereGeometry(2.2, 64, 64);
+    const coronaMat = new THREE.ShaderMaterial({
+      uniforms: {
+        time: { value: 0 },
+        color1: { value: new THREE.Color(0xffaa00) },
+        color2: { value: new THREE.Color(0xff4400) }
+      },
+      vertexShader: `
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+          vNormal = normalize(normalMatrix * normal);
+          vPosition = position;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform float time;
+        uniform vec3 color1;
+        uniform vec3 color2;
+        varying vec3 vNormal;
+        varying vec3 vPosition;
+        void main() {
+          float intensity = pow(0.7 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+          float pulse = sin(time * 3.0) * 0.1 + 0.9;
+          vec3 color = mix(color1, color2, sin(time + vPosition.y * 2.0) * 0.5 + 0.5);
+          gl_FragColor = vec4(color, intensity * pulse * 0.6);
+        }
+      `,
+      transparent: true,
+      side: THREE.BackSide,
+      blending: THREE.AdditiveBlending
+    });
+    const corona = new THREE.Mesh(coronaGeom, coronaMat);
+    corona.position.copy(sun.position);
+    sunScene.add(corona);
+    
+    // Rayons de lumière (god rays effect)
+    const rayCount = 12;
+    const rays = [];
+    for(let i = 0; i < rayCount; i++) {
+      const rayGeom = new THREE.ConeGeometry(0.3, 8, 8, 1, true);
+      const rayMat = new THREE.MeshBasicMaterial({
+        color: 0xffee88,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending
+      });
+      const ray = new THREE.Mesh(rayGeom, rayMat);
+      ray.position.copy(sun.position);
+      const angle = (i / rayCount) * Math.PI * 2;
+      ray.rotation.x = Math.cos(angle) * 0.3;
+      ray.rotation.z = Math.sin(angle) * 0.3 + Math.PI;
+      ray.userData.baseRotZ = ray.rotation.z;
+      ray.userData.offset = i * 0.5;
+      rays.push(ray);
+      sunScene.add(ray);
+    }
+    
+    // Lumière directionnelle avec ombres
+    const sunLight = new THREE.DirectionalLight(0xffeeaa, 2);
+    sunLight.position.copy(sun.position);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 50;
+    sunLight.shadow.camera.left = -10;
+    sunLight.shadow.camera.right = 10;
+    sunLight.shadow.camera.top = 10;
+    sunLight.shadow.camera.bottom = -10;
+    sunLight.shadow.bias = -0.0001;
+    sunScene.add(sunLight);
+    
+    // Lens flare effect avec des cercles
+    const flareGroup = new THREE.Group();
+    const flareSizes = [0.8, 0.4, 0.2, 0.6, 0.3];
+    const flareColors = [0xffffaa, 0xff8844, 0xffaa66, 0xffff88, 0xffcc44];
+    const flarePositions = [0.2, 0.4, 0.6, 0.8, 1.0];
+    
+    flareSizes.forEach((size, i) => {
+      const flareGeom = new THREE.RingGeometry(size * 0.8, size, 32);
+      const flareMat = new THREE.MeshBasicMaterial({
+        color: flareColors[i],
+        transparent: true,
+        opacity: 0.1,
+        side: THREE.DoubleSide,
+        blending: THREE.AdditiveBlending
+      });
+      const flare = new THREE.Mesh(flareGeom, flareMat);
+      flare.position.lerpVectors(sun.position, new THREE.Vector3(0, 0, 6), flarePositions[i]);
+      flare.lookAt(sunCamera.position);
+      flareGroup.add(flare);
+    });
+    sunScene.add(flareGroup);
+    
+    // Particules solaires
+    const particleCount = 200;
+    const particleGeom = new THREE.BufferGeometry();
+    const particlePositions = new Float32Array(particleCount * 3);
+    const particleSpeeds = [];
+    
+    for(let i = 0; i < particleCount; i++) {
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.random() * Math.PI;
+      const r = 1.5 + Math.random() * 0.5;
+      particlePositions[i * 3] = sun.position.x + r * Math.sin(phi) * Math.cos(theta);
+      particlePositions[i * 3 + 1] = sun.position.y + r * Math.sin(phi) * Math.sin(theta);
+      particlePositions[i * 3 + 2] = sun.position.z + r * Math.cos(phi);
+      particleSpeeds.push({ theta, phi, speed: 0.5 + Math.random() * 1.5, r });
+    }
+    particleGeom.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
+    
+    const particleMat = new THREE.PointsMaterial({
+      color: 0xffaa44,
+      size: 0.15,
+      transparent: true,
+      opacity: 0.8,
+      blending: THREE.AdditiveBlending
+    });
+    const particles = new THREE.Points(particleGeom, particleMat);
+    sunScene.add(particles);
+    
+    sunCamera.position.z = 6;
+    
+    // Animation
+    function animateSun() {
+      requestAnimationFrame(animateSun);
+      
+      const time = Date.now() * 0.001;
+      
+      // Pulse du soleil
+      const pulse = Math.sin(time * 2) * 0.05 + 1;
+      sun.scale.set(pulse, pulse, pulse);
+      
+      // Animation de la couronne
+      coronaMat.uniforms.time.value = time;
+      corona.scale.set(pulse * 1.1, pulse * 1.1, pulse * 1.1);
+      
+      // Animation des rayons
+      rays.forEach((ray, i) => {
+        ray.rotation.z = ray.userData.baseRotZ + Math.sin(time * 2 + ray.userData.offset) * 0.1;
+        ray.scale.y = 0.8 + Math.sin(time * 3 + ray.userData.offset) * 0.2;
+        ray.material.opacity = 0.1 + Math.sin(time * 2 + ray.userData.offset) * 0.05;
+      });
+      
+      // Animation des particules
+      const positions = particles.geometry.attributes.position.array;
+      for(let i = 0; i < particleCount; i++) {
+        const s = particleSpeeds[i];
+        s.r += s.speed * 0.02;
+        if(s.r > 4) s.r = 1.5;
+        positions[i * 3] = sun.position.x + s.r * Math.sin(s.phi) * Math.cos(s.theta + time * 0.5);
+        positions[i * 3 + 1] = sun.position.y + s.r * Math.sin(s.phi) * Math.sin(s.theta + time * 0.5);
+        positions[i * 3 + 2] = sun.position.z + s.r * Math.cos(s.phi);
+      }
+      particles.geometry.attributes.position.needsUpdate = true;
+      
+      // Flares suivent la caméra
+      flareGroup.children.forEach(flare => flare.lookAt(sunCamera.position));
+      
+      sunRenderer.render(sunScene, sunCamera);
+    }
+    animateSun();
+    
+    window.addEventListener('resize', () => {
+      sunCamera.aspect = window.innerWidth / window.innerHeight;
+      sunCamera.updateProjectionMatrix();
+      sunRenderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  }, 500);
+})();
+  </script>
 <script>
    (function(){const audio=document.getElementById('bg-music');const overlay=document.getElementById('autoplay-overlay');audio.play().then(()=>{overlay.style.display='none';}).catch(()=>{});document.addEventListener('click',function firstClick(){audio.play().catch(()=>{});},{once:true});})();
   </script>
