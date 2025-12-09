@@ -130,6 +130,29 @@
             border-radius: 50%;
             animation: twinkle 2s ease-in-out infinite;
         }
+        #musicToggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4), 0 0 40px rgba(118, 75, 162, 0.3);
+            transition: all 0.3s ease;
+        }
+        #musicToggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6), 0 0 60px rgba(118, 75, 162, 0.5);
+        }
+        #musicToggle:active {
+            transform: scale(0.95);
+        }
         @keyframes pulse {
             0%, 100% { transform: translate(-50%, -50%) scale(1); }
             50% { transform: translate(-50%, -50%) scale(1.02); }
@@ -176,6 +199,15 @@
         star.style.animationDelay = Math.random() * 2 + 's';
         starsContainer.appendChild(star);
     }
+  </script>
+<audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle" onclick="toggleMusic()">
+   🎵 Pause
+  </button>
+<script>
+   function toggleMusic(){const a=document.getElementById('bgMusic');const b=document.getElementById('musicToggle');if(a.paused){a.play();b.textContent='🎵 Pause';}else{a.pause();b.textContent='🎵 Play';}}
   </script>
 </body>
 </html>
