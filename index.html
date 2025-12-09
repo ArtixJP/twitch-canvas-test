@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌀 Emergent Canvas</title>
-    <style>
-        * {
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>
+   🔴 Welcome to the Matrix
+  </title>
+<style>
+   * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -14,21 +17,27 @@
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #1a1a4e 0%, #2d1b69 35%, #4a1a8a 65%, #6b21a8 100%);
             color: #e8e8e8;
             overflow-x: hidden;
+            animation: bg-shift 15s ease-in-out infinite alternate;
+        }
+        
+        @keyframes bg-shift {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
         
         .header {
             text-align: center;
             padding: 2rem;
             background: rgba(0, 0, 0, 0.3);
-            border-bottom: 2px solid #e94560;
+            border-bottom: 2px solid #a855f7;
         }
         
         .header h1 {
             font-size: 2.5rem;
-            background: linear-gradient(90deg, #e94560, #0f3460, #e94560);
+            background: linear-gradient(90deg, #a855f7, #3b82f6, #a855f7);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -57,8 +66,8 @@
         
         /* Zone de chaos - libre modification */
         #chaos-zone {
-            background: rgba(233, 69, 96, 0.1);
-            border: 2px dashed #e94560;
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px dashed #a855f7;
             border-radius: 12px;
             padding: 2rem;
             min-height: 300px;
@@ -71,10 +80,10 @@
             position: absolute;
             top: -12px;
             left: 20px;
-            background: #1a1a2e;
+            background: #1a1a4e;
             padding: 0 10px;
             font-size: 0.8rem;
-            color: #e94560;
+            color: #a855f7;
         }
         
         .chaos-content {
@@ -96,7 +105,7 @@
         }
         
         .info-section h2 {
-            color: #e94560;
+            color: #a855f7;
             margin-bottom: 1rem;
         }
         
@@ -111,42 +120,190 @@
             color: #666;
             font-size: 0.8rem;
         }
-    </style>
+   @keyframes matrix-flicker { 0%, 90%, 100% { opacity: 1; } 95% { opacity: 0.8; } }
+  </style>
 </head>
 <body>
-    <div class="header">
-        <h1>✨ Emergent Canvas ✨</h1>
-        <p>Une expérience de création collaborative</p>
-    </div>
-    
-    <div class="status-bar">
-        <span>🎭 Mode: Democracy</span>
-        <span>🔄 Cycles: 0</span>
-        <span>⏱️ Démarré</span>
-    </div>
-    
-    <div class="main-content">
-        <!-- LLM-EDIT-START -->
-        <div id="chaos-zone">
-            <div class="chaos-content">
-                <p>🎨 Cette zone attend vos idées créatives...</p>
-                <p>Proposez une idée dans le backlog !</p>
-            </div>
-        </div>
-        <!-- LLM-EDIT-END -->
+<div class="header" style="position: relative; z-index: 1;">
+<h1 style="font-family: 'Courier New', monospace; color: #00ff41; text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41; background: none; -webkit-background-clip: unset; -webkit-text-fill-color: #00ff41; animation: matrix-flicker 0.1s infinite;">
+    ⟨ Welcome to the Matrix ⟩
+   </h1>
+<p>
+    Une expérience de création collaborative
+   </p>
+</div>
+<div class="status-bar">
+<span>
+    🎭 Mode: Democracy
+   </span>
+<span>
+    🔄 Cycles: 0
+   </span>
+<span>
+    ⏱️ Démarré
+   </span>
+</div>
+<div class="main-content" style="position: relative; z-index: 1;">
+<!-- LLM-EDIT-START -->
+<div id="chaos-zone">
+<div class="chaos-content">
+<p>
+      🎨 Cette zone attend vos idées créatives...
+     </p>
+<p>
+      Proposez une idée dans le backlog !
+     </p>
+<div id="counter-display" style="font-size: 4rem; font-weight: bold; background: linear-gradient(135deg, #ffd700, #ff6b6b, #a855f7); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 1.5rem; text-shadow: 0 0 30px rgba(168, 85, 247, 0.5); transition: transform 0.2s ease;">
+      0
+     </div>
+<button id="click-me-btn" style="background: linear-gradient(135deg, #e94560 0%, #ff6b6b 100%); color: white; border: none; padding: 1.2rem 3rem; font-size: 1.5rem; font-weight: bold; border-radius: 50px; cursor: pointer; box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5); transition: all 0.3s ease; animation: pulse 2s infinite; text-transform: uppercase; letter-spacing: 2px;">
+      ✨ Click Me ✨
+     </button>
+<style>
+      #click-me-btn:hover { transform: scale(1.1) rotate(2deg); box-shadow: 0 12px 35px rgba(233, 69, 96, 0.7); } #click-me-btn:active { transform: scale(0.95); } @keyframes pulse { 0%, 100% { box-shadow: 0 8px 25px rgba(233, 69, 96, 0.5); } 50% { box-shadow: 0 8px 40px rgba(233, 69, 96, 0.8), 0 0 60px rgba(233, 69, 96, 0.4); } }
+     </style>
+<script>
+      let clickCount = 0;
+      const btn = document.getElementById('click-me-btn');
+      const counter = document.getElementById('counter-display');
+      
+      btn.addEventListener('click', function() {
+        clickCount++;
+        counter.textContent = clickCount;
+        counter.style.transform = 'scale(1.3)';
+        setTimeout(() => counter.style.transform = 'scale(1)', 200);
         
-        <div class="info-section">
-            <h2>📋 Comment participer ?</h2>
-            <p>
-                Visitez le <strong>/backlog</strong> pour proposer des idées.
+        this.style.background = 'linear-gradient(135deg, hsl(' + Math.random()*360 + ', 70%, 50%) 0%, hsl(' + Math.random()*360 + ', 70%, 60%) 100%)';
+        
+        const emojis = ['🎉', '🚀', '💥', '⚡', '🌟', '🔥', '💫', '🎨'];
+        const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+        this.textContent = emoji + ' ' + clickCount + ' clicks! ' + emoji;
+        setTimeout(() => { this.textContent = '✨ Click Me ✨'; }, 1000);
+        
+        // Confetti burst effect
+        for(let i = 0; i < 8; i++) {
+          const confetti = document.createElement('div');
+          confetti.style.cssText = 'position:absolute;width:10px;height:10px;background:hsl('+Math.random()*360+',80%,60%);border-radius:50%;pointer-events:none;';
+          confetti.style.left = '50%';
+          confetti.style.top = '40%';
+          document.getElementById('chaos-zone').appendChild(confetti);
+          const angle = (i/8) * Math.PI * 2;
+          const velocity = 100 + Math.random() * 50;
+          let x = 0, y = 0, opacity = 1;
+          const animate = () => {
+            x += Math.cos(angle) * 5;
+            y += Math.sin(angle) * 5 + 2;
+            opacity -= 0.02;
+            confetti.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+            confetti.style.opacity = opacity;
+            if(opacity > 0) requestAnimationFrame(animate);
+            else confetti.remove();
+          };
+          requestAnimationFrame(animate);
+        }
+      });
+     </script>
+</div>
+</div>
+<!-- LLM-EDIT-END -->
+<div class="info-section">
+<h2>
+     📋 Comment participer ?
+    </h2>
+<p>
+     Visitez le
+     <strong>
+      /backlog
+     </strong>
+     pour proposer des idées.
                 Votez pour vos idées préférées.
                 L'IA modifiera cette page selon les demandes les plus populaires.
-            </p>
-        </div>
-    </div>
+    </p>
+</div>
+</div>
+<div class="footer">
+<p>
+    Twitch Emergent Coding • Expérience d'intelligence collective
+   </p>
+</div>
+<div id="particles-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;">
+</div>
+<script>
+   (function() {
+  const container = document.getElementById('particles-container');
+  const particleCount = 50;
+  
+  for(let i = 0; i < particleCount; i++) {
+    const particle = document.createElement('div');
+    const size = Math.random() * 6 + 2;
+    const duration = Math.random() * 20 + 15;
+    const delay = Math.random() * 10;
+    const startX = Math.random() * 100;
+    const drift = (Math.random() - 0.5) * 30;
+    const hue = Math.random() > 0.5 ? '260' : '210';
+    const opacity = Math.random() * 0.5 + 0.2;
     
-    <div class="footer">
-        <p>Twitch Emergent Coding • Expérience d'intelligence collective</p>
-    </div>
+    particle.style.cssText = `
+      position: absolute;
+      width: ${size}px;
+      height: ${size}px;
+      background: radial-gradient(circle, hsla(${hue}, 80%, 70%, ${opacity}) 0%, transparent 70%);
+      border-radius: 50%;
+      left: ${startX}%;
+      bottom: -20px;
+      animation: floatUp${i} ${duration}s linear ${delay}s infinite;
+      box-shadow: 0 0 ${size * 2}px hsla(${hue}, 80%, 60%, 0.3);
+    `;
+    
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes floatUp${i} {
+        0% {
+          transform: translateY(0) translateX(0) scale(1);
+          opacity: 0;
+        }
+        10% {
+          opacity: ${opacity};
+        }
+        90% {
+          opacity: ${opacity};
+        }
+        100% {
+          transform: translateY(-110vh) translateX(${drift}vw) scale(${Math.random() * 0.5 + 0.5});
+          opacity: 0;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    container.appendChild(particle);
+  }
+  
+  // Particules scintillantes fixes
+  for(let i = 0; i < 30; i++) {
+    const star = document.createElement('div');
+    const size = Math.random() * 3 + 1;
+    star.style.cssText = `
+      position: absolute;
+      width: ${size}px;
+      height: ${size}px;
+      background: white;
+      border-radius: 50%;
+      left: ${Math.random() * 100}%;
+      top: ${Math.random() * 100}%;
+      animation: twinkle ${Math.random() * 3 + 2}s ease-in-out ${Math.random() * 2}s infinite;
+    `;
+    container.appendChild(star);
+  }
+  
+  const twinkleStyle = document.createElement('style');
+  twinkleStyle.textContent = `
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.2; transform: scale(1); }
+      50% { opacity: 0.8; transform: scale(1.5); }
+    }
+  `;
+  document.head.appendChild(twinkleStyle);
+})();
+  </script>
 </body>
 </html>
