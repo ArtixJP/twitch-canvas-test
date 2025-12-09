@@ -366,6 +366,21 @@
   25% { transform: translate(-50%, -50%) rotate(-20deg) scale(1.2); }
   75% { transform: translate(-50%, -50%) rotate(20deg) scale(0.8); }
 }
+   .planet.catch-flash {
+  animation: planetColorFlash 0.8s ease-out forwards !important;
+}
+@keyframes planetColorFlash {
+  0% { filter: hue-rotate(0deg) brightness(1.5) saturate(2); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.6), inset 10px 10px 40px rgba(255,255,255,0.4), 0 0 100px rgba(255,200,100,0.8), 0 0 200px rgba(255,150,50,0.5); }
+  25% { filter: hue-rotate(90deg) brightness(1.3) saturate(1.8); }
+  50% { filter: hue-rotate(180deg) brightness(1.4) saturate(1.6); }
+  75% { filter: hue-rotate(270deg) brightness(1.2) saturate(1.4); }
+  100% { filter: hue-rotate(0deg) brightness(1) saturate(1); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.6), inset 10px 10px 40px rgba(100,200,255,0.2), 0 0 60px rgba(100,200,255,0.3), 0 0 120px rgba(50,150,200,0.2); }
+}
+.planet.color-shift-1 { background: linear-gradient(135deg, #a44a90 0%, #6b2d5a 30%, #4a1a3a 70%, #2d0d1f 100%) !important; }
+.planet.color-shift-2 { background: linear-gradient(135deg, #4aa490 0%, #2d6b5a 30%, #1a4a3a 70%, #0d2d1f 100%) !important; }
+.planet.color-shift-3 { background: linear-gradient(135deg, #a4904a 0%, #6b5a2d 30%, #4a3a1a 70%, #2d1f0d 100%) !important; }
+.planet.color-shift-4 { background: linear-gradient(135deg, #904aa4 0%, #5a2d6b 30%, #3a1a4a 70%, #1f0d2d 100%) !important; }
+.planet.color-shift-5 { background: linear-gradient(135deg, #a44a4a 0%, #6b2d2d 30%, #4a1a1a 70%, #2d0d0d 100%) !important; }
   </style>
 </head>
 <body>
@@ -1065,6 +1080,56 @@ window.addEventListener('resize', () => {
     
     kittyOrbit.style.animation = 'none';
     updateChaseWithScore();
+})();
+  </script>
+<script>
+   (function() {
+    const planet = document.querySelector('.planet');
+    let currentColorClass = '';
+    const colorClasses = ['color-shift-1', 'color-shift-2', 'color-shift-3', 'color-shift-4', 'color-shift-5'];
+    
+    // Override createCatchEffect to also change planet color
+    const originalCreateCatchEffect = window.createCatchEffect;
+    
+    window.triggerPlanetColorChange = function() {
+        // Remove previous color class
+        if (currentColorClass) {
+            planet.classList.remove(currentColorClass);
+        }
+        
+        // Add flash animation
+        planet.classList.remove('catch-flash');
+        void planet.offsetWidth; // Force reflow
+        planet.classList.add('catch-flash');
+        
+        // Pick random new color
+        const newColorClass = colorClasses[Math.floor(Math.random() * colorClasses.length)];
+        currentColorClass = newColorClass;
+        
+        // Apply new color after flash peaks
+        setTimeout(() => {
+            planet.classList.add(newColorClass);
+        }, 200);
+        
+        // Remove flash class after animation
+        setTimeout(() => {
+            planet.classList.remove('catch-flash');
+        }, 800);
+    };
+    
+    // Patch the score update to trigger planet change
+    const dogScoreEl = document.getElementById('dogScore');
+    let lastScore = parseInt(dogScoreEl.textContent) || 0;
+    
+    const observer = new MutationObserver(() => {
+        const newScore = parseInt(dogScoreEl.textContent) || 0;
+        if (newScore > lastScore) {
+            window.triggerPlanetColorChange();
+            lastScore = newScore;
+        }
+    });
+    
+    observer.observe(dogScoreEl, { childList: true, characterData: true, subtree: true });
 })();
   </script>
 </body>
