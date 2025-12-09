@@ -115,8 +115,349 @@
             font-size: 0.8rem;
         }
   </style>
+<style>
+   /* NEON GLOW EFFECT FOR ALL TEXT */
+@keyframes neon-pulse {
+  0%, 100% { text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor; }
+  50% { text-shadow: 0 0 2px currentColor, 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor; }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 20px currentColor, 0 0 40px currentColor, 0 0 80px currentColor;
+    opacity: 1;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    opacity: 0.8;
+  }
+}
+
+body h1, body h2, body h3, body h4, body h5, body h6 {
+  animation: neon-flicker 3s infinite;
+  color: #ff00ff !important;
+  -webkit-text-fill-color: #ff00ff !important;
+}
+
+body p, body span, body a, body button, body strong, body li {
+  text-shadow: 0 0 5px #00ffff, 0 0 10px #00ffff, 0 0 20px #00ffff, 0 0 40px #00ffff;
+  animation: neon-pulse 2s ease-in-out infinite;
+}
+
+body button {
+  text-shadow: 0 0 5px #ff6b6b, 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 40px #ff6b6b !important;
+  box-shadow: 0 0 10px #ff6b6b, 0 0 20px #ff6b6b, 0 0 40px #ff6b6b, inset 0 0 10px rgba(255,107,107,0.3) !important;
+}
+
+#counter-display {
+  text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #3b82f6 !important;
+  animation: neon-flicker 1.5s infinite !important;
+}
+
+.header h1 {
+  text-shadow: 0 0 10px #a855f7, 0 0 20px #a855f7, 0 0 40px #a855f7, 0 0 80px #a855f7 !important;
+}
+
+.info-section h2 {
+  color: #00ff00 !important;
+  text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00 !important;
+}
+
+.footer p {
+  text-shadow: 0 0 5px #fbbf24, 0 0 10px #fbbf24, 0 0 20px #fbbf24 !important;
+  color: #fbbf24 !important;
+}
+  </style>
+<style>
+   /* SIDEBAR MENU */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 60px;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  border-right: 2px solid #a855f7;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 1rem;
+  z-index: 1000;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+.sidebar:hover {
+  width: 200px;
+}
+
+.sidebar-item {
+  width: 100%;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: #a855f7;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar-item:hover {
+  background: rgba(168, 85, 247, 0.2);
+  color: #ff00ff;
+  text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff;
+}
+
+.sidebar-icon {
+  font-size: 1.5rem;
+  min-width: 28px;
+  text-align: center;
+}
+
+.sidebar-text {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  font-size: 0.9rem;
+}
+
+.sidebar:hover .sidebar-text {
+  opacity: 1;
+}
+
+.sidebar-divider {
+  width: 80%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #a855f7, transparent);
+  margin: 0.5rem 0;
+}
+
+/* Décaler le contenu pour la sidebar */
+body {
+  padding-left: 60px;
+}
+
+.header, .footer {
+  margin-left: 0;
+}
+  </style>
+<style>
+   /* WIGGLE EFFECT ON HOVER */
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-3deg); }
+  25% { transform: rotate(3deg) scale(1.02); }
+  50% { transform: rotate(-3deg) scale(0.98); }
+  75% { transform: rotate(3deg) scale(1.02); }
+}
+
+@keyframes crazy-wiggle {
+  0%, 100% { transform: rotate(-5deg) translateX(-2px); }
+  20% { transform: rotate(5deg) translateX(2px) translateY(-2px); }
+  40% { transform: rotate(-5deg) translateX(-2px) translateY(2px); }
+  60% { transform: rotate(5deg) translateX(2px) translateY(-2px); }
+  80% { transform: rotate(-5deg) translateX(-2px) translateY(2px); }
+}
+
+/* Éléments interactifs */
+button:hover, a:hover, .sidebar-item:hover {
+  animation: crazy-wiggle 0.3s ease-in-out infinite !important;
+}
+
+/* Textes */
+h1:hover, h2:hover, h3:hover, p:hover, span:hover {
+  animation: wiggle 0.4s ease-in-out infinite !important;
+  display: inline-block;
+}
+
+/* Containers */
+.info-section:hover, #chaos-zone:hover, .chaos-content:hover {
+  animation: wiggle 0.5s ease-in-out infinite !important;
+}
+
+/* Header spécial */
+.header:hover {
+  animation: crazy-wiggle 0.2s ease-in-out infinite !important;
+}
+
+/* Footer */
+.footer:hover {
+  animation: wiggle 0.6s ease-in-out infinite !important;
+}
+
+/* Counter display - wiggle intense */
+#counter-display:hover {
+  animation: crazy-wiggle 0.15s ease-in-out infinite !important;
+}
+
+/* Bouton chaos */
+#chaos-btn:hover {
+  animation: crazy-wiggle 0.1s ease-in-out infinite !important;
+}
+
+/* Particules - wiggle subtil */
+#particles-container div:hover {
+  animation: wiggle 0.3s ease-in-out infinite !important;
+}
+
+/* Sidebar entière */
+.sidebar:hover {
+  animation: wiggle 0.8s ease-in-out infinite !important;
+}
+
+/* Status bar items */
+.status-bar span:hover {
+  animation: crazy-wiggle 0.25s ease-in-out infinite !important;
+  display: inline-block;
+}
+  </style>
+<style>
+   /* DARK MODE STYLES */
+body.light-mode {
+  background: linear-gradient(135deg, #f0f4ff 0%, #e8eeff 25%, #dde5ff 50%, #d0dbff 75%, #c4d1ff 100%) !important;
+  color: #1a1a4e !important;
+}
+
+body.light-mode .header {
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-bottom-color: #6b21a8 !important;
+}
+
+body.light-mode .sidebar {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-right-color: #6b21a8 !important;
+}
+
+body.light-mode .sidebar-item {
+  color: #4a1a7a !important;
+}
+
+body.light-mode .sidebar-item:hover {
+  background: rgba(107, 33, 168, 0.1) !important;
+  color: #6b21a8 !important;
+}
+
+body.light-mode #chaos-zone {
+  background: rgba(107, 33, 168, 0.1) !important;
+  border-color: #6b21a8 !important;
+}
+
+body.light-mode #chaos-zone::before {
+  background: #e8eeff !important;
+  color: #6b21a8 !important;
+}
+
+body.light-mode .info-section {
+  background: rgba(107, 33, 168, 0.08) !important;
+}
+
+body.light-mode .chaos-content p,
+body.light-mode .info-section p,
+body.light-mode .status-bar span {
+  color: #4a1a7a !important;
+  text-shadow: none !important;
+}
+
+body.light-mode h1, body.light-mode h2 {
+  color: #4a1a7a !important;
+  -webkit-text-fill-color: #4a1a7a !important;
+  text-shadow: 0 0 10px rgba(107, 33, 168, 0.3) !important;
+}
+
+body.light-mode .footer p {
+  color: #6b21a8 !important;
+  text-shadow: none !important;
+}
+
+/* Toggle animation */
+#dark-mode-toggle .sidebar-icon {
+  transition: transform 0.5s ease, filter 0.3s ease;
+}
+
+#dark-mode-toggle:hover .sidebar-icon {
+  transform: rotate(360deg);
+  filter: drop-shadow(0 0 10px #fbbf24);
+}
+
+body.light-mode #dark-mode-toggle .sidebar-icon::after {
+  content: '☀️';
+}
+  </style>
 </head>
 <body style="position: relative; z-index: 1;">
+<nav class="sidebar">
+<a class="sidebar-item" href="#home">
+<span class="sidebar-icon">
+     🏠
+    </span>
+<span class="sidebar-text">
+     Home
+    </span>
+</a>
+<a class="sidebar-item" href="#chaos-zone">
+<span class="sidebar-icon">
+     🌀
+    </span>
+<span class="sidebar-text">
+     Chaos Zone
+    </span>
+</a>
+<a class="sidebar-item" id="dark-mode-toggle" onclick="toggleDarkMode()" style="cursor: pointer;">
+<span class="sidebar-icon">
+     🌙
+    </span>
+<span class="sidebar-text">
+     Dark Mode
+    </span>
+</a>
+<div class="sidebar-divider">
+</div>
+<a class="sidebar-item" href="#">
+<span class="sidebar-icon">
+     💊
+    </span>
+<span class="sidebar-text">
+     Red Pill
+    </span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="sidebar-icon">
+     💎
+    </span>
+<span class="sidebar-text">
+     Blue Pill
+    </span>
+</a>
+<div class="sidebar-divider">
+</div>
+<a class="sidebar-item" href="#">
+<span class="sidebar-icon">
+     ⚙️
+    </span>
+<span class="sidebar-text">
+     Settings
+    </span>
+</a>
+<a class="sidebar-item" href="#">
+<span class="sidebar-icon">
+     📋
+    </span>
+<span class="sidebar-text">
+     Backlog
+    </span>
+</a>
+<div style="flex-grow: 1;">
+</div>
+<a class="sidebar-item" href="#">
+<span class="sidebar-icon">
+     🎭
+    </span>
+<span class="sidebar-text">
+     Democracy
+    </span>
+</a>
+</nav>
 <div class="header" style="position: relative; z-index: 2;">
 <h1>
     💊 Welcome to the Matrix 💊
@@ -208,7 +549,11 @@ function incrementCounter() {
 <div class="footer">
 <p>
     Twitch Emergent Coding • Expérience d'intelligence collective
-   </p>
+    <br/>
+<span style="display: block; margin-top: 0.5rem; font-size: 0.7rem; opacity: 0.7;">
+     © 2024 All rights reserved • Made with 💜 by the Chaos Community
+    </span>
+</p>
 </div>
 <div id="particles-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden;">
 </div>
@@ -217,6 +562,50 @@ function incrementCounter() {
   </script>
 <style>
    @keyframes floatUp { 0% { transform: translateY(0) translateX(0) rotate(0deg); opacity: 0; } 10% { opacity: 0.7; } 90% { opacity: 0.7; } 100% { transform: translateY(-110vh) translateX(calc(sin(var(--drift, 1)) * 100px)) rotate(360deg); opacity: 0; } } #particles-container div { --drift: 1; } #particles-container div:nth-child(odd) { --drift: -1; animation-timing-function: ease-in-out; } #particles-container div:nth-child(3n) { animation-direction: normal; } #particles-container div:nth-child(5n) { filter: blur(2px); }
+  </style>
+<script>
+   function toggleDarkMode() {
+  const body = document.body;
+  const toggle = document.querySelector('#dark-mode-toggle .sidebar-icon');
+  const text = document.querySelector('#dark-mode-toggle .sidebar-text');
+  
+  body.classList.toggle('light-mode');
+  
+  if (body.classList.contains('light-mode')) {
+    toggle.textContent = '☀️';
+    text.textContent = 'Light Mode';
+    localStorage.setItem('theme', 'light');
+    
+    // Effet de flash lumineux
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position: fixed; inset: 0; background: white; opacity: 0.8; z-index: 9999; pointer-events: none; animation: flash-out 0.5s ease forwards;';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 500);
+  } else {
+    toggle.textContent = '🌙';
+    text.textContent = 'Dark Mode';
+    localStorage.setItem('theme', 'dark');
+    
+    // Effet d'assombrissement
+    const dark = document.createElement('div');
+    dark.style.cssText = 'position: fixed; inset: 0; background: black; opacity: 0.6; z-index: 9999; pointer-events: none; animation: flash-out 0.5s ease forwards;';
+    document.body.appendChild(dark);
+    setTimeout(() => dark.remove(), 500);
+  }
+}
+
+// Charger le thème sauvegardé
+if (localStorage.getItem('theme') === 'light') {
+  document.body.classList.add('light-mode');
+  document.querySelector('#dark-mode-toggle .sidebar-icon').textContent = '☀️';
+  document.querySelector('#dark-mode-toggle .sidebar-text').textContent = 'Light Mode';
+}
+  </script>
+<style>
+   @keyframes flash-out {
+  0% { opacity: 0.8; }
+  100% { opacity: 0; }
+}
   </style>
 </body>
 </html>
