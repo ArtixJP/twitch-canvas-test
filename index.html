@@ -57,6 +57,15 @@
                 0 0 60px rgba(74, 144, 217, 0.4);
             animation: float 4s ease-in-out infinite;
             position: relative;
+            transition: background 0.8s ease-out, box-shadow 0.8s ease-out;
+        }
+        .planet.color-change {
+            animation: float 4s ease-in-out infinite, planet-pulse 0.3s ease-out;
+        }
+        @keyframes planet-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         .planet::before {
             content: '';
@@ -550,6 +559,114 @@
         // Visual feedback
         scoreDisplay.classList.add('point-scored');
         kitty.classList.add('caught');
+        
+        setTimeout(() => {
+            scoreDisplay.classList.remove('point-scored');
+            kitty.classList.remove('caught');
+        }, 500);
+        
+        // Teleport cat to opposite side
+        catAngle = dogAngle + Math.PI;
+        
+        // Allow scoring again after cooldown
+        setTimeout(() => {
+            canScore = true;
+        }, 1000);
+    }
+    
+    function animateChase() {
+        catAngle -= currentCatSpeed;
+        
+        let angleDiff = catAngle - dogAngle;
+        while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+        while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+        
+        if (angleDiff > 0) {
+            dogAngle += dogSpeed;
+        } else {
+            dogAngle -= dogSpeed;
+        }
+        
+        const distance = getDistance(catAngle, dogAngle);
+        const catchThreshold = 0.2;
+        const closeThreshold = 0.5;
+        const safeThreshold = 1.5;
+        
+        // Check for catch!
+        if (distance < catchThreshold && canScore) {
+            scorePoint();
+        }
+        
+        if (distance < closeThreshold && !isEscaping) {
+            isEscaping = true;
+            currentCatSpeed = escapeCatSpeed;
+            kitty.classList.add('escaping');
+            dog.classList.add('chasing');
+        } else if (distance > safeThreshold && isEscaping) {
+            isEscaping = false;
+            currentCatSpeed = normalCatSpeed;
+            kitty.classList.remove('escaping');
+            dog.classList.remove('chasing');
+        }
+        
+        const catDeg = (catAngle * 180 / Math.PI);
+        const dogDeg = (dogAngle * 180 / Math.PI);
+        
+        kittyOrbit.style.transform = `rotate(${catDeg}deg)`;
+        dogOrbit.style.transform = `rotate(${dogDeg}deg)`;
+        
+        kitty.style.transform = `translateX(-50%) rotate(${-catDeg}deg)`;
+        dog.style.transform = `translateX(-50%) rotate(${-dogDeg}deg) scaleX(-1)`;
+        
+        requestAnimationFrame(animateChase);
+    }
+    
+    animateChase();
+})();
+</script><script>
+(function() {
+    const kittyOrbit = document.querySelector('.kitty-orbit');
+    const dogOrbit = document.querySelector('.dog-orbit');
+    const kitty = document.querySelector('.kitty');
+    const dog = document.querySelector('.dog');
+    const scoreDisplay = document.getElementById('scoreDisplay');
+    const dogScoreEl = document.getElementById('dogScore');
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI;
+    let dogScore = 0;
+    let canScore = true;
+    
+    const catRadius = 175;
+    const dogRadius = 160;
+    
+    const normalCatSpeed = 0.015;
+    const escapeCatSpeed = 0.08;
+    const dogSpeed = 0.025;
+    
+    let currentCatSpeed = normalCatSpeed;
+    let isEscaping = false;
+    
+    function getDistance(angle1, angle2) {
+        let diff = Math.abs(angle1 - angle2);
+        if (diff > Math.PI) diff = 2 * Math.PI - diff;
+        return diff;
+    }
+    
+    function scorePoint() {
+        if (!canScore) return;
+        canScore = false;
+        dogScore++;
+        dogScoreEl.textContent = dogScore;
+        
+        // Visual feedback
+        scoreDisplay.classList.add('point-scored');
+        kitty.classList.add('caught');
+        
+        // Change planet color!
+        if (window.changePlanetColor) {
+            window.changePlanetColor();
+        }
         
         setTimeout(() => {
             scoreDisplay.classList.remove('point-scored');
