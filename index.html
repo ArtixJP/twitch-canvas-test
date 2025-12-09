@@ -254,6 +254,43 @@
         .planet.caught {
             animation: planetPulse 0.5s ease-out;
         }
+   @keyframes elephantBounce {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(5deg); }
+        }
+        
+        .water-drop {
+            position: absolute;
+            font-size: 20px;
+            animation: waterSpray 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes waterSpray {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0.5);
+                opacity: 0;
+            }
+        }
+        
+        #elephant-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        #water-spray {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+        }
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 </script>
@@ -865,6 +902,46 @@
   }
   
   requestAnimationFrame(gameLoop);
+})();
+  </script>
+<div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 60; pointer-events: none;">
+<div id="elephant" style="font-size: 80px; animation: elephantBounce 2s ease-in-out infinite;">
+    🐘
+   </div>
+<div id="water-spray">
+</div>
+</div>
+<script>
+   (function() {
+    const waterSpray = document.getElementById('water-spray');
+    
+    function createWaterDrop() {
+        const drop = document.createElement('div');
+        drop.className = 'water-drop';
+        drop.textContent = '💧';
+        
+        // Random direction for water spray (upward arc)
+        const angle = -30 - Math.random() * 120; // -30 to -150 degrees (upward)
+        const distance = 80 + Math.random() * 120;
+        const tx = Math.cos(angle * Math.PI / 180) * distance;
+        const ty = Math.sin(angle * Math.PI / 180) * distance;
+        
+        drop.style.setProperty('--tx', tx + 'px');
+        drop.style.setProperty('--ty', ty + 'px');
+        drop.style.left = '50%';
+        drop.style.top = '50%';
+        
+        waterSpray.appendChild(drop);
+        
+        setTimeout(() => drop.remove(), 1500);
+    }
+    
+    // Spray water continuously
+    setInterval(() => {
+        for (let i = 0; i < 3; i++) {
+            setTimeout(() => createWaterDrop(), i * 50);
+        }
+    }, 200);
 })();
   </script>
 </body>
