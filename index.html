@@ -4,10 +4,12 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Bienvenue sur le Stream ✨</title>
+<title>
+   Bienvenue sur le Stream ✨
+  </title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet"/>
 <style>
-    * { box-sizing: border-box; }
+   * { box-sizing: border-box; }
     
     body { 
         font-family: 'Nunito', sans-serif; 
@@ -183,42 +185,111 @@
         90% { opacity: 0.3; }
         100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
     }
-</style>
+
+.foucault-btn { display: block; margin: 20px auto 0; padding: 12px 30px; background: linear-gradient(135deg, #2d3436 0%, #636e72 100%); color: #dfe6e9; border: 2px solid #74b9ff; border-radius: 25px; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; font-family: 'Nunito', sans-serif; } .foucault-btn:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(116, 185, 255, 0.5); border-color: #a29bfe; } .foucault-bubble { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); background: rgba(45, 52, 54, 0.95); backdrop-filter: blur(15px); border-radius: 20px; padding: 40px; max-width: 600px; width: 90%; border: 2px solid #74b9ff; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(116, 185, 255, 0.3); z-index: 1000; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); } .foucault-bubble.show { transform: translate(-50%, -50%) scale(1); } .foucault-bubble.hidden { transform: translate(-50%, -50%) scale(0); pointer-events: none; } .bubble-content { position: relative; } .close-btn { position: absolute; top: -25px; right: -15px; font-size: 1.5rem; cursor: pointer; color: #74b9ff; transition: all 0.2s; } .close-btn:hover { color: #ff6b6b; transform: rotate(90deg); } .quote { font-size: 1.1rem; line-height: 1.8; color: #dfe6e9; font-style: italic; border-left: 3px solid #a29bfe; padding-left: 20px; margin-bottom: 20px; } .author { text-align: right; color: #a29bfe; font-weight: 600; } .foucault-bubble::before { content: '🎓'; position: absolute; top: -20px; left: 20px; font-size: 2.5rem; animation: float 3s ease-in-out infinite; }
+  </style>
 </head>
 <body>
 <div class="floating-emojis">
-<span class="float-emoji" style="left: 5%; animation-delay: 0s;">✨</span>
-<span class="float-emoji" style="left: 15%; animation-delay: 3s;">💜</span>
-<span class="float-emoji" style="left: 25%; animation-delay: 7s;">🌟</span>
-<span class="float-emoji" style="left: 40%; animation-delay: 2s;">☕</span>
-<span class="float-emoji" style="left: 55%; animation-delay: 5s;">🎮</span>
-<span class="float-emoji" style="left: 70%; animation-delay: 1s;">💫</span>
-<span class="float-emoji" style="left: 85%; animation-delay: 4s;">🌙</span>
-<span class="float-emoji" style="left: 95%; animation-delay: 6s;">💜</span>
+<span class="float-emoji" style="left: 5%; animation-delay: 0s;">
+    ✨
+   </span>
+<span class="float-emoji" style="left: 15%; animation-delay: 3s;">
+    💜
+   </span>
+<span class="float-emoji" style="left: 25%; animation-delay: 7s;">
+    🌟
+   </span>
+<span class="float-emoji" style="left: 40%; animation-delay: 2s;">
+    ☕
+   </span>
+<span class="float-emoji" style="left: 55%; animation-delay: 5s;">
+    🎮
+   </span>
+<span class="float-emoji" style="left: 70%; animation-delay: 1s;">
+    💫
+   </span>
+<span class="float-emoji" style="left: 85%; animation-delay: 4s;">
+    🌙
+   </span>
+<span class="float-emoji" style="left: 95%; animation-delay: 6s;">
+    💜
+   </span>
 </div>
 <div class="container">
 <div class="welcome-badge">
-<span class="live-dot"></span>EN DIRECT
-    </div>
-<h1>Bienvenue chez nous <span class="emoji-wave">👋</span></h1>
-<p class="subtitle">Installe-toi confortablement, tu es au bon endroit ✨</p>
+<span class="live-dot">
+</span>
+    EN DIRECT
+   </div>
+<h1>
+    Bienvenue chez nous
+    <span class="emoji-wave">
+     👋
+    </span>
+</h1>
+<p class="subtitle">
+    Installe-toi confortablement, tu es au bon endroit ✨
+   </p>
 <div class="cozy-box">
 <p class="message">
-            Hey toi ! <span class="highlight">Merci d'être là</span> 💜<br/><br/>
-            Ici, c'est un espace bienveillant où tout le monde est le bienvenu.<br/>
-            Prends ton thé ☕, ton plaid préféré, et profite du moment.<br/><br/>
-<span class="highlight">Tu fais partie de la famille maintenant.</span><br/>
-            N'hésite pas à participer, poser des questions, ou juste chiller avec nous !
-        </p>
+     Hey !
+     <span class="highlight">
+      Bienvenue
+     </span>
+     💜
+     <br/>
+<br/>
+     Espace chill, prends ton thé ☕ et profite.
+     <br/>
+<span class="highlight">
+      Tu fais partie de la famille.
+     </span>
+</p>
 <div class="hearts">
-<span class="heart">💜</span>
-<span class="heart">💜</span>
-<span class="heart">💜</span>
-<span class="heart">💜</span>
-<span class="heart">💜</span>
+<span class="heart">
+      💜
+     </span>
+<span class="heart">
+      💜
+     </span>
+<span class="heart">
+      💜
+     </span>
+<span class="heart">
+      💜
+     </span>
+<span class="heart">
+      💜
+     </span>
 </div>
 </div>
-<button class="cta-button" onclick="this.textContent='Merci d\'être là ! 💜'; this.style.background='linear-gradient(135deg, #ff6b9d 0%, #c44569 100%)';">Dis bonjour dans le chat ! 💬</button>
+<button class="cta-button" onclick="this.textContent='Merci d\'être là ! 💜'; this.style.background='linear-gradient(135deg, #ff6b9d 0%, #c44569 100%)';">
+    Dis bonjour dans le chat ! 💬
+   </button>
+<button class="foucault-btn" onclick="toggleFoucault()">
+    📚 Sagesse de Foucault
+   </button>
+<div class="foucault-bubble hidden" id="foucault-bubble">
+<div class="bubble-content">
+<span class="close-btn" onclick="toggleFoucault()">
+      ✕
+     </span>
+<p class="quote">
+      « L'école, comme la prison, l'usine, la caserne, l'hôpital, sont des institutions qui servent à normaliser les individus, à les rendre dociles et utiles. Le pouvoir disciplinaire s'exerce à travers la surveillance hiérarchique, la sanction normalisatrice et l'examen. »
+     </p>
+<p class="author">
+      — Michel Foucault,
+      <em>
+       Surveiller et punir
+      </em>
+      (1975)
+     </p>
 </div>
+</div>
+</div>
+<script>
+   function toggleFoucault() { const bubble = document.getElementById('foucault-bubble'); bubble.classList.toggle('hidden'); bubble.classList.toggle('show'); }
+  </script>
 </body>
 </html>
