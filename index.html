@@ -104,9 +104,51 @@
             background: rgba(100,100,100,0.4);
             border-radius: 50%;
         }
+        .kitty-orbit {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+        }
+        .kitty {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
+            transition: filter 0.3s ease;
+        }
+        .doggy-orbit {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border-radius: 50%;
+        }
+        .doggy {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.8));
+            animation: doggy-wiggle 0.2s ease-in-out infinite alternate;
+        }
+        @keyframes doggy-wiggle {
+            0% { transform: translateX(-50%) rotate(-5deg); }
+            100% { transform: translateX(-50%) rotate(5deg); }
+        }
         @keyframes orbit {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        @keyframes orbit-reverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        @keyframes kitty-bounce {
+            0% { transform: translateX(-50%) scale(1); }
+            100% { transform: translateX(-50%) scale(1.1); }
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -134,17 +176,31 @@
             50% { opacity: 1; }
         }
   </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
 </head>
 <body>
 <h1>
    Hello World
   </h1>
-<div class="planet-system">
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+</div>
+<div class="planet-system" style="position: relative; width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; z-index: 1;">
 <div class="planet">
 </div>
 <div class="moon-orbit">
 <div class="moon">
 </div>
+</div>
+<div class="kitty-orbit">
+<div class="kitty">
+     🐱
+    </div>
+</div>
+<div class="doggy-orbit" style="position: absolute; width: 380px; height: 380px; border-radius: 50%;">
+<div class="doggy" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 28px; filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.8));">
+     🐕
+    </div>
 </div>
 </div>
 <div class="stars">
@@ -181,6 +237,197 @@
 </button>
 <script>
    document.addEventListener('DOMContentLoaded', function() { const audio = document.getElementById('bgMusic'); audio.play().catch(function() { document.getElementById('musicIcon').textContent = '▶️'; document.getElementById('musicText').textContent = 'Play'; }); });
+  </script>
+<script>
+   (function() {
+  const container = document.getElementById('sun-container');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+  
+  // Sun geometry
+  const sunGeometry = new THREE.SphereGeometry(0.8, 64, 64);
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffdd00,
+  });
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-3, 2, 0);
+  scene.add(sun);
+  
+  // Sun glow effect
+  const glowGeometry = new THREE.SphereGeometry(1.2, 32, 32);
+  const glowMaterial = new THREE.ShaderMaterial({
+    uniforms: {
+      c: { type: 'f', value: 0.3 },
+      p: { type: 'f', value: 4.0 },
+      glowColor: { type: 'c', value: new THREE.Color(0xffaa00) },
+      viewVector: { type: 'v3', value: camera.position }
+    },
+    vertexShader: `
+      uniform vec3 viewVector;
+      varying float intensity;
+      void main() {
+        vec3 vNormal = normalize(normalMatrix * normal);
+        vec3 vNormel = normalize(normalMatrix * viewVector);
+        intensity = pow(0.7 - dot(vNormal, vNormel), 2.0);
+        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+      }
+    `,
+    fragmentShader: `
+      uniform vec3 glowColor;
+      varying float intensity;
+      void main() {
+        vec3 glow = glowColor * intensity;
+        gl_FragColor = vec4(glow, intensity * 0.8);
+      }
+    `,
+    side: THREE.FrontSide,
+    blending: THREE.AdditiveBlending,
+    transparent: true
+  });
+  const sunGlow = new THREE.Mesh(glowGeometry, glowMaterial);
+  sunGlow.position.copy(sun.position);
+  scene.add(sunGlow);
+  
+  // Point light from sun
+  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+  sunLight.position.copy(sun.position);
+  sunLight.castShadow = true;
+  scene.add(sunLight);
+  
+  // Ambient light
+  const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
+  scene.add(ambientLight);
+  
+  // Sun rays particles
+  const rayCount = 200;
+  const rayGeometry = new THREE.BufferGeometry();
+  const rayPositions = new Float32Array(rayCount * 3);
+  const raySizes = new Float32Array(rayCount);
+  
+  for(let i = 0; i < rayCount; i++) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 0.9 + Math.random() * 1.5;
+    rayPositions[i * 3] = sun.position.x + Math.cos(angle) * radius;
+    rayPositions[i * 3 + 1] = sun.position.y + Math.sin(angle) * radius;
+    rayPositions[i * 3 + 2] = (Math.random() - 0.5) * 0.5;
+    raySizes[i] = Math.random() * 3 + 1;
+  }
+  
+  rayGeometry.setAttribute('position', new THREE.BufferAttribute(rayPositions, 3));
+  rayGeometry.setAttribute('size', new THREE.BufferAttribute(raySizes, 1));
+  
+  const rayMaterial = new THREE.PointsMaterial({
+    color: 0xffee88,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending
+  });
+  
+  const rays = new THREE.Points(rayGeometry, rayMaterial);
+  scene.add(rays);
+  
+  // Animation
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    // Pulse sun
+    const scale = 1 + Math.sin(time * 2) * 0.05;
+    sun.scale.set(scale, scale, scale);
+    sunGlow.scale.set(scale, scale, scale);
+    
+    // Rotate rays
+    rays.rotation.z += 0.002;
+    
+    // Update glow
+    glowMaterial.uniforms.viewVector.value = new THREE.Vector3().subVectors(camera.position, sunGlow.position);
+    
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  // Handle resize
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+  </script>
+<script>
+   (function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const doggyOrbit = document.querySelector('.doggy-orbit');
+  const kitty = document.querySelector('.kitty');
+  const doggy = document.querySelector('.doggy');
+  
+  let kittyAngle = 0;
+  let doggyAngle = Math.PI; // Start opposite side
+  let kittySpeed = 0.02; // Normal speed
+  const doggySpeed = 0.035; // Dog is faster base speed
+  const kittyEscapeSpeed = 0.08; // Cat escape speed
+  const normalSpeed = 0.02;
+  const dangerDistance = 0.8; // Radians - how close before cat panics
+  
+  // Remove CSS animation from kitty orbit
+  kittyOrbit.style.animation = 'none';
+  
+  function getAngleDifference(a1, a2) {
+    let diff = Math.abs(a1 - a2) % (Math.PI * 2);
+    if (diff > Math.PI) diff = Math.PI * 2 - diff;
+    return diff;
+  }
+  
+  function animate() {
+    // Calculate distance between cat and dog
+    const distance = getAngleDifference(kittyAngle, doggyAngle);
+    
+    // If dog is close, cat speeds up!
+    if (distance < dangerDistance) {
+      kittySpeed = kittyEscapeSpeed;
+      kitty.style.filter = 'drop-shadow(0 0 15px rgba(255, 0, 0, 0.8))';
+      kitty.textContent = '🙀';
+    } else {
+      // Gradually slow down to normal speed
+      kittySpeed = Math.max(normalSpeed, kittySpeed - 0.001);
+      if (kittySpeed <= normalSpeed + 0.005) {
+        kitty.style.filter = 'drop-shadow(0 0 10px rgba(255, 182, 193, 0.8))';
+        kitty.textContent = '🐱';
+      }
+    }
+    
+    // Update angles (both go same direction, cat runs away)
+    kittyAngle += kittySpeed;
+    doggyAngle += doggySpeed;
+    
+    // Keep angles in bounds
+    if (kittyAngle > Math.PI * 2) kittyAngle -= Math.PI * 2;
+    if (doggyAngle > Math.PI * 2) doggyAngle -= Math.PI * 2;
+    
+    // Apply rotations
+    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
+    doggyOrbit.style.transform = `rotate(${doggyAngle}rad)`;
+    
+    // Counter-rotate the emojis so they stay upright
+    kitty.style.transform = `translateX(-50%) rotate(${-kittyAngle}rad)`;
+    doggy.style.transform = `translateX(-50%) rotate(${-doggyAngle}rad)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  animate();
+})();
   </script>
 </body>
 </html>
