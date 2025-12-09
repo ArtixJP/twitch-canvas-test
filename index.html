@@ -256,11 +256,37 @@
             z-index: 1;
             position: relative;
             text-shadow: 0 0 20px rgba(255, 221, 0, 0.5);
-        }</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
+        }
+@keyframes elephant-bounce {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-10px) rotate(5deg); }
+}
+@keyframes water-drop {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-150px) scale(0.3); opacity: 0; }
+}
+@keyframes water-spray-left {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-80px, -120px) scale(0.2); opacity: 0; }
+}
+@keyframes water-spray-right {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  100% { transform: translate(80px, -120px) scale(0.2); opacity: 0; }
+}
+.water-droplet {
+  position: absolute;
+  font-size: 24px;
+  animation-duration: 1.5s;
+  animation-timing-function: ease-out;
+  animation-iteration-count: infinite;
+}
+#elephant-container {
+  filter: drop-shadow(0 0 20px rgba(100, 200, 255, 0.5));
+}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script></head>
 <body>
-<h1>Hello World</h1><div class="score-display" id="scoreDisplay">🐕 Dog Score: <span id="dogScore">0</span></div>
-<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></div><div class="planet-system"><div class="planet"></div><div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty">🐱</div></div><div class="dog-orbit"><div class="dog">🐕</div></div></div><div class="stars" id="stars"></div><script>
+<h1>Hello World</h1><div id="game-container" style="position: relative; z-index: 10; margin: 20px 0;"><div id="game-canvas" style="border-radius: 15px; overflow: hidden; box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);"></div><div id="game-ui" style="display: flex; gap: 20px; justify-content: center; margin-top: 10px; font-size: 1.2rem;"><span style="background: linear-gradient(135deg, rgba(255,215,0,0.3), rgba(255,180,0,0.2)); padding: 8px 20px; border-radius: 15px;">⭐ Stars: <span id="starCount">0</span></span><span style="background: linear-gradient(135deg, rgba(255,100,100,0.3), rgba(200,50,50,0.2)); padding: 8px 20px; border-radius: 15px;">❤️ Lives: <span id="livesCount">3</span></span><span style="background: linear-gradient(135deg, rgba(100,200,255,0.3), rgba(50,150,200,0.2)); padding: 8px 20px; border-radius: 15px;">🏆 High: <span id="highScore">0</span></span></div><p style="text-align: center; margin-top: 10px; opacity: 0.7; font-size: 0.9rem;">🚀 Move mouse to control spaceship | Collect ⭐ | Avoid 🌑</p></div><div class="score-display" id="scoreDisplay">🐕 Dog Score: <span id="dogScore">0</span></div>
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></div><div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; pointer-events: none;"><div id="elephant" style="font-size: 100px; animation: elephant-bounce 1s ease-in-out infinite;">🐘</div><div id="water-spray" style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%);"></div></div><div class="planet-system"><div class="planet"></div><div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty">🐱</div></div><div class="dog-orbit"><div class="dog">🐕</div></div></div><div class="stars" id="stars"></div><script>
     const starsContainer = document.getElementById('stars');
     for(let i = 0; i < 100; i++) {
         const star = document.createElement('div');
@@ -730,6 +756,333 @@
     }
     
     animateChase();
+})();
+</script><script>
+(function() {
+    let stars = [];
+    let asteroids = [];
+    let particles = [];
+    let ship = { x: 200, y: 350, size: 30 };
+    let score = 0;
+    let lives = 3;
+    let highScore = parseInt(localStorage.getItem('spaceHighScore')) || 0;
+    let gameOver = false;
+    let canvasWidth = 400;
+    let canvasHeight = 400;
+    let difficulty = 1;
+    
+    document.getElementById('highScore').textContent = highScore;
+    
+    const sketch = (p) => {
+        p.setup = function() {
+            let canvas = p.createCanvas(canvasWidth, canvasHeight);
+            canvas.parent('game-canvas');
+            p.textAlign(p.CENTER, p.CENTER);
+            spawnStar();
+        };
+        
+        p.draw = function() {
+            // Space background
+            p.background(10, 15, 30);
+            
+            // Draw background stars
+            p.fill(255, 255, 255, 100);
+            p.noStroke();
+            for(let i = 0; i < 50; i++) {
+                let x = (i * 73 + p.frameCount * 0.1) % canvasWidth;
+                let y = (i * 137) % canvasHeight;
+                let size = (i % 3) + 1;
+                p.ellipse(x, y, size, size);
+            }
+            
+            if (gameOver) {
+                drawGameOver(p);
+                return;
+            }
+            
+            // Update ship position (smooth follow)
+            let targetX = p.constrain(p.mouseX, 20, canvasWidth - 20);
+            let targetY = p.constrain(p.mouseY, 20, canvasHeight - 20);
+            ship.x = p.lerp(ship.x, targetX, 0.15);
+            ship.y = p.lerp(ship.y, targetY, 0.15);
+            
+            // Spawn logic
+            if (p.frameCount % 60 === 0) spawnStar();
+            if (p.frameCount % Math.max(40 - difficulty * 5, 15) === 0) spawnAsteroid();
+            
+            // Update and draw stars
+            for (let i = stars.length - 1; i >= 0; i--) {
+                let s = stars[i];
+                s.y += s.speed;
+                s.angle += 0.05;
+                
+                // Draw star glow
+                p.fill(255, 215, 0, 50);
+                p.ellipse(s.x, s.y, s.size * 2, s.size * 2);
+                
+                // Draw star
+                p.push();
+                p.translate(s.x, s.y);
+                p.rotate(s.angle);
+                p.fill(255, 215, 0);
+                drawStar(p, 0, 0, s.size/2, s.size, 5);
+                p.pop();
+                
+                // Check collision with ship
+                if (p.dist(s.x, s.y, ship.x, ship.y) < ship.size/2 + s.size/2) {
+                    score++;
+                    document.getElementById('starCount').textContent = score;
+                    createParticles(s.x, s.y, [255, 215, 0]);
+                    stars.splice(i, 1);
+                    difficulty = Math.floor(score / 10) + 1;
+                    continue;
+                }
+                
+                if (s.y > canvasHeight + 20) stars.splice(i, 1);
+            }
+            
+            // Update and draw asteroids
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                let a = asteroids[i];
+                a.y += a.speed;
+                a.angle += a.rotSpeed;
+                
+                // Draw asteroid
+                p.push();
+                p.translate(a.x, a.y);
+                p.rotate(a.angle);
+                p.fill(80, 70, 60);
+                p.stroke(50, 45, 40);
+                p.strokeWeight(2);
+                p.beginShape();
+                for(let j = 0; j < 8; j++) {
+                    let angle = j * p.TWO_PI / 8;
+                    let r = a.size/2 + a.bumps[j];
+                    p.vertex(p.cos(angle) * r, p.sin(angle) * r);
+                }
+                p.endShape(p.CLOSE);
+                // Crater
+                p.fill(60, 55, 50);
+                p.noStroke();
+                p.ellipse(a.size/6, -a.size/6, a.size/3, a.size/3);
+                p.pop();
+                
+                // Check collision with ship
+                if (p.dist(a.x, a.y, ship.x, ship.y) < ship.size/2 + a.size/2 - 5) {
+                    lives--;
+                    document.getElementById('livesCount').textContent = lives;
+                    createParticles(ship.x, ship.y, [255, 100, 100]);
+                    asteroids.splice(i, 1);
+                    if (lives <= 0) {
+                        gameOver = true;
+                        if (score > highScore) {
+                            highScore = score;
+                            localStorage.setItem('spaceHighScore', highScore);
+                            document.getElementById('highScore').textContent = highScore;
+                        }
+                    }
+                    continue;
+                }
+                
+                if (a.y > canvasHeight + 30) asteroids.splice(i, 1);
+            }
+            
+            // Draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                let part = particles[i];
+                part.x += part.vx;
+                part.y += part.vy;
+                part.life -= 3;
+                p.fill(part.color[0], part.color[1], part.color[2], part.life);
+                p.noStroke();
+                p.ellipse(part.x, part.y, part.size, part.size);
+                if (part.life <= 0) particles.splice(i, 1);
+            }
+            
+            // Draw spaceship
+            drawSpaceship(p, ship.x, ship.y);
+            
+            // Draw engine particles
+            if (p.frameCount % 2 === 0) {
+                particles.push({
+                    x: ship.x + p.random(-5, 5),
+                    y: ship.y + 15,
+                    vx: p.random(-0.5, 0.5),
+                    vy: p.random(1, 3),
+                    size: p.random(3, 6),
+                    life: 150,
+                    color: [255, p.random(100, 200), 50]
+                });
+            }
+        };
+        
+        p.mousePressed = function() {
+            if (gameOver && p.mouseX > 0 && p.mouseX < canvasWidth && p.mouseY > 0 && p.mouseY < canvasHeight) {
+                resetGame();
+            }
+        };
+        
+        function drawSpaceship(p, x, y) {
+            p.push();
+            p.translate(x, y);
+            
+            // Engine glow
+            p.fill(255, 150, 50, 100);
+            p.noStroke();
+            p.ellipse(0, 12, 15, 20);
+            
+            // Body
+            p.fill(100, 150, 255);
+            p.stroke(70, 120, 220);
+            p.strokeWeight(2);
+            p.beginShape();
+            p.vertex(0, -15);
+            p.vertex(12, 10);
+            p.vertex(0, 5);
+            p.vertex(-12, 10);
+            p.endShape(p.CLOSE);
+            
+            // Cockpit
+            p.fill(200, 230, 255);
+            p.noStroke();
+            p.ellipse(0, -3, 8, 10);
+            
+            // Wings
+            p.fill(80, 130, 200);
+            p.triangle(-12, 10, -18, 15, -8, 5);
+            p.triangle(12, 10, 18, 15, 8, 5);
+            
+            p.pop();
+        }
+        
+        function drawStar(p, x, y, radius1, radius2, npoints) {
+            let angle = p.TWO_PI / npoints;
+            let halfAngle = angle / 2.0;
+            p.beginShape();
+            for (let a = -p.PI/2; a < p.TWO_PI - p.PI/2; a += angle) {
+                let sx = x + p.cos(a) * radius2;
+                let sy = y + p.sin(a) * radius2;
+                p.vertex(sx, sy);
+                sx = x + p.cos(a + halfAngle) * radius1;
+                sy = y + p.sin(a + halfAngle) * radius1;
+                p.vertex(sx, sy);
+            }
+            p.endShape(p.CLOSE);
+        }
+        
+        function drawGameOver(p) {
+            p.fill(0, 0, 0, 150);
+            p.rect(0, 0, canvasWidth, canvasHeight);
+            
+            p.fill(255);
+            p.textSize(32);
+            p.text('GAME OVER', canvasWidth/2, canvasHeight/2 - 40);
+            
+            p.textSize(20);
+            p.fill(255, 215, 0);
+            p.text('Stars: ' + score, canvasWidth/2, canvasHeight/2);
+            
+            if (score >= highScore && score > 0) {
+                p.fill(100, 255, 100);
+                p.text('NEW HIGH SCORE!', canvasWidth/2, canvasHeight/2 + 30);
+            }
+            
+            p.fill(200);
+            p.textSize(16);
+            p.text('Click to play again', canvasWidth/2, canvasHeight/2 + 70);
+        }
+        
+        function spawnStar() {
+            stars.push({
+                x: p.random(30, canvasWidth - 30),
+                y: -20,
+                size: p.random(15, 25),
+                speed: p.random(1.5, 3),
+                angle: 0
+            });
+        }
+        
+        function spawnAsteroid() {
+            let bumps = [];
+            for(let i = 0; i < 8; i++) bumps.push(p.random(-5, 5));
+            asteroids.push({
+                x: p.random(30, canvasWidth - 30),
+                y: -30,
+                size: p.random(25, 40),
+                speed: p.random(2, 4 + difficulty * 0.5),
+                angle: 0,
+                rotSpeed: p.random(-0.05, 0.05),
+                bumps: bumps
+            });
+        }
+        
+        function createParticles(x, y, color) {
+            for(let i = 0; i < 15; i++) {
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: p.random(-3, 3),
+                    vy: p.random(-3, 3),
+                    size: p.random(3, 8),
+                    life: 255,
+                    color: color
+                });
+            }
+        }
+        
+        function resetGame() {
+            stars = [];
+            asteroids = [];
+            particles = [];
+            score = 0;
+            lives = 3;
+            difficulty = 1;
+            gameOver = false;
+            ship.x = canvasWidth / 2;
+            ship.y = canvasHeight - 50;
+            document.getElementById('starCount').textContent = 0;
+            document.getElementById('livesCount').textContent = 3;
+        }
+    };
+    
+    new p5(sketch);
+})();
+</script><script>
+(function() {
+  const sprayContainer = document.getElementById('water-spray');
+  const droplets = ['💧', '💦', '🌊'];
+  
+  function createWaterSpray() {
+    for(let i = 0; i < 5; i++) {
+      setTimeout(() => {
+        const drop = document.createElement('span');
+        drop.className = 'water-droplet';
+        drop.textContent = droplets[Math.floor(Math.random() * droplets.length)];
+        drop.style.left = (Math.random() * 60 - 30) + 'px';
+        
+        const animType = Math.random();
+        if(animType < 0.33) {
+          drop.style.animation = 'water-drop 1.5s ease-out infinite';
+        } else if(animType < 0.66) {
+          drop.style.animation = 'water-spray-left 1.5s ease-out infinite';
+        } else {
+          drop.style.animation = 'water-spray-right 1.5s ease-out infinite';
+        }
+        
+        drop.style.animationDelay = (Math.random() * 0.5) + 's';
+        sprayContainer.appendChild(drop);
+        
+        setTimeout(() => {
+          if(sprayContainer.children.length > 20) {
+            sprayContainer.removeChild(sprayContainer.firstChild);
+          }
+        }, 2000);
+      }, i * 200);
+    }
+  }
+  
+  createWaterSpray();
+  setInterval(createWaterSpray, 1500);
 })();
 </script></body>
 </html>
