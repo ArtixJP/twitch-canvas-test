@@ -12,15 +12,65 @@
             font-family: system-ui, sans-serif; 
             display: flex; 
             flex-direction: column;
-            justify-content: center; 
+            justify-content: flex-start; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
+        
+        /* Navigation Menu */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-btn {
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .nav-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* Sections */
+        .section {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding-top: 80px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .section.active {
+            display: flex;
+        }
+        
         .planet-system {
             position: relative;
             width: 300px;
@@ -216,15 +266,58 @@ h1 {
   flex-direction: column;
   align-items: center;
 }
+
+/* Section titles */
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+    text-align: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Animals section specific */
+#animals-section .animals-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+/* Games section specific */
+#games-section {
+    position: relative;
+}
+#games-section #gameCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+@keyframes fadeUp {
+    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -100%) scale(1.5); }
+}
+#dogScore, #asteroidScore { transition: transform 0.2s, color 0.2s; }
   </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 </script>
 </head>
 <body>
-<h1>
-   Hello World
-  </h1>
-<div id="scoreBoard" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; z-index: 100; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); display: flex; gap: 30px;">
+<nav class="nav-menu">
+<button class="nav-btn active" onclick="showSection('space')">
+    🌌 Space
+   </button>
+<button class="nav-btn" onclick="showSection('animals')">
+    🐾 Animals
+   </button>
+<button class="nav-btn" onclick="showSection('games')">
+    🎮 Games
+   </button>
+</nav>
+<div id="scoreBoard" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; z-index: 100; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); display: none; gap: 30px;">
 <span>
     🐕 Dog:
     <span id="dogScore">
@@ -238,8 +331,17 @@ h1 {
     </span>
 </span>
 </div>
+<!-- SPACE SECTION -->
+<section class="section active" id="space-section">
+<h2 class="section-title">
+    🌌 Space Explorer
+   </h2>
 <div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
 </div>
+<p style="margin-top: 30px; opacity: 0.7; text-align: center;">
+    Watch the beautiful planet and moon orbit in space!
+   </p>
+</section>
 <div class="planet-system">
 <div class="planet" id="planet">
 </div>
@@ -258,15 +360,74 @@ h1 {
     </div>
 </div>
 </div>
-<div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 60; pointer-events: none;">
+<!-- ANIMALS SECTION -->
+<section class="section" id="animals-section">
+<h2 class="section-title">
+    🐾 Animal Kingdom
+   </h2>
+<div class="animals-container">
+<div id="chase-arena" style="position: relative; width: 350px; height: 350px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 50%;">
+<div class="kitty-orbit" id="kittyOrbitAnimals">
+<div class="kitty" id="kittyAnimals">
+       🐱
+      </div>
+</div>
+<div class="doggy-orbit" id="doggyOrbitAnimals">
+<div class="doggy" id="doggyAnimals">
+       🐕
+      </div>
+</div>
+<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+<p style="font-size: 0.9rem; opacity: 0.7;">
+       Dog chases Cat!
+      </p>
+<p style="font-size: 1.2rem;">
+       🐕 Catches:
+       <span id="dogScoreAnimals">
+        0
+       </span>
+</p>
+</div>
+</div>
+<div id="elephant-container" style="position: relative; z-index: 60;">
 <div id="elephant" style="font-size: 100px; animation: elephantBounce 2s ease-in-out infinite;">
-    🐘
-   </div>
+      🐘
+     </div>
 <div id="water-spray">
 </div>
+<p style="text-align: center; opacity: 0.7; margin-top: 10px;">
+      Elephant spraying water!
+     </p>
 </div>
+</div>
+</section>
 <div class="stars" id="stars">
 </div>
+<script>
+   // Navigation system
+function showSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    // Remove active from all buttons
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    // Show selected section
+    document.getElementById(sectionName + '-section').classList.add('active');
+    // Activate button
+    event.target.classList.add('active');
+    
+    // Handle game canvas resize when games section is shown
+    if (sectionName === 'games') {
+        setTimeout(() => {
+            const canvas = document.getElementById('gameCanvas');
+            if (canvas) {
+                canvas.width = 800;
+                canvas.height = 500;
+            }
+        }, 100);
+    }
+}
+  </script>
 <script>
    const starsContainer = document.getElementById('stars');
     for(let i = 0; i < 100; i++) {
@@ -628,8 +789,22 @@ checkCatch = function() {
     }
 };
   </script>
-<canvas id="gameCanvas" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; cursor: crosshair;">
+<!-- GAMES SECTION -->
+<section class="section" id="games-section">
+<h2 class="section-title">
+    🎮 Space Shooter
+   </h2>
+<div id="gameScoreBoard" style="background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); display: flex; gap: 30px; margin-bottom: 20px;">
+<span>
+     🚀 Asteroids Destroyed:
+     <span id="asteroidScoreGame">
+      0
+     </span>
+</span>
+</div>
+<canvas id="gameCanvas" style="border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; cursor: crosshair; width: 800px; height: 500px;">
 </canvas>
+</section>
 <div id="gameInstructions" style="position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 10px; font-size: 1rem; z-index: 100; text-align: center; border: 1px solid rgba(255,255,255,0.2);">
    🎮 Click to shoot asteroids! | WASD to move ship
   </div>
@@ -957,6 +1132,47 @@ setInterval(() => {
     setTimeout(() => createWaterDroplet(), i * 100);
   }
 }, 500);
+  </script>
+<script>
+   // Auto-rotate sections every 30 seconds
+const sections = ['space', 'animals', 'games'];
+let currentSectionIndex = 0;
+
+function autoRotateSection() {
+    currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+    const nextSection = sections[currentSectionIndex];
+    
+    // Hide all sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    // Remove active from all buttons
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    // Show next section
+    document.getElementById(nextSection + '-section').classList.add('active');
+    // Activate corresponding button
+    document.querySelectorAll('.nav-btn')[currentSectionIndex].classList.add('active');
+    
+    // Handle game canvas resize when games section is shown
+    if (nextSection === 'games') {
+        setTimeout(() => {
+            const canvas = document.getElementById('gameCanvas');
+            if (canvas) {
+                canvas.width = 800;
+                canvas.height = 500;
+            }
+        }, 100);
+    }
+}
+
+// Start auto-rotation every 30 seconds
+setInterval(autoRotateSection, 30000);
+
+// Update currentSectionIndex when user manually clicks a nav button
+const originalShowSection = showSection;
+showSection = function(sectionName) {
+    currentSectionIndex = sections.indexOf(sectionName);
+    originalShowSection(sectionName);
+};
   </script>
 </body>
 </html>
