@@ -116,6 +116,26 @@
         #dog-score { transition: transform 0.3s ease, color 0.3s ease; }
         .rotate-icon { display: inline-block; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+   /* Enhanced Elephant Aesthetics */
+        .elephant { filter: drop-shadow(0 10px 30px rgba(100, 150, 200, 0.4)); }
+        .elephant-body { background: linear-gradient(145deg, #a8b8c8 0%, #8899aa 25%, #667788 50%, #556677 75%, #445566 100%); box-shadow: inset -15px -10px 30px rgba(0,0,0,0.3), inset 8px 8px 20px rgba(255,255,255,0.15), 0 5px 20px rgba(0,0,0,0.3); }
+        .elephant-head { background: linear-gradient(145deg, #b8c8d8 0%, #99aabb 30%, #778899 70%, #667788 100%); box-shadow: inset -10px -5px 20px rgba(0,0,0,0.25), inset 5px 5px 15px rgba(255,255,255,0.2); }
+        .elephant-ear { background: linear-gradient(160deg, #99aabb 0%, #8899aa 40%, #667788 100%); box-shadow: inset -5px -3px 15px rgba(0,0,0,0.3), 0 3px 10px rgba(0,0,0,0.2); animation: earFlapSmooth 2s ease-in-out infinite; }
+        .elephant-ear-inner { background: linear-gradient(145deg, #ffcccc 0%, #ffbbbb 30%, #ffaaaa 70%, #ff9999 100%); box-shadow: inset 3px 3px 10px rgba(255,255,255,0.5); }
+        .elephant-eye { background: radial-gradient(circle at 30% 30%, #444 0%, #222 50%, #111 100%); box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3); }
+        .elephant-eye::after { width: 4px; height: 4px; background: radial-gradient(circle, #fff 0%, rgba(255,255,255,0.5) 100%); }
+        .elephant-eye::before { content: ''; position: absolute; width: 10px; height: 2px; background: linear-gradient(90deg, transparent, #445566, #667788, #445566, transparent); top: -4px; left: -1px; border-radius: 50%; }
+        .elephant-trunk { background: linear-gradient(90deg, #99aabb 0%, #8899aa 30%, #778899 50%, #8899aa 70%, #99aabb 100%); box-shadow: inset -3px 0 10px rgba(0,0,0,0.2), inset 3px 0 10px rgba(255,255,255,0.1), 2px 0 8px rgba(0,0,0,0.15); border-radius: 8px 8px 50% 50%; }
+        .elephant-trunk-tip { background: linear-gradient(145deg, #aabbcc 0%, #99aabb 50%, #889999 100%); box-shadow: inset -3px -2px 8px rgba(0,0,0,0.2), inset 2px 2px 6px rgba(255,255,255,0.2); }
+        .elephant-leg { background: linear-gradient(180deg, #778899 0%, #667788 30%, #556677 70%, #445566 100%); box-shadow: inset -3px 0 8px rgba(0,0,0,0.3), inset 3px 0 8px rgba(255,255,255,0.1), 0 3px 8px rgba(0,0,0,0.3); border-radius: 8px 8px 12px 12px; }
+        .elephant-leg::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 18px; height: 6px; background: linear-gradient(180deg, #556677 0%, #445566 100%); border-radius: 0 0 50% 50%; }
+        .elephant-tail { background: linear-gradient(180deg, #667788 0%, #556677 50%, #445566 100%); box-shadow: 2px 0 5px rgba(0,0,0,0.2); }
+        .elephant-tail::after { background: radial-gradient(ellipse, #556677 0%, #445566 50%, #334455 100%); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+        @keyframes earFlapSmooth { 0%, 100% { transform: rotate(-8deg) scale(1); } 50% { transform: rotate(8deg) scale(1.02); } }
+        @keyframes elephantBounce { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-3px) rotate(-0.5deg); } 50% { transform: translateY(-6px) rotate(0deg); } 75% { transform: translateY(-3px) rotate(0.5deg); } }
+        .water-drop { background: linear-gradient(180deg, rgba(150,220,255,0.95) 0%, rgba(100,180,255,0.8) 50%, rgba(50,150,255,0.6) 100%); box-shadow: 0 0 10px rgba(100,200,255,0.5), inset 2px 2px 4px rgba(255,255,255,0.6); }
+        .elephant::before { content: '✨'; position: absolute; top: -10px; right: -5px; font-size: 16px; animation: sparkle 2s ease-in-out infinite; opacity: 0.8; }
+        @keyframes sparkle { 0%, 100% { opacity: 0.4; transform: scale(0.8) rotate(0deg); } 50% { opacity: 1; transform: scale(1.2) rotate(180deg); } }
   </style>
 </head>
 <body>
@@ -678,9 +698,9 @@ document.addEventListener('DOMContentLoaded', function() {
 <div class="elephant-ear-inner">
 </div>
 </div>
-<div class="elephant-eye">
+<div class="elephant-eye" style="position: absolute; width: 10px; height: 12px; background: radial-gradient(circle at 30% 30%, #444 0%, #222 50%, #111 100%); border-radius: 50%; top: 12px; left: 30px; box-shadow: inset 2px 2px 4px rgba(255,255,255,0.3), 0 2px 4px rgba(0,0,0,0.3);">
 </div>
-<div class="elephant-trunk">
+<div class="elephant-trunk" style="position: absolute; width: 16px; height: 55px; background: linear-gradient(90deg, #99aabb 0%, #8899aa 30%, #778899 50%, #8899aa 70%, #99aabb 100%); border-radius: 8px 8px 50% 50%; top: 25px; left: 15px; transform-origin: top center; animation: trunkSpray 3s ease-in-out infinite;">
 <div class="elephant-trunk-tip">
 </div>
 <div class="water-container" id="water-spray">
@@ -717,8 +737,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 </div>
 </div>
-<p style="text-align: center; color: #aaa; font-size: 1.2rem; margin-top: 20px;">
-    🐘 L'éléphant arrose la planète! 💦
+<p style="text-align: center; color: #aabbcc; font-size: 1.3rem; margin-top: 25px; text-shadow: 0 0 20px rgba(100,150,200,0.5); font-family: 'Georgia', serif; letter-spacing: 1px;">
+    🐘 L'éléphant majestueux arrose la planète! 💦✨
    </p>
 </section>
 <script>
