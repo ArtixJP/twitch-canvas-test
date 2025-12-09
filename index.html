@@ -668,6 +668,15 @@
 <button class="nav-btn" data-section="games" onclick="showSection('games')" style="background: linear-gradient(135deg, #444 0%, #222 100%); border: none; color: white; padding: 12px 30px; border-radius: 25px; cursor: pointer; font-size: 16px; font-family: 'Comic Sans MS', cursive; transition: all 0.3s ease;">
     🎮 Jeux
    </button>
+<div id="auto-rotate-indicator" style="position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); font-size: 11px; color: rgba(255,255,255,0.6); font-family: 'Comic Sans MS', cursive; display: flex; align-items: center; gap: 5px;">
+<span class="rotate-icon" style="animation: spin 4s linear infinite;">
+     🔄
+    </span>
+    Auto-rotation 30s
+   </div>
+<style>
+    .rotate-icon { display: inline-block; } @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+   </style>
 </nav>
 <h1 style="margin-top: 80px; font-size: 3rem; text-align: center; text-shadow: 0 0 20px rgba(138, 43, 226, 0.5); z-index: 10;">
    Twitch Versus Code
@@ -1324,5 +1333,35 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
   transform: none !important;
 }
   </style>
+<script>
+   (function() {
+    const sections = ['space', 'animals', 'games'];
+    let currentIndex = 0;
+    
+    // Auto-rotate every 30 seconds
+    setInterval(() => {
+        currentIndex = (currentIndex + 1) % sections.length;
+        showSection(sections[currentIndex]);
+        
+        // Visual feedback - flash the nav
+        const activeBtn = document.querySelector(`.nav-btn[data-section="${sections[currentIndex]}"]`);
+        if (activeBtn) {
+            activeBtn.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                activeBtn.style.transform = 'scale(1)';
+            }, 300);
+        }
+    }, 30000);
+    
+    // Update currentIndex when user manually clicks
+    document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+            currentIndex = sections.indexOf(btn.dataset.section);
+        });
+    });
+    
+    console.log('🔄 Auto-rotation activée: changement de section toutes les 30 secondes');
+})();
+  </script>
 </body>
 </html>
