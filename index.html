@@ -1540,12 +1540,32 @@ updateChase();
     box-shadow: 0 0 25px rgba(78,205,196,0.6);
   }
   [data-section] {
-    transition: opacity 0.5s ease, visibility 0.5s ease;
+    transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
   }
   [data-section].hidden-section {
     opacity: 0 !important;
     visibility: hidden !important;
     pointer-events: none !important;
+    position: absolute !important;
+    transform: scale(0.9) !important;
+  }
+  #score-display.hidden-section {
+    display: none !important;
+  }
+  #elephant-container.hidden-section {
+    display: none !important;
+  }
+  #snake-game-container.hidden-section {
+    display: none !important;
+  }
+  #planet-system.hidden-section {
+    display: none !important;
+  }
+  #stars-container.hidden-section {
+    display: none !important;
+  }
+  #three-container.hidden-section {
+    display: none !important;
   }
   .section-title {
     position: fixed;
@@ -1576,7 +1596,8 @@ updateChase();
     currentSection = sectionName;
     
     // Update title
-    document.getElementById('section-title').textContent = titles[sectionName];
+    const titleEl = document.getElementById('section-title');
+    if (titleEl) titleEl.textContent = titles[sectionName];
     
     // Update nav buttons
     document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -1585,9 +1606,10 @@ updateChase();
     
     // Show/hide sections
     document.querySelectorAll('[data-section]').forEach(el => {
-      if (el.dataset.section === 'all') return;
+      if (el.dataset.section === 'all' || el.id === 'section-title') return;
       if (el.dataset.section === sectionName) {
         el.classList.remove('hidden-section');
+        el.style.display = '';
       } else {
         el.classList.add('hidden-section');
       }
@@ -1607,11 +1629,10 @@ updateChase();
   
   function startAutoRotation() {
     if (autoRotateInterval) clearInterval(autoRotateInterval);
-    autoRotateInterval = setInterval(autoRotate, 30000); // 30 secondes
+    autoRotateInterval = setInterval(autoRotate, 30000);
   }
   
   function resetAutoRotation() {
-    // Reset le timer quand l'utilisateur clique manuellement
     startAutoRotation();
   }
   
@@ -1619,14 +1640,12 @@ updateChase();
   document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       showSection(btn.dataset.section);
-      resetAutoRotation(); // Reset le timer après un clic manuel
+      resetAutoRotation();
     });
   });
   
-  // Initialize - hide non-space sections
-  showSection('space');
-  
-  // Start auto-rotation
+  // Initialize
+  setTimeout(() => showSection('space'), 100);
   startAutoRotation();
   
   // Expose for external access
