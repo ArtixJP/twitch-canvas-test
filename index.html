@@ -429,6 +429,31 @@
 @keyframes elephantBob { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-15px) rotate(5deg); } } #elephant { text-shadow: 0 0 30px rgba(100,180,255,0.6), 0 0 60px rgba(50,100,200,0.4); } .water-drop { position: absolute; width: 8px; height: 12px; background: linear-gradient(180deg, rgba(100,200,255,0.9), rgba(50,150,255,0.6)); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; animation: waterFall 1.5s ease-in forwards; pointer-events: none; } @keyframes waterFall { 0% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(0.5) translateY(100px); } } .splash { position: absolute; font-size: 1.5rem; animation: splashPop 0.8s ease-out forwards; pointer-events: none; } @keyframes splashPop { 0% { transform: scale(0); opacity: 1; } 50% { transform: scale(1.5); opacity: 1; } 100% { transform: scale(2) translateY(-20px); opacity: 0; } }
 
 .auto-menu { position: fixed; top: 20px; right: 20px; z-index: 1000; background: rgba(0,0,0,0.8); border-radius: 20px; padding: 15px; border: 2px solid rgba(255,220,180,0.4); display: flex; flex-direction: column; gap: 8px; backdrop-filter: blur(10px); } .menu-item { background: rgba(255,255,255,0.1); border: none; color: white; padding: 12px 20px; border-radius: 12px; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; text-align: left; } .menu-item:hover { background: rgba(255,255,255,0.2); transform: translateX(-5px); } .menu-item.active { background: linear-gradient(135deg, #6a0572 0%, #c44569 100%); box-shadow: 0 0 20px rgba(255,107,107,0.5); transform: translateX(-10px) scale(1.05); } .timer-bar { width: 100%; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-top: 10px; overflow: hidden; } .timer-fill { height: 100%; width: 100%; background: linear-gradient(90deg, #ff6b6b, #ffcc00, #00ff88); border-radius: 2px; animation: timerCountdown 30s linear infinite; } @keyframes timerCountdown { from { width: 100%; } to { width: 0%; } } .menu-transition { animation: sectionPulse 0.5s ease-out; } @keyframes sectionPulse { 0% { filter: brightness(1); } 50% { filter: brightness(1.5) hue-rotate(20deg); } 100% { filter: brightness(1); } } .section-indicator { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 4rem; pointer-events: none; z-index: 999; animation: indicatorPop 1s ease-out forwards; opacity: 0; } @keyframes indicatorPop { 0% { transform: translate(-50%, -50%) scale(0); opacity: 0; } 30% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; } 70% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1.5); opacity: 0; } }
+
+[data-section] { display: none !important; opacity: 0; transition: opacity 0.5s ease; }
+[data-section].section-visible { display: flex !important; opacity: 1; }
+.solar-system[data-section].section-visible { display: flex !important; flex-direction: column; align-items: center; }
+.game-container[data-section].section-visible { display: block !important; }
+.game-ui[data-section].section-visible { display: flex !important; }
+#gameOverScreen[data-section].section-visible.active { display: flex !important; }
+#elephantContainer[data-section].section-visible { display: block !important; }
+.music-controls[data-section].section-visible { display: flex !important; justify-content: center; }
+.score-container[data-section].section-visible { display: block !important; text-align: center; }
+
+/* Animals section special container */
+.animals-arena { position: relative; width: 100%; height: 80vh; display: flex; justify-content: center; align-items: center; }
+.animals-arena .space-pet { font-size: 5rem; position: absolute; animation: petFloat 3s ease-in-out infinite; cursor: pointer; transition: transform 0.3s; }
+.animals-arena .space-pet:hover { transform: scale(1.3); }
+.animals-arena .space-pet:nth-child(1) { top: 20%; left: 30%; animation-delay: 0s; }
+.animals-arena .space-pet:nth-child(2) { top: 40%; left: 60%; animation-delay: 0.5s; }
+.animals-arena .space-pet:nth-child(3) { top: 60%; left: 40%; animation-delay: 1s; }
+@keyframes petFloat { 0%, 100% { transform: translateY(0) rotate(-5deg); } 50% { transform: translateY(-20px) rotate(5deg); } }
+
+/* Music section styling */
+.music-section { display: flex; flex-direction: column; align-items: center; gap: 2rem; padding: 2rem; }
+.music-visualizer { width: 300px; height: 100px; display: flex; align-items: flex-end; justify-content: center; gap: 4px; }
+.music-bar { width: 8px; background: linear-gradient(to top, #ff6b6b, #ffcc00, #00ff88); border-radius: 4px; animation: musicBarBounce 0.5s ease-in-out infinite; }
+@keyframes musicBarBounce { 0%, 100% { height: 20px; } 50% { height: 80px; } }
   </style>
 </head>
 <body>
@@ -470,7 +495,7 @@
 <div class="star" style="top:85%;left:90%;animation-delay:0.2s;">
 </div>
 </div>
-<div class="solar-system">
+<div class="solar-system" data-section="space">
 <div class="light-rays">
 </div>
 <div id="sun-container" style="position: absolute; top: -150px; left: 50%; transform: translateX(-50%); width: 400px; height: 400px; z-index: 0;">
@@ -517,7 +542,7 @@
 </div>
 </div>
 </div>
-<div class="score-container">
+<div class="score-container" data-section="animals">
 <h1>
      Hello World
     </h1>
@@ -539,7 +564,7 @@
 </span>
 </div>
 </div>
-<div class="music-controls">
+<div class="music-controls" data-section="music">
 <audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
@@ -552,7 +577,7 @@
      </span>
 </button>
 </div>
-<div id="elephantContainer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; pointer-events: none;">
+<div data-section="animals" id="elephantContainer" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 50; pointer-events: none;">
 <div id="elephant" style="font-size: 8rem; filter: drop-shadow(0 0 20px rgba(100,150,255,0.8)); animation: elephantBob 2s ease-in-out infinite;">
      🐘
     </div>
@@ -1117,11 +1142,11 @@ function toggleMusic() {
     animateChase2();
 })();
   </script>
-<div class="game-container">
+<div class="game-container" data-section="game">
 <canvas id="gameCanvas">
 </canvas>
 </div>
-<div class="game-ui">
+<div class="game-ui" data-section="game">
 <div class="game-stat">
     🛡️
     <div class="health-bar">
@@ -1148,7 +1173,7 @@ function toggleMusic() {
     </span>
 </div>
 </div>
-<div class="game-over-screen" id="gameOverScreen">
+<div class="game-over-screen" data-section="game" id="gameOverScreen">
 <h2>
     💥 GAME OVER 💥
    </h2>
@@ -1561,6 +1586,67 @@ function toggleMusic() {
   </script>
 <script>
    (function(){const sections=['space','animals','music','game'];const icons={'space':'🌌','animals':'🐾','music':'🎵','game':'🎮'};let currentIndex=0;const menuItems=document.querySelectorAll('.menu-item');const timerFill=document.getElementById('timerFill');function showSectionIndicator(section){const indicator=document.createElement('div');indicator.className='section-indicator';indicator.textContent=icons[section]+' '+section.toUpperCase();document.body.appendChild(indicator);setTimeout(()=>indicator.remove(),1000)}function highlightSection(section){switch(section){case'space':document.querySelector('.solar-system')?.classList.add('menu-transition');setTimeout(()=>document.querySelector('.solar-system')?.classList.remove('menu-transition'),500);break;case'animals':document.querySelector('.kitty-orbit')?.classList.add('menu-transition');document.querySelector('#doggyOrbit')?.classList.add('menu-transition');document.querySelector('#elephantContainer')?.classList.add('menu-transition');setTimeout(()=>{document.querySelector('.kitty-orbit')?.classList.remove('menu-transition');document.querySelector('#doggyOrbit')?.classList.remove('menu-transition');document.querySelector('#elephantContainer')?.classList.remove('menu-transition')},500);break;case'music':document.querySelector('.music-controls')?.classList.add('menu-transition');setTimeout(()=>document.querySelector('.music-controls')?.classList.remove('menu-transition'),500);break;case'game':document.querySelector('.game-ui')?.classList.add('menu-transition');setTimeout(()=>document.querySelector('.game-ui')?.classList.remove('menu-transition'),500);break}}function cycleToNext(){currentIndex=(currentIndex+1)%sections.length;const nextSection=sections[currentIndex];menuItems.forEach((item,i)=>{item.classList.toggle('active',i===currentIndex)});showSectionIndicator(nextSection);highlightSection(nextSection);timerFill.style.animation='none';timerFill.offsetHeight;timerFill.style.animation='timerCountdown 30s linear infinite'}menuItems.forEach((item,i)=>{item.addEventListener('click',()=>{currentIndex=i;menuItems.forEach((m,j)=>m.classList.toggle('active',j===i));showSectionIndicator(sections[i]);highlightSection(sections[i]);timerFill.style.animation='none';timerFill.offsetHeight;timerFill.style.animation='timerCountdown 30s linear infinite'})});setInterval(cycleToNext,30000)})();
+  </script>
+<script>
+   (function(){
+  const sections = ['space', 'animals', 'music', 'game'];
+  const icons = {'space':'🌌','animals':'🐾','music':'🎵','game':'🎮'};
+  let currentSection = 'space';
+  
+  function showSection(section) {
+    // Hide all sections
+    document.querySelectorAll('[data-section]').forEach(el => {
+      el.classList.remove('section-visible');
+    });
+    
+    // Show current section
+    document.querySelectorAll(`[data-section="${section}"]`).forEach(el => {
+      el.classList.add('section-visible');
+    });
+    
+    currentSection = section;
+  }
+  
+  // Override menu click handlers
+  const menuItems = document.querySelectorAll('.menu-item');
+  menuItems.forEach((item, i) => {
+    item.addEventListener('click', () => {
+      menuItems.forEach((m, j) => m.classList.toggle('active', j === i));
+      showSection(sections[i]);
+    });
+  });
+  
+  // Override the auto-cycle
+  let currentIndex = 0;
+  const timerFill = document.getElementById('timerFill');
+  
+  function cycleToNextSection() {
+    currentIndex = (currentIndex + 1) % sections.length;
+    const nextSection = sections[currentIndex];
+    menuItems.forEach((item, i) => {
+      item.classList.toggle('active', i === currentIndex);
+    });
+    showSection(nextSection);
+    
+    // Show indicator
+    const indicator = document.createElement('div');
+    indicator.className = 'section-indicator';
+    indicator.textContent = icons[nextSection] + ' ' + nextSection.toUpperCase();
+    document.body.appendChild(indicator);
+    setTimeout(() => indicator.remove(), 1000);
+    
+    // Reset timer
+    timerFill.style.animation = 'none';
+    timerFill.offsetHeight;
+    timerFill.style.animation = 'timerCountdown 30s linear infinite';
+  }
+  
+  // Initial show
+  showSection('space');
+  
+  // Auto cycle every 30 seconds
+  setInterval(cycleToNextSection, 30000);
+})();
   </script>
 </body>
 </html>
