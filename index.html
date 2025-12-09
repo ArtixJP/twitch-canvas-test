@@ -50,7 +50,10 @@
 </div>
 <h1>
    🌍 World Explorer 🚶‍♂️
-  </h1>
+   <span style="font-size: 1rem; display: block; margin-top: 10px; opacity: 0.8;">
+    Watch the little adventurer walk around!
+   </span>
+</h1>
 <p class="credit">
    Demandé par @artix187
   </p>
@@ -115,15 +118,27 @@ const cloudsMaterial = new THREE.MeshPhongMaterial({
 const clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial);
 scene.add(clouds);
 
-// === CUTE STICKMAN ===
+// === CUTE EXPLORER CHARACTER ===
 const stickmanGroup = new THREE.Group();
 
-// Head (happy face!)
+// Head
 const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
-const headMaterial = new THREE.MeshPhongMaterial({ color: 0xffdd88 });
+const headMaterial = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
 const head = new THREE.Mesh(headGeometry, headMaterial);
 head.position.y = 0.9;
 stickmanGroup.add(head);
+
+// Explorer Hat!
+const hatBrimGeometry = new THREE.CylinderGeometry(0.35, 0.35, 0.05, 16);
+const hatMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+const hatBrim = new THREE.Mesh(hatBrimGeometry, hatMaterial);
+hatBrim.position.y = 1.1;
+stickmanGroup.add(hatBrim);
+
+const hatTopGeometry = new THREE.CylinderGeometry(0.15, 0.2, 0.2, 16);
+const hatTop = new THREE.Mesh(hatTopGeometry, hatMaterial);
+hatTop.position.y = 1.2;
+stickmanGroup.add(hatTop);
 
 // Eyes
 const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
@@ -135,59 +150,110 @@ const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
 rightEye.position.set(0.08, 0.95, 0.2);
 stickmanGroup.add(rightEye);
 
-// Smile (curved line using tube)
+// Rosy cheeks
+const cheekGeometry = new THREE.SphereGeometry(0.04, 8, 8);
+const cheekMaterial = new THREE.MeshBasicMaterial({ color: 0xff9999 });
+const leftCheek = new THREE.Mesh(cheekGeometry, cheekMaterial);
+leftCheek.position.set(-0.15, 0.85, 0.18);
+stickmanGroup.add(leftCheek);
+const rightCheek = new THREE.Mesh(cheekGeometry, cheekMaterial);
+rightCheek.position.set(0.15, 0.85, 0.18);
+stickmanGroup.add(rightCheek);
+
+// Big smile
 const smileCurve = new THREE.QuadraticBezierCurve3(
-    new THREE.Vector3(-0.1, 0.82, 0.2),
-    new THREE.Vector3(0, 0.75, 0.25),
-    new THREE.Vector3(0.1, 0.82, 0.2)
+    new THREE.Vector3(-0.12, 0.8, 0.2),
+    new THREE.Vector3(0, 0.72, 0.28),
+    new THREE.Vector3(0.12, 0.8, 0.2)
 );
-const smileGeometry = new THREE.TubeGeometry(smileCurve, 8, 0.02, 8, false);
-const smileMaterial = new THREE.MeshBasicMaterial({ color: 0xff6699 });
+const smileGeometry = new THREE.TubeGeometry(smileCurve, 12, 0.025, 8, false);
+const smileMaterial = new THREE.MeshBasicMaterial({ color: 0xff6666 });
 const smile = new THREE.Mesh(smileGeometry, smileMaterial);
 stickmanGroup.add(smile);
 
-// Body
-const bodyGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.5, 8);
-const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x44aaff });
+// Body (shirt)
+const bodyGeometry = new THREE.CylinderGeometry(0.12, 0.1, 0.5, 8);
+const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x22aa44 });
 const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
 body.position.y = 0.5;
 stickmanGroup.add(body);
 
+// Backpack!
+const backpackGeometry = new THREE.BoxGeometry(0.2, 0.3, 0.15);
+const backpackMaterial = new THREE.MeshPhongMaterial({ color: 0xff6600 });
+const backpack = new THREE.Mesh(backpackGeometry, backpackMaterial);
+backpack.position.set(0, 0.5, -0.15);
+stickmanGroup.add(backpack);
+
+// Backpack pocket
+const pocketGeometry = new THREE.BoxGeometry(0.12, 0.1, 0.05);
+const pocketMaterial = new THREE.MeshPhongMaterial({ color: 0xcc5500 });
+const pocket = new THREE.Mesh(pocketGeometry, pocketMaterial);
+pocket.position.set(0, 0.4, -0.23);
+stickmanGroup.add(pocket);
+
 // Arms
 const armGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.35, 8);
-const armMaterial = new THREE.MeshPhongMaterial({ color: 0xffdd88 });
+const armMaterial = new THREE.MeshPhongMaterial({ color: 0xffcc99 });
 const leftArm = new THREE.Mesh(armGeometry, armMaterial);
-leftArm.position.set(-0.2, 0.6, 0);
+leftArm.position.set(-0.2, 0.55, 0);
 leftArm.rotation.z = Math.PI / 4;
 stickmanGroup.add(leftArm);
 const rightArm = new THREE.Mesh(armGeometry, armMaterial);
-rightArm.position.set(0.2, 0.6, 0);
+rightArm.position.set(0.2, 0.55, 0);
 rightArm.rotation.z = -Math.PI / 4;
 stickmanGroup.add(rightArm);
 
-// Legs
+// Legs (pants)
 const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8);
-const legMaterial = new THREE.MeshPhongMaterial({ color: 0x3366aa });
+const legMaterial = new THREE.MeshPhongMaterial({ color: 0x4444aa });
 const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
-leftLeg.position.set(-0.1, 0.1, 0);
+leftLeg.position.set(-0.08, 0.05, 0);
 stickmanGroup.add(leftLeg);
 const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
-rightLeg.position.set(0.1, 0.1, 0);
+rightLeg.position.set(0.08, 0.05, 0);
 stickmanGroup.add(rightLeg);
 
+// Boots!
+const bootGeometry = new THREE.BoxGeometry(0.08, 0.08, 0.12);
+const bootMaterial = new THREE.MeshPhongMaterial({ color: 0x553300 });
+const leftBoot = new THREE.Mesh(bootGeometry, bootMaterial);
+leftBoot.position.set(-0.08, -0.15, 0.02);
+stickmanGroup.add(leftBoot);
+const rightBoot = new THREE.Mesh(bootGeometry, bootMaterial);
+rightBoot.position.set(0.08, -0.15, 0.02);
+stickmanGroup.add(rightBoot);
+
+// Walking stick
+const stickGeometry = new THREE.CylinderGeometry(0.02, 0.02, 0.6, 8);
+const stickMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+const walkingStick = new THREE.Mesh(stickGeometry, stickMaterial);
+walkingStick.position.set(0.35, 0.3, 0);
+walkingStick.rotation.z = -0.3;
+stickmanGroup.add(walkingStick);
+
 // Position stickman on globe surface
-stickmanGroup.scale.set(0.5, 0.5, 0.5);
+stickmanGroup.scale.set(0.6, 0.6, 0.6);
 scene.add(stickmanGroup);
 
+// Footprints trail!
+const footprints = [];
+const footprintMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+
 let walkAngle = 0;
+let lastFootprintAngle = 0;
 
 // Lighting
-const ambientLight = new THREE.AmbientLight(0x333333);
+const ambientLight = new THREE.AmbientLight(0x444444);
 scene.add(ambientLight);
 
 const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
 sunLight.position.set(5, 3, 5);
 scene.add(sunLight);
+
+// Rim light for character
+const rimLight = new THREE.PointLight(0x88ccff, 0.5, 20);
+scene.add(rimLight);
 
 camera.position.z = 12;
 
@@ -203,37 +269,50 @@ function animate() {
     requestAnimationFrame(animate);
     
     // Earth rotation
-    earth.rotation.y += 0.002;
-    clouds.rotation.y += 0.0025;
+    earth.rotation.y += 0.001;
+    clouds.rotation.y += 0.0015;
     
     // Stickman walking around the globe!
-    walkAngle += 0.015;
-    const radius = 5.4;
-    const lat = Math.sin(walkAngle * 0.3) * 0.5; // slight wobble in latitude
+    walkAngle += 0.012;
+    const radius = 5.5;
+    const lat = Math.sin(walkAngle * 0.5) * 0.4;
     
     stickmanGroup.position.x = Math.cos(walkAngle) * Math.cos(lat) * radius;
     stickmanGroup.position.z = Math.sin(walkAngle) * Math.cos(lat) * radius;
     stickmanGroup.position.y = Math.sin(lat) * radius;
     
-    // Make stickman face forward (tangent to sphere)
+    // Make stickman face forward
     stickmanGroup.lookAt(0, 0, 0);
-    stickmanGroup.rotateX(Math.PI); // flip to stand on surface
+    stickmanGroup.rotateX(Math.PI);
     
-    // Walking animation - legs move!
-    leftLeg.rotation.x = Math.sin(walkAngle * 8) * 0.5;
-    rightLeg.rotation.x = Math.sin(walkAngle * 8 + Math.PI) * 0.5;
-    leftArm.rotation.x = Math.sin(walkAngle * 8 + Math.PI) * 0.3;
-    rightArm.rotation.x = Math.sin(walkAngle * 8) * 0.3;
+    // Walking animation
+    const walkCycle = walkAngle * 10;
+    leftLeg.rotation.x = Math.sin(walkCycle) * 0.6;
+    rightLeg.rotation.x = Math.sin(walkCycle + Math.PI) * 0.6;
+    leftBoot.position.y = -0.15 + Math.max(0, Math.sin(walkCycle)) * 0.05;
+    rightBoot.position.y = -0.15 + Math.max(0, Math.sin(walkCycle + Math.PI)) * 0.05;
+    leftArm.rotation.x = Math.sin(walkCycle + Math.PI) * 0.4;
+    rightArm.rotation.x = Math.sin(walkCycle) * 0.4;
+    walkingStick.rotation.x = Math.sin(walkCycle) * 0.2;
     
     // Happy bounce!
-    stickmanGroup.position.y += Math.abs(Math.sin(walkAngle * 8)) * 0.1;
+    const bounce = Math.abs(Math.sin(walkCycle)) * 0.08;
+    stickmanGroup.position.normalize().multiplyScalar(radius + bounce);
+    
+    // Head bob
+    head.rotation.z = Math.sin(walkCycle * 0.5) * 0.1;
+    hatBrim.rotation.z = head.rotation.z;
+    hatTop.rotation.z = head.rotation.z;
+    
+    // Rim light follows character
+    rimLight.position.copy(stickmanGroup.position).multiplyScalar(1.5);
     
     // Subtle tilt based on mouse
     earth.rotation.x = mouseY * 0.3;
     clouds.rotation.x = mouseY * 0.3;
     atmosphere.rotation.x = mouseY * 0.3;
     
-    // Camera follows mouse slightly
+    // Camera follows mouse
     camera.position.x += (mouseX * 3 - camera.position.x) * 0.05;
     camera.position.y += (-mouseY * 2 - camera.position.y) * 0.05;
     camera.lookAt(earth.position);
