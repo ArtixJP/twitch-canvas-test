@@ -34,6 +34,12 @@
 <style>
    .sun-container{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0}.solar-system{z-index:5;position:relative}body{overflow:hidden}.sun-glow{position:fixed;top:50px;left:50px;width:150px;height:150px;background:radial-gradient(circle,rgba(255,200,50,0.8) 0%,rgba(255,150,0,0.4) 40%,transparent 70%);border-radius:50%;animation:sunPulse 3s ease-in-out infinite;pointer-events:none;z-index:1}.sun-rays{position:fixed;top:75px;left:75px;width:100px;height:100px;z-index:0;pointer-events:none}.sun-rays::before,.sun-rays::after{content:'';position:absolute;top:50%;left:50%;width:200px;height:200px;background:conic-gradient(from 0deg,transparent 0deg,rgba(255,200,50,0.3) 10deg,transparent 20deg,rgba(255,200,50,0.3) 30deg,transparent 40deg,rgba(255,200,50,0.3) 50deg,transparent 60deg,rgba(255,200,50,0.3) 70deg,transparent 80deg,rgba(255,200,50,0.3) 90deg,transparent 100deg,rgba(255,200,50,0.3) 110deg,transparent 120deg,rgba(255,200,50,0.3) 130deg,transparent 140deg,rgba(255,200,50,0.3) 150deg,transparent 160deg,rgba(255,200,50,0.3) 170deg,transparent 180deg);transform:translate(-50%,-50%);animation:raysSpin 20s linear infinite}.sun-rays::after{animation:raysSpin 30s linear infinite reverse;opacity:0.5}@keyframes sunPulse{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.1);filter:brightness(1.2)}}@keyframes raysSpin{from{transform:translate(-50%,-50%) rotate(0deg)}to{transform:translate(-50%,-50%) rotate(360deg)}}.light-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at 10% 10%,rgba(255,200,100,0.15) 0%,transparent 50%);pointer-events:none;z-index:2}
   </style>
+<style>
+   .doggy{position:absolute;width:40px;height:40px;top:50%;left:50%;z-index:9;cursor:pointer;transition:filter 0.3s}.doggy-body{position:relative;width:100%;height:100%}.doggy-face{width:35px;height:30px;background:linear-gradient(135deg,#d4a574 0%,#c4956a 100%);border-radius:50% 50% 45% 45%;position:absolute;top:5px;left:2px;box-shadow:0 0 15px rgba(212,165,116,0.6)}.doggy-ear{position:absolute;width:12px;height:18px;background:#b8865a;border-radius:50% 50% 40% 40%;top:-8px}.doggy-ear.left{left:0;transform:rotate(-20deg)}.doggy-ear.right{right:0;transform:rotate(20deg)}.doggy-eye{position:absolute;width:7px;height:9px;background:#2d2d2d;border-radius:50%;top:10px;animation:dogBlink 4s infinite}.doggy-eye.left{left:6px}.doggy-eye.right{right:6px}.doggy-eye::after{content:'';position:absolute;width:3px;height:3px;background:white;border-radius:50%;top:1px;left:1px}.doggy-snout{position:absolute;bottom:2px;left:50%;transform:translateX(-50%);width:18px;height:12px;background:#e8c9a8;border-radius:40% 40% 50% 50%}.doggy-nose{position:absolute;top:0;left:50%;transform:translateX(-50%);width:8px;height:6px;background:#2d2d2d;border-radius:50%}.doggy-tongue{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:6px;height:10px;background:#ff6b8a;border-radius:0 0 50% 50%;animation:pant 0.3s ease-in-out infinite alternate}.doggy-tail{position:absolute;width:25px;height:10px;background:#c4956a;border-radius:10px;bottom:0;right:-18px;transform-origin:left center;animation:wagTailFast 0.15s ease-in-out infinite alternate}@keyframes wagTailFast{0%{transform:rotate(-30deg)}100%{transform:rotate(30deg)}}@keyframes pant{0%{height:8px}100%{height:12px}}@keyframes dogBlink{0%,85%,100%{transform:scaleY(1)}90%{transform:scaleY(0.1)}}.sweat{position:absolute;font-size:8px;top:-5px;right:-5px;animation:sweatDrop 0.5s ease-in-out infinite;opacity:0}.doggy.tired .sweat{opacity:1}@keyframes sweatDrop{0%{transform:translateY(0);opacity:1}100%{transform:translateY(5px);opacity:0}}
+  </style>
+<style>
+   #scoreboard{transition:all 0.3s ease;}#dog-score{transition:all 0.3s ease;}@keyframes scorePopIn{0%{transform:scale(1);}50%{transform:scale(1.3);}100%{transform:scale(1);}}
+  </style>
 </head>
 <body>
 <div class="sun-glow">
@@ -92,6 +98,31 @@
 </div>
 </div>
 </div>
+<div class="doggy" title="Woof! 🐕">
+<div class="doggy-body">
+<span class="sweat">
+      💦
+     </span>
+<div class="doggy-ear left">
+</div>
+<div class="doggy-ear right">
+</div>
+<div class="doggy-face">
+<div class="doggy-eye left">
+</div>
+<div class="doggy-eye right">
+</div>
+<div class="doggy-snout">
+<div class="doggy-nose">
+</div>
+<div class="doggy-tongue">
+</div>
+</div>
+</div>
+<div class="doggy-tail">
+</div>
+</div>
+</div>
 </div>
 <script>
    function toggleMusic(){const a=document.getElementById('bg-music'),b=document.getElementById('music-toggle');a.paused?(a.play(),b.textContent='⏸️',b.style.background='linear-gradient(135deg,#ff6b6b,#feca57)'):(a.pause(),b.textContent='▶️',b.style.background='linear-gradient(135deg,#a8e6cf,#88d8b0)')}document.getElementById('music-toggle').addEventListener('mouseenter',function(){this.style.transform='scale(1.1)'});document.getElementById('music-toggle').addEventListener('mouseleave',function(){this.style.transform='scale(1)'});
@@ -110,6 +141,23 @@
   </script>
 <script>
    const scene=new THREE.Scene();const camera=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,0.1,1000);const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setSize(window.innerWidth,window.innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;document.getElementById('three-sun').appendChild(renderer.domElement);const sunGeometry=new THREE.SphereGeometry(2,64,64);const sunMaterial=new THREE.MeshBasicMaterial({color:0xffcc33});const sun=new THREE.Mesh(sunGeometry,sunMaterial);sun.position.set(-8,6,-5);scene.add(sun);const coronaGeometry=new THREE.SphereGeometry(2.3,32,32);const coronaMaterial=new THREE.ShaderMaterial({uniforms:{time:{value:0},color1:{value:new THREE.Color(0xff6600)},color2:{value:new THREE.Color(0xffff00)}},vertexShader:`varying vec3 vNormal;varying vec2 vUv;void main(){vNormal=normal;vUv=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`uniform float time;uniform vec3 color1;uniform vec3 color2;varying vec3 vNormal;varying vec2 vUv;void main(){float intensity=pow(0.7-dot(vNormal,vec3(0.0,0.0,1.0)),2.0);float pulse=sin(time*2.0)*0.2+0.8;vec3 color=mix(color1,color2,intensity*pulse);gl_FragColor=vec4(color,intensity*0.6);}`,transparent:true,side:THREE.BackSide});const corona=new THREE.Mesh(coronaGeometry,coronaMaterial);corona.position.copy(sun.position);scene.add(corona);const sunLight=new THREE.PointLight(0xffcc33,2,100);sunLight.position.copy(sun.position);sunLight.castShadow=true;sunLight.shadow.mapSize.width=1024;sunLight.shadow.mapSize.height=1024;scene.add(sunLight);const ambientLight=new THREE.AmbientLight(0x404040,0.3);scene.add(ambientLight);for(let i=0;i<50;i++){const flareGeometry=new THREE.SphereGeometry(0.05,8,8);const flareMaterial=new THREE.MeshBasicMaterial({color:0xffaa00,transparent:true,opacity:Math.random()});const flare=new THREE.Mesh(flareGeometry,flareMaterial);const angle=Math.random()*Math.PI*2;const radius=2.5+Math.random()*1.5;flare.position.set(sun.position.x+Math.cos(angle)*radius,sun.position.y+Math.sin(angle)*radius+(Math.random()-0.5)*2,sun.position.z+(Math.random()-0.5)*2);flare.userData={angle:angle,radius:radius,speed:0.5+Math.random()};scene.add(flare);}camera.position.z=10;let time=0;function animate(){requestAnimationFrame(animate);time+=0.016;coronaMaterial.uniforms.time.value=time;corona.scale.setScalar(1+Math.sin(time*2)*0.05);scene.children.forEach(child=>{if(child.userData&&child.userData.angle!==undefined){child.userData.angle+=child.userData.speed*0.02;child.position.x=sun.position.x+Math.cos(child.userData.angle)*child.userData.radius;child.position.y=sun.position.y+Math.sin(child.userData.angle)*child.userData.radius;child.material.opacity=0.3+Math.sin(time*child.userData.speed)*0.4;}});renderer.render(scene,camera);}animate();window.addEventListener('resize',()=>{camera.aspect=window.innerWidth/window.innerHeight;camera.updateProjectionMatrix();renderer.setSize(window.innerWidth,window.innerHeight);});
+  </script>
+<script>
+   (function(){let dogAngle=Math.PI;let catAngle=0;let dogSpeed=0.025;let catSpeed=0.015;let catBaseSpeed=0.015;let catFleeSpeed=0.08;const catRadius=200;const dogRadius=200;const fleeDistance=80;const safeDistance=150;function updatePositions(){const kitty=document.querySelector('.kitty');const doggy=document.querySelector('.doggy');if(!kitty||!doggy)return;const centerX=150;const centerY=150;const catX=centerX+Math.cos(catAngle)*catRadius;const catY=centerY+Math.sin(catAngle)*catRadius;const dogX=centerX+Math.cos(dogAngle)*dogRadius;const dogY=centerY+Math.sin(dogAngle)*dogRadius;const dx=catX-dogX;const dy=catY-dogY;const distance=Math.sqrt(dx*dx+dy*dy);if(distance<fleeDistance){catSpeed=catFleeSpeed;kitty.style.filter='brightness(1.3)';kitty.querySelector('.sparkle').textContent='💨';doggy.classList.add('tired');}else if(distance>safeDistance){catSpeed+=(catBaseSpeed-catSpeed)*0.02;kitty.style.filter='';kitty.querySelector('.sparkle').textContent='✨';doggy.classList.remove('tired');}catAngle+=catSpeed;const angleToCat=Math.atan2(catY-dogY,catX-dogX);let angleDiff=angleToCat-dogAngle;while(angleDiff>Math.PI)angleDiff-=2*Math.PI;while(angleDiff<-Math.PI)angleDiff+=2*Math.PI;dogAngle+=Math.sign(angleDiff)*dogSpeed;kitty.style.transform=`translate(-50%,-50%) rotate(${catAngle}rad) translateX(${catRadius}px) rotate(${-catAngle}rad)`;doggy.style.transform=`translate(-50%,-50%) rotate(${dogAngle}rad) translateX(${dogRadius}px) rotate(${-dogAngle}rad)`;requestAnimationFrame(updatePositions);}const kitty=document.querySelector('.kitty');if(kitty){kitty.style.animation='none';kitty.style.position='absolute';kitty.style.top='50%';kitty.style.left='50%';}setTimeout(()=>{const doggy=document.querySelector('.doggy');if(doggy){doggy.style.position='absolute';doggy.style.top='50%';doggy.style.left='50%';}updatePositions();},100);})();
+  </script>
+<div id="scoreboard" style="position:fixed;top:20px;right:20px;background:linear-gradient(135deg,rgba(255,255,255,0.1),rgba(255,255,255,0.05));backdrop-filter:blur(10px);padding:15px 25px;border-radius:15px;font-family:system-ui,sans-serif;z-index:1000;border:1px solid rgba(255,255,255,0.2);box-shadow:0 4px 20px rgba(0,0,0,0.3);">
+<div style="font-size:12px;text-transform:uppercase;letter-spacing:2px;opacity:0.7;margin-bottom:5px;">
+    🐕 Dog Score
+   </div>
+<div id="dog-score" style="font-size:36px;font-weight:bold;background:linear-gradient(135deg,#d4a574,#ffd700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 20px rgba(255,215,0,0.3);">
+    0
+   </div>
+</div>
+<div id="catch-effect" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:48px;opacity:0;pointer-events:none;z-index:2000;transition:all 0.5s ease;">
+   🎉 CAUGHT!
+  </div>
+<script>
+   (function(){let dogScore=0;let lastCatchTime=0;const catchCooldown=2000;const originalUpdatePositions=window.updatePositions;function checkCatch(){const kitty=document.querySelector('.kitty');const doggy=document.querySelector('.doggy');if(!kitty||!doggy)return;const kittyRect=kitty.getBoundingClientRect();const doggyRect=doggy.getBoundingClientRect();const kittyCenterX=kittyRect.left+kittyRect.width/2;const kittyCenterY=kittyRect.top+kittyRect.height/2;const doggyCenterX=doggyRect.left+doggyRect.width/2;const doggyCenterY=doggyRect.top+doggyRect.height/2;const dx=kittyCenterX-doggyCenterX;const dy=kittyCenterY-doggyCenterY;const distance=Math.sqrt(dx*dx+dy*dy);const now=Date.now();if(distance<35&&now-lastCatchTime>catchCooldown){lastCatchTime=now;dogScore++;document.getElementById('dog-score').textContent=dogScore;const effect=document.getElementById('catch-effect');effect.style.opacity='1';effect.style.transform='translate(-50%,-50%) scale(1.2)';effect.innerHTML='🎉 CAUGHT! +1';setTimeout(()=>{effect.style.opacity='0';effect.style.transform='translate(-50%,-50%) scale(0.8)';},1000);const scoreboard=document.getElementById('scoreboard');scoreboard.style.transform='scale(1.2)';scoreboard.style.boxShadow='0 0 30px rgba(255,215,0,0.5)';setTimeout(()=>{scoreboard.style.transform='scale(1)';scoreboard.style.boxShadow='0 4px 20px rgba(0,0,0,0.3)';},300);}}setInterval(checkCatch,100);})();
   </script>
 </body>
 </html>
