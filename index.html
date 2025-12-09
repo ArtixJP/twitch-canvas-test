@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code - 3D Globe</title>
+<title>
+   Twitch Versus Code - 3D Globe
+  </title>
 <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+   * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
         font-family: system-ui, sans-serif; 
         min-height: 100vh; 
@@ -40,16 +43,21 @@
         opacity: 0.7;
         z-index: 10;
     }
-</style>
+  </style>
 </head>
 <body>
-<div id="container" data-llm-id="e2"></div>
-<h1 data-llm-id="e1">🌍 World Explorer</h1>
-<p class="credit" data-llm-id="e3">Demandé par @artix187</p>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<div id="container">
+</div>
+<h1>
+   🌍 World Explorer 🚶‍♂️
+  </h1>
+<p class="credit">
+   Demandé par @artix187
+  </p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
+</script>
 <script>
-// Scene setup
+   // Scene setup
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
@@ -107,6 +115,72 @@ const cloudsMaterial = new THREE.MeshPhongMaterial({
 const clouds = new THREE.Mesh(cloudsGeometry, cloudsMaterial);
 scene.add(clouds);
 
+// === CUTE STICKMAN ===
+const stickmanGroup = new THREE.Group();
+
+// Head (happy face!)
+const headGeometry = new THREE.SphereGeometry(0.25, 16, 16);
+const headMaterial = new THREE.MeshPhongMaterial({ color: 0xffdd88 });
+const head = new THREE.Mesh(headGeometry, headMaterial);
+head.position.y = 0.9;
+stickmanGroup.add(head);
+
+// Eyes
+const eyeGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+const eyeMaterial = new THREE.MeshBasicMaterial({ color: 0x000000 });
+const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+leftEye.position.set(-0.08, 0.95, 0.2);
+stickmanGroup.add(leftEye);
+const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+rightEye.position.set(0.08, 0.95, 0.2);
+stickmanGroup.add(rightEye);
+
+// Smile (curved line using tube)
+const smileCurve = new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(-0.1, 0.82, 0.2),
+    new THREE.Vector3(0, 0.75, 0.25),
+    new THREE.Vector3(0.1, 0.82, 0.2)
+);
+const smileGeometry = new THREE.TubeGeometry(smileCurve, 8, 0.02, 8, false);
+const smileMaterial = new THREE.MeshBasicMaterial({ color: 0xff6699 });
+const smile = new THREE.Mesh(smileGeometry, smileMaterial);
+stickmanGroup.add(smile);
+
+// Body
+const bodyGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.5, 8);
+const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x44aaff });
+const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+body.position.y = 0.5;
+stickmanGroup.add(body);
+
+// Arms
+const armGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.35, 8);
+const armMaterial = new THREE.MeshPhongMaterial({ color: 0xffdd88 });
+const leftArm = new THREE.Mesh(armGeometry, armMaterial);
+leftArm.position.set(-0.2, 0.6, 0);
+leftArm.rotation.z = Math.PI / 4;
+stickmanGroup.add(leftArm);
+const rightArm = new THREE.Mesh(armGeometry, armMaterial);
+rightArm.position.set(0.2, 0.6, 0);
+rightArm.rotation.z = -Math.PI / 4;
+stickmanGroup.add(rightArm);
+
+// Legs
+const legGeometry = new THREE.CylinderGeometry(0.05, 0.05, 0.4, 8);
+const legMaterial = new THREE.MeshPhongMaterial({ color: 0x3366aa });
+const leftLeg = new THREE.Mesh(legGeometry, legMaterial);
+leftLeg.position.set(-0.1, 0.1, 0);
+stickmanGroup.add(leftLeg);
+const rightLeg = new THREE.Mesh(legGeometry, legMaterial);
+rightLeg.position.set(0.1, 0.1, 0);
+stickmanGroup.add(rightLeg);
+
+// Position stickman on globe surface
+stickmanGroup.scale.set(0.5, 0.5, 0.5);
+scene.add(stickmanGroup);
+
+let walkAngle = 0;
+
 // Lighting
 const ambientLight = new THREE.AmbientLight(0x333333);
 scene.add(ambientLight);
@@ -132,6 +206,28 @@ function animate() {
     earth.rotation.y += 0.002;
     clouds.rotation.y += 0.0025;
     
+    // Stickman walking around the globe!
+    walkAngle += 0.015;
+    const radius = 5.4;
+    const lat = Math.sin(walkAngle * 0.3) * 0.5; // slight wobble in latitude
+    
+    stickmanGroup.position.x = Math.cos(walkAngle) * Math.cos(lat) * radius;
+    stickmanGroup.position.z = Math.sin(walkAngle) * Math.cos(lat) * radius;
+    stickmanGroup.position.y = Math.sin(lat) * radius;
+    
+    // Make stickman face forward (tangent to sphere)
+    stickmanGroup.lookAt(0, 0, 0);
+    stickmanGroup.rotateX(Math.PI); // flip to stand on surface
+    
+    // Walking animation - legs move!
+    leftLeg.rotation.x = Math.sin(walkAngle * 8) * 0.5;
+    rightLeg.rotation.x = Math.sin(walkAngle * 8 + Math.PI) * 0.5;
+    leftArm.rotation.x = Math.sin(walkAngle * 8 + Math.PI) * 0.3;
+    rightArm.rotation.x = Math.sin(walkAngle * 8) * 0.3;
+    
+    // Happy bounce!
+    stickmanGroup.position.y += Math.abs(Math.sin(walkAngle * 8)) * 0.1;
+    
     // Subtle tilt based on mouse
     earth.rotation.x = mouseY * 0.3;
     clouds.rotation.x = mouseY * 0.3;
@@ -156,6 +252,6 @@ window.addEventListener('resize', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
-</script>
+  </script>
 </body>
 </html>
