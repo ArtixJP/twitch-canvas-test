@@ -710,9 +710,15 @@
 setInterval(sprayWater, 4000);
   </script>
 <script id="navScript">
+   const sections = ['space', 'animals', 'games'];
+   let currentSectionIndex = 0;
+   
    function showSection(section) {
     document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    
+    currentSectionIndex = sections.indexOf(section);
+    if(currentSectionIndex === -1) currentSectionIndex = 0;
     
     if(section === 'space') {
         document.getElementById('spaceSection').classList.add('active');
@@ -725,6 +731,14 @@ setInterval(sprayWater, 4000);
         document.querySelectorAll('.nav-btn')[2].classList.add('active');
     }
 }
+
+   function autoRotateSection() {
+       currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+       showSection(sections[currentSectionIndex]);
+   }
+   
+   // Rotation automatique toutes les 30 secondes
+   setInterval(autoRotateSection, 30000);
   </script>
 <script id="animalChaseScript">
    (function() {
