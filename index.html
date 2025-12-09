@@ -4,81 +4,20 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>
-   Twitch Versus Code
-  </title>
-<style>
-   body { 
+<title>Twitch Versus Code</title>
+<style>body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             flex-direction: column;
-            justify-content: flex-start; 
+            justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
-        
-        /* Navigation Menu */
-        .nav-menu {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-        .nav-btn {
-            padding: 12px 30px;
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.3);
-            border-radius: 25px;
-            color: white;
-            cursor: pointer;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.2);
-            transform: translateY(-2px);
-        }
-        .nav-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-color: transparent;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        /* Sections */
-        .section {
-            display: none;
-            width: 100%;
-            min-height: 100vh;
-            padding-top: 80px;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-        .section.active {
-            display: flex;
-        }
-        
-        .planet-system {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
         .planet {
             width: 200px;
             height: 200px;
@@ -88,17 +27,8 @@
                 inset -30px -30px 60px rgba(0,0,0,0.5),
                 inset 10px 10px 40px rgba(255,255,255,0.2),
                 0 0 60px rgba(74, 144, 217, 0.4);
-            animation: float 4s ease-in-out infinite;
+            animation: rotate 20s linear infinite, float 4s ease-in-out infinite;
             position: relative;
-            transition: background 0.5s ease, box-shadow 0.5s ease;
-        }
-        .planet.caught {
-            animation: float 4s ease-in-out infinite, planetPulse 0.5s ease;
-        }
-        @keyframes planetPulse {
-            0% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-10px) scale(1.1); }
-            100% { transform: translateY(0) scale(1); }
         }
         .planet::before {
             content: '';
@@ -115,97 +45,16 @@
             content: '';
             position: absolute;
             top: 40%;
-            left: 10%;
-            width: 80%;
+            left: 60%;
+            width: 15%;
             height: 10%;
-            background: rgba(30, 87, 153, 0.5);
+            background: rgba(30, 87, 153, 0.6);
             border-radius: 50%;
             filter: blur(3px);
         }
-        .moon-orbit {
-            position: absolute;
-            width: 280px;
-            height: 280px;
-            border-radius: 50%;
-            animation: orbit 8s linear infinite;
-        }
-        .moon {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%);
-            box-shadow: 
-                inset -8px -8px 16px rgba(0,0,0,0.4),
-                inset 4px 4px 10px rgba(255,255,255,0.3),
-                0 0 20px rgba(200, 200, 200, 0.3);
-        }
-        .moon::before {
-            content: '';
-            position: absolute;
-            top: 25%;
-            left: 20%;
-            width: 8px;
-            height: 8px;
-            background: rgba(100,100,100,0.5);
-            border-radius: 50%;
-        }
-        .moon::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 55%;
-            width: 12px;
-            height: 12px;
-            background: rgba(100,100,100,0.4);
-            border-radius: 50%;
-        }
-        .kitty-orbit {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-        }
-        .kitty {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 35px;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
-            transition: filter 0.3s;
-        }
-        .kitty.scared {
-            filter: drop-shadow(0 0 20px rgba(255, 0, 0, 0.8));
-        }
-        .doggy-orbit {
-            position: absolute;
-            width: 350px;
-            height: 350px;
-            border-radius: 50%;
-        }
-        .doggy {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 30px;
-            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
-        }
-        @keyframes orbit {
+        @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
-        }
-        @keyframes orbit-reverse {
-            from { transform: rotate(360deg); }
-            to { transform: rotate(0deg); }
-        }
-        @keyframes kitty-float {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.1); }
         }
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -232,947 +81,90 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
-   #sun-container canvas {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 0;
-}
-.planet-system {
-  z-index: 1;
-  position: relative;
-}
-h1 {
-  z-index: 1;
-  position: relative;
-  text-shadow: 0 0 30px rgba(255, 221, 0, 0.5);
-}
-   @keyframes elephantBounce {
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-10px) rotate(5deg); }
-}
-@keyframes waterDrop {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
-}
-.water-droplet {
-  position: absolute;
-  font-size: 20px;
-  animation: waterDrop 1.5s ease-out forwards;
-  pointer-events: none;
-}
-#elephant-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Section titles */
-.section-title {
-    font-size: 2.5rem;
-    margin-bottom: 30px;
-    text-align: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Animals section specific */
-#animals-section .animals-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 40px;
-}
-
-/* Games section specific */
-#games-section {
-    position: relative;
-}
-#games-section #gameCanvas {
-    position: absolute;
-    top: 0;
-    left: 0;
-}
-
-@keyframes fadeUp {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -100%) scale(1.5); }
-}
-#dogScore, #asteroidScore { transition: transform 0.2s, color 0.2s; }
-  </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
-</script>
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+        .music-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(99, 102, 241, 0.7);
+        }
+        .music-btn:active {
+            transform: scale(0.95);
+        }</style>
 </head>
 <body>
-<nav class="nav-menu">
-<button class="nav-btn active" onclick="showSection('space')">
-    🌌 Space
-   </button>
-<button class="nav-btn" onclick="showSection('animals')">
-    🐾 Animals
-   </button>
-<button class="nav-btn" onclick="showSection('games')">
-    🎮 Games
-   </button>
-</nav>
-<div id="scoreBoard" style="position: fixed; top: 70px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; z-index: 100; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); display: none; gap: 30px;">
-<span>
-    🐕 Dog:
-    <span id="dogScore">
-     0
-    </span>
-</span>
-<span>
-    🚀 Asteroids:
-    <span id="asteroidScore">
-     0
-    </span>
-</span>
-</div>
-<!-- SPACE SECTION -->
-<section class="section active" id="space-section">
-<h2 class="section-title">
-    🌌 Space Explorer
-   </h2>
-<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;">
-</div>
-<p style="margin-top: 30px; opacity: 0.7; text-align: center;">
-    Watch the beautiful planet and moon orbit in space!
-   </p>
-</section>
-<div class="planet-system">
-<div class="planet" id="planet">
-</div>
-<div class="moon-orbit">
-<div class="moon">
-</div>
-</div>
-<div class="kitty-orbit">
-<div class="kitty">
-     🐱
-    </div>
-</div>
-<div class="doggy-orbit">
-<div class="doggy">
-     🐕
-    </div>
-</div>
-</div>
-<!-- ANIMALS SECTION -->
-<section class="section" id="animals-section">
-<h2 class="section-title">
-    🐾 Animal Kingdom
-   </h2>
-<div class="animals-container">
-<div id="chase-arena" style="position: relative; width: 350px; height: 350px; border: 2px dashed rgba(255,255,255,0.2); border-radius: 50%;">
-<div class="kitty-orbit" id="kittyOrbitAnimals">
-<div class="kitty" id="kittyAnimals">
-       🐱
-      </div>
-</div>
-<div class="doggy-orbit" id="doggyOrbitAnimals">
-<div class="doggy" id="doggyAnimals">
-       🐕
-      </div>
-</div>
-<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
-<p style="font-size: 0.9rem; opacity: 0.7;">
-       Dog chases Cat!
-      </p>
-<p style="font-size: 1.2rem;">
-       🐕 Catches:
-       <span id="dogScoreAnimals">
-        0
-       </span>
-</p>
-</div>
-</div>
-<div id="elephant-container" style="position: relative; z-index: 60;">
-<div id="elephant" style="font-size: 100px; animation: elephantBounce 2s ease-in-out infinite;">
-      🐘
-     </div>
-<div id="water-spray">
-</div>
-<p style="text-align: center; opacity: 0.7; margin-top: 10px;">
-      Elephant spraying water!
-     </p>
-</div>
-</div>
-</section>
-<div class="stars" id="stars">
-</div>
-<script>
-   // Navigation system
-function showSection(sectionName) {
-    // Hide all sections
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    // Remove active from all buttons
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
-    // Show selected section
-    document.getElementById(sectionName + '-section').classList.add('active');
-    // Activate button
-    event.target.classList.add('active');
-    
-    // Handle game canvas resize when games section is shown
-    if (sectionName === 'games') {
-        setTimeout(() => {
-            const canvas = document.getElementById('gameCanvas');
-            if (canvas) {
-                canvas.width = 800;
-                canvas.height = 500;
-            }
-        }, 100);
-    }
-}
-  </script>
-<script>
-   const starsContainer = document.getElementById('stars');
+<h1>Hello World</h1>
+<div class="planet"></div><div class="stars" id="stars"></div><script>
+    const starsContainer = document.getElementById('stars');
     for(let i = 0; i < 100; i++) {
         const star = document.createElement('div');
         star.className = 'star';
         star.style.left = Math.random() * 100 + '%';
         star.style.top = Math.random() * 100 + '%';
         star.style.animationDelay = Math.random() * 2 + 's';
-        star.style.width = Math.random() * 3 + 1 + 'px';
+        star.style.width = (Math.random() * 2 + 1) + 'px';
         star.style.height = star.style.width;
         starsContainer.appendChild(star);
     }
-  </script>
-<script>
-   const audio = document.getElementById('bgMusic');
-  const musicIcon = document.getElementById('musicIcon');
-  const musicText = document.getElementById('musicText');
-  const musicBtn = document.getElementById('musicBtn');
-  
-  musicBtn.addEventListener('mouseenter', function() {
-    this.style.background = 'rgba(255,255,255,0.2)';
-  });
-  musicBtn.addEventListener('mouseleave', function() {
-    this.style.background = 'rgba(255,255,255,0.1)';
-  });
-  
-  function toggleMusic() {
-    if (audio.paused) {
-      audio.play();
-      musicIcon.textContent = '⏸️';
-      musicText.textContent = 'Pause';
-    } else {
-      audio.pause();
-      musicIcon.textContent = '▶️';
-      musicText.textContent = 'Play';
-    }
-  }
-  </script>
-<audio id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3">
+</script><audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
-<button id="musicBtn" onclick="toggleMusic()" style="position: fixed; bottom: 20px; right: 20px; padding: 12px 20px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 25px; color: white; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; backdrop-filter: blur(10px); transition: all 0.3s ease;">
-<span id="musicIcon">
-    ▶️
-   </span>
-<span id="musicText">
-    Play
-   </span>
-</button>
-<script>
-   // Auto-play music on page load
-  window.addEventListener('load', function() {
-    const audio = document.getElementById('bgMusic');
-    const musicIcon = document.getElementById('musicIcon');
-    const musicText = document.getElementById('musicText');
-    
-    // Try to play (may be blocked by browser autoplay policy)
-    audio.play().then(() => {
-      musicIcon.textContent = '⏸️';
-      musicText.textContent = 'Pause';
-    }).catch(() => {
-      // Autoplay blocked, user needs to click
-      console.log('Autoplay blocked by browser, click the button to play');
-    });
-  });
-  </script>
-<script>
-   // Three.js Sun with light/shadow effects
-const sunContainer = document.getElementById('sun-container');
-
-// Scene setup
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-renderer.setSize(window.innerWidth, window.innerHeight);
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-sunContainer.appendChild(renderer.domElement);
-
-// Sun geometry
-const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
-const sunMaterial = new THREE.MeshBasicMaterial({
-  color: 0xffdd00,
-});
-const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-sun.position.set(-8, 5, -5);
-scene.add(sun);
-
-// Sun glow effect
-const glowGeometry = new THREE.SphereGeometry(2.5, 32, 32);
-const glowMaterial = new THREE.ShaderMaterial({
-  uniforms: {
-    c: { type: 'f', value: 0.3 },
-    p: { type: 'f', value: 4.0 },
-    glowColor: { type: 'c', value: new THREE.Color(0xffaa00) },
-    viewVector: { type: 'v3', value: camera.position }
-  },
-  vertexShader: `
-    uniform vec3 viewVector;
-    varying float intensity;
-    void main() {
-      vec3 vNormal = normalize(normalMatrix * normal);
-      vec3 vNormel = normalize(normalMatrix * viewVector);
-      intensity = pow(0.7 - dot(vNormal, vNormel), 2.0);
-      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-  `,
-  fragmentShader: `
-    uniform vec3 glowColor;
-    varying float intensity;
-    void main() {
-      vec3 glow = glowColor * intensity;
-      gl_FragColor = vec4(glow, intensity * 0.8);
-    }
-  `,
-  side: THREE.BackSide,
-  blending: THREE.AdditiveBlending,
-  transparent: true
-});
-const sunGlow = new THREE.Mesh(glowGeometry, glowMaterial);
-sunGlow.position.copy(sun.position);
-scene.add(sunGlow);
-
-// Outer glow
-const outerGlowGeometry = new THREE.SphereGeometry(3.5, 32, 32);
-const outerGlowMaterial = glowMaterial.clone();
-outerGlowMaterial.uniforms.c.value = 0.1;
-outerGlowMaterial.uniforms.p.value = 6.0;
-const outerGlow = new THREE.Mesh(outerGlowGeometry, outerGlowMaterial);
-outerGlow.position.copy(sun.position);
-scene.add(outerGlow);
-
-// Point light from sun
-const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
-sunLight.position.copy(sun.position);
-sunLight.castShadow = true;
-sunLight.shadow.mapSize.width = 1024;
-sunLight.shadow.mapSize.height = 1024;
-scene.add(sunLight);
-
-// Ambient light
-const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
-scene.add(ambientLight);
-
-// Sun rays (volumetric light effect)
-const rayCount = 12;
-for (let i = 0; i < rayCount; i++) {
-  const rayGeometry = new THREE.PlaneGeometry(0.1, 8);
-  const rayMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffdd00,
-    transparent: true,
-    opacity: 0.15,
-    side: THREE.DoubleSide,
-    blending: THREE.AdditiveBlending
-  });
-  const ray = new THREE.Mesh(rayGeometry, rayMaterial);
-  ray.position.copy(sun.position);
-  ray.rotation.z = (i / rayCount) * Math.PI * 2;
-  ray.userData = { baseRotation: ray.rotation.z, index: i };
-  scene.add(ray);
-}
-
-camera.position.z = 10;
-
-// Animation
-let time = 0;
-function animate() {
-  requestAnimationFrame(animate);
-  time += 0.01;
-  
-  // Pulsing sun
-  const pulse = 1 + Math.sin(time * 2) * 0.05;
-  sun.scale.set(pulse, pulse, pulse);
-  sunGlow.scale.set(pulse * 1.2, pulse * 1.2, pulse * 1.2);
-  
-  // Rotate rays
-  scene.children.forEach(child => {
-    if (child.userData && child.userData.baseRotation !== undefined) {
-      child.rotation.z = child.userData.baseRotation + time * 0.2;
-      child.material.opacity = 0.1 + Math.sin(time * 3 + child.userData.index) * 0.05;
-    }
-  });
-  
-  // Light intensity variation
-  sunLight.intensity = 2 + Math.sin(time * 1.5) * 0.3;
-  
-  renderer.render(scene, camera);
-}
-animate();
-
-// Handle resize
-window.addEventListener('resize', () => {
-  camera.aspect = window.innerWidth / window.innerHeight;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, window.innerHeight);
-});
-  </script>
-<script>
-   // Cat and Dog chase logic
-const kittyOrbit = document.querySelector('.kitty-orbit');
-const doggyOrbit = document.querySelector('.doggy-orbit');
-const kitty = document.querySelector('.kitty');
-
-let catAngle = 0;
-let dogAngle = Math.PI; // Start opposite to cat
-let catSpeed = 0.02; // Normal speed
-let dogSpeed = 0.035; // Dog is faster
-const normalCatSpeed = 0.02;
-const escapeCatSpeed = 0.12; // Very fast escape speed
-const dangerDistance = 0.8; // Radians - when dog is too close
-
-function updateChase() {
-    // Calculate angular distance between cat and dog
-    let angleDiff = Math.abs(catAngle - dogAngle) % (Math.PI * 2);
-    if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
-    
-    // If dog is too close, cat escapes!
-    if (angleDiff < dangerDistance) {
-        catSpeed = escapeCatSpeed;
-        kitty.classList.add('scared');
-    } else {
-        catSpeed = normalCatSpeed;
-        kitty.classList.remove('scared');
-    }
-    
-    // Update positions (cat goes counter-clockwise, dog chases)
-    catAngle -= catSpeed;
-    dogAngle -= dogSpeed;
-    
-    // Keep angles in bounds
-    if (catAngle < 0) catAngle += Math.PI * 2;
-    if (dogAngle < 0) dogAngle += Math.PI * 2;
-    
-    // Apply rotations
-    kittyOrbit.style.transform = `rotate(${catAngle}rad)`;
-    doggyOrbit.style.transform = `rotate(${dogAngle}rad)`;
-    
-    requestAnimationFrame(updateChase);
-}
-
-updateChase();
-  </script>
-<script>
-   // Score system
-let dogPoints = 0;
-const dogScoreDisplay = document.getElementById('dogScore');
-const catchDistance = 0.3; // Radians - when dog catches cat
-let catchCooldown = false;
-
-function checkCatch() {
-    if (catchCooldown) return;
-    
-    // Calculate angular distance between cat and dog
-    let angleDiff = Math.abs(catAngle - dogAngle) % (Math.PI * 2);
-    if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
-    
-    // If dog catches cat!
-    if (angleDiff < catchDistance) {
-        dogPoints++;
-        dogScoreDisplay.textContent = dogPoints;
-        
-        // Visual feedback
-        dogScoreDisplay.style.transform = 'scale(1.5)';
-        dogScoreDisplay.style.color = '#ffdd00';
-        setTimeout(() => {
-            dogScoreDisplay.style.transform = 'scale(1)';
-            dogScoreDisplay.style.color = 'white';
-        }, 300);
-        
-        // Show catch message
-        const catchMsg = document.createElement('div');
-        catchMsg.textContent = '🐕 CAUGHT! +1';
-        catchMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffdd00; text-shadow: 0 0 20px rgba(255,221,0,0.8); z-index: 200; animation: fadeUp 1s forwards;';
-        document.body.appendChild(catchMsg);
-        setTimeout(() => catchMsg.remove(), 1000);
-        
-        // Reset positions with cooldown
-        catchCooldown = true;
-        catAngle = 0;
-        dogAngle = Math.PI;
-        setTimeout(() => {
-            catchCooldown = false;
-        }, 1000);
-    }
-}
-
-// Add animation for catch message
-const catchStyle = document.createElement('style');
-catchStyle.textContent = `
-@keyframes fadeUp {
-    0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -100%) scale(1.5); }
-}
-#dogScore { transition: transform 0.3s, color 0.3s; }
-`;
-document.head.appendChild(catchStyle);
-
-// Run catch check in animation loop
-setInterval(checkCatch, 50);
-  </script>
-<script>
-   // Planet color change on catch
-const planet = document.getElementById('planet');
-const planetColors = [
-    { gradient: 'linear-gradient(135deg, #d94a4a 0%, #991e1e 50%, #5e0d0d 100%)', glow: 'rgba(217, 74, 74, 0.4)' },
-    { gradient: 'linear-gradient(135deg, #4ad9a7 0%, #1e9963 50%, #0d5e3a 100%)', glow: 'rgba(74, 217, 167, 0.4)' },
-    { gradient: 'linear-gradient(135deg, #d9a74a 0%, #996b1e 50%, #5e420d 100%)', glow: 'rgba(217, 167, 74, 0.4)' },
-    { gradient: 'linear-gradient(135deg, #a74ad9 0%, #631e99 50%, #3a0d5e 100%)', glow: 'rgba(167, 74, 217, 0.4)' },
-    { gradient: 'linear-gradient(135deg, #4ad9d9 0%, #1e9999 50%, #0d5e5e 100%)', glow: 'rgba(74, 217, 217, 0.4)' },
-    { gradient: 'linear-gradient(135deg, #d94a90 0%, #991e57 50%, #5e0d2f 100%)', glow: 'rgba(217, 74, 144, 0.4)' }
-];
-const originalColor = { gradient: 'linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5e 100%)', glow: 'rgba(74, 144, 217, 0.4)' };
-
-function changePlanetColor() {
-    const randomColor = planetColors[Math.floor(Math.random() * planetColors.length)];
-    planet.style.background = randomColor.gradient;
-    planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.5), inset 10px 10px 40px rgba(255,255,255,0.2), 0 0 60px ${randomColor.glow}`;
-    planet.classList.add('caught');
-    
-    // Return to original color after 2 seconds
-    setTimeout(() => {
-        planet.style.background = originalColor.gradient;
-        planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.5), inset 10px 10px 40px rgba(255,255,255,0.2), 0 0 60px ${originalColor.glow}`;
-        planet.classList.remove('caught');
-    }, 2000);
-}
-
-// Override the checkCatch function to include planet color change
-const originalCheckCatch = checkCatch;
-checkCatch = function() {
-    if (catchCooldown) return;
-    
-    let angleDiff = Math.abs(catAngle - dogAngle) % (Math.PI * 2);
-    if (angleDiff > Math.PI) angleDiff = Math.PI * 2 - angleDiff;
-    
-    if (angleDiff < catchDistance) {
-        changePlanetColor();
-        dogPoints++;
-        dogScoreDisplay.textContent = dogPoints;
-        
-        dogScoreDisplay.style.transform = 'scale(1.5)';
-        dogScoreDisplay.style.color = '#ffdd00';
-        setTimeout(() => {
-            dogScoreDisplay.style.transform = 'scale(1)';
-            dogScoreDisplay.style.color = 'white';
-        }, 300);
-        
-        const catchMsg = document.createElement('div');
-        catchMsg.textContent = '🐕 CAUGHT! +1';
-        catchMsg.style.cssText = 'position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 3rem; color: #ffdd00; text-shadow: 0 0 20px rgba(255,221,0,0.8); z-index: 200; animation: fadeUp 1s forwards;';
-        document.body.appendChild(catchMsg);
-        setTimeout(() => catchMsg.remove(), 1000);
-        
-        catchCooldown = true;
-        catAngle = 0;
-        dogAngle = Math.PI;
-        setTimeout(() => {
-            catchCooldown = false;
-        }, 1000);
-    }
-};
-  </script>
-<!-- GAMES SECTION -->
-<section class="section" id="games-section">
-<h2 class="section-title">
-    🎮 Space Shooter
-   </h2>
-<div id="gameScoreBoard" style="background: rgba(0,0,0,0.5); padding: 15px 30px; border-radius: 15px; font-size: 1.5rem; backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); display: flex; gap: 30px; margin-bottom: 20px;">
-<span>
-     🚀 Asteroids Destroyed:
-     <span id="asteroidScoreGame">
-      0
-     </span>
-</span>
+<div class="music-control">
+<button class="music-btn" id="musicToggle" title="Play/Pause Music">⏸️</button>
 </div>
-<canvas id="gameCanvas" style="border: 2px solid rgba(255,255,255,0.2); border-radius: 10px; cursor: crosshair; width: 800px; height: 500px;">
-</canvas>
-</section>
-<div id="gameInstructions" style="position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.7); padding: 10px 20px; border-radius: 10px; font-size: 1rem; z-index: 100; text-align: center; border: 1px solid rgba(255,255,255,0.2);">
-   🎮 Click to shoot asteroids! | WASD to move ship
-  </div>
 <script>
-   // Space Shooter Game
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
-
-// Game state
-let asteroidScore = 0;
-const asteroidScoreDisplay = document.getElementById('asteroidScore');
-
-// Ship
-const ship = {
-    x: window.innerWidth / 2,
-    y: window.innerHeight / 2,
-    size: 20,
-    speed: 5,
-    angle: 0
-};
-
-// Bullets
-const bullets = [];
-const bulletSpeed = 12;
-
-// Asteroids
-const asteroids = [];
-const asteroidSpawnRate = 2000; // ms
-
-// Keys
-const keys = {};
-
-// Input handlers
-document.addEventListener('keydown', (e) => keys[e.key.toLowerCase()] = true);
-document.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
-
-canvas.addEventListener('click', (e) => {
-    const angle = Math.atan2(e.clientY - ship.y, e.clientX - ship.x);
-    bullets.push({
-        x: ship.x,
-        y: ship.y,
-        vx: Math.cos(angle) * bulletSpeed,
-        vy: Math.sin(angle) * bulletSpeed,
-        life: 100
+    const audio = document.getElementById('bgMusic');
+    const toggleBtn = document.getElementById('musicToggle');
+    let isPlaying = false;
+    
+    toggleBtn.addEventListener('click', function() {
+        if (isPlaying) {
+            audio.pause();
+            toggleBtn.textContent = '▶️';
+            isPlaying = false;
+        } else {
+            audio.play();
+            toggleBtn.textContent = '⏸️';
+            isPlaying = true;
+        }
     });
-    // Play shoot sound effect
-    playShootSound();
-});
-
-canvas.addEventListener('mousemove', (e) => {
-    ship.angle = Math.atan2(e.clientY - ship.y, e.clientX - ship.x);
-});
-
-// Sound effects
-function playShootSound() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.frequency.setValueAtTime(800, audioCtx.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
-    gainNode.gain.setValueAtTime(0.3, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-    oscillator.start(audioCtx.currentTime);
-    oscillator.stop(audioCtx.currentTime + 0.1);
-}
-
-function playExplosionSound() {
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.type = 'sawtooth';
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.frequency.setValueAtTime(150, audioCtx.currentTime);
-    oscillator.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.2);
-    gainNode.gain.setValueAtTime(0.4, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
-    oscillator.start(audioCtx.currentTime);
-    oscillator.stop(audioCtx.currentTime + 0.2);
-}
-
-// Spawn asteroids
-function spawnAsteroid() {
-    const side = Math.floor(Math.random() * 4);
-    let x, y;
-    switch(side) {
-        case 0: x = Math.random() * canvas.width; y = -50; break;
-        case 1: x = canvas.width + 50; y = Math.random() * canvas.height; break;
-        case 2: x = Math.random() * canvas.width; y = canvas.height + 50; break;
-        case 3: x = -50; y = Math.random() * canvas.height; break;
-    }
-    const angle = Math.atan2(ship.y - y, ship.x - x) + (Math.random() - 0.5) * 0.5;
-    const speed = 1 + Math.random() * 2;
-    asteroids.push({
-        x, y,
-        vx: Math.cos(angle) * speed,
-        vy: Math.sin(angle) * speed,
-        size: 20 + Math.random() * 30,
-        rotation: 0,
-        rotationSpeed: (Math.random() - 0.5) * 0.1,
-        vertices: generateAsteroidVertices()
+    
+    audio.addEventListener('ended', function() {
+        toggleBtn.textContent = '▶️';
+        isPlaying = false;
     });
-}
-
-function generateAsteroidVertices() {
-    const vertices = [];
-    const numVertices = 8 + Math.floor(Math.random() * 4);
-    for (let i = 0; i < numVertices; i++) {
-        const angle = (i / numVertices) * Math.PI * 2;
-        const radius = 0.7 + Math.random() * 0.3;
-        vertices.push({ angle, radius });
-    }
-    return vertices;
-}
-
-setInterval(spawnAsteroid, asteroidSpawnRate);
-
-// Particles
-const particles = [];
-
-function createExplosion(x, y, color) {
-    for (let i = 0; i < 15; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = 2 + Math.random() * 4;
-        particles.push({
-            x, y,
-            vx: Math.cos(angle) * speed,
-            vy: Math.sin(angle) * speed,
-            life: 30 + Math.random() * 20,
-            color,
-            size: 2 + Math.random() * 3
+</script><script>
+    // Set initial state to playing since autoplay is enabled
+    document.addEventListener('DOMContentLoaded', function() {
+        const audio = document.getElementById('bgMusic');
+        const toggleBtn = document.getElementById('musicToggle');
+        
+        // Try to play on load (may be blocked by browser)
+        audio.play().then(() => {
+            toggleBtn.textContent = '⏸️';
+            window.isPlaying = true;
+        }).catch(() => {
+            toggleBtn.textContent = '▶️';
+            window.isPlaying = false;
         });
-    }
-}
-
-// Game loop
-function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Move ship
-    if (keys['w'] || keys['arrowup']) ship.y -= ship.speed;
-    if (keys['s'] || keys['arrowdown']) ship.y += ship.speed;
-    if (keys['a'] || keys['arrowleft']) ship.x -= ship.speed;
-    if (keys['d'] || keys['arrowright']) ship.x += ship.speed;
-    
-    // Keep ship in bounds
-    ship.x = Math.max(ship.size, Math.min(canvas.width - ship.size, ship.x));
-    ship.y = Math.max(ship.size, Math.min(canvas.height - ship.size, ship.y));
-    
-    // Draw ship
-    ctx.save();
-    ctx.translate(ship.x, ship.y);
-    ctx.rotate(ship.angle);
-    ctx.fillStyle = '#00ffff';
-    ctx.shadowColor = '#00ffff';
-    ctx.shadowBlur = 15;
-    ctx.beginPath();
-    ctx.moveTo(ship.size, 0);
-    ctx.lineTo(-ship.size * 0.7, -ship.size * 0.6);
-    ctx.lineTo(-ship.size * 0.4, 0);
-    ctx.lineTo(-ship.size * 0.7, ship.size * 0.6);
-    ctx.closePath();
-    ctx.fill();
-    // Engine glow
-    ctx.fillStyle = '#ff6600';
-    ctx.shadowColor = '#ff6600';
-    ctx.beginPath();
-    ctx.moveTo(-ship.size * 0.4, -ship.size * 0.3);
-    ctx.lineTo(-ship.size * 0.8 - Math.random() * 10, 0);
-    ctx.lineTo(-ship.size * 0.4, ship.size * 0.3);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
-    
-    // Update and draw bullets
-    for (let i = bullets.length - 1; i >= 0; i--) {
-        const b = bullets[i];
-        b.x += b.vx;
-        b.y += b.vy;
-        b.life--;
-        
-        if (b.life <= 0 || b.x < 0 || b.x > canvas.width || b.y < 0 || b.y > canvas.height) {
-            bullets.splice(i, 1);
-            continue;
-        }
-        
-        ctx.fillStyle = '#ffff00';
-        ctx.shadowColor = '#ffff00';
-        ctx.shadowBlur = 10;
-        ctx.beginPath();
-        ctx.arc(b.x, b.y, 4, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    
-    // Update and draw asteroids
-    for (let i = asteroids.length - 1; i >= 0; i--) {
-        const a = asteroids[i];
-        a.x += a.vx;
-        a.y += a.vy;
-        a.rotation += a.rotationSpeed;
-        
-        // Remove if off screen
-        if (a.x < -100 || a.x > canvas.width + 100 || a.y < -100 || a.y > canvas.height + 100) {
-            asteroids.splice(i, 1);
-            continue;
-        }
-        
-        // Check bullet collision
-        for (let j = bullets.length - 1; j >= 0; j--) {
-            const b = bullets[j];
-            const dist = Math.hypot(b.x - a.x, b.y - a.y);
-            if (dist < a.size) {
-                createExplosion(a.x, a.y, '#ff8800');
-                playExplosionSound();
-                asteroids.splice(i, 1);
-                bullets.splice(j, 1);
-                asteroidScore++;
-                asteroidScoreDisplay.textContent = asteroidScore;
-                asteroidScoreDisplay.style.transform = 'scale(1.3)';
-                asteroidScoreDisplay.style.color = '#ffdd00';
-                setTimeout(() => {
-                    asteroidScoreDisplay.style.transform = 'scale(1)';
-                    asteroidScoreDisplay.style.color = 'white';
-                }, 200);
-                break;
-            }
-        }
-        
-        if (!asteroids[i]) continue;
-        
-        // Draw asteroid
-        ctx.save();
-        ctx.translate(a.x, a.y);
-        ctx.rotate(a.rotation);
-        ctx.fillStyle = '#8b7355';
-        ctx.strokeStyle = '#a08060';
-        ctx.lineWidth = 2;
-        ctx.shadowColor = '#8b7355';
-        ctx.shadowBlur = 5;
-        ctx.beginPath();
-        for (let v = 0; v < a.vertices.length; v++) {
-            const vertex = a.vertices[v];
-            const vx = Math.cos(vertex.angle) * a.size * vertex.radius;
-            const vy = Math.sin(vertex.angle) * a.size * vertex.radius;
-            if (v === 0) ctx.moveTo(vx, vy);
-            else ctx.lineTo(vx, vy);
-        }
-        ctx.closePath();
-        ctx.fill();
-        ctx.stroke();
-        ctx.restore();
-    }
-    
-    // Update and draw particles
-    ctx.shadowBlur = 0;
-    for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vx *= 0.98;
-        p.vy *= 0.98;
-        p.life--;
-        
-        if (p.life <= 0) {
-            particles.splice(i, 1);
-            continue;
-        }
-        
-        ctx.globalAlpha = p.life / 50;
-        ctx.fillStyle = p.color;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fill();
-    }
-    ctx.globalAlpha = 1;
-    
-    requestAnimationFrame(gameLoop);
-}
-
-gameLoop();
-
-// Add transition for score
-const scoreStyle = document.createElement('style');
-scoreStyle.textContent = '#asteroidScore { transition: transform 0.2s, color 0.2s; }';
-document.head.appendChild(scoreStyle);
-  </script>
-<script>
-   // Elephant water spray effect
-const waterSpray = document.getElementById('water-spray');
-const elephantContainer = document.getElementById('elephant-container');
-
-function createWaterDroplet() {
-  const droplet = document.createElement('div');
-  droplet.className = 'water-droplet';
-  droplet.textContent = '💧';
-  
-  // Random trajectory
-  const angle = -30 - Math.random() * 120; // Spray upward in an arc
-  const distance = 80 + Math.random() * 150;
-  const tx = Math.cos(angle * Math.PI / 180) * distance;
-  const ty = Math.sin(angle * Math.PI / 180) * distance;
-  
-  droplet.style.setProperty('--tx', tx + 'px');
-  droplet.style.setProperty('--ty', ty + 'px');
-  droplet.style.left = '50px';
-  droplet.style.top = '-30px';
-  
-  waterSpray.appendChild(droplet);
-  
-  setTimeout(() => droplet.remove(), 1500);
-}
-
-// Spray water continuously
-setInterval(() => {
-  for (let i = 0; i < 3; i++) {
-    setTimeout(() => createWaterDroplet(), i * 100);
-  }
-}, 500);
-  </script>
-<script>
-   // Auto-rotate sections every 30 seconds
-const sections = ['space', 'animals', 'games'];
-let currentSectionIndex = 0;
-
-function autoRotateSection() {
-    currentSectionIndex = (currentSectionIndex + 1) % sections.length;
-    const nextSection = sections[currentSectionIndex];
-    
-    // Hide all sections
-    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-    // Remove active from all buttons
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    
-    // Show next section
-    document.getElementById(nextSection + '-section').classList.add('active');
-    // Activate corresponding button
-    document.querySelectorAll('.nav-btn')[currentSectionIndex].classList.add('active');
-    
-    // Handle game canvas resize when games section is shown
-    if (nextSection === 'games') {
-        setTimeout(() => {
-            const canvas = document.getElementById('gameCanvas');
-            if (canvas) {
-                canvas.width = 800;
-                canvas.height = 500;
-            }
-        }, 100);
-    }
-}
-
-// Start auto-rotation every 30 seconds
-setInterval(autoRotateSection, 30000);
-
-// Update currentSectionIndex when user manually clicks a nav button
-const originalShowSection = showSection;
-showSection = function(sectionName) {
-    currentSectionIndex = sections.indexOf(sectionName);
-    originalShowSection(sectionName);
-};
-  </script>
-</body>
+    });
+</script></body>
 </html>
