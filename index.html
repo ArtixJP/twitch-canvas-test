@@ -781,12 +781,20 @@
   </style>
 </head>
 <body>
-<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
+<div data-section="space" id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;">
 </div>
-<h1>
-   Hello World
-  </h1>
-<div id="score-display" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 30px; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255,255,255,0.5);">
+<nav id="main-nav" style="position: fixed; top: 0; left: 0; right: 0; z-index: 200; display: flex; justify-content: center; gap: 20px; padding: 15px; background: linear-gradient(180deg, rgba(10,10,21,0.95) 0%, rgba(10,10,21,0.7) 80%, transparent 100%);">
+<button class="nav-btn active" data-section="space" style="padding: 12px 30px; border: 2px solid #667eea; background: rgba(102,126,234,0.3); color: white; border-radius: 25px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease; text-shadow: 0 0 10px rgba(102,126,234,0.5);">
+    🌌 Espace
+   </button>
+<button class="nav-btn" data-section="animals" style="padding: 12px 30px; border: 2px solid #ffb6c1; background: transparent; color: white; border-radius: 25px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease;">
+    🐾 Animaux
+   </button>
+<button class="nav-btn" data-section="games" style="padding: 12px 30px; border: 2px solid #4ecdc4; background: transparent; color: white; border-radius: 25px; font-size: 1.1rem; cursor: pointer; transition: all 0.3s ease;">
+    🎮 Jeux
+   </button>
+</nav>
+<div data-section="animals" id="score-display" style="position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; display: flex; gap: 30px; font-size: 1.5rem; text-shadow: 0 0 10px rgba(255,255,255,0.5);">
 <div id="dog-score" style="display: flex; align-items: center; gap: 10px; background: rgba(212, 165, 116, 0.3); padding: 10px 20px; border-radius: 20px; border: 2px solid #d4a574;">
 <span>
      🐕
@@ -807,7 +815,7 @@
     </span>
 </div>
 </div>
-<div id="elephant-container">
+<div data-section="animals" id="elephant-container">
 <div id="elephant">
 <div class="elephant-body">
 </div>
@@ -847,7 +855,7 @@
 <div id="water-spray">
 </div>
 </div>
-<div class="solar-system" id="planet-system">
+<div class="solar-system" data-section="space" id="planet-system">
 <div class="rings">
 </div>
 <div class="planet">
@@ -919,7 +927,7 @@
 </div>
 </div>
 </div>
-<div id="snake-game-container" style="position: fixed; bottom: 20px; left: 20px; z-index: 100;">
+<div data-section="games" id="snake-game-container" style="position: fixed; bottom: 20px; left: 20px; z-index: 100;">
 <canvas height="300" id="snake-canvas" style="border: 3px solid #667eea; border-radius: 15px; background: rgba(10, 10, 30, 0.9); box-shadow: 0 0 30px rgba(102, 126, 234, 0.5);" width="300">
 </canvas>
 <div style="text-align: center; margin-top: 10px; font-size: 0.9rem; color: #fff;">
@@ -935,7 +943,7 @@
     </span>
 </div>
 </div>
-<div class="stars" id="stars-container">
+<div class="stars" data-section="space" id="stars-container">
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js">
 </script>
@@ -1512,6 +1520,121 @@ updateChase();
     }
     
     createWaterDrops();
+})();
+  </script>
+<style id="nav-styles">
+   .nav-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px currentColor;
+  }
+  .nav-btn.active {
+    background: rgba(102,126,234,0.4) !important;
+    box-shadow: 0 0 25px rgba(102,126,234,0.6);
+  }
+  .nav-btn[data-section="animals"].active {
+    background: rgba(255,182,193,0.4) !important;
+    box-shadow: 0 0 25px rgba(255,182,193,0.6);
+  }
+  .nav-btn[data-section="games"].active {
+    background: rgba(78,205,196,0.4) !important;
+    box-shadow: 0 0 25px rgba(78,205,196,0.6);
+  }
+  [data-section] {
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  [data-section].hidden-section {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  .section-title {
+    position: fixed;
+    top: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 2.5rem;
+    text-shadow: 0 0 20px rgba(255,255,255,0.5);
+    z-index: 150;
+    pointer-events: none;
+  }
+  </style>
+<h1 class="section-title" data-section="all" id="section-title">
+   🌌 Espace
+  </h1>
+<script id="navigation-script">
+   (function() {
+  const sections = ['space', 'animals', 'games'];
+  const titles = {
+    space: '🌌 Espace',
+    animals: '🐾 Animaux',
+    games: '🎮 Jeux'
+  };
+  let currentSection = 'space';
+  let autoRotateInterval = null;
+  
+  function showSection(sectionName) {
+    currentSection = sectionName;
+    
+    // Update title
+    document.getElementById('section-title').textContent = titles[sectionName];
+    
+    // Update nav buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.section === sectionName);
+    });
+    
+    // Show/hide sections
+    document.querySelectorAll('[data-section]').forEach(el => {
+      if (el.dataset.section === 'all') return;
+      if (el.dataset.section === sectionName) {
+        el.classList.remove('hidden-section');
+      } else {
+        el.classList.add('hidden-section');
+      }
+    });
+  }
+  
+  function getNextSection() {
+    const currentIndex = sections.indexOf(currentSection);
+    const nextIndex = (currentIndex + 1) % sections.length;
+    return sections[nextIndex];
+  }
+  
+  function autoRotate() {
+    const nextSection = getNextSection();
+    showSection(nextSection);
+  }
+  
+  function startAutoRotation() {
+    if (autoRotateInterval) clearInterval(autoRotateInterval);
+    autoRotateInterval = setInterval(autoRotate, 30000); // 30 secondes
+  }
+  
+  function resetAutoRotation() {
+    // Reset le timer quand l'utilisateur clique manuellement
+    startAutoRotation();
+  }
+  
+  // Nav click handlers
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      showSection(btn.dataset.section);
+      resetAutoRotation(); // Reset le timer après un clic manuel
+    });
+  });
+  
+  // Initialize - hide non-space sections
+  showSection('space');
+  
+  // Start auto-rotation
+  startAutoRotation();
+  
+  // Expose for external access
+  window.showSection = showSection;
+  window.getSections = () => sections;
+  window.getCurrentSection = () => currentSection;
+  window.stopAutoRotation = () => clearInterval(autoRotateInterval);
+  window.startAutoRotation = startAutoRotation;
 })();
   </script>
 </body>
