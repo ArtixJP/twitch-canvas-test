@@ -224,6 +224,49 @@
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
         }
+   .kitty-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 380px;
+            height: 380px;
+            transform: translate(-50%, -50%);
+            animation: kittyOrbit 12s linear infinite reverse;
+            z-index: 11;
+            pointer-events: none;
+        }
+        .space-kitty {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            filter: drop-shadow(0 0 10px rgba(255, 200, 250, 0.6));
+            animation: kittyFloat 2s ease-in-out infinite, kittyWiggle 0.5s ease-in-out infinite;
+        }
+        .kitty-sparkle {
+            position: absolute;
+            top: -10px;
+            right: -15px;
+            font-size: 1rem;
+            animation: sparkleGlow 1s ease-in-out infinite;
+        }
+        @keyframes kittyOrbit {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes kittyFloat {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-8px); }
+        }
+        @keyframes kittyWiggle {
+            0%, 100% { rotate: -5deg; }
+            50% { rotate: 5deg; }
+        }
+        @keyframes sparkleGlow {
+            0%, 100% { opacity: 0.5; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
   </style>
 </head>
 <body>
@@ -239,6 +282,14 @@
 </div>
 <div class="moon-orbit">
 <div class="moon">
+</div>
+</div>
+<div class="kitty-orbit">
+<div class="space-kitty">
+     🐱
+     <span class="kitty-sparkle">
+      ✨
+     </span>
 </div>
 </div>
 </div>
