@@ -19,6 +19,15 @@
         }
         h1 { font-size: 3rem; text-align: center; }
         
+        .planet-system {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
         .planet {
             width: 150px;
             height: 150px;
@@ -28,7 +37,7 @@
                 inset -20px -20px 40px rgba(0,0,0,0.5),
                 inset 10px 10px 20px rgba(255,255,255,0.2),
                 0 0 60px rgba(74, 144, 217, 0.4);
-            animation: rotate 20s linear infinite, float 3s ease-in-out infinite;
+            animation: float 3s ease-in-out infinite;
             position: relative;
         }
         
@@ -57,9 +66,87 @@
             box-shadow: 0 0 10px rgba(200, 180, 150, 0.3);
         }
         
-        @keyframes rotate {
+        .moon-orbit {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            animation: orbit 5s linear infinite;
+        }
+        
+        .moon {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%);
+            box-shadow: 
+                inset -5px -5px 10px rgba(0,0,0,0.4),
+                inset 3px 3px 6px rgba(255,255,255,0.3),
+                0 0 15px rgba(255, 255, 255, 0.2);
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 8px;
+            width: 6px;
+            height: 6px;
+            background: rgba(100,100,100,0.5);
+            border-radius: 50%;
+        }
+        
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            width: 4px;
+            height: 4px;
+            background: rgba(100,100,100,0.4);
+            border-radius: 50%;
+        }
+        
+        .kitty-orbit {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            animation: orbit-reverse 4s linear infinite;
+        }
+        
+        .kitty {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            animation: kitty-bounce 0.5s ease-in-out infinite, kitty-spin 4s linear infinite reverse;
+            filter: drop-shadow(0 0 8px rgba(255, 182, 193, 0.6));
+        }
+        
+        @keyframes orbit {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes orbit-reverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        
+        @keyframes kitty-bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        @keyframes kitty-spin {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(360deg); }
         }
         
         @keyframes float {
@@ -85,11 +172,34 @@
         #musicToggle:hover {
             background: rgba(255,255,255,0.25);
             transform: scale(1.05);
-        }</style>
-</head>
+        }
+#sun-container canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+}
+
+.planet-system {
+  filter: drop-shadow(-20px -15px 30px rgba(255, 200, 100, 0.3));
+}
+
+.planet {
+  box-shadow: 
+    inset -20px -20px 40px rgba(0,0,0,0.5),
+    inset 10px 10px 20px rgba(255,255,255,0.2),
+    0 0 60px rgba(74, 144, 217, 0.4),
+    -30px -20px 50px rgba(255, 200, 100, 0.2);
+}</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
-<h1>Hello World</h1>
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;"></div><h1>Hello World</h1>
+<div class="planet-system">
 <div class="planet"></div>
+<div class="moon-orbit">
+<div class="moon"></div>
+</div>
+<div class="kitty-orbit"><div class="kitty">🐱</div></div></div>
 <audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
@@ -120,5 +230,129 @@
       console.log('Autoplay blocked by browser, click the button to play');
     });
   });
+</script><script>
+(function() {
+  const container = document.getElementById('sun-container');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  container.appendChild(renderer.domElement);
+  
+  // Sun geometry
+  const sunGeometry = new THREE.SphereGeometry(1.2, 64, 64);
+  
+  // Sun material with glow effect
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffdd00,
+  });
+  
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-3, 2, -2);
+  scene.add(sun);
+  
+  // Sun glow layers
+  const glowGeometry = new THREE.SphereGeometry(1.4, 32, 32);
+  const glowMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffaa00,
+    transparent: true,
+    opacity: 0.3
+  });
+  const glow1 = new THREE.Mesh(glowGeometry, glowMaterial);
+  sun.add(glow1);
+  
+  const glow2Geometry = new THREE.SphereGeometry(1.7, 32, 32);
+  const glow2Material = new THREE.MeshBasicMaterial({
+    color: 0xff6600,
+    transparent: true,
+    opacity: 0.15
+  });
+  const glow2 = new THREE.Mesh(glow2Geometry, glow2Material);
+  sun.add(glow2);
+  
+  const glow3Geometry = new THREE.SphereGeometry(2.2, 32, 32);
+  const glow3Material = new THREE.MeshBasicMaterial({
+    color: 0xff4400,
+    transparent: true,
+    opacity: 0.08
+  });
+  const glow3 = new THREE.Mesh(glow3Geometry, glow3Material);
+  sun.add(glow3);
+  
+  // Point light from sun
+  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+  sunLight.position.copy(sun.position);
+  sunLight.castShadow = true;
+  sunLight.shadow.mapSize.width = 1024;
+  sunLight.shadow.mapSize.height = 1024;
+  scene.add(sunLight);
+  
+  // Ambient light
+  const ambientLight = new THREE.AmbientLight(0x222244, 0.5);
+  scene.add(ambientLight);
+  
+  // Floating particles (sun rays)
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particleCount = 200;
+  const positions = new Float32Array(particleCount * 3);
+  
+  for(let i = 0; i < particleCount * 3; i += 3) {
+    const angle = Math.random() * Math.PI * 2;
+    const radius = 1.5 + Math.random() * 2;
+    positions[i] = sun.position.x + Math.cos(angle) * radius;
+    positions[i + 1] = sun.position.y + (Math.random() - 0.5) * 3;
+    positions[i + 2] = sun.position.z + Math.sin(angle) * radius;
+  }
+  
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  
+  const particlesMaterial = new THREE.PointsMaterial({
+    color: 0xffcc00,
+    size: 0.05,
+    transparent: true,
+    opacity: 0.6
+  });
+  
+  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particles);
+  
+  // Animation
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    // Pulsing glow
+    const pulse = 1 + Math.sin(time * 2) * 0.1;
+    glow1.scale.setScalar(pulse);
+    glow2.scale.setScalar(pulse * 0.95);
+    glow3.scale.setScalar(pulse * 0.9);
+    
+    // Rotate particles
+    particles.rotation.y += 0.002;
+    particles.rotation.x = Math.sin(time * 0.5) * 0.1;
+    
+    // Sun gentle movement
+    sun.position.y = 2 + Math.sin(time * 0.5) * 0.2;
+    sunLight.position.copy(sun.position);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  // Handle resize
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
 </script></body>
 </html>
