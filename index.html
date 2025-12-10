@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Cozy Corner ✨ Welcome Home</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Quicksand:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<title>🥐 Golden Crust Bakery - Fresh Daily</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Lato:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
 <style>
         * {
             margin: 0;
@@ -13,15 +13,24 @@
             box-sizing: border-box;
         }
         
+        :root {
+            --cream: #FFF8F0;
+            --warm-brown: #8B5E3C;
+            --golden: #D4A574;
+            --dark-brown: #3D2314;
+            --soft-pink: #F5E1DA;
+            --butter: #F5DEB3;
+        }
+        
         body {
-            font-family: 'Quicksand', sans-serif;
-            min-height: 100vh;
-            background: linear-gradient(180deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a2e 100%);
-            color: #f0e6d3;
+            font-family: 'Lato', sans-serif;
+            background: var(--cream);
+            color: var(--dark-brown);
             overflow-x: hidden;
         }
         
-        .stars {
+        /* Floating flour particles */
+        .flour-particles {
             position: fixed;
             top: 0;
             left: 0;
@@ -29,485 +38,490 @@
             height: 100%;
             pointer-events: none;
             z-index: 0;
-        }
-        
-        .star {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: #fff;
-            border-radius: 50%;
-            animation: twinkle 2s infinite ease-in-out;
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-        
-        .container {
-            position: relative;
-            z-index: 1;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        header {
-            text-align: center;
-            padding: 3rem 1rem;
-        }
-        
-        .logo {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 1.5rem;
-            color: #ff9f9f;
-            text-shadow: 0 0 20px rgba(255, 159, 159, 0.5);
-            margin-bottom: 1rem;
-        }
-        
-        .welcome-text {
-            font-size: 2.5rem;
-            font-weight: 600;
-            background: linear-gradient(90deg, #ffd1dc, #bae1ff, #baffc9);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            margin-bottom: 0.5rem;
-        }
-        
-        .subtitle {
-            color: #a89cc8;
-            font-size: 1.1rem;
-        }
-        
-        .pixel-border {
-            border: 4px solid transparent;
-            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect x='0' y='0' width='4' height='4' fill='%23ff9f9f'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%239f9fff'/%3E%3Crect x='8' y='8' width='4' height='4' fill='%239fffc8'/%3E%3C/svg%3E") 4 round;
-        }
-        
-        .main-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .card {
-            background: rgba(45, 27, 78, 0.6);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 2rem;
-            border: 2px solid rgba(255, 159, 159, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
             overflow: hidden;
         }
         
-        .card::before {
-            content: '';
+        .flour {
             position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            animation: float-down 15s linear infinite;
+        }
+        
+        @keyframes float-down {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            90% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        /* Navigation */
+        nav {
+            position: fixed;
             top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ff9f9f, #9f9fff, #9fffc8);
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(255, 159, 159, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-        
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .card h3 {
-            font-family: 'Press Start 2P', cursive;
-            font-size: 0.9rem;
-            color: #ffd1dc;
-            margin-bottom: 1rem;
-            line-height: 1.6;
-        }
-        
-        .card p {
-            color: #c4b8db;
-            line-height: 1.8;
-        }
-        
-        .cozy-corner {
-            background: rgba(255, 159, 159, 0.1);
-            border-radius: 15px;
-            padding: 2rem;
-            margin-top: 3rem;
-            text-align: center;
-        }
-        
-        .pixel-art {
+            width: 100%;
+            background: rgba(255, 248, 240, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            padding: 1rem 2rem;
             display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(139, 94, 60, 0.1);
         }
         
-        .pixel-item {
-            width: 60px;
-            height: 60px;
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--warm-brown);
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            background: rgba(159, 159, 255, 0.2);
-            border-radius: 10px;
-            animation: float 3s ease-in-out infinite;
+            gap: 0.5rem;
         }
         
-        .pixel-item:nth-child(2) { animation-delay: 0.5s; }
-        .pixel-item:nth-child(3) { animation-delay: 1s; }
-        .pixel-item:nth-child(4) { animation-delay: 1.5s; }
-        .pixel-item:nth-child(5) { animation-delay: 2s; }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
         }
         
-        .chat-bubble {
-            background: linear-gradient(135deg, rgba(159, 255, 200, 0.2), rgba(159, 159, 255, 0.2));
-            border-radius: 20px 20px 20px 5px;
-            padding: 1.5rem;
-            margin: 1rem auto;
-            max-width: 500px;
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-brown);
+            font-weight: 600;
+            transition: color 0.3s;
             position: relative;
         }
         
-        .chat-bubble::after {
-            content: '💜';
+        .nav-links a::after {
+            content: '';
             position: absolute;
-            bottom: -10px;
-            left: 20px;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--golden);
+            transition: width 0.3s;
         }
         
-        footer {
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 3rem 1rem;
-            color: #a89cc8;
+            padding: 6rem 2rem 4rem;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--soft-pink) 50%, var(--butter) 100%);
+            position: relative;
         }
         
-        .social-links {
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            color: var(--dark-brown);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero h1 span {
+            color: var(--warm-brown);
+            font-style: italic;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--warm-brown);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .cta-btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--warm-brown);
+            color: var(--cream);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(139, 94, 60, 0.3);
+        }
+        
+        .cta-btn:hover {
+            background: var(--dark-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 94, 60, 0.4);
+        }
+        
+        .hero-emojis {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: bounce 2s ease-in-out infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        /* Featured Products */
+        .featured {
+            padding: 5rem 2rem;
+            background: white;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--dark-brown);
+            margin-bottom: 3rem;
+        }
+        
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 3px;
+            background: var(--golden);
+            margin: 1rem auto 0;
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .product-card {
+            background: var(--cream);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+            box-shadow: 0 5px 20px rgba(139, 94, 60, 0.1);
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(139, 94, 60, 0.2);
+        }
+        
+        .product-image {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 6rem;
+            background: linear-gradient(135deg, var(--soft-pink), var(--butter));
+        }
+        
+        .product-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .product-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            color: var(--dark-brown);
+            margin-bottom: 0.5rem;
+        }
+        
+        .product-info p {
+            color: var(--warm-brown);
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+        
+        .price {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: var(--warm-brown);
+        }
+        
+        /* About Section */
+        .about {
+            padding: 5rem 2rem;
+            background: linear-gradient(135deg, var(--butter) 0%, var(--soft-pink) 100%);
+        }
+        
+        .about-content {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        
+        .about-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--dark-brown);
+            margin-bottom: 1.5rem;
+        }
+        
+        .about-text p {
+            color: var(--dark-brown);
+            line-height: 1.8;
+            margin-bottom: 1rem;
+        }
+        
+        .about-image {
+            font-size: 8rem;
+            text-align: center;
+            animation: rotate-slow 20s linear infinite;
+        }
+        
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Hours & Location */
+        .info-section {
+            padding: 5rem 2rem;
+            background: var(--dark-brown);
+            color: var(--cream);
+        }
+        
+        .info-grid {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            text-align: center;
+        }
+        
+        .info-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--golden);
+        }
+        
+        .info-box p {
+            line-height: 1.8;
+            opacity: 0.9;
+        }
+        
+        .info-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        /* Footer */
+        footer {
+            padding: 3rem 2rem;
+            background: var(--warm-brown);
+            color: var(--cream);
+            text-align: center;
+        }
+        
+        footer p {
+            opacity: 0.9;
+        }
+        
+        .social-icons {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
         
-        .social-link {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 159, 159, 0.2);
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
-            transition: all 0.3s ease;
+            font-size: 1.5rem;
+            transition: all 0.3s;
             cursor: pointer;
         }
         
-        .social-link:hover {
-            background: rgba(255, 159, 159, 0.4);
+        .social-icon:hover {
+            background: rgba(255, 255, 255, 0.2);
             transform: scale(1.1);
         }
         
-        .glow-text {
-            animation: glow 2s ease-in-out infinite alternate;
-        }
-        
-        @keyframes glow {
-            from { text-shadow: 0 0 10px rgba(255, 159, 159, 0.5); }
-            to { text-shadow: 0 0 20px rgba(159, 159, 255, 0.8), 0 0 30px rgba(159, 255, 200, 0.6); }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .about-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-<div class="stars" id="stars"></div>
-<div class="container">
-<header>
-<div class="logo glow-text">✨ COZY CORNER ✨</div>
-<h1 class="welcome-text">Welcome, Friend!</h1>
-<p class="subtitle">A safe space for gamers, creators &amp; dreamers 🌙</p>
-</header>
-<div class="pixel-art">
-<div class="pixel-item">🎮</div>
-<div class="pixel-item">🕹️</div>
-<div class="pixel-item">👾</div>
-<div class="pixel-item">🌟</div>
-<div class="pixel-item">🎨</div>
+<div class="flour-particles" id="flour"></div>
+<nav>
+<div class="logo">🥐 Golden Crust</div>
+<ul class="nav-links">
+<li><a href="#home">Home</a></li>
+<li><a href="#menu">Menu</a></li>
+<li><a href="#about">About</a></li>
+<li><a href="#visit">Visit Us</a></li>
+</ul>
+</nav>
+<section class="hero" id="home">
+<div class="hero-content">
+<div class="hero-emojis">🥖🍞🥐</div>
+<h1>Freshly Baked <span>Happiness</span></h1>
+<p>Artisan breads, delicate pastries, and sweet treats made with love every morning since 1987</p>
+<a class="cta-btn" href="#menu">View Our Menu</a>
 </div>
-<main class="main-content" style="display: block;">
-<div class="game-container" style="background: rgba(45, 27, 78, 0.8); border-radius: 20px; padding: 1.5rem; border: 2px solid rgba(255, 159, 159, 0.3);">
-<div style="text-align: center; margin-bottom: 1rem;">
-<h2 style="font-family: 'Press Start 2P', cursive; font-size: 1rem; color: #ffd1dc; margin-bottom: 0.5rem;">🎮 MONSTER ESCAPE 🎮</h2>
-<p style="color: #a89cc8; font-size: 0.9rem;">Help the little monster escape the AI hunters!</p>
-<p style="color: #9fffc8; font-size: 0.8rem; margin-top: 0.5rem;">Use WASD or Arrow Keys to move</p>
-</div>
-<canvas id="gameCanvas" style="display: block; margin: 0 auto; border-radius: 10px; border: 3px solid rgba(159, 159, 255, 0.4);"></canvas>
-<div id="gameUI" style="text-align: center; margin-top: 1rem;">
-<p style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #baffc9;">Score: <span id="score">0</span> | Level: <span id="level">1</span></p>
-<button id="restartBtn" style="margin-top: 0.8rem; padding: 0.8rem 1.5rem; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; background: linear-gradient(135deg, #ff9f9f, #9f9fff); border: none; border-radius: 10px; color: #1a1a2e; cursor: pointer; transition: transform 0.2s;">RESTART GAME</button>
-</div>
-</div>
-</main>
-<script>
-(function() {
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  
-  // Responsive canvas size
-  const size = Math.min(500, window.innerWidth - 80);
-  canvas.width = size;
-  canvas.height = size;
-  
-  const CELL_SIZE = Math.floor(size / 15);
-  const GRID_SIZE = 15;
-  
-  let maze = [];
-  let player = { x: 1, y: 1, emoji: '👾' };
-  let enemies = [];
-  let exit = { x: 13, y: 13 };
-  let score = 0;
-  let level = 1;
-  let gameOver = false;
-  let won = false;
-  
-  function generateMaze() {
-    maze = [];
-    for (let y = 0; y < GRID_SIZE; y++) {
-      maze[y] = [];
-      for (let x = 0; x < GRID_SIZE; x++) {
-        maze[y][x] = 1;
-      }
-    }
-    
-    function carve(x, y) {
-      maze[y][x] = 0;
-      const dirs = [[0,-2],[0,2],[-2,0],[2,0]].sort(() => Math.random() - 0.5);
-      for (let [dx, dy] of dirs) {
-        const nx = x + dx, ny = y + dy;
-        if (nx > 0 && nx < GRID_SIZE-1 && ny > 0 && ny < GRID_SIZE-1 && maze[ny][nx] === 1) {
-          maze[y + dy/2][x + dx/2] = 0;
-          carve(nx, ny);
-        }
-      }
-    }
-    carve(1, 1);
-    
-    // Ensure exit is reachable
-    maze[13][13] = 0;
-    maze[12][13] = 0;
-    maze[13][12] = 0;
-    maze[1][1] = 0;
-    maze[1][2] = 0;
-    maze[2][1] = 0;
-  }
-  
-  function spawnEnemies() {
-    enemies = [];
-    const numEnemies = Math.min(2 + level, 6);
-    for (let i = 0; i < numEnemies; i++) {
-      let ex, ey;
-      do {
-        ex = Math.floor(Math.random() * (GRID_SIZE - 4)) + 4;
-        ey = Math.floor(Math.random() * (GRID_SIZE - 4)) + 4;
-      } while (maze[ey][ex] === 1 || (ex === player.x && ey === player.y));
-      enemies.push({ x: ex, y: ey, emoji: '🤖', moveTimer: 0 });
-    }
-  }
-  
-  function init() {
-    generateMaze();
-    player = { x: 1, y: 1, emoji: '👾' };
-    exit = { x: 13, y: 13 };
-    spawnEnemies();
-    gameOver = false;
-    won = false;
-    updateUI();
-  }
-  
-  function updateUI() {
-    document.getElementById('score').textContent = score;
-    document.getElementById('level').textContent = level;
-  }
-  
-  function draw() {
-    // Background
-    ctx.fillStyle = '#1a1a2e';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Draw maze
-    for (let y = 0; y < GRID_SIZE; y++) {
-      for (let x = 0; x < GRID_SIZE; x++) {
-        if (maze[y][x] === 1) {
-          ctx.fillStyle = '#2d1b4e';
-          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-          ctx.strokeStyle = '#9f9fff33';
-          ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        } else {
-          ctx.fillStyle = '#0d0d1a';
-          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-        }
-      }
-    }
-    
-    // Draw exit
-    ctx.font = `${CELL_SIZE * 0.8}px Arial`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('🚪', exit.x * CELL_SIZE + CELL_SIZE/2, exit.y * CELL_SIZE + CELL_SIZE/2);
-    
-    // Draw enemies
-    enemies.forEach(e => {
-      ctx.fillText(e.emoji, e.x * CELL_SIZE + CELL_SIZE/2, e.y * CELL_SIZE + CELL_SIZE/2);
-    });
-    
-    // Draw player
-    ctx.fillText(player.emoji, player.x * CELL_SIZE + CELL_SIZE/2, player.y * CELL_SIZE + CELL_SIZE/2);
-    
-    // Game over overlay
-    if (gameOver || won) {
-      ctx.fillStyle = 'rgba(0,0,0,0.7)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = won ? '#9fffc8' : '#ff9f9f';
-      ctx.font = "bold 20px 'Press Start 2P'";
-      ctx.fillText(won ? 'LEVEL UP!' : 'CAUGHT!', canvas.width/2, canvas.height/2);
-      ctx.font = '14px Quicksand';
-      ctx.fillStyle = '#fff';
-      ctx.fillText('Press RESTART to play again', canvas.width/2, canvas.height/2 + 40);
-    }
-  }
-  
-  function movePlayer(dx, dy) {
-    if (gameOver || won) return;
-    const nx = player.x + dx;
-    const ny = player.y + dy;
-    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE && maze[ny][nx] === 0) {
-      player.x = nx;
-      player.y = ny;
-      checkCollisions();
-    }
-  }
-  
-  function moveEnemies() {
-    if (gameOver || won) return;
-    enemies.forEach(e => {
-      e.moveTimer++;
-      if (e.moveTimer < 15) return;
-      e.moveTimer = 0;
-      
-      // Simple AI: move towards player
-      const dx = player.x - e.x;
-      const dy = player.y - e.y;
-      let moves = [];
-      
-      if (dx > 0 && maze[e.y][e.x + 1] === 0) moves.push([1, 0]);
-      if (dx < 0 && maze[e.y][e.x - 1] === 0) moves.push([-1, 0]);
-      if (dy > 0 && maze[e.y + 1][e.x] === 0) moves.push([0, 1]);
-      if (dy < 0 && maze[e.y - 1][e.x] === 0) moves.push([0, -1]);
-      
-      if (moves.length > 0) {
-        const [mx, my] = moves[Math.floor(Math.random() * moves.length)];
-        e.x += mx;
-        e.y += my;
-      }
-    });
-    checkCollisions();
-  }
-  
-  function checkCollisions() {
-    // Check enemy collision
-    for (let e of enemies) {
-      if (e.x === player.x && e.y === player.y) {
-        gameOver = true;
-        return;
-      }
-    }
-    // Check exit
-    if (player.x === exit.x && player.y === exit.y) {
-      won = true;
-      score += level * 100;
-      level++;
-      setTimeout(() => {
-        init();
-      }, 1500);
-    }
-  }
-  
-  document.addEventListener('keydown', (e) => {
-    switch(e.key) {
-      case 'ArrowUp': case 'w': case 'W': movePlayer(0, -1); e.preventDefault(); break;
-      case 'ArrowDown': case 's': case 'S': movePlayer(0, 1); e.preventDefault(); break;
-      case 'ArrowLeft': case 'a': case 'A': movePlayer(-1, 0); e.preventDefault(); break;
-      case 'ArrowRight': case 'd': case 'D': movePlayer(1, 0); e.preventDefault(); break;
-    }
-  });
-  
-  document.getElementById('restartBtn').addEventListener('click', () => {
-    score = 0;
-    level = 1;
-    init();
-  });
-  
-  function gameLoop() {
-    moveEnemies();
-    draw();
-    updateUI();
-    requestAnimationFrame(gameLoop);
-  }
-  
-  init();
-  gameLoop();
-})();
-</script>
-<div class="cozy-corner">
-<h2 style="font-family: 'Press Start 2P', cursive; font-size: 1rem; color: #ffd1dc; margin-bottom: 1rem;">Game Tips</h2>
-<div class="chat-bubble">
-<p>"The 🤖 AI hunters will chase you! Find the 🚪 exit to escape and level up. Each level adds more hunters!" 🌸</p>
+</section>
+<section class="featured" id="menu">
+<h2 class="section-title">Today's Specials</h2>
+<div class="products-grid">
+<div class="product-card">
+<div class="product-image">🥐</div>
+<div class="product-info">
+<h3>Butter Croissant</h3>
+<p>Flaky, golden layers of pure buttery bliss</p>
+<span class="price">$3.50</span>
 </div>
 </div>
+<div class="product-card">
+<div class="product-image">🍞</div>
+<div class="product-info">
+<h3>Sourdough Loaf</h3>
+<p>24-hour fermented with a perfect crust</p>
+<span class="price">$7.00</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🧁</div>
+<div class="product-info">
+<h3>Vanilla Bean Cupcake</h3>
+<p>Topped with silky cream cheese frosting</p>
+<span class="price">$4.25</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🥧</div>
+<div class="product-info">
+<h3>Apple Cinnamon Pie</h3>
+<p>Grandma's secret recipe with local apples</p>
+<span class="price">$22.00</span>
+</div>
+</div>
+</div>
+</section>
+<section class="about" id="about">
+<div class="about-content">
+<div class="about-text">
+<h2>Baked with Love &amp; Tradition</h2>
+<p>For over 35 years, Golden Crust Bakery has been the heart of our community. Every morning at 4 AM, our bakers begin crafting the perfect loaves, pastries, and treats.</p>
+<p>We use only the finest ingredients: organic flour, farm-fresh eggs, and real butter. No shortcuts, no preservatives – just honest, delicious baking.</p>
+<p>Come taste the difference that passion makes! ☕🥐</p>
+</div>
+<div class="about-image">🎂</div>
+</div>
+</section>
+<section class="info-section" id="visit">
+<div class="info-grid">
+<div class="info-box">
+<div class="info-icon">📍</div>
+<h3>Find Us</h3>
+<p>123 Baker Street<br/>Flourtown, PA 19031</p>
+</div>
+<div class="info-box">
+<div class="info-icon">🕐</div>
+<h3>Hours</h3>
+<p>Mon - Fri: 6AM - 7PM<br/>Sat - Sun: 7AM - 5PM</p>
+</div>
+<div class="info-box">
+<div class="info-icon">📞</div>
+<h3>Contact</h3>
+<p>(555) 123-BAKE<br/>hello@goldencrust.com</p>
+</div>
+</div>
+</section>
 <footer>
-<p class="glow-text">Made with 💜 and too much coffee</p>
-<div class="social-links">
-<div class="social-link">📺</div>
-<div class="social-link">🐦</div>
-<div class="social-link">💬</div>
-<div class="social-link">🎵</div>
+<p>© 2024 Golden Crust Bakery. Made with 🤍 and lots of flour.</p>
+<div class="social-icons">
+<div class="social-icon">📸</div>
+<div class="social-icon">📘</div>
+<div class="social-icon">🐦</div>
+<div class="social-icon">📧</div>
 </div>
-<p style="margin-top: 1.5rem; font-size: 0.9rem;">Press START to begin your adventure ▶️</p>
 </footer>
-</div>
 <script>
-        // Create twinkling stars
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 2 + 's';
-            star.style.width = (Math.random() * 3 + 1) + 'px';
-            star.style.height = star.style.width;
-            starsContainer.appendChild(star);
+        // Create floating flour particles
+        const flourContainer = document.getElementById('flour');
+        for (let i = 0; i < 30; i++) {
+            const flour = document.createElement('div');
+            flour.className = 'flour';
+            flour.style.left = Math.random() * 100 + '%';
+            flour.style.animationDelay = Math.random() * 15 + 's';
+            flour.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            flour.style.width = (Math.random() * 6 + 4) + 'px';
+            flour.style.height = flour.style.width;
+            flour.style.opacity = Math.random() * 0.5 + 0.2;
+            flourContainer.appendChild(flour);
         }
         
-        // Add gentle parallax to stars
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth - 0.5) * 20;
-            const y = (e.clientY / window.innerHeight - 0.5) * 20;
-            starsContainer.style.transform = `translate(${x}px, ${y}px)`;
+        // Smooth scroll for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+        
+        // Add scroll effect to nav
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.boxShadow = '0 4px 30px rgba(139, 94, 60, 0.2)';
+            } else {
+                nav.style.boxShadow = '0 2px 20px rgba(139, 94, 60, 0.1)';
+            }
         });
     </script>
 </body>
