@@ -40,6 +40,17 @@
                 0 0 60px rgba(74, 144, 217, 0.4);
             animation: float 3s ease-in-out infinite;
             position: relative;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+        
+        .planet.caught {
+            animation: float 3s ease-in-out infinite, planetPulse 0.3s ease-out;
+        }
+        
+        @keyframes planetPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
         }
         
         .planet::before {
@@ -199,7 +210,7 @@ h1 {
 }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
-<h1>Hello World</h1>
+<h1>Hello World</h1><div id="scoreboard" style="font-size: 1.5rem; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px); border: 2px solid rgba(255,255,255,0.2);">🐕 Dog Score: <span id="dogScore">0</span></div>
 <div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div><div class="planet-system"><div class="planet"></div><div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty">🐱</div></div><div class="doggy-orbit"><div class="doggy">🐕</div></div></div>
 <script>
 const audio = document.getElementById('bgMusic');
@@ -354,6 +365,7 @@ btn.addEventListener('click', () => {
   const kitty = document.querySelector('.kitty');
   const doggyOrbit = document.querySelector('.doggy-orbit');
   const doggy = document.querySelector('.doggy');
+  const dogScoreEl = document.getElementById('dogScore');
   
   let catAngle = 0;
   let dogAngle = Math.PI; // Start opposite to cat
@@ -366,8 +378,11 @@ btn.addEventListener('click', () => {
   const dogSpeed = 0.04;
   
   const dangerDistance = 80;
+  const catchDistance = 35;
   
   let catSpeed = catNormalSpeed;
+  let dogScore = 0;
+  let catchCooldown = false;
   
   function getPosition(angle, radius) {
     return {
@@ -382,6 +397,36 @@ btn.addEventListener('click', () => {
     return Math.sqrt(dx * dx + dy * dy);
   }
   
+  function catchCat() {
+    if (catchCooldown) return;
+    
+    dogScore++;
+    dogScoreEl.textContent = dogScore;
+    
+    // Visual feedback
+    dogScoreEl.style.transform = 'scale(1.5)';
+    dogScoreEl.style.color = '#ffdd00';
+    setTimeout(() => {
+      dogScoreEl.style.transform = 'scale(1)';
+      dogScoreEl.style.color = 'white';
+    }, 300);
+    
+    // Show catch effect
+    kitty.textContent = '😵';
+    doggy.textContent = '🐕‍🦺';
+    
+    // Teleport cat to opposite side
+    catAngle = dogAngle + Math.PI;
+    
+    // Cooldown to prevent multiple catches
+    catchCooldown = true;
+    setTimeout(() => {
+      catchCooldown = false;
+      kitty.textContent = '🐱';
+      doggy.textContent = '🐕';
+    }, 1000);
+  }
+  
   function animate() {
     // Get positions
     const catPos = getPosition(catAngle, catOrbitRadius);
@@ -390,12 +435,17 @@ btn.addEventListener('click', () => {
     // Check distance
     const distance = getDistance(catPos, dogPos);
     
+    // Check for catch
+    if (distance < catchDistance && !catchCooldown) {
+      catchCat();
+    }
+    
     // Cat behavior
-    if (distance < dangerDistance) {
+    if (distance < dangerDistance && !catchCooldown) {
       catSpeed = catEscapeSpeed;
       kitty.classList.add('scared');
-      kitty.textContent = '🙀';
-    } else {
+      if (!catchCooldown) kitty.textContent = '🙀';
+    } else if (!catchCooldown) {
       catSpeed = catNormalSpeed;
       kitty.classList.remove('scared');
       kitty.textContent = '🐱';
@@ -415,6 +465,126 @@ btn.addEventListener('click', () => {
     
     requestAnimationFrame(animate);
   }
+  
+  // Add transition for score
+  dogScoreEl.style.transition = 'transform 0.3s, color 0.3s';
+  
+  animate();
+})();
+</script><script>
+(function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const kitty = document.querySelector('.kitty');
+  const doggyOrbit = document.querySelector('.doggy-orbit');
+  const doggy = document.querySelector('.doggy');
+  const dogScoreEl = document.getElementById('dogScore');
+  
+  let catAngle = 0;
+  let dogAngle = Math.PI; // Start opposite to cat
+  
+  const catOrbitRadius = 100;
+  const dogOrbitRadius = 110;
+  
+  const catNormalSpeed = 0.025;
+  const catEscapeSpeed = 0.12;
+  const dogSpeed = 0.04;
+  
+  const dangerDistance = 80;
+  const catchDistance = 35;
+  
+  let catSpeed = catNormalSpeed;
+  let dogScore = 0;
+  let catchCooldown = false;
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    const dx = pos1.x - pos2.x;
+    const dy = pos1.y - pos2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  
+  function catchCat() {
+    if (catchCooldown) return;
+    
+    dogScore++;
+    dogScoreEl.textContent = dogScore;
+    
+    // Change planet color!
+    if (window.changePlanetColor) {
+      window.changePlanetColor();
+    }
+    
+    // Visual feedback
+    dogScoreEl.style.transform = 'scale(1.5)';
+    dogScoreEl.style.color = '#ffdd00';
+    setTimeout(() => {
+      dogScoreEl.style.transform = 'scale(1)';
+      dogScoreEl.style.color = 'white';
+    }, 300);
+    
+    // Show catch effect
+    kitty.textContent = '😵';
+    doggy.textContent = '🐕‍🦺';
+    
+    // Teleport cat to opposite side
+    catAngle = dogAngle + Math.PI;
+    
+    // Cooldown to prevent multiple catches
+    catchCooldown = true;
+    setTimeout(() => {
+      catchCooldown = false;
+      kitty.textContent = '🐱';
+      doggy.textContent = '🐕';
+    }, 1000);
+  }
+  
+  function animate() {
+    // Get positions
+    const catPos = getPosition(catAngle, catOrbitRadius);
+    const dogPos = getPosition(dogAngle, dogOrbitRadius);
+    
+    // Check distance
+    const distance = getDistance(catPos, dogPos);
+    
+    // Check for catch
+    if (distance < catchDistance && !catchCooldown) {
+      catchCat();
+    }
+    
+    // Cat behavior
+    if (distance < dangerDistance && !catchCooldown) {
+      catSpeed = catEscapeSpeed;
+      kitty.classList.add('scared');
+      if (!catchCooldown) kitty.textContent = '🙀';
+    } else if (!catchCooldown) {
+      catSpeed = catNormalSpeed;
+      kitty.classList.remove('scared');
+      kitty.textContent = '🐱';
+    }
+    
+    // Update angles (cat goes counter-clockwise, dog chases)
+    catAngle -= catSpeed;
+    dogAngle -= dogSpeed;
+    
+    // Apply transforms
+    kittyOrbit.style.transform = `rotate(${-catAngle * 180 / Math.PI}deg)`;
+    doggyOrbit.style.transform = `rotate(${-dogAngle * 180 / Math.PI}deg)`;
+    
+    // Keep dog wobbling excitedly
+    const wobble = Math.sin(Date.now() / 100) * 15;
+    doggy.style.transform = `translateX(-50%) rotate(${wobble}deg)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  // Add transition for score
+  dogScoreEl.style.transition = 'transform 0.3s, color 0.3s';
   
   animate();
 })();
