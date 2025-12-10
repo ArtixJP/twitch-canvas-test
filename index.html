@@ -39,6 +39,16 @@
                 0 0 60px rgba(74, 144, 217, 0.4);
             animation: float 3s ease-in-out infinite;
             position: relative;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .planet.caught {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #c0392b 100%) !important;
+            box-shadow: 
+                inset -30px -20px 40px rgba(0,0,0,0.7),
+                inset 20px 15px 30px rgba(255,220,100,0.3),
+                -15px 15px 40px rgba(0, 0, 0, 0.5),
+                0 0 80px rgba(255, 100, 100, 0.6) !important;
         }
         
         .planet::before {
@@ -116,7 +126,6 @@
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            animation: orbit-reverse 5s linear infinite;
         }
         
         .kitty {
@@ -127,6 +136,33 @@
             font-size: 28px;
             animation: kitty-wobble 0.5s ease-in-out infinite;
             filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
+            transition: filter 0.3s;
+        }
+        
+        .kitty.scared {
+            filter: drop-shadow(0 0 20px rgba(255, 50, 50, 0.8));
+        }
+        
+        .dog-orbit {
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+        }
+        
+        .dog {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 26px;
+            animation: dog-wobble 0.3s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(139, 90, 43, 0.6));
+        }
+        
+        @keyframes dog-wobble {
+            0%, 100% { transform: translateX(-50%) rotate(-15deg) scaleX(1); }
+            50% { transform: translateX(-50%) rotate(15deg) scaleX(-1); }
         }
         
         @keyframes orbit {
@@ -196,8 +232,8 @@
 }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
-<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div><h1>Hello World</h1>
-<div class="planet-system"><div class="planet"></div><div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty">🐱</div></div></div><audio id="bgMusic" loop="">
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div><h1>Hello World</h1><div id="scoreboard" style="font-size: 1.5rem; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 15px; backdrop-filter: blur(10px);">🐕 Dog Score: <span id="dogScore">0</span></div>
+<div class="planet-system"><div class="planet" id="planet"></div><div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty">🐱</div></div><div class="dog-orbit"><div class="dog">🐕</div></div></div><audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
 <button id="musicToggle">🎵 Play Music</button>
@@ -351,6 +387,193 @@ toggleBtn.addEventListener('click', () => {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
+})();
+</script><script>
+(function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const dogOrbit = document.querySelector('.dog-orbit');
+  const kitty = document.querySelector('.kitty');
+  const dogScoreEl = document.getElementById('dogScore');
+  
+  let catAngle = 0;
+  let dogAngle = Math.PI; // Start opposite to cat
+  
+  const catOrbitRadius = 100;
+  const dogOrbitRadius = 110;
+  
+  const catNormalSpeed = 0.02;
+  const catEscapeSpeed = 0.12;
+  const dogSpeed = 0.04;
+  
+  const dangerDistance = 80;
+  const catchDistance = 35;
+  
+  let catSpeed = catNormalSpeed;
+  let dogScore = 0;
+  let canScore = true;
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    const dx = pos1.x - pos2.x;
+    const dy = pos1.y - pos2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  
+  function catchCat() {
+    dogScore++;
+    dogScoreEl.textContent = dogScore;
+    dogScoreEl.style.color = '#ffcc00';
+    dogScoreEl.style.transform = 'scale(1.5)';
+    setTimeout(() => {
+      dogScoreEl.style.color = 'white';
+      dogScoreEl.style.transform = 'scale(1)';
+    }, 300);
+    
+    // Teleport cat to opposite side
+    catAngle = dogAngle + Math.PI;
+    canScore = false;
+    setTimeout(() => { canScore = true; }, 1000);
+  }
+  
+  function animate() {
+    // Get positions
+    const catPos = getPosition(catAngle, catOrbitRadius);
+    const dogPos = getPosition(dogAngle, dogOrbitRadius);
+    
+    // Check distance
+    const distance = getDistance(catPos, dogPos);
+    
+    // Check if dog caught the cat
+    if (distance < catchDistance && canScore) {
+      catchCat();
+    }
+    
+    // Adjust cat speed based on distance
+    if (distance < dangerDistance) {
+      catSpeed = catEscapeSpeed;
+      kitty.classList.add('scared');
+    } else {
+      catSpeed = catNormalSpeed;
+      kitty.classList.remove('scared');
+    }
+    
+    // Update angles (cat goes counter-clockwise, dog chases)
+    catAngle -= catSpeed;
+    dogAngle -= dogSpeed;
+    
+    // Apply transforms
+    kittyOrbit.style.transform = `rotate(${-catAngle * 180 / Math.PI}deg)`;
+    dogOrbit.style.transform = `rotate(${-dogAngle * 180 / Math.PI}deg)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  // Add transition for score animation
+  dogScoreEl.style.transition = 'all 0.3s ease';
+  
+  animate();
+})();
+</script><script>
+(function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const dogOrbit = document.querySelector('.dog-orbit');
+  const kitty = document.querySelector('.kitty');
+  const dogScoreEl = document.getElementById('dogScore');
+  
+  let catAngle = 0;
+  let dogAngle = Math.PI; // Start opposite to cat
+  
+  const catOrbitRadius = 100;
+  const dogOrbitRadius = 110;
+  
+  const catNormalSpeed = 0.02;
+  const catEscapeSpeed = 0.12;
+  const dogSpeed = 0.04;
+  
+  const dangerDistance = 80;
+  const catchDistance = 35;
+  
+  let catSpeed = catNormalSpeed;
+  let dogScore = 0;
+  let canScore = true;
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    const dx = pos1.x - pos2.x;
+    const dy = pos1.y - pos2.y;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  
+  function catchCat() {
+    dogScore++;
+    dogScoreEl.textContent = dogScore;
+    dogScoreEl.style.color = '#ffcc00';
+    dogScoreEl.style.transform = 'scale(1.5)';
+    setTimeout(() => {
+      dogScoreEl.style.color = 'white';
+      dogScoreEl.style.transform = 'scale(1)';
+    }, 300);
+    
+    // Trigger planet color change
+    if (window.triggerPlanetColorChange) {
+      window.triggerPlanetColorChange();
+    }
+    
+    // Teleport cat to opposite side
+    catAngle = dogAngle + Math.PI;
+    canScore = false;
+    setTimeout(() => { canScore = true; }, 1000);
+  }
+  
+  function animate() {
+    // Get positions
+    const catPos = getPosition(catAngle, catOrbitRadius);
+    const dogPos = getPosition(dogAngle, dogOrbitRadius);
+    
+    // Check distance
+    const distance = getDistance(catPos, dogPos);
+    
+    // Check if dog caught the cat
+    if (distance < catchDistance && canScore) {
+      catchCat();
+    }
+    
+    // Adjust cat speed based on distance
+    if (distance < dangerDistance) {
+      catSpeed = catEscapeSpeed;
+      kitty.classList.add('scared');
+    } else {
+      catSpeed = catNormalSpeed;
+      kitty.classList.remove('scared');
+    }
+    
+    // Update angles (cat goes counter-clockwise, dog chases)
+    catAngle -= catSpeed;
+    dogAngle -= dogSpeed;
+    
+    // Apply transforms
+    kittyOrbit.style.transform = `rotate(${-catAngle * 180 / Math.PI}deg)`;
+    dogOrbit.style.transform = `rotate(${-dogAngle * 180 / Math.PI}deg)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  // Add transition for score animation
+  dogScoreEl.style.transition = 'all 0.3s ease';
+  
+  animate();
 })();
 </script></body>
 </html>
