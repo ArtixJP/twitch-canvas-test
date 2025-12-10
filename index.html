@@ -109,6 +109,37 @@
             border-radius: 50%;
             animation: twinkle 2s ease-in-out infinite;
         }
+        #musicToggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(100, 200, 255, 0.5);
+            background: rgba(10, 10, 40, 0.8);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(100, 200, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        #musicToggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.6);
+            background: rgba(30, 30, 80, 0.9);
+        }
+        #musicToggle.paused {
+            border-color: rgba(255, 100, 100, 0.5);
+            box-shadow: 0 0 20px rgba(255, 100, 100, 0.3);
+        }
+        #musicToggle.paused:hover {
+            box-shadow: 0 0 30px rgba(255, 100, 100, 0.6);
+        }
         @keyframes planetRotate {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
@@ -142,5 +173,33 @@
         star.style.animationDuration = (Math.random() * 2 + 1) + 's';
         starsContainer.appendChild(star);
     }
+</script><audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle" onclick="toggleMusic()" title="Toggle Music">
+<span id="musicIcon">🔊</span>
+</button>
+<script>
+  const audio = document.getElementById('bgMusic');
+  const musicIcon = document.getElementById('musicIcon');
+  const musicToggle = document.getElementById('musicToggle');
+  
+  function toggleMusic() {
+    if (audio.paused) {
+      audio.play();
+      musicIcon.textContent = '🔊';
+      musicToggle.classList.remove('paused');
+    } else {
+      audio.pause();
+      musicIcon.textContent = '🔇';
+      musicToggle.classList.add('paused');
+    }
+  }
+  
+  // Handle autoplay restrictions
+  audio.play().catch(() => {
+    musicIcon.textContent = '🔇';
+    musicToggle.classList.add('paused');
+  });
 </script></body>
 </html>
