@@ -15,52 +15,163 @@
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            gap: 40px;
         }
-        h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
+        h1 { font-size: 3rem; text-align: center; }
+        
+        .planet-system {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         
         .planet {
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5c 100%);
+            background: linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5e 100%);
             box-shadow: 
                 inset -20px -20px 40px rgba(0,0,0,0.5),
                 inset 10px 10px 20px rgba(255,255,255,0.2),
                 0 0 60px rgba(74, 144, 217, 0.4);
-            animation: rotate 20s linear infinite;
+            animation: float 3s ease-in-out infinite;
             position: relative;
-            overflow: hidden;
         }
         
         .planet::before {
             content: '';
             position: absolute;
             top: 20%;
-            left: 10%;
-            width: 80%;
-            height: 15%;
-            background: rgba(255,255,255,0.1);
+            left: 15%;
+            width: 20px;
+            height: 15px;
+            background: rgba(255,255,255,0.3);
             border-radius: 50%;
-            transform: rotate(-5deg);
+            filter: blur(3px);
         }
         
         .planet::after {
             content: '';
             position: absolute;
             top: 50%;
-            left: 5%;
-            width: 90%;
-            height: 10%;
-            background: rgba(30,87,153,0.5);
+            left: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            width: 220px;
+            height: 220px;
+            border: 3px solid rgba(200, 180, 150, 0.5);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(200, 180, 150, 0.3);
+        }
+        
+        .moon-orbit {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            animation: orbit 8s linear infinite;
+        }
+        
+        .moon {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%);
+            box-shadow: 
+                inset -5px -5px 15px rgba(0,0,0,0.4),
+                inset 3px 3px 8px rgba(255,255,255,0.3),
+                0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            background: rgba(100, 100, 100, 0.5);
             border-radius: 50%;
         }
         
-        @keyframes rotate {
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 5px;
+            height: 5px;
+            background: rgba(100, 100, 100, 0.4);
+            border-radius: 50%;
+        }
+        
+        @keyframes orbit {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        #musicToggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+        
+        #musicToggle:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: scale(1.05);
         }</style>
 </head>
 <body>
-<h1>Hello World</h1><div class="planet"></div>
-</body>
+<h1>Hello World</h1>
+<div class="planet-system"><div class="planet"></div><div class="moon-orbit"><div class="moon"></div></div></div><audio id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle">🎵 Play Music</button>
+<script>
+const music = document.getElementById('bgMusic');
+const toggleBtn = document.getElementById('musicToggle');
+let isPlaying = false;
+
+// Auto-play on page load
+window.addEventListener('load', () => {
+  music.play().then(() => {
+    isPlaying = true;
+    toggleBtn.textContent = '⏸️ Pause Music';
+  }).catch(() => {
+    // Autoplay blocked by browser, user needs to click
+    console.log('Autoplay blocked, click the button to play');
+  });
+});
+
+toggleBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    music.pause();
+    toggleBtn.textContent = '🎵 Play Music';
+  } else {
+    music.play();
+    toggleBtn.textContent = '⏸️ Pause Music';
+  }
+  isPlaying = !isPlaying;
+});
+</script></body>
 </html>
