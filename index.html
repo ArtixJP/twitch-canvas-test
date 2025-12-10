@@ -44,20 +44,26 @@
             color: #1a1a2e;
         }
         .neon-text {
-            text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00;
-            animation: neon-pulse 2s ease-in-out infinite alternate;
+            text-shadow: 0 0 5px #ff00ff, 0 0 10px #00ffff, 0 0 20px #ffff00, 0 0 40px #ff00ff, 0 0 80px #00ffff;
+            animation: rainbow-pulse 1s ease-in-out infinite alternate;
         }
-        @keyframes neon-pulse {
-            from { text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00; }
-            to { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00, 0 0 120px #00ff00; }
+        @keyframes rainbow-pulse {
+            0% { text-shadow: 0 0 5px #ff00ff, 0 0 10px #00ffff, 0 0 20px #ffff00; }
+            50% { text-shadow: 0 0 10px #00ff00, 0 0 20px #ff6600, 0 0 40px #ff0066; }
+            100% { text-shadow: 0 0 15px #ffff00, 0 0 30px #ff00ff, 0 0 60px #00ffff, 0 0 100px #ff0066; }
         }
         h1 { 
             font-size: 3rem; 
             text-align: center; 
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff, 0 0 40px #ffff00, 0 0 80px #ff0066;
             letter-spacing: 3px;
             z-index: 10;
             transition: all 0.3s ease;
+            animation: sparkle-text 0.5s ease-in-out infinite;
+        }
+        @keyframes sparkle-text {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
         }
         h1:hover, .counter:hover, .click-btn:hover, footer:hover {
             animation: wiggle 0.3s ease-in-out infinite;
@@ -71,20 +77,27 @@
             padding: 1rem 2.5rem;
             font-size: 1.5rem;
             font-weight: bold;
-            background: linear-gradient(145deg, #00ff00, #00aa00);
+            background: linear-gradient(145deg, #ff00ff, #00ffff, #ffff00, #ff6600);
+            background-size: 400% 400%;
+            animation: gradient-shift 2s ease infinite;
             color: #000;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 8px 25px rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.6), 0 8px 25px rgba(0, 255, 255, 0.4);
             transition: all 0.3s ease;
             z-index: 10;
             position: relative;
             text-shadow: none;
         }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
         .click-btn:hover {
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.8), 0 12px 35px rgba(0, 255, 0, 0.6);
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.8), 0 12px 35px rgba(0, 255, 255, 0.6);
         }
         .click-btn:active {
             transform: translateY(1px) scale(0.98);
@@ -92,8 +105,8 @@
         .counter {
             margin-top: 1.5rem;
             font-size: 2rem;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00;
+            color: #ff00ff;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff, 0 0 40px #ffff00;
             z-index: 10;
             transition: all 0.3s ease;
         }
@@ -119,6 +132,67 @@
             90% { opacity: 1; }
             100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
+        .sparkle {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #fff 0%, transparent 70%);
+            border-radius: 50%;
+            animation: sparkle-anim 1.5s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes sparkle-anim {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 0.8; }
+            100% { transform: scale(0) rotate(360deg); opacity: 0; }
+        }
+        .confetti {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            animation: confetti-fall linear forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+        }
+        .firework {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            animation: firework-explode 1s ease-out forwards;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        @keyframes firework-explode {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        .glitter-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 5;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, #fff, transparent),
+                radial-gradient(2px 2px at 40px 70px, #ff00ff, transparent),
+                radial-gradient(2px 2px at 50px 160px, #00ffff, transparent),
+                radial-gradient(2px 2px at 90px 40px, #ffff00, transparent),
+                radial-gradient(2px 2px at 130px 80px, #ff6600, transparent),
+                radial-gradient(2px 2px at 160px 120px, #ff0066, transparent);
+            background-size: 200px 200px;
+            animation: glitter-shift 4s linear infinite;
+        }
+        @keyframes glitter-shift {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-200px); }
+        }
         .sidebar {
             position: fixed;
             left: 0;
@@ -126,8 +200,8 @@
             width: 200px;
             height: 100vh;
             background: rgba(0, 0, 0, 0.9);
-            border-right: 2px solid #00ff00;
-            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            border-right: 2px solid #ff00ff;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3);
             z-index: 100;
             display: flex;
             flex-direction: column;
@@ -135,14 +209,15 @@
             transition: all 0.3s ease;
         }
         .sidebar h2 {
-            color: #00ff00;
+            color: #ff00ff;
             text-align: center;
             margin-bottom: 2rem;
-            text-shadow: 0 0 10px #00ff00;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
             font-size: 1.2rem;
+            animation: rainbow-pulse 1s ease-in-out infinite alternate;
         }
         .sidebar a {
-            color: #00ff00;
+            color: #00ffff;
             text-decoration: none;
             padding: 1rem 1.5rem;
             display: block;
@@ -150,9 +225,9 @@
             border-left: 3px solid transparent;
         }
         .sidebar a:hover {
-            background: rgba(0, 255, 0, 0.1);
-            border-left: 3px solid #00ff00;
-            text-shadow: 0 0 10px #00ff00;
+            background: linear-gradient(90deg, rgba(255, 0, 255, 0.2), rgba(0, 255, 255, 0.1));
+            border-left: 3px solid #ff00ff;
+            text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff;
             animation: wiggle 0.3s ease-in-out infinite;
         }
         footer {
@@ -162,10 +237,10 @@
             right: 0;
             padding: 1rem;
             background: rgba(0, 0, 0, 0.8);
-            border-top: 1px solid #00ff00;
+            border-top: 2px solid #ff00ff;
             text-align: center;
-            color: #00ff00;
-            text-shadow: 0 0 10px #00ff00;
+            color: #00ffff;
+            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
             z-index: 100;
             transition: all 0.3s ease;
         }
@@ -174,26 +249,26 @@
             top: 1rem;
             right: 1rem;
             padding: 0.8rem 1.2rem;
-            background: rgba(0, 0, 0, 0.8);
-            border: 2px solid #00ff00;
+            background: linear-gradient(145deg, #ff00ff, #00ffff);
+            border: 2px solid #ffff00;
             border-radius: 50px;
-            color: #00ff00;
+            color: #000;
             cursor: pointer;
             z-index: 200;
             font-size: 1.2rem;
             transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+            box-shadow: 0 0 15px rgba(255, 0, 255, 0.6), 0 0 30px rgba(0, 255, 255, 0.4);
         }
         .dark-toggle:hover {
-            background: #00ff00;
+            background: linear-gradient(145deg, #ffff00, #ff6600);
             color: #000;
             animation: wiggle 0.3s ease-in-out infinite;
         }
         body.light-mode .dark-toggle {
-            background: #fff;
+            background: linear-gradient(145deg, #ff6600, #ff0066);
             border-color: #0066ff;
-            color: #0066ff;
-            box-shadow: 0 0 15px rgba(0, 100, 255, 0.4);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 100, 0, 0.6);
         }
         .main-content {
             margin-left: 200px;
@@ -205,8 +280,8 @@
             padding-bottom: 60px;
         }</style>
 </head>
-<body><nav class="sidebar">
-<h2>⚡ MENU ⚡</h2>
+<body><div class="glitter-overlay"></div><nav class="sidebar">
+<h2>🎆 MENU 🎇</h2>
 <a href="#">🏠 Home</a>
 <a href="#">👤 Profile</a>
 <a href="#">⚙️ Settings</a>
@@ -216,7 +291,7 @@
 </nav>
 <button class="dark-toggle" id="darkToggle">🌙 / ☀️</button>
 <div class="main-content">
-<h1 class="neon-text">Welcome to the Matrix</h1>
+<h1 class="neon-text">✨ Welcome to the Sparkle Matrix ✨</h1>
 </div>
 <button class="click-btn" id="clickBtn">Click Me</button>
 <div class="counter">Clicks: <span id="count">0</span></div>
@@ -227,11 +302,85 @@
     const btn = document.getElementById('clickBtn');
     const darkToggle = document.getElementById('darkToggle');
     
-    btn.addEventListener('click', () => {
+    // Sparkle creation function
+    function createSparkle(x, y) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        sparkle.style.left = x + 'px';
+        sparkle.style.top = y + 'px';
+        sparkle.style.background = `radial-gradient(circle, hsl(${Math.random() * 360}, 100%, 70%) 0%, transparent 70%)`;
+        document.body.appendChild(sparkle);
+        setTimeout(() => sparkle.remove(), 1500);
+    }
+    
+    // Confetti creation
+    function createConfetti() {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = '-20px';
+        confetti.style.background = `hsl(${Math.random() * 360}, 100%, 60%)`;
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        const shapes = ['50%', '0%', '50% 0 50% 50%'];
+        confetti.style.borderRadius = shapes[Math.floor(Math.random() * shapes.length)];
+        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+    }
+    
+    // Firework explosion
+    function createFirework(x, y) {
+        const colors = ['#ff00ff', '#00ffff', '#ffff00', '#ff6600', '#ff0066', '#00ff00'];
+        const particleCount = 20;
+        
+        for (let i = 0; i < particleCount; i++) {
+            const firework = document.createElement('div');
+            firework.className = 'firework';
+            const angle = (i / particleCount) * Math.PI * 2;
+            const velocity = 100 + Math.random() * 50;
+            const endX = x + Math.cos(angle) * velocity;
+            const endY = y + Math.sin(angle) * velocity;
+            
+            firework.style.left = x + 'px';
+            firework.style.top = y + 'px';
+            firework.style.background = colors[Math.floor(Math.random() * colors.length)];
+            firework.style.boxShadow = `0 0 10px ${firework.style.background}, 0 0 20px ${firework.style.background}`;
+            
+            document.body.appendChild(firework);
+            
+            firework.animate([
+                { left: x + 'px', top: y + 'px', opacity: 1 },
+                { left: endX + 'px', top: endY + 'px', opacity: 0 }
+            ], {
+                duration: 1000,
+                easing: 'ease-out'
+            });
+            
+            setTimeout(() => firework.remove(), 1000);
+        }
+    }
+    
+    // Click button with explosion
+    btn.addEventListener('click', (e) => {
         count++;
         countDisplay.textContent = count;
         countDisplay.style.transform = 'scale(1.3)';
         setTimeout(() => countDisplay.style.transform = 'scale(1)', 150);
+        
+        // Create firework on click
+        createFirework(e.clientX, e.clientY);
+        
+        // Burst of confetti
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => createConfetti(), i * 50);
+        }
+        
+        // Sparkles around button
+        for (let i = 0; i < 10; i++) {
+            const offsetX = (Math.random() - 0.5) * 100;
+            const offsetY = (Math.random() - 0.5) * 100;
+            createSparkle(e.clientX + offsetX, e.clientY + offsetY);
+        }
     });
     
     darkToggle.addEventListener('click', () => {
@@ -249,27 +398,51 @@
         const left = Math.random() * 100;
         const duration = Math.random() * 10 + 8;
         const delay = Math.random() * 5;
-        const hue = Math.random() * 60 + 100;
+        const hue = Math.random() * 360;
         
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
         particle.style.left = left + '%';
         particle.style.animationDuration = duration + 's';
         particle.style.animationDelay = delay + 's';
-        particle.style.background = `hsla(${hue}, 100%, 70%, 0.6)`;
-        particle.style.boxShadow = `0 0 ${size * 2}px hsla(${hue}, 100%, 50%, 0.8)`;
+        particle.style.background = `hsla(${hue}, 100%, 70%, 0.8)`;
+        particle.style.boxShadow = `0 0 ${size * 3}px hsla(${hue}, 100%, 50%, 1)`;
         
         container.appendChild(particle);
         
         setTimeout(() => particle.remove(), (duration + delay) * 1000);
     }
     
-    for (let i = 0; i < 30; i++) {
+    for (let i = 0; i < 50; i++) {
         createParticle();
     }
     
-    setInterval(createParticle, 300);
+    setInterval(createParticle, 200);
+    
+    // Random sparkles everywhere
+    setInterval(() => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * window.innerHeight;
+        createSparkle(x, y);
+    }, 100);
+    
+    // Continuous confetti rain
+    setInterval(createConfetti, 300);
+    
+    // Random fireworks
+    setInterval(() => {
+        const x = Math.random() * window.innerWidth;
+        const y = Math.random() * (window.innerHeight * 0.6);
+        createFirework(x, y);
+    }, 2000);
+    
+    // Mouse trail sparkles
+    document.addEventListener('mousemove', (e) => {
+        if (Math.random() > 0.7) {
+            createSparkle(e.clientX, e.clientY);
+        }
+    });
 </script><footer>
-<p>© 2024 Matrix Industries | All rights reserved | <span class="neon-text">Enter the Code</span></p>
+<p>© 2024 Matrix Industries | All rights reserved | <span class="neon-text">✨ Enter the Sparkle Zone ✨</span></p>
 </footer></body>
 </html>
