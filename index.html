@@ -168,5 +168,33 @@
         star.style.animationDuration = (Math.random() * 2 + 1) + 's';
         starfield.appendChild(star);
     }
+</script><audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle">🎵 Pause Music</button>
+<script>
+  const music = document.getElementById('bgMusic');
+  const toggleBtn = document.getElementById('musicToggle');
+  
+  // Try to autoplay, handle browser restrictions
+  music.volume = 0.5;
+  
+  toggleBtn.addEventListener('click', () => {
+    if (music.paused) {
+      music.play();
+      toggleBtn.textContent = '🎵 Pause Music';
+      toggleBtn.classList.remove('paused');
+    } else {
+      music.pause();
+      toggleBtn.textContent = '🎶 Play Music';
+      toggleBtn.classList.add('paused');
+    }
+  });
+  
+  // Handle autoplay restrictions
+  music.play().catch(() => {
+    toggleBtn.textContent = '🎶 Play Music';
+    toggleBtn.classList.add('paused');
+  });
 </script></body>
 </html>
