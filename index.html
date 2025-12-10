@@ -381,10 +381,44 @@ body {
 <div class="doggy-orbit"><div class="doggy">🐕</div></div>
 </div>
 <p style="text-align: center; color: #888;">Watch the dog chase the cat around the planet!</p>
-<div id="elephant-container">
-<div id="elephant" style="font-size: 80px; image-rendering: pixelated; animation: pixelBounce 0.5s steps(4) infinite; filter: drop-shadow(0 4px 0 #000) drop-shadow(4px 0 0 #000) drop-shadow(-4px 0 0 #000) drop-shadow(0 -4px 0 #000); position: relative;"><div style="position: relative; display: inline-block;"><span style="display: block; animation: wiggleEars 0.3s steps(2) infinite;">🐘</span><div class="pixel-sparkles" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 20px; animation: sparkleRotate 1s steps(8) infinite;">✨</div></div></div>
-<div id="water-spray" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 200px; height: 200px;"></div><div style="display: flex; gap: 10px; margin-top: 15px; font-family: 'Courier New', monospace; font-size: 0.9rem; color: #9333ea;"><span style="animation: blink 1s steps(2) infinite;">▶</span><span>PRESS F TO PAY RESPECTS</span><span style="animation: blink 1s steps(2) infinite; animation-delay: 0.5s;">◀</span></div><style>@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }</style>
+<div id="elephant-container" style="display: flex; flex-direction: column; align-items: center; position: relative; padding: 50px;">
+<div class="art-frame" style="position: relative; background: linear-gradient(145deg, #8B4513 0%, #654321 20%, #8B4513 40%, #A0522D 60%, #8B4513 80%, #654321 100%); padding: 25px; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.3);">
+<div class="inner-frame" style="background: linear-gradient(145deg, #DAA520 0%, #B8860B 50%, #DAA520 100%); padding: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
+<div class="canvas-bg" style="background: linear-gradient(180deg, #F5F5DC 0%, #FAEBD7 30%, #FFE4C4 70%, #F5DEB3 100%); padding: 40px 60px; position: relative; box-shadow: inset 0 0 30px rgba(139,69,19,0.1);">
+<div 2000="" class="canvas-texture" height="4" http:="" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/svg+xml,&lt;svg xmlns=" svg"="" width="4" www.w3.org=""><rect fill="%23f5f5dc" height="4" width="4"></rect><rect fill="%23e8e8d0" height="1" width="1"></rect>'); opacity: 0.3;"&gt;</div>
+<div id="elephant" style="font-size: 100px; position: relative; z-index: 1; filter: drop-shadow(2px 2px 0 #654321) drop-shadow(-1px -1px 0 #8B4513); animation: gentleFloat 4s ease-in-out infinite;">
+<div style="position: relative; display: inline-block;">
+<span style="display: block; background: linear-gradient(180deg, #808080 0%, #696969 50%, #505050 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐘</span>
 </div>
+</div>
+<div class="artist-signature" style="position: absolute; bottom: 10px; right: 15px; font-family: 'Brush Script MT', cursive, serif; font-size: 14px; color: #654321; opacity: 0.7; font-style: italic;">Twitch Community, 2024</div>
+</div>
+</div>
+</div>
+<div class="museum-plaque" style="margin-top: 20px; background: linear-gradient(180deg, #B8860B 0%, #8B7355 100%); padding: 15px 30px; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); text-align: center;">
+<h3 style="margin: 0 0 5px 0; font-family: 'Times New Roman', serif; font-size: 1.1rem; color: #1a1a2e; letter-spacing: 2px;">"THE MAJESTIC ELEPHANT"</h3>
+<p style="margin: 0; font-family: 'Times New Roman', serif; font-size: 0.8rem; color: #2a2a3e; font-style: italic;">Digital on Canvas • Interactive Installation</p>
+</div>
+<div id="water-spray" style="position: absolute; top: 50px; left: 50%; transform: translateX(-50%); width: 200px; height: 200px; pointer-events: none;"></div>
+<div class="spotlight" style="position: absolute; top: -50px; left: 50%; transform: translateX(-50%); width: 300px; height: 400px; background: radial-gradient(ellipse at top, rgba(255,248,220,0.15) 0%, transparent 70%); pointer-events: none;"></div>
+</div>
+<style>
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-5px) rotate(1deg); }
+}
+.art-frame::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 2px solid rgba(218,165,32,0.3);
+  border-radius: 4px;
+  pointer-events: none;
+}
+</style>
 </section>
 <!-- GAMES SECTION -->
 <section class="section" id="section-games">
