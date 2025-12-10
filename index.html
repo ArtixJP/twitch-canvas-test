@@ -5,46 +5,86 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+<style>* { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: system-ui, sans-serif; 
+            font-family: 'Courier New', monospace; 
             display: flex; 
             flex-direction: column;
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1e3a8a 0%, #7c3aed 50%, #a855f7 100%);
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
             position: relative;
+            transition: all 0.5s ease;
+        }
+        body.light-mode {
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 50%, #d0d0d0 100%);
+            color: #1a1a2e;
+        }
+        body.light-mode h1 {
+            color: #1a1a2e;
+            text-shadow: 0 0 10px rgba(0, 100, 255, 0.5), 0 0 20px rgba(0, 100, 255, 0.3);
+        }
+        body.light-mode .counter {
+            color: #0066ff;
+            text-shadow: 0 0 10px rgba(0, 100, 255, 0.5);
+        }
+        body.light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.95);
+            border-right: 2px solid #0066ff;
+        }
+        body.light-mode .sidebar a {
+            color: #1a1a2e;
+        }
+        body.light-mode footer {
+            background: rgba(255, 255, 255, 0.9);
+            color: #1a1a2e;
+        }
+        .neon-text {
+            text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00;
+            animation: neon-pulse 2s ease-in-out infinite alternate;
+        }
+        @keyframes neon-pulse {
+            from { text-shadow: 0 0 5px #00ff00, 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00; }
+            to { text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00, 0 0 120px #00ff00; }
         }
         h1 { 
             font-size: 3rem; 
             text-align: center; 
-            text-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00, 0 0 80px #00ff00;
             letter-spacing: 3px;
             z-index: 10;
+            transition: all 0.3s ease;
+        }
+        h1:hover, .counter:hover, .click-btn:hover, footer:hover {
+            animation: wiggle 0.3s ease-in-out infinite;
+        }
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
         }
         .click-btn {
             margin-top: 2rem;
             padding: 1rem 2.5rem;
             font-size: 1.5rem;
             font-weight: bold;
-            background: linear-gradient(145deg, #dc2626, #991b1b);
-            color: white;
+            background: linear-gradient(145deg, #00ff00, #00aa00);
+            color: #000;
             border: none;
             border-radius: 12px;
             cursor: pointer;
-            box-shadow: 0 8px 25px rgba(220, 38, 38, 0.4);
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.6), 0 8px 25px rgba(0, 255, 0, 0.4);
             transition: all 0.3s ease;
             z-index: 10;
             position: relative;
+            text-shadow: none;
         }
         .click-btn:hover {
             transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 12px 35px rgba(220, 38, 38, 0.6);
+            box-shadow: 0 0 40px rgba(0, 255, 0, 0.8), 0 12px 35px rgba(0, 255, 0, 0.6);
         }
         .click-btn:active {
             transform: translateY(1px) scale(0.98);
@@ -53,8 +93,9 @@
             margin-top: 1.5rem;
             font-size: 2rem;
             color: #00ff00;
-            text-shadow: 0 0 15px rgba(0, 255, 0, 0.8);
+            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00, 0 0 40px #00ff00;
             z-index: 10;
+            transition: all 0.3s ease;
         }
         #particles-container {
             position: fixed;
@@ -68,30 +109,115 @@
         }
         .particle {
             position: absolute;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(0, 255, 0, 0.6);
             border-radius: 50%;
             animation: float linear infinite;
         }
         @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(-100vh) rotate(720deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
         }
-    </style>
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 200px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            border-right: 2px solid #00ff00;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.3);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            padding-top: 2rem;
+            transition: all 0.3s ease;
+        }
+        .sidebar h2 {
+            color: #00ff00;
+            text-align: center;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #00ff00;
+            font-size: 1.2rem;
+        }
+        .sidebar a {
+            color: #00ff00;
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            display: block;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+        .sidebar a:hover {
+            background: rgba(0, 255, 0, 0.1);
+            border-left: 3px solid #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            animation: wiggle 0.3s ease-in-out infinite;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            left: 200px;
+            right: 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-top: 1px solid #00ff00;
+            text-align: center;
+            color: #00ff00;
+            text-shadow: 0 0 10px #00ff00;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        .dark-toggle {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            padding: 0.8rem 1.2rem;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff00;
+            border-radius: 50px;
+            color: #00ff00;
+            cursor: pointer;
+            z-index: 200;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
+        }
+        .dark-toggle:hover {
+            background: #00ff00;
+            color: #000;
+            animation: wiggle 0.3s ease-in-out infinite;
+        }
+        body.light-mode .dark-toggle {
+            background: #fff;
+            border-color: #0066ff;
+            color: #0066ff;
+            box-shadow: 0 0 15px rgba(0, 100, 255, 0.4);
+        }
+        .main-content {
+            margin-left: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }</style>
 </head>
-<body>
-<h1>Welcome to the Matrix</h1>
+<body><nav class="sidebar">
+<h2>⚡ MENU ⚡</h2>
+<a href="#">🏠 Home</a>
+<a href="#">👤 Profile</a>
+<a href="#">⚙️ Settings</a>
+<a href="#">📊 Stats</a>
+<a href="#">💬 Chat</a>
+<a href="#">🎮 Games</a>
+</nav>
+<button class="dark-toggle" id="darkToggle">🌙 / ☀️</button>
+<div class="main-content">
+<h1 class="neon-text">Welcome to the Matrix</h1>
+</div>
 <button class="click-btn" id="clickBtn">Click Me</button>
 <div class="counter">Clicks: <span id="count">0</span></div>
 <div id="particles-container"></div>
@@ -99,12 +225,17 @@
     let count = 0;
     const countDisplay = document.getElementById('count');
     const btn = document.getElementById('clickBtn');
+    const darkToggle = document.getElementById('darkToggle');
     
     btn.addEventListener('click', () => {
         count++;
         countDisplay.textContent = count;
         countDisplay.style.transform = 'scale(1.3)';
         setTimeout(() => countDisplay.style.transform = 'scale(1)', 150);
+    });
+    
+    darkToggle.addEventListener('click', () => {
+        document.body.classList.toggle('light-mode');
     });
     
     // Create floating particles
@@ -118,7 +249,7 @@
         const left = Math.random() * 100;
         const duration = Math.random() * 10 + 8;
         const delay = Math.random() * 5;
-        const hue = Math.random() * 60 + 100; // Green-ish Matrix colors
+        const hue = Math.random() * 60 + 100;
         
         particle.style.width = size + 'px';
         particle.style.height = size + 'px';
@@ -133,12 +264,12 @@
         setTimeout(() => particle.remove(), (duration + delay) * 1000);
     }
     
-    // Initial particles
     for (let i = 0; i < 30; i++) {
         createParticle();
     }
     
-    // Keep creating particles
     setInterval(createParticle, 300);
-</script></body>
+</script><footer>
+<p>© 2024 Matrix Industries | All rights reserved | <span class="neon-text">Enter the Code</span></p>
+</footer></body>
 </html>
