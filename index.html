@@ -5,8 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>
-* {
+<style>* {
   box-sizing: border-box;
 }
 
@@ -218,6 +217,27 @@ body {
   filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.6));
 }
 
+/* Pixel Art Elephant Animations */
+@keyframes pixelBounce {
+  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
+  25% { transform: translateY(-20px) scaleY(1.1) scaleX(0.95); }
+  50% { transform: translateY(-30px) scaleY(1.05) scaleX(1); }
+  75% { transform: translateY(-15px) scaleY(0.95) scaleX(1.05); }
+}
+
+@keyframes wiggleEars {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  50% { transform: rotate(3deg) scale(1.02); }
+}
+
+@keyframes sparkleRotate {
+  0% { transform: translateX(-50%) rotate(0deg) scale(1); opacity: 1; }
+  25% { transform: translateX(-50%) rotate(90deg) scale(1.2); opacity: 0.8; }
+  50% { transform: translateX(-50%) rotate(180deg) scale(1); opacity: 1; }
+  75% { transform: translateX(-50%) rotate(270deg) scale(0.8); opacity: 0.8; }
+  100% { transform: translateX(-50%) rotate(360deg) scale(1); opacity: 1; }
+}
+
 @keyframes elephantBounce {
   0%, 100% { transform: translateY(0) rotate(-5deg); }
   50% { transform: translateY(-10px) rotate(5deg); }
@@ -239,6 +259,7 @@ body {
   font-size: 24px;
   animation: waterDrop 1.5s ease-out infinite;
   pointer-events: none;
+  image-rendering: pixelated;
 }
 
 #elephant-container {
@@ -246,6 +267,26 @@ body {
   flex-direction: column;
   align-items: center;
   position: relative;
+  background: linear-gradient(180deg, transparent 0%, rgba(147, 51, 234, 0.1) 50%, rgba(236, 72, 153, 0.1) 100%);
+  padding: 30px;
+  border-radius: 20px;
+  border: 3px dashed rgba(147, 51, 234, 0.4);
+}
+
+#elephant-container::before {
+  content: '🎮 PIXEL ZONE 🎮';
+  position: absolute;
+  top: -15px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, #9333ea, #ec4899);
+  padding: 5px 20px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+  white-space: nowrap;
 }
 
 /* Games Section */
@@ -308,8 +349,7 @@ body {
 .game-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(74, 222, 128, 0.6);
-}
-</style>
+}</style>
 </head>
 <body>
 <!-- Navigation Menu -->
@@ -342,8 +382,8 @@ body {
 </div>
 <p style="text-align: center; color: #888;">Watch the dog chase the cat around the planet!</p>
 <div id="elephant-container">
-<div id="elephant" style="font-size: 120px; animation: elephantBounce 2s ease-in-out infinite; filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));">🐘</div>
-<div id="water-spray" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 200px; height: 200px;"></div>
+<div id="elephant" style="font-size: 80px; image-rendering: pixelated; animation: pixelBounce 0.5s steps(4) infinite; filter: drop-shadow(0 4px 0 #000) drop-shadow(4px 0 0 #000) drop-shadow(-4px 0 0 #000) drop-shadow(0 -4px 0 #000); position: relative;"><div style="position: relative; display: inline-block;"><span style="display: block; animation: wiggleEars 0.3s steps(2) infinite;">🐘</span><div class="pixel-sparkles" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 20px; animation: sparkleRotate 1s steps(8) infinite;">✨</div></div></div>
+<div id="water-spray" style="position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 200px; height: 200px;"></div><div style="display: flex; gap: 10px; margin-top: 15px; font-family: 'Courier New', monospace; font-size: 0.9rem; color: #9333ea;"><span style="animation: blink 1s steps(2) infinite;">▶</span><span>PRESS F TO PAY RESPECTS</span><span style="animation: blink 1s steps(2) infinite; animation-delay: 0.5s;">◀</span></div><style>@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }</style>
 </div>
 </section>
 <!-- GAMES SECTION -->
