@@ -74,6 +74,15 @@
             animation: orbit 8s linear infinite;
         }
         
+        .orbit-kitty {
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            border: 1px dashed rgba(255,182,193,0.3);
+            border-radius: 50%;
+            animation: orbit-reverse 12s linear infinite;
+        }
+        
         .moon {
             position: absolute;
             top: -20px;
@@ -111,9 +120,40 @@
             border-radius: 50%;
         }
         
+        .kitty {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 35px;
+            animation: kitty-float 1s ease-in-out infinite, counter-rotate 12s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(255,182,193,0.6));
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .kitty:hover {
+            transform: translateX(-50%) scale(1.3);
+        }
+        
         @keyframes orbit {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
+        }
+        
+        @keyframes orbit-reverse {
+            from { transform: rotate(360deg); }
+            to { transform: rotate(0deg); }
+        }
+        
+        @keyframes counter-rotate {
+            from { transform: translateX(-50%) rotate(-360deg); }
+            to { transform: translateX(-50%) rotate(0deg); }
+        }
+        
+        @keyframes kitty-float {
+            0%, 100% { margin-top: 0; }
+            50% { margin-top: -5px; }
         }
         
         @keyframes float {
@@ -152,7 +192,7 @@
 <div class="orbit">
 <div class="moon"></div>
 </div>
-</div>
+<div class="orbit-kitty"><div class="kitty" title="Space Kitty! 🐱">🐱</div></div></div>
 <div class="stars">
 <div class="star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
 <div class="star" style="top: 20%; left: 80%; animation-delay: 0.5s;"></div>
