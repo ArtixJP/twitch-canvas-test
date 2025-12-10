@@ -92,10 +92,15 @@
             border-radius: 20px;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        .pokemon.ko {
+            opacity: 0.3;
+            transform: scale(0.8);
+            filter: grayscale(1);
         }
         .pokemon-sprite {
             font-size: 80px;
-            animation: pokemonBounce 0.5s ease-in-out infinite;
         }
         .pikachu .pokemon-sprite {
             animation: pikachuAttack 2s ease-in-out infinite;
@@ -103,6 +108,9 @@
         .charizard .pokemon-sprite {
             animation: charizardAttack 2s ease-in-out infinite;
             animation-delay: 1s;
+        }
+        .pokemon.ko .pokemon-sprite {
+            animation: none !important;
         }
         .pokemon-name {
             font-weight: bold;
@@ -124,10 +132,12 @@
         .hp-fill {
             height: 100%;
             border-radius: 4px;
-            animation: hpDamage 3s ease-in-out infinite;
+            transition: width 0.3s ease, background 0.3s ease;
         }
         .pikachu-hp { background: linear-gradient(90deg, #4caf50, #8bc34a); }
         .charizard-hp { background: linear-gradient(90deg, #4caf50, #8bc34a); }
+        .hp-fill.low { background: linear-gradient(90deg, #f44336, #ff5722) !important; }
+        .hp-fill.medium { background: linear-gradient(90deg, #ff9800, #ffc107) !important; }
         .battle-effects {
             position: absolute;
             left: 50%;
@@ -167,6 +177,18 @@
             animation: fightText 3s ease-in-out infinite;
             z-index: 100;
             letter-spacing: 10px;
+            pointer-events: none;
+        }
+        .battle-text.ko-text {
+            color: #00ff00;
+            text-shadow: 0 0 20px #00ff00, 0 0 40px #00aa00, 3px 3px 0 #000;
+            animation: koText 2s ease-out forwards;
+        }
+        @keyframes koText {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            20% { opacity: 1; transform: translate(-50%, -50%) scale(1.5); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(2); }
         }
         @keyframes pikachuAttack {
             0%, 40%, 100% { transform: translateX(0) rotate(0deg); }
@@ -191,11 +213,6 @@
             50% { opacity: 1; transform: scale(2); }
             60% { opacity: 0; transform: scale(3); }
         }
-        @keyframes hpDamage {
-            0%, 45% { width: 100%; }
-            50%, 95% { width: 70%; }
-            100% { width: 100%; }
-        }
         @keyframes fightText {
             0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
             10%, 40% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -215,7 +232,7 @@
 </head>
 <body>
 <h1>🌍 Earth's Epic Pokemon Battle! ⚡🔥</h1>
-<div class="stars" id="stars"></div><div class="planet-container"><div class="planet"></div><div class="atmosphere"></div><div class="moon"></div></div><div class="pokemon-battle"><div class="pokemon pikachu"><div class="pokemon-sprite">⚡</div><div class="pokemon-name">Pikachu</div><div class="hp-bar"><div class="hp-fill pikachu-hp"></div></div></div><div class="battle-effects"><div class="lightning-bolt">⚡</div><div class="fire-blast">🔥</div><div class="impact">💥</div></div><div class="pokemon charizard"><div class="pokemon-sprite">🔥</div><div class="pokemon-name">Charizard</div><div class="hp-bar"><div class="hp-fill charizard-hp"></div></div></div></div><div class="battle-text">FIGHT!</div><script>
+<div class="stars" id="stars"></div><div class="planet-container"><div class="planet"></div><div class="atmosphere"></div><div class="moon"></div></div><div class="scoreboard" style="display: flex; justify-content: center; gap: 40px; font-size: 1.5rem; font-weight: bold; margin-bottom: 20px; z-index: 50;"><div style="color: #ffcb05; text-shadow: 0 0 10px #ffcb05;">⚡ Pikachu: <span id="pikachu-score">0</span> KOs</div><div style="color: #ff6b35; text-shadow: 0 0 10px #ff6b35;">🔥 Charizard: <span id="charizard-score">0</span> KOs</div></div><div class="pokemon-battle"><div class="pokemon pikachu"><div class="pokemon-sprite">⚡</div><div class="pokemon-name">Pikachu</div><div class="hp-bar"><div class="hp-fill pikachu-hp" id="pikachu-hp-bar" style="width: 100%;"></div></div></div><div class="battle-effects"><div class="lightning-bolt">⚡</div><div class="fire-blast">🔥</div><div class="impact">💥</div></div><div class="pokemon charizard"><div class="pokemon-sprite">🔥</div><div class="pokemon-name">Charizard</div><div class="hp-bar"><div class="hp-fill charizard-hp" id="charizard-hp-bar" style="width: 100%;"></div></div></div></div><div class="battle-text">FIGHT!</div><script>
     // Generate random stars
     const starsContainer = document.getElementById('stars');
     for(let i = 0; i < 100; i++) {
@@ -243,6 +260,112 @@ setInterval(() => {
         document.body.style.animation = 'shake 0.3s ease-in-out';
     }, 10);
 }, 2000);
+
+// Add shake animation
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = '@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }';
+document.head.appendChild(shakeStyle);
+</script><script>
+// Battle System with Score Tracking
+const battleState = {
+    pikachuHP: 100,
+    charizardHP: 100,
+    pikachuScore: 0,
+    charizardScore: 0,
+    battlePaused: false
+};
+
+const pikachuHPBar = document.getElementById('pikachu-hp-bar');
+const charizardHPBar = document.getElementById('charizard-hp-bar');
+const pikachuScoreEl = document.getElementById('pikachu-score');
+const charizardScoreEl = document.getElementById('charizard-score');
+const battleText = document.querySelector('.battle-text');
+const pikachuEl = document.querySelector('.pikachu');
+const charizardEl = document.querySelector('.charizard');
+
+function updateHPBar(bar, hp) {
+    bar.style.width = hp + '%';
+    bar.classList.remove('low', 'medium');
+    if (hp <= 25) bar.classList.add('low');
+    else if (hp <= 50) bar.classList.add('medium');
+}
+
+function showBattleText(text, isKO = false) {
+    battleText.textContent = text;
+    if (isKO) {
+        battleText.classList.add('ko-text');
+        setTimeout(() => battleText.classList.remove('ko-text'), 2000);
+    }
+}
+
+function handleKO(winner) {
+    battleState.battlePaused = true;
+    
+    if (winner === 'pikachu') {
+        battleState.pikachuScore++;
+        pikachuScoreEl.textContent = battleState.pikachuScore;
+        charizardEl.classList.add('ko');
+        showBattleText('CHARIZARD KO!', true);
+    } else {
+        battleState.charizardScore++;
+        charizardScoreEl.textContent = battleState.charizardScore;
+        pikachuEl.classList.add('ko');
+        showBattleText('PIKACHU KO!', true);
+    }
+    
+    // Reset after 3 seconds
+    setTimeout(() => {
+        battleState.pikachuHP = 100;
+        battleState.charizardHP = 100;
+        updateHPBar(pikachuHPBar, 100);
+        updateHPBar(charizardHPBar, 100);
+        pikachuEl.classList.remove('ko');
+        charizardEl.classList.remove('ko');
+        battleState.battlePaused = false;
+        showBattleText('ROUND ' + (battleState.pikachuScore + battleState.charizardScore + 1) + '!');
+    }, 3000);
+}
+
+function doBattle() {
+    if (battleState.battlePaused) return;
+    
+    // Random attacker
+    const pikachuAttacks = Math.random() > 0.5;
+    const damage = Math.floor(Math.random() * 15) + 5;
+    const attacks = ['THUNDERBOLT!', 'QUICK ATTACK!', 'IRON TAIL!'];
+    const fireAttacks = ['FLAMETHROWER!', 'FIRE BLAST!', 'DRAGON CLAW!'];
+    
+    if (pikachuAttacks) {
+        battleState.charizardHP = Math.max(0, battleState.charizardHP - damage);
+        updateHPBar(charizardHPBar, battleState.charizardHP);
+        showBattleText(attacks[Math.floor(Math.random() * attacks.length)]);
+        
+        if (battleState.charizardHP <= 0) {
+            handleKO('pikachu');
+        }
+    } else {
+        battleState.pikachuHP = Math.max(0, battleState.pikachuHP - damage);
+        updateHPBar(pikachuHPBar, battleState.pikachuHP);
+        showBattleText(fireAttacks[Math.floor(Math.random() * fireAttacks.length)]);
+        
+        if (battleState.pikachuHP <= 0) {
+            handleKO('charizard');
+        }
+    }
+}
+
+// Battle loop
+setInterval(doBattle, 1500);
+
+// Screen shake on attacks
+setInterval(() => {
+    if (!battleState.battlePaused) {
+        document.body.style.animation = 'none';
+        setTimeout(() => {
+            document.body.style.animation = 'shake 0.3s ease-in-out';
+        }, 10);
+    }
+}, 1500);
 
 // Add shake animation
 const shakeStyle = document.createElement('style');
