@@ -9,14 +9,19 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body { 
-  font-family: system-ui, sans-serif; 
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
   display: flex; 
   flex-direction: column;
   min-height: 100vh; 
   margin: 0;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
   color: white;
+  overflow-x: hidden;
 }
 
 /* Navigation */
@@ -29,8 +34,9 @@ body {
   justify-content: center;
   gap: 10px;
   padding: 15px 20px;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   z-index: 500;
   border-bottom: 1px solid rgba(255,255,255,0.1);
 }
@@ -45,11 +51,16 @@ body {
   cursor: pointer;
   transition: all 0.3s ease;
   font-weight: 500;
+  user-select: none;
 }
 
 .nav-btn:hover {
   background: rgba(255,255,255,0.2);
   transform: translateY(-2px);
+}
+
+.nav-btn:active {
+  transform: translateY(0);
 }
 
 .nav-btn.active {
@@ -65,7 +76,7 @@ body {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  padding: 80px 20px 20px;
+  padding: 100px 20px 40px;
   gap: 30px;
 }
 
@@ -77,6 +88,7 @@ body {
   font-size: 2.5rem;
   text-align: center;
   margin-bottom: 20px;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 /* Space Section */
@@ -87,6 +99,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  filter: drop-shadow(-20px -15px 30px rgba(255, 200, 100, 0.3));
 }
 
 .planet {
@@ -168,18 +181,7 @@ body {
   pointer-events: none;
 }
 
-.planet-system {
-  filter: drop-shadow(-20px -15px 30px rgba(255, 200, 100, 0.3));
-}
-
 /* Animals Section */
-.animals-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 30px;
-}
-
 .kitty-orbit {
   position: absolute;
   width: 200px;
@@ -217,60 +219,17 @@ body {
   filter: drop-shadow(0 0 8px rgba(255, 200, 100, 0.6));
 }
 
-/* Pixel Art Elephant Animations */
-@keyframes pixelBounce {
-  0%, 100% { transform: translateY(0) scaleY(1) scaleX(1); }
-  25% { transform: translateY(-20px) scaleY(1.1) scaleX(0.95); }
-  50% { transform: translateY(-30px) scaleY(1.05) scaleX(1); }
-  75% { transform: translateY(-15px) scaleY(0.95) scaleX(1.05); }
-}
-
-@keyframes wiggleEars {
-  0%, 100% { transform: rotate(-3deg) scale(1); }
-  50% { transform: rotate(3deg) scale(1.02); }
-}
-
-@keyframes sparkleRotate {
-  0% { transform: translateX(-50%) rotate(0deg) scale(1); opacity: 1; }
-  25% { transform: translateX(-50%) rotate(90deg) scale(1.2); opacity: 0.8; }
-  50% { transform: translateX(-50%) rotate(180deg) scale(1); opacity: 1; }
-  75% { transform: translateX(-50%) rotate(270deg) scale(0.8); opacity: 0.8; }
-  100% { transform: translateX(-50%) rotate(360deg) scale(1); opacity: 1; }
-}
-
-@keyframes elephantBounce {
-  0%, 100% { transform: translateY(0) rotate(-5deg); }
-  50% { transform: translateY(-10px) rotate(5deg); }
-}
-
-@keyframes waterDrop {
-  0% {
-    transform: translate(-50%, 0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(var(--tx), var(--ty)) scale(0.3);
-    opacity: 0;
-  }
-}
-
-.water-droplet {
-  position: absolute;
-  font-size: 24px;
-  animation: waterDrop 1.5s ease-out infinite;
-  pointer-events: none;
-  image-rendering: pixelated;
-}
-
+/* Elephant Container */
 #elephant-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   position: relative;
   background: linear-gradient(180deg, transparent 0%, rgba(147, 51, 234, 0.1) 50%, rgba(236, 72, 153, 0.1) 100%);
-  padding: 30px;
+  padding: 50px 30px 30px;
   border-radius: 20px;
   border: 3px dashed rgba(147, 51, 234, 0.4);
+  margin-top: 30px;
 }
 
 #elephant-container::before {
@@ -289,48 +248,69 @@ body {
   white-space: nowrap;
 }
 
+.art-frame {
+  position: relative;
+  background: linear-gradient(145deg, #8B4513 0%, #654321 20%, #8B4513 40%, #A0522D 60%, #8B4513 80%, #654321 100%);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.3);
+}
+
+.art-frame::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 2px solid rgba(218,165,32,0.3);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.inner-frame {
+  background: linear-gradient(145deg, #DAA520 0%, #B8860B 50%, #DAA520 100%);
+  padding: 8px;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.canvas-bg {
+  background: linear-gradient(180deg, #F5F5DC 0%, #FAEBD7 30%, #FFE4C4 70%, #F5DEB3 100%);
+  padding: 40px 60px;
+  position: relative;
+  box-shadow: inset 0 0 30px rgba(139,69,19,0.1);
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-5px) rotate(1deg); }
+}
+
+/* Water Droplets */
+@keyframes waterDrop {
+  0% {
+    transform: translate(-50%, 0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(var(--tx), var(--ty)) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.water-droplet {
+  position: absolute;
+  font-size: 24px;
+  animation: waterDrop 1.5s ease-out infinite;
+  pointer-events: none;
+}
+
 /* Games Section */
 .games-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 20px;
-}
-
-#game-modal {
-  display: none;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.85);
-  z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  flex-direction: column;
-}
-
-/* Music Toggle */
-#musicToggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  padding: 12px 24px;
-  font-size: 1.1rem;
-  background: rgba(255,255,255,0.15);
-  border: 2px solid rgba(255,255,255,0.3);
-  border-radius: 30px;
-  color: white;
-  cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.3s ease;
-  z-index: 400;
-}
-
-#musicToggle:hover {
-  background: rgba(255,255,255,0.25);
-  transform: scale(1.05);
 }
 
 .game-btn {
@@ -349,6 +329,93 @@ body {
 .game-btn:hover {
   transform: scale(1.05);
   box-shadow: 0 6px 20px rgba(74, 222, 128, 0.6);
+}
+
+.game-btn:active {
+  transform: scale(0.98);
+}
+
+/* Game Modal */
+#game-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 20px;
+}
+
+#game-modal.active {
+  display: flex;
+}
+
+#snake-canvas {
+  border: 3px solid #4ade80;
+  border-radius: 10px;
+  background: #1a1a2e;
+  max-width: 100%;
+}
+
+/* Music Toggle */
+#musicToggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  background: rgba(255,255,255,0.15);
+  border: 2px solid rgba(255,255,255,0.3);
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  z-index: 400;
+}
+
+#musicToggle:hover {
+  background: rgba(255,255,255,0.25);
+  transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .nav-menu {
+    flex-wrap: wrap;
+    padding: 10px;
+  }
+  
+  .nav-btn {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .planet-system {
+    transform: scale(0.8);
+  }
+  
+  #elephant-container {
+    padding: 40px 15px 20px;
+  }
+  
+  .canvas-bg {
+    padding: 20px 30px;
+  }
+  
+  #elephant {
+    font-size: 70px !important;
+  }
 }</style>
 </head>
 <body>
@@ -374,7 +441,7 @@ body {
 <!-- ANIMALS SECTION -->
 <section class="section" id="section-animals">
 <h1 class="section-title">🐾 Animal Kingdom</h1>
-<div id="scoreboard" style="font-size: 1.5rem; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px);">🐕 Dog Score: <span id="dogScore">0</span></div>
+<div id="scoreboard" style="font-size: 1.5rem; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); text-align: center;">🐕 Dog Score: <span id="dogScore" style="font-weight: bold; color: #4ade80;">0</span></div>
 <div class="planet-system" id="chase-arena">
 <div class="planet" id="planet-animals"></div>
 <div class="kitty-orbit"><div class="kitty">🐱</div></div>
@@ -385,7 +452,7 @@ body {
 <div class="art-frame" style="position: relative; background: linear-gradient(145deg, #8B4513 0%, #654321 20%, #8B4513 40%, #A0522D 60%, #8B4513 80%, #654321 100%); padding: 25px; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,0.5), inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.3);">
 <div class="inner-frame" style="background: linear-gradient(145deg, #DAA520 0%, #B8860B 50%, #DAA520 100%); padding: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);">
 <div class="canvas-bg" style="background: linear-gradient(180deg, #F5F5DC 0%, #FAEBD7 30%, #FFE4C4 70%, #F5DEB3 100%); padding: 40px 60px; position: relative; box-shadow: inset 0 0 30px rgba(139,69,19,0.1);">
-<div 2000="" class="canvas-texture" height="4" http:="" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-image: url('data:image/svg+xml,&lt;svg xmlns=" svg"="" width="4" www.w3.org=""><rect fill="%23f5f5dc" height="4" width="4"></rect><rect fill="%23e8e8d0" height="1" width="1"></rect>'); opacity: 0.3;"&gt;</div>
+<div class="canvas-texture" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(139,69,19,0.03) 2px, rgba(139,69,19,0.03) 4px), repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(139,69,19,0.03) 2px, rgba(139,69,19,0.03) 4px); opacity: 0.5;"></div>
 <div id="elephant" style="font-size: 100px; position: relative; z-index: 1; filter: drop-shadow(2px 2px 0 #654321) drop-shadow(-1px -1px 0 #8B4513); animation: gentleFloat 4s ease-in-out infinite;">
 <div style="position: relative; display: inline-block;">
 <span style="display: block; background: linear-gradient(180deg, #808080 0%, #696969 50%, #505050 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">🐘</span>
@@ -432,15 +499,15 @@ body {
 <div id="game-modal">
 <div style="text-align: center; margin-bottom: 20px;">
 <h2 style="color: #4ade80; font-size: 2rem; margin-bottom: 10px;">🐍 Snake Game</h2>
-<p style="color: #888; font-size: 0.9rem;">Use Arrow Keys or WASD to move</p>
-<p id="snake-score" style="color: #fbbf24; font-size: 1.5rem; margin-top: 10px;">Score: 0</p>
+<p style="color: #aaa; font-size: 1rem; margin-bottom: 5px;">Use Arrow Keys or WASD to move</p>
+<p id="snake-score" style="color: #fbbf24; font-size: 1.5rem; margin-top: 10px; font-weight: bold;">Score: 0</p>
 </div>
 <canvas height="400" id="snake-canvas" style="border: 3px solid #4ade80; border-radius: 10px; background: #1a1a2e;" width="400"></canvas>
-<div style="margin-top: 20px; display: flex; gap: 15px;">
+<div style="margin-top: 20px; display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
 <button id="start-snake" style="padding: 12px 30px; font-size: 1.1rem; background: #4ade80; border: none; border-radius: 25px; color: #1a1a2e; cursor: pointer; font-weight: bold; transition: all 0.3s;">▶ Start Game</button>
 <button id="close-game" style="padding: 12px 30px; font-size: 1.1rem; background: #ef4444; border: none; border-radius: 25px; color: white; cursor: pointer; font-weight: bold; transition: all 0.3s;">✕ Close</button>
 </div>
-<p id="game-over-text" style="color: #ef4444; font-size: 1.5rem; margin-top: 15px; display: none;">Game Over! Press Start to play again</p>
+<p id="game-over-text" style="color: #ef4444; font-size: 1.3rem; margin-top: 15px; display: none; text-align: center; font-weight: bold;">Game Over! Press Start to play again</p>
 </div>
 <!-- Music Player -->
 <audio id="bgMusic" loop="">
