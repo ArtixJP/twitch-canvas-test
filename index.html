@@ -554,5 +554,48 @@ document.addEventListener('DOMContentLoaded', function() {
   animate();
 })();
 </script>
-</body>
+<script>
+// Auto-rotate sections every 30 seconds
+(function() {
+  const sections = ['space', 'animals', 'games'];
+  let currentIndex = 0;
+  
+  function rotateSection() {
+    currentIndex = (currentIndex + 1) % sections.length;
+    const targetSection = sections[currentIndex];
+    
+    // Update nav items
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.remove('active');
+      if (item.dataset.section === targetSection) {
+        item.classList.add('active');
+      }
+    });
+    
+    // Update sections
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.getElementById(targetSection + '-section').classList.add('active');
+    
+    // Show/hide game elements
+    const isGames = targetSection === 'games';
+    document.getElementById('scoreboard').style.display = isGames ? 'block' : 'none';
+    document.getElementById('gameCanvas').style.pointerEvents = isGames ? 'auto' : 'none';
+    document.getElementById('gameInstructions').style.display = isGames ? 'block' : 'none';
+    
+    console.log('🔄 Auto-rotated to:', targetSection);
+  }
+  
+  // Start auto-rotation every 30 seconds
+  setInterval(rotateSection, 30000);
+  
+  // Sync currentIndex when user manually clicks
+  document.querySelectorAll('.nav-item').forEach((item, idx) => {
+    item.addEventListener('click', () => {
+      currentIndex = sections.indexOf(item.dataset.section);
+    });
+  });
+  
+  console.log('✨ Auto-rotation enabled: switching sections every 30 seconds');
+})();
+</script></body>
 </html>
