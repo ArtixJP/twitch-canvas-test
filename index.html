@@ -4,678 +4,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🥐 Golden Crust Bakery - Artisan Breads &amp; Pastries</title>
+<title>🌭 Chiguez House - Sausage &amp; Merguez Fusion Delights</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Poppins:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        :root {
-            --warm-cream: #FEF9F3;
-            --golden-brown: #C4813D;
-            --deep-brown: #4A2C1A;
-            --soft-wheat: #E8D5B7;
-            --rose-pink: #E8B4B8;
-            --sage-green: #A8B89C;
-            --rich-chocolate: #2D1810;
-        }
-        
-        html {
-            scroll-behavior: smooth;
-        }
-        
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: var(--warm-cream);
-            color: var(--deep-brown);
-            overflow-x: hidden;
-        }
-        
-        /* Floating crumbs animation */
-        .crumbs-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            overflow: hidden;
-        }
-        
-        .crumb {
-            position: absolute;
-            font-size: 16px;
-            opacity: 0.2;
-            animation: fall 25s linear infinite;
-        }
-        
-        @keyframes fall {
-            0% {
-                transform: translateY(-100px) rotate(0deg);
-                opacity: 0;
-            }
-            10% { opacity: 0.25; }
-            90% { opacity: 0.25; }
-            100% {
-                transform: translateY(100vh) rotate(360deg);
-                opacity: 0;
-            }
-        }
-        
-        /* Navigation */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.2rem 4rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.4s ease;
-            background: transparent;
-        }
-        
-        nav.scrolled {
-            background: rgba(254, 249, 243, 0.95);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 4px 30px rgba(74, 44, 26, 0.1);
-            padding: 0.8rem 4rem;
-        }
-        
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: var(--deep-brown);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .logo-emoji {
-            font-size: 2rem;
-            animation: bounce 2s ease-in-out infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        .nav-links {
-            display: flex;
-            gap: 3rem;
-            list-style: none;
-        }
-        
-        .nav-links a {
-            text-decoration: none;
-            color: var(--deep-brown);
-            font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            transition: color 0.3s;
-        }
-        
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background: var(--golden-brown);
-            transition: width 0.3s;
-        }
-        
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-        
-        .nav-links a:hover {
-            color: var(--golden-brown);
-        }
-        
-        /* Hero Section */
-        #hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            background: linear-gradient(135deg, var(--warm-cream) 0%, var(--soft-wheat) 50%, #F5E6D3 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-bg-shape {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(196, 129, 61, 0.1) 0%, transparent 70%);
-            top: -200px;
-            right: -200px;
-        }
-        
-        .hero-bg-shape-2 {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(168, 184, 156, 0.15) 0%, transparent 70%);
-            bottom: -100px;
-            left: -100px;
-        }
-        
-        .hero-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 4rem;
-            gap: 4rem;
-            align-items: center;
-            position: relative;
-            z-index: 1;
-        }
-        
-        .hero-content h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            line-height: 1.15;
-            color: var(--deep-brown);
-            margin-bottom: 1.5rem;
-        }
-        
-        .hero-content h1 .highlight {
-            color: var(--golden-brown);
-            position: relative;
-            display: inline-block;
-        }
-        
-        .hero-content h1 .highlight::after {
-            content: '';
-            position: absolute;
-            bottom: 5px;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: rgba(196, 129, 61, 0.3);
-            z-index: -1;
-        }
-        
-        .hero-content p {
-            font-size: 1.15rem;
-            color: var(--deep-brown);
-            opacity: 0.8;
-            line-height: 1.8;
-            margin-bottom: 2.5rem;
-            max-width: 480px;
-        }
-        
-        .hero-buttons {
-            display: flex;
-            gap: 1rem;
-        }
-        
-        .btn {
-            padding: 1rem 2.2rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.95rem;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            border: none;
-        }
-        
-        .btn-primary {
-            background: var(--golden-brown);
-            color: white;
-            box-shadow: 0 10px 30px rgba(196, 129, 61, 0.3);
-        }
-        
-        .btn-primary:hover {
-            background: var(--deep-brown);
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(74, 44, 26, 0.3);
-        }
-        
-        .btn-outline {
-            background: transparent;
-            color: var(--deep-brown);
-            border: 2px solid var(--deep-brown);
-        }
-        
-        .btn-outline:hover {
-            background: var(--deep-brown);
-            color: white;
-        }
-        
-        .hero-visual {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 500px;
-        }
-        
-        .main-bread {
-            font-size: 18rem;
-            animation: floatBread 4s ease-in-out infinite;
-            filter: drop-shadow(0 40px 50px rgba(74, 44, 26, 0.2));
-            z-index: 2;
-        }
-        
-        @keyframes floatBread {
-            0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50% { transform: translateY(-20px) rotate(2deg); }
-        }
-        
-        .orbit-item {
-            position: absolute;
-            font-size: 3.5rem;
-            animation: orbit 10s linear infinite;
-        }
-        
-        .orbit-item:nth-child(1) { animation-delay: 0s; }
-        .orbit-item:nth-child(2) { animation-delay: -2.5s; }
-        .orbit-item:nth-child(3) { animation-delay: -5s; }
-        .orbit-item:nth-child(4) { animation-delay: -7.5s; }
-        
-        @keyframes orbit {
-            0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
-        }
-        
-        /* Featured Section */
-        #featured {
-            padding: 8rem 4rem;
-            background: white;
-        }
-        
-        .section-title {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        
-        .section-title h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            color: var(--deep-brown);
-            margin-bottom: 1rem;
-        }
-        
-        .section-title .underline {
-            width: 80px;
-            height: 4px;
-            background: linear-gradient(90deg, var(--golden-brown), var(--rose-pink));
-            margin: 0 auto 1.5rem;
-            border-radius: 2px;
-        }
-        
-        .section-title p {
-            color: var(--deep-brown);
-            opacity: 0.7;
-            font-size: 1.05rem;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2.5rem;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-        
-        .product-card {
-            background: var(--warm-cream);
-            border-radius: 24px;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 30px 60px rgba(74, 44, 26, 0.12);
-        }
-        
-        .product-tag {
-            position: absolute;
-            top: 1.2rem;
-            left: 1.2rem;
-            background: var(--sage-green);
-            color: white;
-            padding: 0.4rem 1rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .product-tag.popular {
-            background: var(--rose-pink);
-        }
-        
-        .product-tag.new {
-            background: var(--golden-brown);
-        }
-        
-        .product-image {
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 6rem;
-            background: linear-gradient(180deg, var(--soft-wheat) 0%, var(--warm-cream) 100%);
-        }
-        
-        .product-info {
-            padding: 1.8rem 2rem 2rem;
-        }
-        
-        .product-info h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            color: var(--deep-brown);
-            margin-bottom: 0.5rem;
-        }
-        
-        .product-info p {
-            color: var(--deep-brown);
-            opacity: 0.7;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            margin-bottom: 1.2rem;
-        }
-        
-        .product-bottom {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .product-price {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
-            font-weight: 600;
-            color: var(--golden-brown);
-        }
-        
-        .add-to-cart {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: var(--deep-brown);
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .add-to-cart:hover {
-            background: var(--golden-brown);
-            transform: scale(1.1);
-        }
-        
-        /* About Section */
-        #about {
-            padding: 8rem 4rem;
-            background: linear-gradient(180deg, var(--soft-wheat) 0%, var(--warm-cream) 100%);
-        }
-        
-        .about-container {
-            display: grid;
-            grid-template-columns: 1.2fr 1fr;
-            gap: 5rem;
-            max-width: 1200px;
-            margin: 0 auto;
-            align-items: center;
-        }
-        
-        .about-content h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.8rem;
-            color: var(--deep-brown);
-            margin-bottom: 1.5rem;
-            line-height: 1.2;
-        }
-        
-        .about-content p {
-            font-size: 1.05rem;
-            line-height: 1.9;
-            color: var(--deep-brown);
-            opacity: 0.85;
-            margin-bottom: 1.2rem;
-        }
-        
-        .about-features {
-            display: flex;
-            gap: 2rem;
-            margin-top: 2.5rem;
-            padding-top: 2rem;
-            border-top: 2px solid rgba(196, 129, 61, 0.2);
-        }
-        
-        .feature {
-            text-align: center;
-        }
-        
-        .feature-number {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--golden-brown);
-            display: block;
-        }
-        
-        .feature-text {
-            font-size: 0.85rem;
-            color: var(--deep-brown);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .about-visual {
-            position: relative;
-            text-align: center;
-        }
-        
-        .about-emoji {
-            font-size: 14rem;
-            display: block;
-            filter: drop-shadow(0 20px 30px rgba(74, 44, 26, 0.15));
-        }
-        
-        .about-deco {
-            position: absolute;
-            font-size: 3rem;
-            opacity: 0.8;
-        }
-        
-        .about-deco:nth-child(2) { top: 10%; left: 10%; }
-        .about-deco:nth-child(3) { bottom: 20%; right: 5%; }
-        .about-deco:nth-child(4) { top: 40%; right: 0; }
-        
-        /* Contact Section */
-        #contact {
-            padding: 6rem 4rem;
-            background: var(--deep-brown);
-            color: var(--warm-cream);
-        }
-        
-        .contact-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        
-        .contact-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-        
-        .contact-header h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-        
-        .contact-header .underline {
-            width: 60px;
-            height: 3px;
-            background: var(--golden-brown);
-            margin: 1rem auto;
-            border-radius: 2px;
-        }
-        
-        .contact-cards {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 2rem;
-        }
-        
-        .contact-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 2.5rem;
-            border-radius: 20px;
-            text-align: center;
-            transition: all 0.3s;
-        }
-        
-        .contact-card:hover {
-            background: rgba(255, 255, 255, 0.1);
-            transform: translateY(-5px);
-        }
-        
-        .contact-card-icon {
-            font-size: 3rem;
-            margin-bottom: 1.2rem;
-            display: block;
-        }
-        
-        .contact-card h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.3rem;
-            color: var(--golden-brown);
-            margin-bottom: 0.8rem;
-        }
-        
-        .contact-card p {
-            line-height: 1.7;
-            opacity: 0.9;
-        }
-        
-        /* Footer */
-        footer {
-            padding: 3rem 4rem;
-            background: var(--rich-chocolate);
-            color: var(--warm-cream);
-            text-align: center;
-        }
-        
-        .footer-logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .social-icons {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        
-        .social-icon {
-            width: 45px;
-            height: 45px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .social-icon:hover {
-            background: var(--golden-brown);
-            transform: translateY(-3px);
-        }
-        
-        .footer-text {
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-        
-        /* Responsive */
-        @media (max-width: 992px) {
-            .hero-container, .about-container {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .hero-content p {
-                margin: 0 auto 2.5rem;
-            }
-            
-            .hero-buttons {
-                justify-content: center;
-            }
-            
-            .about-features {
-                justify-content: center;
-            }
-            
-            .contact-cards {
-                grid-template-columns: 1fr;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            nav {
-                padding: 1rem 2rem;
-            }
-            
-            .nav-links {
-                display: none;
-            }
-            
-            .hero-content h1 {
-                font-size: 2.8rem;
-            }
-            
-            .main-bread {
-                font-size: 12rem;
-            }
-            
-            .orbit-item {
-                display: none;
-            }
-        }
-    </style>
+<style>* { margin: 0; padding: 0; box-sizing: border-box; } :root { --warm-cream: #FEF9F3; --golden-brown: #D35400; --deep-brown: #4A2C1A; --soft-wheat: #F5E6D3; --rose-pink: #E74C3C; --sage-green: #27AE60; --rich-chocolate: #2D1810; } html { scroll-behavior: smooth; } body { font-family: 'Poppins', sans-serif; background: var(--warm-cream); color: var(--deep-brown); overflow-x: hidden; } .crumbs-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; overflow: hidden; } .crumb { position: absolute; font-size: 16px; opacity: 0.2; animation: fall 25s linear infinite; } @keyframes fall { 0% { transform: translateY(-100px) rotate(0deg); opacity: 0; } 10% { opacity: 0.25; } 90% { opacity: 0.25; } 100% { transform: translateY(100vh) rotate(360deg); opacity: 0; } } nav { position: fixed; top: 0; width: 100%; padding: 1.2rem 4rem; display: flex; justify-content: space-between; align-items: center; z-index: 1000; transition: all 0.4s ease; background: transparent; } nav.scrolled { background: rgba(254, 249, 243, 0.95); backdrop-filter: blur(10px); box-shadow: 0 4px 30px rgba(74, 44, 26, 0.1); padding: 0.8rem 4rem; } .logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 700; color: var(--deep-brown); text-decoration: none; display: flex; align-items: center; gap: 0.5rem; } .logo-emoji { font-size: 2rem; animation: sizzle 0.5s ease-in-out infinite; } @keyframes sizzle { 0%, 100% { transform: translateY(0) rotate(-3deg); } 50% { transform: translateY(-3px) rotate(3deg); } } .nav-links { display: flex; gap: 3rem; list-style: none; } .nav-links a { text-decoration: none; color: var(--deep-brown); font-weight: 500; font-size: 0.95rem; position: relative; transition: color 0.3s; } .nav-links a::after { content: ''; position: absolute; bottom: -6px; left: 0; width: 0; height: 2px; background: var(--golden-brown); transition: width 0.3s; } .nav-links a:hover::after { width: 100%; } .nav-links a:hover { color: var(--golden-brown); } #hero { min-height: 100vh; display: flex; align-items: center; background: linear-gradient(135deg, var(--warm-cream) 0%, #FFE5D0 50%, #F5E6D3 100%); position: relative; overflow: hidden; } .hero-bg-shape { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle, rgba(211, 84, 0, 0.15) 0%, transparent 70%); top: -200px; right: -200px; } .hero-bg-shape-2 { position: absolute; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(231, 76, 60, 0.1) 0%, transparent 70%); bottom: -100px; left: -100px; } .hero-container { display: grid; grid-template-columns: 1fr 1fr; max-width: 1400px; margin: 0 auto; padding: 0 4rem; gap: 4rem; align-items: center; position: relative; z-index: 1; } .hero-content h1 { font-family: 'Playfair Display', serif; font-size: 4rem; line-height: 1.15; color: var(--deep-brown); margin-bottom: 1.5rem; } .hero-content h1 .highlight { color: var(--golden-brown); position: relative; display: inline-block; } .hero-content h1 .highlight::after { content: ''; position: absolute; bottom: 5px; left: 0; width: 100%; height: 8px; background: rgba(211, 84, 0, 0.3); z-index: -1; } .hero-content p { font-size: 1.15rem; color: var(--deep-brown); opacity: 0.8; line-height: 1.8; margin-bottom: 2.5rem; max-width: 480px; } .hero-buttons { display: flex; gap: 1rem; } .btn { padding: 1rem 2.2rem; border-radius: 50px; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.3s ease; cursor: pointer; border: none; } .btn-primary { background: linear-gradient(135deg, var(--golden-brown), #E74C3C); color: white; box-shadow: 0 10px 30px rgba(211, 84, 0, 0.3); } .btn-primary:hover { background: linear-gradient(135deg, #C0392B, var(--golden-brown)); transform: translateY(-3px); box-shadow: 0 15px 40px rgba(211, 84, 0, 0.4); } .btn-outline { background: transparent; color: var(--deep-brown); border: 2px solid var(--deep-brown); } .btn-outline:hover { background: var(--deep-brown); color: white; } .hero-visual { position: relative; display: flex; justify-content: center; align-items: center; height: 500px; } .main-bread { font-size: 18rem; animation: floatBread 4s ease-in-out infinite; filter: drop-shadow(0 40px 50px rgba(74, 44, 26, 0.2)); z-index: 2; } @keyframes floatBread { 0%, 100% { transform: translateY(0) rotate(-2deg); } 50% { transform: translateY(-20px) rotate(2deg); } } .orbit-item { position: absolute; font-size: 3.5rem; animation: orbit 10s linear infinite; } .orbit-item:nth-child(1) { animation-delay: 0s; } .orbit-item:nth-child(2) { animation-delay: -2.5s; } .orbit-item:nth-child(3) { animation-delay: -5s; } .orbit-item:nth-child(4) { animation-delay: -7.5s; } @keyframes orbit { 0% { transform: rotate(0deg) translateX(180px) rotate(0deg); } 100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); } } #featured { padding: 8rem 4rem; background: white; } .section-title { text-align: center; margin-bottom: 4rem; } .section-title h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--deep-brown); margin-bottom: 1rem; } .section-title .underline { width: 80px; height: 4px; background: linear-gradient(90deg, var(--golden-brown), var(--rose-pink)); margin: 0 auto 1.5rem; border-radius: 2px; } .section-title p { color: var(--deep-brown); opacity: 0.7; font-size: 1.05rem; max-width: 500px; margin: 0 auto; } .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem; max-width: 1300px; margin: 0 auto; } .product-card { background: var(--warm-cream); border-radius: 24px; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; } .product-card:hover { transform: translateY(-12px); box-shadow: 0 30px 60px rgba(211, 84, 0, 0.15); } .product-tag { position: absolute; top: 1.2rem; left: 1.2rem; background: var(--sage-green); color: white; padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; } .product-tag.popular { background: linear-gradient(135deg, #E74C3C, #D35400); } .product-tag.new { background: var(--golden-brown); } .product-image { height: 200px; display: flex; align-items: center; justify-content: center; font-size: 6rem; background: linear-gradient(180deg, #FFE5D0 0%, var(--warm-cream) 100%); } .product-info { padding: 1.8rem 2rem 2rem; } .product-info h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--deep-brown); margin-bottom: 0.5rem; } .product-info p { color: var(--deep-brown); opacity: 0.7; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.2rem; } .product-bottom { display: flex; justify-content: space-between; align-items: center; } .product-price { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 600; color: var(--golden-brown); } .add-to-cart { width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--golden-brown), #E74C3C); border: none; color: white; font-size: 1.5rem; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; } .add-to-cart:hover { transform: scale(1.1); box-shadow: 0 5px 20px rgba(211, 84, 0, 0.4); } #about { padding: 8rem 4rem; background: linear-gradient(180deg, #FFE5D0 0%, var(--warm-cream) 100%); } .about-container { display: grid; grid-template-columns: 1.2fr 1fr; gap: 5rem; max-width: 1200px; margin: 0 auto; align-items: center; } .about-content h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; color: var(--deep-brown); margin-bottom: 1.5rem; line-height: 1.2; } .about-content p { font-size: 1.05rem; line-height: 1.9; color: var(--deep-brown); opacity: 0.85; margin-bottom: 1.2rem; } .about-features { display: flex; gap: 2rem; margin-top: 2.5rem; padding-top: 2rem; border-top: 2px solid rgba(211, 84, 0, 0.2); } .feature { text-align: center; } .feature-number { font-family: 'Playfair Display', serif; font-size: 2.5rem; font-weight: 700; color: var(--golden-brown); display: block; } .feature-text { font-size: 0.85rem; color: var(--deep-brown); text-transform: uppercase; letter-spacing: 1px; } .about-visual { position: relative; text-align: center; } .about-emoji { font-size: 14rem; display: block; filter: drop-shadow(0 20px 30px rgba(74, 44, 26, 0.15)); } .about-deco { position: absolute; font-size: 3rem; opacity: 0.8; animation: float 3s ease-in-out infinite; } .about-deco:nth-child(2) { top: 10%; left: 10%; animation-delay: 0s; } .about-deco:nth-child(3) { bottom: 20%; right: 5%; animation-delay: 1s; } .about-deco:nth-child(4) { top: 40%; right: 0; animation-delay: 2s; } @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } } #contact { padding: 6rem 4rem; background: var(--deep-brown); color: var(--warm-cream); } .contact-container { max-width: 1100px; margin: 0 auto; } .contact-header { text-align: center; margin-bottom: 4rem; } .contact-header h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; margin-bottom: 0.5rem; } .contact-header .underline { width: 60px; height: 3px; background: linear-gradient(90deg, var(--golden-brown), #E74C3C); margin: 1rem auto; border-radius: 2px; } .contact-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; } .contact-card { background: rgba(255, 255, 255, 0.05); padding: 2.5rem; border-radius: 20px; text-align: center; transition: all 0.3s; } .contact-card:hover { background: rgba(255, 255, 255, 0.1); transform: translateY(-5px); } .contact-card-icon { font-size: 3rem; margin-bottom: 1.2rem; display: block; } .contact-card h3 { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--golden-brown); margin-bottom: 0.8rem; } .contact-card p { line-height: 1.7; opacity: 0.9; } footer { padding: 3rem 4rem; background: var(--rich-chocolate); color: var(--warm-cream); text-align: center; } .footer-logo { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin-bottom: 1.5rem; } .social-icons { display: flex; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; } .social-icon { width: 45px; height: 45px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.3s; } .social-icon:hover { background: linear-gradient(135deg, var(--golden-brown), #E74C3C); transform: translateY(-3px); } .footer-text { font-size: 0.9rem; opacity: 0.7; } @media (max-width: 992px) { .hero-container, .about-container { grid-template-columns: 1fr; text-align: center; } .hero-content p { margin: 0 auto 2.5rem; } .hero-buttons { justify-content: center; } .about-features { justify-content: center; } .contact-cards { grid-template-columns: 1fr; } } @media (max-width: 768px) { nav { padding: 1rem 2rem; } .nav-links { display: none; } .hero-content h1 { font-size: 2.8rem; } .main-bread { font-size: 12rem; } .orbit-item { display: none; } }</style>
 </head>
 <body>
 <div class="crumbs-container" id="crumbs"></div>
 <nav id="navbar">
-<a class="logo" href="#hero">
-<span class="logo-emoji">🥐</span>
-            Golden Crust
-        </a>
+<a class="logo" href="#hero"><span class="logo-emoji">🌭</span> Chiguez House</a>
 <ul class="nav-links">
 <li><a href="#hero">Home</a></li>
 <li><a href="#featured">Menu</a></li>
@@ -688,127 +24,64 @@
 <div class="hero-bg-shape-2"></div>
 <div class="hero-container">
 <div class="hero-content">
-<h1>Baked Fresh <span class="highlight">Every Morning</span></h1>
-<p>Discover the art of traditional baking with our handcrafted breads and pastries. Made with love, organic ingredients, and generations of expertise.</p>
+<h1>Grilled Fresh <span class="highlight">Every Day</span></h1>
+<p>Discover the art of the Chiguez - our legendary fusion of premium sausage and spicy merguez. Made with passion, secret spices, and generations of grilling expertise.</p>
 <div class="hero-buttons">
 <a class="btn btn-primary" href="#featured">View Menu</a>
 <a class="btn btn-outline" href="#about">Our Story</a>
 </div>
 </div>
 <div class="hero-visual">
+<span class="orbit-item">🔥</span>
+<span class="orbit-item">🌶️</span>
+<span class="orbit-item">🧅</span>
 <span class="orbit-item">🥖</span>
-<span class="orbit-item">🧁</span>
-<span class="orbit-item">🌾</span>
-<span class="orbit-item">🥯</span>
-<span class="main-bread">🥐</span>
+<span class="main-bread">🌭</span>
 </div>
 </div>
 </section>
 <section id="featured">
 <div class="section-title">
-<h2>Fresh From The Oven</h2>
+<h2>Hot Off The Grill</h2>
 <div class="underline"></div>
-<p>Our most beloved creations, baked with passion every single day</p>
+<p>Our most beloved Chiguez creations, grilled with passion every single day</p>
 </div>
 <div class="products-grid">
-<div class="product-card">
-<span class="product-tag popular">Popular</span>
-<div class="product-image">🥖</div>
-<div class="product-info">
-<h3>Artisan Baguette</h3>
-<p>Crusty exterior, soft cloud-like interior. The perfect companion to any meal.</p>
-<div class="product-bottom">
-<span class="product-price">$4.50</span>
-<button class="add-to-cart">+</button>
-</div>
-</div>
-</div>
-<div class="product-card">
-<span class="product-tag new">New</span>
-<div class="product-image">🥐</div>
-<div class="product-info">
-<h3>Butter Croissant</h3>
-<p>72 layers of French butter folded into flaky, golden perfection.</p>
-<div class="product-bottom">
-<span class="product-price">$5.00</span>
-<button class="add-to-cart">+</button>
-</div>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🍞</div>
-<div class="product-info">
-<h3>Sourdough Loaf</h3>
-<p>48-hour fermented with our century-old starter. Rich and tangy.</p>
-<div class="product-bottom">
-<span class="product-price">$7.50</span>
-<button class="add-to-cart">+</button>
-</div>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🧁</div>
-<div class="product-info">
-<h3>Vanilla Bean Cupcake</h3>
-<p>Light sponge topped with Madagascar vanilla buttercream.</p>
-<div class="product-bottom">
-<span class="product-price">$4.25</span>
-<button class="add-to-cart">+</button>
-</div>
-</div>
-</div>
-<div class="product-card">
-<span class="product-tag">Seasonal</span>
-<div class="product-image">🥧</div>
-<div class="product-info">
-<h3>Apple Cinnamon Tart</h3>
-<p>Caramelized apples with warming spices on buttery pastry.</p>
-<div class="product-bottom">
-<span class="product-price">$22.00</span>
-<button class="add-to-cart">+</button>
-</div>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🥯</div>
-<div class="product-info">
-<h3>Everything Bagel</h3>
-<p>Kettle-boiled and loaded with seeds, garlic, and onion.</p>
-<div class="product-bottom">
-<span class="product-price">$3.50</span>
-<button class="add-to-cart">+</button>
-</div>
-</div>
-</div>
+<div class="product-card"><span class="product-tag popular">Legendary</span><div class="product-image">🌭</div><div class="product-info"><h3>Classic Chiguez</h3><p>The original fusion! Half sausage, half merguez, 100% delicious. Served in a fresh baguette.</p><div class="product-bottom"><span class="product-price">$8.50</span><button class="add-to-cart">+</button></div></div></div>
+<div class="product-card"><span class="product-tag new">New</span><div class="product-image">🔥</div><div class="product-info"><h3>Spicy Inferno Chiguez</h3><p>For the brave! Extra harissa, jalapeños, and our secret fire sauce. Handle with care.</p><div class="product-bottom"><span class="product-price">$9.50</span><button class="add-to-cart">+</button></div></div></div>
+<div class="product-card"><div class="product-image">🧀</div><div class="product-info"><h3>Cheese Lover Chiguez</h3><p>Melted gruyère and cheddar cascading over our signature blend. Pure indulgence.</p><div class="product-bottom"><span class="product-price">$10.00</span><button class="add-to-cart">+</button></div></div></div>
+<div class="product-card"><div class="product-image">🥗</div><div class="product-info"><h3>Mediterranean Chiguez</h3><p>With fresh tzatziki, tomatoes, onions, and a drizzle of olive oil. Refreshing twist!</p><div class="product-bottom"><span class="product-price">$9.00</span><button class="add-to-cart">+</button></div></div></div>
+<div class="product-card"><span class="product-tag">Seasonal</span><div class="product-image">🍟</div><div class="product-info"><h3>Chiguez Combo Meal</h3><p>Classic Chiguez + crispy fries + homemade harissa mayo + drink. The full experience.</p><div class="product-bottom"><span class="product-price">$14.50</span><button class="add-to-cart">+</button></div></div></div>
+<div class="product-card"><div class="product-image">🌯</div><div class="product-info"><h3>Chiguez Wrap</h3><p>All the Chiguez goodness wrapped in a warm tortilla with fresh veggies and sauce.</p><div class="product-bottom"><span class="product-price">$8.00</span><button class="add-to-cart">+</button></div></div></div>
 </div>
 </section>
 <section id="about">
 <div class="about-container">
 <div class="about-content">
-<h2>Baking Happiness Since 1958</h2>
-<p>What started as a small family kitchen has grown into a beloved neighborhood bakery. Three generations later, we still use the same recipes and techniques passed down from our grandmother.</p>
-<p>Every morning at 4 AM, our bakers begin their craft—mixing, kneading, shaping, and baking with the same dedication and love that has defined our family for decades.</p>
-<p>We believe that great bread brings people together. That's why we only use organic, locally-sourced ingredients and traditional methods that honor the art of baking.</p>
+<h2>Grilling Happiness Since 2015</h2>
+<p>What started as a crazy idea at a backyard BBQ has become a legendary street food sensation. We asked: why choose between sausage and merguez when you can have BOTH?</p>
+<p>The Chiguez was born—a perfect fusion that combines the savory richness of traditional sausage with the spicy kick of North African merguez. Every bite is an adventure.</p>
+<p>We source our meats from local farms, blend our own secret spice mix, and grill each Chiguez to smoky perfection. This isn't just food—it's a flavor revolution.</p>
 <div class="about-features">
 <div class="feature">
-<span class="feature-number">65+</span>
-<span class="feature-text">Years Baking</span>
+<span class="feature-number">50K+</span>
+<span class="feature-text">Chiguez Served</span>
 </div>
 <div class="feature">
-<span class="feature-number">4AM</span>
-<span class="feature-text">We Start Fresh</span>
+<span class="feature-number">🔥</span>
+<span class="feature-text">Grilled Fresh</span>
 </div>
 <div class="feature">
 <span class="feature-number">100%</span>
-<span class="feature-text">Organic</span>
+<span class="feature-text">Halal Meat</span>
 </div>
 </div>
 </div>
 <div class="about-visual">
 <span class="about-emoji">👨‍🍳</span>
-<span class="about-deco">🌾</span>
-<span class="about-deco">❤️</span>
-<span class="about-deco">🥖</span>
+<span class="about-deco">🔥</span>
+<span class="about-deco">🌶️</span>
+<span class="about-deco">🌭</span>
 </div>
 </div>
 </section>
@@ -838,14 +111,14 @@
 </div>
 </section>
 <footer>
-<div class="footer-logo">🥐 Golden Crust Bakery</div>
+<div class="footer-logo">🌭 Chiguez House</div>
 <div class="social-icons">
 <div class="social-icon">📸</div>
 <div class="social-icon">📘</div>
 <div class="social-icon">🐦</div>
 <div class="social-icon">📧</div>
 </div>
-<p class="footer-text">© 2024 Golden Crust Bakery. Made with flour, love &amp; a pinch of magic ✨</p>
+<p class="footer-text">© 2024 Chiguez House. Made with meat, spices &amp; a whole lot of fire 🔥</p>
 </footer>
 <script>
         // Create floating crumbs
