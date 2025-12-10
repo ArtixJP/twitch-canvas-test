@@ -5,8 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Pokemon Adventure - JSGL Game</title>
-<style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
+<style>* { margin: 0; padding: 0; box-sizing: border-box; }
 body {
   font-family: 'Press Start 2P', system-ui, sans-serif;
   background: linear-gradient(180deg, #87CEEB 0%, #98FB98 100%);
@@ -271,7 +270,178 @@ body {
   font-size: 14px;
   margin-top: 20px;
 }
-</style>
+
+/* BATTLE SCREEN STYLES */
+#battle-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #1a1a2e 0%, #2d3436 100%);
+  z-index: 400;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+#battle-screen.active {
+  display: flex;
+  animation: battleEnter 0.5s ease-out;
+}
+
+@keyframes battleEnter {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.battle-arena {
+  width: 90%;
+  max-width: 800px;
+  background: linear-gradient(180deg, #87CEEB 0%, #90EE90 70%, #228B22 100%);
+  border: 8px solid #333;
+  border-radius: 20px;
+  padding: 30px;
+  position: relative;
+  min-height: 400px;
+}
+
+.battle-trainer {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.battle-trainer.player {
+  bottom: 30px;
+  left: 50px;
+}
+
+.battle-trainer.opponent {
+  top: 30px;
+  right: 50px;
+}
+
+.trainer-pokemon {
+  font-size: 80px;
+  animation: pokemonIdle 1s ease-in-out infinite;
+}
+
+@keyframes pokemonIdle {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.hp-bar-container {
+  width: 200px;
+  background: #333;
+  border-radius: 10px;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.hp-bar {
+  height: 20px;
+  background: linear-gradient(90deg, #4CAF50, #8BC34A);
+  border-radius: 5px;
+  transition: width 0.5s ease-out;
+}
+
+.hp-bar.low {
+  background: linear-gradient(90deg, #f44336, #ff5722);
+}
+
+.hp-bar.medium {
+  background: linear-gradient(90deg, #ff9800, #ffc107);
+}
+
+.trainer-name {
+  color: white;
+  font-size: 14px;
+  text-shadow: 2px 2px #000;
+  margin-top: 5px;
+}
+
+.battle-menu {
+  position: absolute;
+  bottom: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.battle-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: 3px solid #FFD700;
+  border-radius: 15px;
+  padding: 15px 25px;
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.battle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+}
+
+.battle-btn.attack { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+.battle-btn.defend { background: linear-gradient(135deg, #4834d4, #686de0); }
+.battle-btn.special { background: linear-gradient(135deg, #f9ca24, #f0932b); }
+.battle-btn.run { background: linear-gradient(135deg, #636e72, #2d3436); }
+
+.battle-log {
+  position: absolute;
+  bottom: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.9);
+  border: 3px solid #4CAF50;
+  border-radius: 10px;
+  padding: 15px 30px;
+  color: white;
+  font-size: 14px;
+  min-width: 400px;
+  text-align: center;
+}
+
+.damage-number {
+  position: absolute;
+  font-size: 30px;
+  font-weight: bold;
+  color: #ff6b6b;
+  text-shadow: 2px 2px #000;
+  animation: damageFloat 1s ease-out forwards;
+  pointer-events: none;
+}
+
+@keyframes damageFloat {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-50px) scale(1.5); opacity: 0; }
+}
+
+.battle-vs {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 40px;
+  color: #FFD700;
+  text-shadow: 3px 3px #000;
+  animation: vsPulse 1s ease-in-out infinite;
+}
+
+@keyframes vsPulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.2); }
+}</style>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
 </head>
 <body>
@@ -303,7 +473,32 @@ body {
 </div>
 </div>
 <div class="message-box" id="message-box"></div>
-<div class="battle-flash" id="battle-flash"></div>
+<div class="battle-flash" id="battle-flash"></div><div id="battle-screen">
+<div class="battle-arena">
+<div class="battle-trainer opponent">
+<div class="trainer-pokemon" id="opponent-pokemon">🔥</div>
+<div class="hp-bar-container">
+<div class="hp-bar" id="opponent-hp" style="width: 100%"></div>
+</div>
+<div class="trainer-name" id="opponent-name">Rival Trainer</div>
+</div>
+<div class="battle-vs">⚔️ VS ⚔️</div>
+<div class="battle-trainer player">
+<div class="trainer-pokemon" id="player-pokemon">⚡</div>
+<div class="hp-bar-container">
+<div class="hp-bar" id="player-hp" style="width: 100%"></div>
+</div>
+<div class="trainer-name">Your Pokemon</div>
+</div>
+</div>
+<div class="battle-menu">
+<button class="battle-btn attack" onclick="battleAction('attack')">⚔️ ATTACK</button>
+<button class="battle-btn defend" onclick="battleAction('defend')">🛡️ DEFEND</button>
+<button class="battle-btn special" onclick="battleAction('special')">✨ SPECIAL</button>
+<button class="battle-btn run" onclick="battleAction('run')">🏃 RUN</button>
+</div>
+<div class="battle-log" id="battle-log">Choose your action!</div>
+</div>
 <div class="title-screen" id="title-screen">
 <div class="game-title">🎮 POKEMON CATCH!</div>
 <div class="title-pokemon">
@@ -318,7 +513,7 @@ body {
 </div>
 </div>
 <script>
-// JSGL-style Pokemon Game Engine
+// JSGL-style Pokemon Game Engine with BATTLE SYSTEM!
 const canvas = document.getElementById('game-canvas');
 const ctx = canvas.getContext('2d');
 
@@ -336,21 +531,45 @@ const game = {
   score: 0,
   pokeballs: 10,
   caughtPokemon: [],
-  time: 0
+  time: 0,
+  inBattle: false
+};
+
+// Battle State
+const battle = {
+  active: false,
+  playerHP: 100,
+  playerMaxHP: 100,
+  opponentHP: 100,
+  opponentMaxHP: 100,
+  playerPokemon: null,
+  opponentPokemon: null,
+  opponentTrainer: null,
+  playerTurn: true,
+  defending: false
 };
 
 // Pokemon types with their properties
 const POKEMON_TYPES = [
-  { emoji: '⚡', name: 'Pikachu', color: '#FFD700', speed: 3, points: 100, rarity: 0.3 },
-  { emoji: '🔥', name: 'Charmander', color: '#FF6B6B', speed: 2.5, points: 80, rarity: 0.35 },
-  { emoji: '💧', name: 'Squirtle', color: '#4FC3F7', speed: 2, points: 70, rarity: 0.4 },
-  { emoji: '🌿', name: 'Bulbasaur', color: '#81C784', speed: 1.8, points: 60, rarity: 0.45 },
-  { emoji: '🐉', name: 'Dragonite', color: '#9C27B0', speed: 4, points: 200, rarity: 0.1 },
-  { emoji: '👻', name: 'Gengar', color: '#7B1FA2', speed: 3.5, points: 150, rarity: 0.15 },
-  { emoji: '🦋', name: 'Butterfree', color: '#E1BEE7', speed: 2.8, points: 90, rarity: 0.25 },
-  { emoji: '🐢', name: 'Blastoise', color: '#0288D1', speed: 1.5, points: 120, rarity: 0.2 },
-  { emoji: '🦅', name: 'Pidgeot', color: '#8D6E63', speed: 3.2, points: 85, rarity: 0.3 },
-  { emoji: '🌟', name: 'Starmie', color: '#00BCD4', speed: 2.2, points: 95, rarity: 0.25 }
+  { emoji: '⚡', name: 'Pikachu', color: '#FFD700', speed: 3, points: 100, rarity: 0.3, attack: 25, defense: 15 },
+  { emoji: '🔥', name: 'Charmander', color: '#FF6B6B', speed: 2.5, points: 80, rarity: 0.35, attack: 22, defense: 18 },
+  { emoji: '💧', name: 'Squirtle', color: '#4FC3F7', speed: 2, points: 70, rarity: 0.4, attack: 18, defense: 25 },
+  { emoji: '🌿', name: 'Bulbasaur', color: '#81C784', speed: 1.8, points: 60, rarity: 0.45, attack: 20, defense: 20 },
+  { emoji: '🐉', name: 'Dragonite', color: '#9C27B0', speed: 4, points: 200, rarity: 0.1, attack: 35, defense: 25 },
+  { emoji: '👻', name: 'Gengar', color: '#7B1FA2', speed: 3.5, points: 150, rarity: 0.15, attack: 30, defense: 15 },
+  { emoji: '🦋', name: 'Butterfree', color: '#E1BEE7', speed: 2.8, points: 90, rarity: 0.25, attack: 15, defense: 12 },
+  { emoji: '🐢', name: 'Blastoise', color: '#0288D1', speed: 1.5, points: 120, rarity: 0.2, attack: 28, defense: 30 },
+  { emoji: '🦅', name: 'Pidgeot', color: '#8D6E63', speed: 3.2, points: 85, rarity: 0.3, attack: 20, defense: 18 },
+  { emoji: '🌟', name: 'Starmie', color: '#00BCD4', speed: 2.2, points: 95, rarity: 0.25, attack: 22, defense: 22 }
+];
+
+// Opponent Trainers
+const TRAINERS = [
+  { emoji: '🧑‍🦰', name: 'Rival Gary', color: '#e74c3c' },
+  { emoji: '👨‍🔬', name: 'Prof. Oak', color: '#9b59b6' },
+  { emoji: '👩‍🎤', name: 'Gym Leader', color: '#3498db' },
+  { emoji: '🥷', name: 'Team Rocket', color: '#2c3e50' },
+  { emoji: '🧙‍♂️', name: 'Elite Four', color: '#f39c12' }
 ];
 
 // Player object
@@ -369,6 +588,9 @@ const player = {
 // Wild Pokemon array
 let wildPokemon = [];
 
+// Opponent trainers on map
+let opponentTrainers = [];
+
 // Pokeballs in flight
 let pokeballs = [];
 
@@ -382,7 +604,7 @@ let grassPatches = [];
 const keys = {};
 window.addEventListener('keydown', (e) => {
   keys[e.code] = true;
-  if (e.code === 'Space' && game.running) {
+  if (e.code === 'Space' && game.running && !game.inBattle) {
     e.preventDefault();
     throwPokeball();
   }
@@ -397,6 +619,7 @@ function initGame() {
   game.pokeballs = 10;
   game.caughtPokemon = [];
   wildPokemon = [];
+  opponentTrainers = [];
   pokeballs = [];
   particles = [];
   
@@ -410,6 +633,219 @@ function initGame() {
     });
   }
   
+  // Spawn initial trainers
+  for (let i = 0; i < 3; i++) {
+    spawnTrainer();
+  }
+  
+  updateUI();
+}
+
+// Spawn opponent trainer
+function spawnTrainer() {
+  const trainerType = TRAINERS[Math.floor(Math.random() * TRAINERS.length)];
+  let x, y;
+  do {
+    x = Math.random() * (canvas.width - 100) + 50;
+    y = Math.random() * (canvas.height - 100) + 50;
+  } while (Math.hypot(x - player.x, y - player.y) < 250);
+  
+  const trainer = {
+    ...trainerType,
+    x, y,
+    width: 60,
+    height: 60,
+    vx: (Math.random() - 0.5) * 1.5,
+    vy: (Math.random() - 0.5) * 1.5,
+    pokemon: POKEMON_TYPES[Math.floor(Math.random() * POKEMON_TYPES.length)],
+    defeated: false
+  };
+  
+  opponentTrainers.push(trainer);
+}
+
+// Check collision with trainers
+function checkTrainerCollision() {
+  for (const trainer of opponentTrainers) {
+    if (trainer.defeated) continue;
+    const dist = Math.hypot(trainer.x - player.x, trainer.y - player.y);
+    if (dist < 50) {
+      startBattle(trainer);
+      return;
+    }
+  }
+}
+
+// Start battle
+function startBattle(trainer) {
+  game.inBattle = true;
+  battle.active = true;
+  battle.opponentTrainer = trainer;
+  battle.opponentPokemon = trainer.pokemon;
+  battle.playerPokemon = game.caughtPokemon.length > 0 
+    ? POKEMON_TYPES.find(p => p.emoji === game.caughtPokemon[game.caughtPokemon.length - 1]) || POKEMON_TYPES[0]
+    : POKEMON_TYPES[0];
+  
+  battle.playerHP = 100;
+  battle.playerMaxHP = 100;
+  battle.opponentHP = 100;
+  battle.opponentMaxHP = 100;
+  battle.playerTurn = true;
+  battle.defending = false;
+  
+  // Update battle UI
+  document.getElementById('battle-screen').classList.add('active');
+  document.getElementById('opponent-pokemon').textContent = battle.opponentPokemon.emoji;
+  document.getElementById('player-pokemon').textContent = battle.playerPokemon.emoji;
+  document.getElementById('opponent-name').textContent = trainer.name + "'s " + battle.opponentPokemon.name;
+  document.getElementById('battle-log').textContent = trainer.name + " wants to battle!";
+  
+  updateBattleHP();
+  
+  // Flash effect
+  document.getElementById('battle-flash').classList.add('active');
+  setTimeout(() => document.getElementById('battle-flash').classList.remove('active'), 500);
+}
+
+// Battle action
+function battleAction(action) {
+  if (!battle.playerTurn) return;
+  
+  let damage = 0;
+  let message = '';
+  
+  switch(action) {
+    case 'attack':
+      damage = Math.floor(battle.playerPokemon.attack * (0.8 + Math.random() * 0.4));
+      battle.opponentHP = Math.max(0, battle.opponentHP - damage);
+      message = `${battle.playerPokemon.name} attacks! ${damage} damage!`;
+      showDamage(damage, true);
+      break;
+    case 'defend':
+      battle.defending = true;
+      message = `${battle.playerPokemon.name} is defending!`;
+      break;
+    case 'special':
+      if (Math.random() > 0.4) {
+        damage = Math.floor(battle.playerPokemon.attack * 1.8);
+        battle.opponentHP = Math.max(0, battle.opponentHP - damage);
+        message = `CRITICAL HIT! ${damage} damage!`;
+        showDamage(damage, true);
+      } else {
+        message = 'Special attack missed!';
+      }
+      break;
+    case 'run':
+      if (Math.random() > 0.3) {
+        endBattle(false);
+        return;
+      } else {
+        message = "Can't escape!";
+      }
+      break;
+  }
+  
+  document.getElementById('battle-log').textContent = message;
+  updateBattleHP();
+  
+  // Check win condition
+  if (battle.opponentHP <= 0) {
+    setTimeout(() => endBattle(true), 1000);
+    return;
+  }
+  
+  // Opponent turn
+  battle.playerTurn = false;
+  setTimeout(opponentTurn, 1500);
+}
+
+// Opponent turn
+function opponentTurn() {
+  const actions = ['attack', 'attack', 'attack', 'special'];
+  const action = actions[Math.floor(Math.random() * actions.length)];
+  
+  let damage = 0;
+  let message = '';
+  
+  if (action === 'attack') {
+    damage = Math.floor(battle.opponentPokemon.attack * (0.8 + Math.random() * 0.4));
+    if (battle.defending) {
+      damage = Math.floor(damage * 0.4);
+      message = `${battle.opponentPokemon.name} attacks! Blocked! Only ${damage} damage!`;
+    } else {
+      message = `${battle.opponentPokemon.name} attacks! ${damage} damage!`;
+    }
+  } else {
+    if (Math.random() > 0.5) {
+      damage = Math.floor(battle.opponentPokemon.attack * 1.5);
+      message = `${battle.opponentPokemon.name} uses special move! ${damage} damage!`;
+    } else {
+      message = `${battle.opponentPokemon.name}'s special attack missed!`;
+    }
+  }
+  
+  battle.playerHP = Math.max(0, battle.playerHP - damage);
+  battle.defending = false;
+  
+  if (damage > 0) showDamage(damage, false);
+  document.getElementById('battle-log').textContent = message;
+  updateBattleHP();
+  
+  // Check lose condition
+  if (battle.playerHP <= 0) {
+    setTimeout(() => endBattle(false), 1000);
+    return;
+  }
+  
+  battle.playerTurn = true;
+}
+
+// Show damage number
+function showDamage(damage, isOpponent) {
+  const arena = document.querySelector('.battle-arena');
+  const div = document.createElement('div');
+  div.className = 'damage-number';
+  div.textContent = '-' + damage;
+  div.style.left = isOpponent ? '70%' : '30%';
+  div.style.top = isOpponent ? '30%' : '70%';
+  arena.appendChild(div);
+  setTimeout(() => div.remove(), 1000);
+}
+
+// Update battle HP bars
+function updateBattleHP() {
+  const playerBar = document.getElementById('player-hp');
+  const opponentBar = document.getElementById('opponent-hp');
+  
+  const playerPercent = (battle.playerHP / battle.playerMaxHP) * 100;
+  const opponentPercent = (battle.opponentHP / battle.opponentMaxHP) * 100;
+  
+  playerBar.style.width = playerPercent + '%';
+  opponentBar.style.width = opponentPercent + '%';
+  
+  playerBar.className = 'hp-bar' + (playerPercent < 25 ? ' low' : playerPercent < 50 ? ' medium' : '');
+  opponentBar.className = 'hp-bar' + (opponentPercent < 25 ? ' low' : opponentPercent < 50 ? ' medium' : '');
+}
+
+// End battle
+function endBattle(won) {
+  document.getElementById('battle-screen').classList.remove('active');
+  game.inBattle = false;
+  battle.active = false;
+  
+  if (won) {
+    const points = battle.opponentPokemon.points * 2;
+    game.score += points;
+    game.caughtPokemon.push(battle.opponentPokemon.emoji);
+    battle.opponentTrainer.defeated = true;
+    showMessage(`Victory! +${points} points! You caught ${battle.opponentPokemon.name}! 🏆`);
+    
+    // Spawn new trainer
+    setTimeout(spawnTrainer, 3000);
+  } else {
+    showMessage('You fled from battle! 🏃');
+  }
+  
   updateUI();
 }
 
@@ -417,7 +853,6 @@ function initGame() {
 function spawnPokemon() {
   if (wildPokemon.length >= 8) return;
   
-  // Select random Pokemon based on rarity
   let selectedType;
   const roll = Math.random();
   let cumulative = 0;
@@ -430,7 +865,6 @@ function spawnPokemon() {
   }
   if (!selectedType) selectedType = POKEMON_TYPES[0];
   
-  // Spawn position (away from player)
   let x, y;
   do {
     x = Math.random() * (canvas.width - 100) + 50;
@@ -452,7 +886,6 @@ function spawnPokemon() {
   showWildAppear(pokemon);
 }
 
-// Show wild Pokemon appearance
 function showWildAppear(pokemon) {
   const div = document.createElement('div');
   div.className = 'wild-appear';
@@ -463,7 +896,6 @@ function showWildAppear(pokemon) {
   setTimeout(() => div.remove(), 2000);
 }
 
-// Throw pokeball
 function throwPokeball() {
   if (game.pokeballs <= 0) {
     showMessage('No Pokeballs left! 😢');
@@ -473,7 +905,6 @@ function throwPokeball() {
   game.pokeballs--;
   updateUI();
   
-  // Find nearest Pokemon
   let nearest = null;
   let nearestDist = Infinity;
   
@@ -500,7 +931,6 @@ function throwPokeball() {
   });
 }
 
-// Update pokeballs
 function updatePokeballs() {
   for (let i = pokeballs.length - 1; i >= 0; i--) {
     const ball = pokeballs[i];
@@ -510,11 +940,9 @@ function updatePokeballs() {
     const dist = Math.hypot(dx, dy);
     
     if (dist < 10) {
-      // Check if hit Pokemon
       if (ball.target && !ball.target.caught) {
         catchPokemon(ball.target);
       } else {
-        // Miss effect
         createParticles(ball.x, ball.y, '#FF6B6B', 10);
       }
       pokeballs.splice(i, 1);
@@ -527,17 +955,14 @@ function updatePokeballs() {
   }
 }
 
-// Catch Pokemon
 function catchPokemon(pokemon) {
   pokemon.caught = true;
   game.score += pokemon.points;
   game.caughtPokemon.push(pokemon.emoji);
   
-  // Flash effect
   document.getElementById('battle-flash').classList.add('active');
   setTimeout(() => document.getElementById('battle-flash').classList.remove('active'), 500);
   
-  // Catch animation
   const div = document.createElement('div');
   div.className = 'catch-animation';
   div.textContent = '🔴';
@@ -546,18 +971,14 @@ function catchPokemon(pokemon) {
   document.getElementById('game-container').appendChild(div);
   setTimeout(() => div.remove(), 1000);
   
-  // Particles
   createParticles(pokemon.x, pokemon.y, pokemon.color, 30);
-  
   showMessage(`Caught ${pokemon.name}! +${pokemon.points} points! 🎉`);
   
-  // Remove after animation
   setTimeout(() => {
     const idx = wildPokemon.indexOf(pokemon);
     if (idx > -1) wildPokemon.splice(idx, 1);
   }, 500);
   
-  // Bonus pokeball chance
   if (Math.random() < 0.3) {
     game.pokeballs++;
     showMessage('Bonus Pokeball! 🎁');
@@ -566,7 +987,6 @@ function catchPokemon(pokemon) {
   updateUI();
 }
 
-// Create particles
 function createParticles(x, y, color, count) {
   for (let i = 0; i < count; i++) {
     particles.push({
@@ -580,80 +1000,50 @@ function createParticles(x, y, color, count) {
   }
 }
 
-// Update particles
 function updateParticles() {
   for (let i = particles.length - 1; i >= 0; i--) {
     const p = particles[i];
     p.x += p.vx;
     p.y += p.vy;
-    p.vy += 0.2; // gravity
+    p.vy += 0.2;
     p.life -= 0.02;
-    
-    if (p.life <= 0) {
-      particles.splice(i, 1);
-    }
+    if (p.life <= 0) particles.splice(i, 1);
   }
 }
 
-// Update player
 function updatePlayer() {
+  if (game.inBattle) return;
+  
   player.running = keys['KeyR'];
   const speed = player.running ? player.speed * 1.8 : player.speed;
   
   let moving = false;
   
-  if (keys['ArrowUp'] || keys['KeyW']) {
-    player.y -= speed;
-    player.direction = 'up';
-    moving = true;
-  }
-  if (keys['ArrowDown'] || keys['KeyS']) {
-    player.y += speed;
-    player.direction = 'down';
-    moving = true;
-  }
-  if (keys['ArrowLeft'] || keys['KeyA']) {
-    player.x -= speed;
-    player.direction = 'left';
-    moving = true;
-  }
-  if (keys['ArrowRight'] || keys['KeyD']) {
-    player.x += speed;
-    player.direction = 'right';
-    moving = true;
-  }
+  if (keys['ArrowUp'] || keys['KeyW']) { player.y -= speed; player.direction = 'up'; moving = true; }
+  if (keys['ArrowDown'] || keys['KeyS']) { player.y += speed; player.direction = 'down'; moving = true; }
+  if (keys['ArrowLeft'] || keys['KeyA']) { player.x -= speed; player.direction = 'left'; moving = true; }
+  if (keys['ArrowRight'] || keys['KeyD']) { player.x += speed; player.direction = 'right'; moving = true; }
   
-  // Bounds
   player.x = Math.max(25, Math.min(canvas.width - 25, player.x));
   player.y = Math.max(25, Math.min(canvas.height - 25, player.y));
   
-  if (moving) {
-    player.frame += 0.2;
-  }
+  if (moving) player.frame += 0.2;
+  
+  checkTrainerCollision();
 }
 
-// Update wild Pokemon
 function updateWildPokemon() {
   for (const pokemon of wildPokemon) {
     if (pokemon.caught) continue;
-    
     pokemon.wobble += 0.1;
-    
-    // Move
     pokemon.x += pokemon.vx;
     pokemon.y += pokemon.vy;
-    
-    // Bounce off walls
     if (pokemon.x < 30 || pokemon.x > canvas.width - 30) pokemon.vx *= -1;
     if (pokemon.y < 30 || pokemon.y > canvas.height - 30) pokemon.vy *= -1;
-    
-    // Random direction change
     if (Math.random() < 0.01) {
       pokemon.vx = (Math.random() - 0.5) * pokemon.speed * 2;
       pokemon.vy = (Math.random() - 0.5) * pokemon.speed * 2;
     }
-    
-    // Flee from player if too close
     const distToPlayer = Math.hypot(pokemon.x - player.x, pokemon.y - player.y);
     if (distToPlayer < 100) {
       const angle = Math.atan2(pokemon.y - player.y, pokemon.x - player.x);
@@ -663,13 +1053,24 @@ function updateWildPokemon() {
   }
 }
 
-// Draw functions
+function updateTrainers() {
+  for (const trainer of opponentTrainers) {
+    if (trainer.defeated) continue;
+    trainer.x += trainer.vx;
+    trainer.y += trainer.vy;
+    if (trainer.x < 30 || trainer.x > canvas.width - 30) trainer.vx *= -1;
+    if (trainer.y < 30 || trainer.y > canvas.height - 30) trainer.vy *= -1;
+    if (Math.random() < 0.01) {
+      trainer.vx = (Math.random() - 0.5) * 2;
+      trainer.vy = (Math.random() - 0.5) * 2;
+    }
+  }
+}
+
 function draw() {
-  // Clear
   ctx.fillStyle = '#90EE90';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-  // Draw grass patches
   ctx.fillStyle = '#228B22';
   for (const grass of grassPatches) {
     ctx.beginPath();
@@ -677,63 +1078,69 @@ function draw() {
     ctx.fill();
   }
   
-  // Draw grid pattern
   ctx.strokeStyle = 'rgba(0,100,0,0.2)';
   ctx.lineWidth = 1;
   for (let x = 0; x < canvas.width; x += 50) {
-    ctx.beginPath();
-    ctx.moveTo(x, 0);
-    ctx.lineTo(x, canvas.height);
-    ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
   }
   for (let y = 0; y < canvas.height; y += 50) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+  }
+  
+  // Draw opponent trainers
+  for (const trainer of opponentTrainers) {
+    if (trainer.defeated) continue;
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.beginPath();
-    ctx.moveTo(0, y);
-    ctx.lineTo(canvas.width, y);
-    ctx.stroke();
+    ctx.ellipse(trainer.x, trainer.y + 35, 25, 10, 0, 0, Math.PI * 2);
+    ctx.fill();
+    
+    ctx.shadowColor = trainer.color;
+    ctx.shadowBlur = 20;
+    ctx.font = '50px Arial';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(trainer.emoji, trainer.x, trainer.y);
+    ctx.shadowBlur = 0;
+    
+    // Trainer label
+    ctx.font = '12px "Press Start 2P", sans-serif';
+    ctx.fillStyle = '#fff';
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
+    ctx.strokeText('⚔️ ' + trainer.name, trainer.x, trainer.y - 40);
+    ctx.fillText('⚔️ ' + trainer.name, trainer.x, trainer.y - 40);
   }
   
   // Draw wild Pokemon
   for (const pokemon of wildPokemon) {
     if (pokemon.caught) continue;
-    
     const wobbleOffset = Math.sin(pokemon.wobble) * 5;
-    
-    // Shadow
     ctx.fillStyle = 'rgba(0,0,0,0.3)';
     ctx.beginPath();
     ctx.ellipse(pokemon.x, pokemon.y + 35, 25, 10, 0, 0, Math.PI * 2);
     ctx.fill();
-    
-    // Glow
     ctx.shadowColor = pokemon.color;
     ctx.shadowBlur = 20;
-    
-    // Pokemon emoji
     ctx.font = '50px Arial';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(pokemon.emoji, pokemon.x, pokemon.y + wobbleOffset);
-    
     ctx.shadowBlur = 0;
   }
   
   // Draw player
   ctx.shadowColor = '#FFD700';
   ctx.shadowBlur = player.running ? 30 : 15;
-  
-  // Player shadow
   ctx.fillStyle = 'rgba(0,0,0,0.3)';
   ctx.beginPath();
   ctx.ellipse(player.x, player.y + 30, 20, 8, 0, 0, Math.PI * 2);
   ctx.fill();
-  
   const bounce = Math.sin(player.frame) * 3;
   ctx.font = '45px Arial';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(player.emoji, player.x, player.y + bounce);
-  
   ctx.shadowBlur = 0;
   
   // Draw pokeballs in flight
@@ -759,11 +1166,9 @@ function draw() {
   ctx.globalAlpha = 1;
 }
 
-// Update UI
 function updateUI() {
   document.getElementById('score').textContent = game.score;
   
-  // Pokeballs display
   const pokeballsDiv = document.getElementById('pokeballs');
   pokeballsDiv.innerHTML = '';
   for (let i = 0; i < Math.min(game.pokeballs, 15); i++) {
@@ -772,11 +1177,8 @@ function updateUI() {
     span.textContent = '🔴';
     pokeballsDiv.appendChild(span);
   }
-  if (game.pokeballs > 15) {
-    pokeballsDiv.innerHTML += `+${game.pokeballs - 15}`;
-  }
+  if (game.pokeballs > 15) pokeballsDiv.innerHTML += `+${game.pokeballs - 15}`;
   
-  // Caught Pokemon
   const caughtDiv = document.getElementById('caught-pokemon');
   caughtDiv.innerHTML = '';
   for (const emoji of game.caughtPokemon.slice(-10)) {
@@ -786,7 +1188,6 @@ function updateUI() {
   }
 }
 
-// Show message
 function showMessage(text) {
   const box = document.getElementById('message-box');
   box.textContent = text;
@@ -794,49 +1195,44 @@ function showMessage(text) {
   setTimeout(() => box.classList.remove('show'), 2000);
 }
 
-// Game loop
 function gameLoop() {
   if (!game.running) {
     requestAnimationFrame(gameLoop);
     return;
   }
   
-  game.time++;
-  
-  // Spawn Pokemon periodically
-  if (game.time % 180 === 0) {
-    spawnPokemon();
+  if (!game.inBattle) {
+    game.time++;
+    if (game.time % 180 === 0) spawnPokemon();
+    if (game.time % 600 === 0 && game.pokeballs < 15) {
+      game.pokeballs++;
+      showMessage('New Pokeball! 🎁');
+      updateUI();
+    }
+    if (game.time % 900 === 0 && opponentTrainers.filter(t => !t.defeated).length < 3) {
+      spawnTrainer();
+    }
+    
+    updatePlayer();
+    updateWildPokemon();
+    updateTrainers();
+    updatePokeballs();
+    updateParticles();
+    draw();
   }
-  
-  // Bonus pokeballs over time
-  if (game.time % 600 === 0 && game.pokeballs < 15) {
-    game.pokeballs++;
-    showMessage('New Pokeball! 🎁');
-    updateUI();
-  }
-  
-  updatePlayer();
-  updateWildPokemon();
-  updatePokeballs();
-  updateParticles();
-  draw();
   
   requestAnimationFrame(gameLoop);
 }
 
-// Start game
 document.getElementById('start-btn').addEventListener('click', () => {
   document.getElementById('title-screen').classList.add('hidden');
   initGame();
   game.running = true;
-  
-  // Spawn initial Pokemon
   for (let i = 0; i < 4; i++) {
     setTimeout(() => spawnPokemon(), i * 500);
   }
 });
 
-// Initialize and start loop
 gameLoop();
 </script>
 </body>
