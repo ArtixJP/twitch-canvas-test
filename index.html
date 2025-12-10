@@ -11,7 +11,13 @@
 #scoreBoard { animation: scorePulse 2s ease-in-out infinite; }
 @keyframes scorePulse { 0%, 100% { box-shadow: 0 0 30px rgba(255, 150, 50, 0.5), 0 5px 20px rgba(0,0,0,0.4); } 50% { box-shadow: 0 0 40px rgba(255, 150, 50, 0.7), 0 5px 25px rgba(0,0,0,0.5); } }
 #dogScore.scored { animation: scoreUp 0.5s ease-out; }
-@keyframes scoreUp { 0% { transform: scale(1); } 50% { transform: scale(1.5); color: #ffff00; } 100% { transform: scale(1); } }</style>
+@keyframes scoreUp { 0% { transform: scale(1); } 50% { transform: scale(1.5); color: #ffff00; } 100% { transform: scale(1); } }
+.planet.caught { animation: planetColorChange 1.5s ease-out !important; }
+@keyframes planetColorChange { 0% { background: linear-gradient(135deg, #ff6b6b 0%, #feca57 30%, #48dbfb 70%, #ff9ff3 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.6), inset 30px 20px 40px rgba(255, 220, 100, 0.3), 0 0 80px rgba(255, 107, 107, 0.6), 0 0 150px rgba(254, 202, 87, 0.4); } 50% { background: linear-gradient(135deg, #a29bfe 0%, #fd79a8 30%, #00b894 70%, #fdcb6e 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.6), inset 30px 20px 40px rgba(255, 220, 100, 0.3), 0 0 100px rgba(162, 155, 254, 0.7), 0 0 180px rgba(253, 121, 168, 0.5); } 100% { background: linear-gradient(135deg, #4a90a4 0%, #2d5a6b 30%, #1a3a4a 70%, #0d1f2a 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.6), inset 30px 20px 40px rgba(255, 220, 100, 0.15), 0 0 60px rgba(74, 144, 164, 0.4), 0 0 120px rgba(74, 144, 164, 0.2), -25px 20px 40px rgba(0, 0, 0, 0.9); } }
+.atmosphere.caught { animation: atmosphereGlow 1.5s ease-out !important; }
+@keyframes atmosphereGlow { 0%, 50% { background: radial-gradient(circle at 30% 30%, rgba(255, 150, 200, 0.5) 0%, transparent 50%); transform: scale(1.1); } 100% { background: radial-gradient(circle at 30% 30%, rgba(100, 200, 255, 0.2) 0%, transparent 50%); transform: scale(1); } }
+.ring.caught { animation: ringFlash 1.5s ease-out !important; }
+@keyframes ringFlash { 0% { border-color: rgba(255, 200, 100, 0.8); box-shadow: 0 0 40px rgba(255, 200, 100, 0.6); } 50% { border-color: rgba(255, 150, 200, 0.7); box-shadow: 0 0 50px rgba(255, 150, 200, 0.5); } 100% { border-color: rgba(200, 180, 150, 0.4); box-shadow: 0 0 20px rgba(200, 180, 150, 0.2); } }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body><div id="scoreBoard" style="position: fixed; top: 20px; left: 20px; z-index: 100; background: linear-gradient(135deg, rgba(255, 150, 50, 0.9) 0%, rgba(200, 100, 30, 0.95) 100%); padding: 15px 25px; border-radius: 20px; border: 3px solid rgba(255, 200, 100, 0.6); box-shadow: 0 0 30px rgba(255, 150, 50, 0.5), 0 5px 20px rgba(0,0,0,0.4); backdrop-filter: blur(10px);"><div style="display: flex; align-items: center; gap: 15px;"><span style="font-size: 2rem;">🐕</span><div><div style="font-size: 0.8rem; opacity: 0.8; text-transform: uppercase; letter-spacing: 2px;">Dog Score</div><div id="dogScore" style="font-size: 2.5rem; font-weight: bold; text-shadow: 0 0 10px rgba(255,255,255,0.5);">0</div></div></div></div><div id="catchAlert" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); z-index: 200; background: radial-gradient(circle, rgba(255, 200, 50, 0.95) 0%, rgba(255, 150, 30, 0.9) 100%); padding: 30px 50px; border-radius: 30px; box-shadow: 0 0 60px rgba(255, 200, 50, 0.8), 0 10px 40px rgba(0,0,0,0.5); text-align: center; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s; opacity: 0;"><div style="font-size: 3rem; margin-bottom: 10px;">🐕 caught 🐱!</div><div style="font-size: 1.5rem;">+1 Point!</div></div><div id="startOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 10, 26, 0.95); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 1000; cursor: pointer; transition: opacity 0.5s ease;"><h2 style="font-size: 2.5rem; color: white; text-shadow: 0 0 30px rgba(100, 200, 255, 0.8); margin-bottom: 20px;">🚀 Enter Space</h2><p style="color: rgba(255,255,255,0.7); font-size: 1.2rem;">Click anywhere to begin your journey</p><div style="margin-top: 30px; animation: pulse 2s infinite;"><span style="font-size: 3rem;">🎵</span></div></div><style>@keyframes pulse { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } }</style>
 <h1>Welcome to Space</h1>
@@ -275,6 +281,52 @@
   
   // Check for catches every 50ms
   setInterval(checkCatch, 50);
+})();
+</script><script>
+(function() {
+  function triggerPlanetColorChange() {
+    const planet = document.querySelector('.planet');
+    const atmosphere = document.querySelector('.atmosphere');
+    const rings = document.querySelectorAll('.ring');
+    
+    if (planet) {
+      planet.classList.remove('caught');
+      void planet.offsetWidth; // Force reflow
+      planet.classList.add('caught');
+      setTimeout(() => planet.classList.remove('caught'), 1500);
+    }
+    
+    if (atmosphere) {
+      atmosphere.classList.remove('caught');
+      void atmosphere.offsetWidth;
+      atmosphere.classList.add('caught');
+      setTimeout(() => atmosphere.classList.remove('caught'), 1500);
+    }
+    
+    rings.forEach(ring => {
+      ring.classList.remove('caught');
+      void ring.offsetWidth;
+      ring.classList.add('caught');
+      setTimeout(() => ring.classList.remove('caught'), 1500);
+    });
+  }
+  
+  // Override the catch detection to also trigger planet color change
+  const originalAlertShow = document.getElementById('catchAlert');
+  const observer = new MutationObserver(function(mutations) {
+    mutations.forEach(function(mutation) {
+      if (mutation.attributeName === 'class') {
+        const alert = mutation.target;
+        if (alert.classList.contains('show')) {
+          triggerPlanetColorChange();
+        }
+      }
+    });
+  });
+  
+  if (originalAlertShow) {
+    observer.observe(originalAlertShow, { attributes: true });
+  }
 })();
 </script></body>
 </html>
