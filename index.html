@@ -5,8 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>
-        body { 
+<style>body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             flex-direction: column;
@@ -19,25 +18,31 @@
             overflow: hidden;
         }
         h1 { 
-            font-size: 3rem; 
+            font-size: 2.5rem; 
             text-align: center; 
             z-index: 10;
             text-shadow: 0 0 30px rgba(100, 200, 255, 0.5);
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
+            animation: titlePulse 2s ease-in-out infinite;
+        }
+        @keyframes titlePulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); text-shadow: 0 0 50px rgba(255, 200, 100, 0.8); }
         }
         .planet-container {
             position: relative;
-            width: 300px;
-            height: 300px;
-            perspective: 1000px;
-        }
-        .planet {
             width: 200px;
             height: 200px;
+            perspective: 1000px;
+            margin-bottom: 2rem;
+        }
+        .planet {
+            width: 150px;
+            height: 150px;
             border-radius: 50%;
             position: absolute;
-            top: 50px;
-            left: 50px;
+            top: 25px;
+            left: 25px;
             background: 
                 radial-gradient(circle at 30% 25%, rgba(255,255,255,0.4) 0%, transparent 25%),
                 url('https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Earth_Western_Hemisphere_transparent_background.png/600px-Earth_Western_Hemisphere_transparent_background.png');
@@ -46,117 +51,171 @@
             box-shadow: 
                 inset -30px -30px 60px rgba(0,0,0,0.6),
                 inset 10px 10px 40px rgba(255,255,255,0.1),
-                0 0 60px rgba(100, 180, 255, 0.5),
-                0 0 120px rgba(100, 180, 255, 0.3),
-                0 0 200px rgba(100, 180, 255, 0.1);
+                0 0 60px rgba(100, 180, 255, 0.5);
             animation: earthRotate 30s linear infinite;
-            overflow: hidden;
-        }
-        .planet::before {
-            content: '';
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            background: 
-                radial-gradient(circle at 30% 30%, rgba(255,255,255,0.2) 0%, transparent 40%);
-            animation: clouds 60s linear infinite;
-        }
-        .planet::after {
-            content: '';
-            position: absolute;
-            width: 110%;
-            height: 110%;
-            top: -5%;
-            left: -5%;
-            border-radius: 50%;
-            background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(100, 180, 255, 0.15) 50%, transparent 55%);
-            animation: atmosphereGlow 4s ease-in-out infinite;
         }
         .atmosphere {
             position: absolute;
-            width: 220px;
-            height: 220px;
-            top: 40px;
-            left: 40px;
+            width: 170px;
+            height: 170px;
+            top: 15px;
+            left: 15px;
             border-radius: 50%;
-            background: radial-gradient(circle, transparent 40%, rgba(100, 180, 255, 0.1) 60%, rgba(100, 180, 255, 0.05) 80%, transparent 100%);
+            background: radial-gradient(circle, transparent 40%, rgba(100, 180, 255, 0.1) 60%, transparent 100%);
             pointer-events: none;
         }
         .moon {
             position: absolute;
-            width: 40px;
-            height: 40px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%);
-            box-shadow: 
-                inset -8px -8px 20px rgba(0,0,0,0.5),
-                inset 3px 3px 10px rgba(255,255,255,0.3),
-                0 0 20px rgba(255,255,255,0.2);
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.5);
             animation: moonOrbit 20s linear infinite;
         }
-        .moon::before {
-            content: '';
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: rgba(100,100,100,0.5);
-            border-radius: 50%;
-            top: 10px;
-            left: 8px;
+        .pokemon-battle {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            position: relative;
+            z-index: 20;
         }
-        .moon::after {
-            content: '';
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: rgba(100,100,100,0.4);
-            border-radius: 50%;
-            top: 20px;
-            left: 20px;
+        .pokemon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
         }
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
+        .pokemon-sprite {
+            font-size: 80px;
+            animation: pokemonBounce 0.5s ease-in-out infinite;
+        }
+        .pikachu .pokemon-sprite {
+            animation: pikachuAttack 2s ease-in-out infinite;
+        }
+        .charizard .pokemon-sprite {
+            animation: charizardAttack 2s ease-in-out infinite;
+            animation-delay: 1s;
+        }
+        .pokemon-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 10px 0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .pikachu .pokemon-name { color: #ffcb05; text-shadow: 0 0 10px #ffcb05; }
+        .charizard .pokemon-name { color: #ff6b35; text-shadow: 0 0 10px #ff6b35; }
+        .hp-bar {
+            width: 100px;
+            height: 12px;
+            background: #333;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 2px solid #555;
+        }
+        .hp-fill {
             height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            border-radius: 4px;
+            animation: hpDamage 3s ease-in-out infinite;
         }
-        .star {
+        .pikachu-hp { background: linear-gradient(90deg, #4caf50, #8bc34a); }
+        .charizard-hp { background: linear-gradient(90deg, #4caf50, #8bc34a); }
+        .battle-effects {
             position: absolute;
-            width: 3px;
-            height: 3px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s ease-in-out infinite;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 60px;
+            z-index: 30;
+        }
+        .lightning-bolt {
+            position: absolute;
+            animation: lightningStrike 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px #ffeb3b);
+        }
+        .fire-blast {
+            position: absolute;
+            animation: fireBlast 2s ease-in-out infinite;
+            animation-delay: 1s;
+            filter: drop-shadow(0 0 20px #ff5722);
+        }
+        .impact {
+            position: absolute;
+            animation: impactBurst 1s ease-out infinite;
+            animation-delay: 0.5s;
+        }
+        .battle-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            font-weight: 900;
+            color: #ff0000;
+            text-shadow: 
+                0 0 20px #ff0000,
+                0 0 40px #ff6600,
+                3px 3px 0 #000;
+            animation: fightText 3s ease-in-out infinite;
+            z-index: 100;
+            letter-spacing: 10px;
+        }
+        @keyframes pikachuAttack {
+            0%, 40%, 100% { transform: translateX(0) rotate(0deg); }
+            45% { transform: translateX(50px) rotate(15deg); }
+            50% { transform: translateX(30px) rotate(-5deg); }
+        }
+        @keyframes charizardAttack {
+            0%, 40%, 100% { transform: translateX(0) rotate(0deg) scaleX(-1); }
+            45% { transform: translateX(-50px) rotate(-15deg) scaleX(-1); }
+            50% { transform: translateX(-30px) rotate(5deg) scaleX(-1); }
+        }
+        @keyframes lightningStrike {
+            0%, 40%, 100% { opacity: 0; transform: translate(-50px, -30px) scale(0.5); }
+            45%, 55% { opacity: 1; transform: translate(30px, 0) scale(1.5); }
+        }
+        @keyframes fireBlast {
+            0%, 40%, 100% { opacity: 0; transform: translate(50px, -30px) scale(0.5); }
+            45%, 55% { opacity: 1; transform: translate(-30px, 0) scale(1.5); }
+        }
+        @keyframes impactBurst {
+            0%, 45%, 100% { opacity: 0; transform: scale(0); }
+            50% { opacity: 1; transform: scale(2); }
+            60% { opacity: 0; transform: scale(3); }
+        }
+        @keyframes hpDamage {
+            0%, 45% { width: 100%; }
+            50%, 95% { width: 70%; }
+            100% { width: 100%; }
+        }
+        @keyframes fightText {
+            0%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            10%, 40% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0; transform: translate(-50%, -50%) scale(1.5); }
         }
         @keyframes earthRotate {
             from { background-position: 0% center; }
             to { background-position: 200% center; }
         }
-        @keyframes clouds {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        @keyframes atmosphereGlow {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 1; }
-        }
         @keyframes moonOrbit {
-            from { transform: rotate(0deg) translateX(160px) rotate(0deg); }
-            to { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
+            from { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
         }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-    </style>
+        .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
+        .star { position: absolute; width: 3px; height: 3px; background: white; border-radius: 50%; animation: twinkle 2s ease-in-out infinite; }
+        @keyframes twinkle { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }</style>
 </head>
 <body>
-<h1>🌍 Our Beautiful Earth</h1>
-<div class="stars" id="stars"></div><div class="planet-container"><div class="planet"></div><div class="atmosphere"></div><div class="moon"></div></div><script>
+<h1>🌍 Earth's Epic Pokemon Battle! ⚡🔥</h1>
+<div class="stars" id="stars"></div><div class="planet-container"><div class="planet"></div><div class="atmosphere"></div><div class="moon"></div></div><div class="pokemon-battle"><div class="pokemon pikachu"><div class="pokemon-sprite">⚡</div><div class="pokemon-name">Pikachu</div><div class="hp-bar"><div class="hp-fill pikachu-hp"></div></div></div><div class="battle-effects"><div class="lightning-bolt">⚡</div><div class="fire-blast">🔥</div><div class="impact">💥</div></div><div class="pokemon charizard"><div class="pokemon-sprite">🔥</div><div class="pokemon-name">Charizard</div><div class="hp-bar"><div class="hp-fill charizard-hp"></div></div></div></div><div class="battle-text">FIGHT!</div><script>
     // Generate random stars
     const starsContainer = document.getElementById('stars');
     for(let i = 0; i < 100; i++) {
@@ -169,5 +228,25 @@
         star.style.height = star.style.width;
         starsContainer.appendChild(star);
     }
+</script><audio autoplay="" id="battleMusic" loop=""><source src="https://www.soundjay.com/misc/sounds/magic-chime-02.mp3" type="audio/mpeg"/></audio><script>
+// Add battle sound effects simulation with visual feedback
+setInterval(() => {
+    const battleText = document.querySelector('.battle-text');
+    const attacks = ['THUNDERBOLT!', 'FLAMETHROWER!', 'FIGHT!', 'SUPER EFFECTIVE!', 'CRITICAL HIT!'];
+    battleText.textContent = attacks[Math.floor(Math.random() * attacks.length)];
+}, 3000);
+
+// Add screen shake on attacks
+setInterval(() => {
+    document.body.style.animation = 'none';
+    setTimeout(() => {
+        document.body.style.animation = 'shake 0.3s ease-in-out';
+    }, 10);
+}, 2000);
+
+// Add shake animation
+const shakeStyle = document.createElement('style');
+shakeStyle.textContent = '@keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }';
+document.head.appendChild(shakeStyle);
 </script></body>
 </html>
