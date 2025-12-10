@@ -6,8 +6,94 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
 <style>body { font-family: system-ui, sans-serif; display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #0d1b2a 100%); color: white; overflow: hidden; position: relative; } h1 { font-size: 2.5rem; text-align: center; z-index: 10; text-shadow: 0 0 30px rgba(100, 200, 255, 0.5); margin-bottom: 50px; animation: float 3s ease-in-out infinite; } @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } } .planet-container { position: relative; width: 300px; height: 300px; animation: planetFloat 6s ease-in-out infinite; } @keyframes planetFloat { 0%, 100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-20px) rotate(2deg); } } .planet { width: 200px; height: 200px; border-radius: 50%; position: absolute; top: 50px; left: 50px; overflow: hidden; box-shadow: inset -30px -30px 60px rgba(0,0,0,0.8), inset 10px 10px 40px rgba(255,200,100,0.3), 0 0 60px rgba(100, 150, 255, 0.4), 0 0 120px rgba(100, 150, 255, 0.2); z-index: 5; } .planet-surface { width: 100%; height: 100%; background: linear-gradient(135deg, #4a90a4 0%, #2d5a6b 30%, #1a3a4a 60%, #0d2030 100%); animation: rotate 20s linear infinite; } @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .planet-surface::before { content: ''; position: absolute; width: 100%; height: 100%; background: radial-gradient(ellipse 80% 20% at 50% 30%, rgba(255,255,255,0.2) 0%, transparent 50%), radial-gradient(ellipse 60% 15% at 30% 60%, rgba(100,200,150,0.3) 0%, transparent 50%), radial-gradient(ellipse 40% 10% at 70% 45%, rgba(200,150,100,0.2) 0%, transparent 50%); } .planet-atmosphere { position: absolute; top: -10px; left: -10px; width: 220px; height: 220px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(150,200,255,0.2) 0%, transparent 50%); pointer-events: none; } .ring { position: absolute; top: 50%; left: 50%; width: 320px; height: 80px; margin-top: -40px; margin-left: -160px; border: 3px solid rgba(200, 180, 150, 0.4); border-radius: 50%; transform: rotateX(75deg); box-shadow: 0 0 20px rgba(200, 180, 150, 0.3); } .ring-2 { width: 360px; height: 90px; margin-top: -45px; margin-left: -180px; border-color: rgba(180, 160, 130, 0.2); } .moon-orbit { position: absolute; top: 50%; left: 50%; width: 280px; height: 280px; margin-top: -140px; margin-left: -140px; animation: orbit 8s linear infinite; transform-style: preserve-3d; } @keyframes orbit { from { transform: rotateZ(0deg) rotateX(20deg); } to { transform: rotateZ(360deg) rotateX(20deg); } } .moon { position: absolute; top: 0; left: 50%; width: 40px; height: 40px; margin-left: -20px; margin-top: -20px; border-radius: 50%; background: linear-gradient(135deg, #e8e8e0 0%, #c9c9c0 40%, #a0a095 70%, #707068 100%); box-shadow: inset -8px -8px 15px rgba(0,0,0,0.4), inset 4px 4px 10px rgba(255,255,255,0.3), 0 0 20px rgba(200, 200, 180, 0.3), 0 0 40px rgba(200, 200, 180, 0.15); overflow: hidden; } .moon-craters { position: absolute; width: 100%; height: 100%; } .moon-craters::before { content: ''; position: absolute; width: 10px; height: 10px; background: rgba(100, 100, 95, 0.4); border-radius: 50%; top: 8px; left: 12px; box-shadow: 15px 10px 0 3px rgba(100, 100, 95, 0.3), 5px 20px 0 2px rgba(100, 100, 95, 0.35), 20px 25px 0 1px rgba(100, 100, 95, 0.25); } .kitty-orbit { position: absolute; top: 50%; left: 50%; width: 340px; height: 340px; margin-top: -170px; margin-left: -170px; animation: kittyOrbit 12s linear infinite; transform-style: preserve-3d; } @keyframes kittyOrbit { from { transform: rotateZ(180deg) rotateX(-15deg); } to { transform: rotateZ(540deg) rotateX(-15deg); } } .space-kitty { position: absolute; top: 0; left: 50%; width: 50px; height: 50px; margin-left: -25px; margin-top: -25px; font-size: 40px; filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6)) drop-shadow(0 0 20px rgba(255, 182, 193, 0.4)); animation: kittyFloat 2s ease-in-out infinite, kittyGlow 3s ease-in-out infinite; } @keyframes kittyFloat { 0%, 100% { transform: translateY(0) rotate(-10deg); } 50% { transform: translateY(-5px) rotate(10deg); } } @keyframes kittyGlow { 0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6)) drop-shadow(0 0 20px rgba(255, 182, 193, 0.4)); } 50% { filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.9)) drop-shadow(0 0 30px rgba(255, 182, 193, 0.6)); } } .kitty-sparkles { position: absolute; width: 100%; height: 100%; pointer-events: none; } .kitty-sparkles::before, .kitty-sparkles::after { content: '✨'; position: absolute; font-size: 12px; animation: sparkle 1.5s ease-in-out infinite; } .kitty-sparkles::before { top: -10px; left: 5px; animation-delay: 0s; } .kitty-sparkles::after { top: 5px; right: -5px; animation-delay: 0.75s; } @keyframes sparkle { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 1; transform: scale(1.2); } } .stars { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background-image: radial-gradient(2px 2px at 20px 30px, white, transparent), radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent), radial-gradient(1px 1px at 90px 40px, white, transparent), radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.9), transparent), radial-gradient(1px 1px at 230px 80px, white, transparent), radial-gradient(2px 2px at 300px 150px, rgba(255,255,255,0.7), transparent), radial-gradient(1px 1px at 400px 60px, white, transparent), radial-gradient(2px 2px at 500px 200px, rgba(255,255,255,0.8), transparent), radial-gradient(1px 1px at 600px 100px, white, transparent), radial-gradient(2px 2px at 700px 180px, rgba(255,255,255,0.9), transparent), radial-gradient(1px 1px at 800px 50px, white, transparent), radial-gradient(2px 2px at 900px 140px, rgba(255,255,255,0.7), transparent); background-size: 1000px 300px; animation: twinkle 8s linear infinite; } @keyframes twinkle { from { opacity: 0.7; } 50% { opacity: 1; } to { opacity: 0.7; } } #music-toggle { position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; font-size: 1.1rem; background: linear-gradient(135deg, rgba(100, 150, 255, 0.3), rgba(150, 100, 255, 0.3)); border: 2px solid rgba(150, 200, 255, 0.5); border-radius: 50px; color: white; cursor: pointer; z-index: 100; backdrop-filter: blur(10px); transition: all 0.3s ease; box-shadow: 0 0 20px rgba(100, 150, 255, 0.3); font-family: system-ui, sans-serif; } #music-toggle:hover { transform: scale(1.05); box-shadow: 0 0 30px rgba(100, 150, 255, 0.5); background: linear-gradient(135deg, rgba(100, 150, 255, 0.5), rgba(150, 100, 255, 0.5)); } #music-toggle.paused { background: linear-gradient(135deg, rgba(255, 150, 100, 0.3), rgba(255, 100, 150, 0.3)); border-color: rgba(255, 200, 150, 0.5); box-shadow: 0 0 20px rgba(255, 150, 100, 0.3); } #music-toggle:active { transform: scale(0.95); }</style>
-</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
 <h1>Welcome to the Cosmos</h1>
-<div class="planet-container"><div class="planet"><div class="planet-surface"></div><div class="planet-atmosphere"></div></div><div class="ring"></div><div class="ring ring-2"></div><div class="moon-orbit"><div class="moon"><div class="moon-craters"></div></div></div><div class="kitty-orbit"><div class="space-kitty">🐱<div class="kitty-sparkles"></div></div></div></div><div class="stars"></div><script>function toggleMusic() { const audio = document.getElementById('bg-music'); const btn = document.getElementById('music-toggle'); if (audio.paused) { audio.play(); btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); } else { audio.pause(); btn.innerHTML = '▶️ Play'; btn.classList.add('paused'); } } document.addEventListener('DOMContentLoaded', function() { const audio = document.getElementById('bg-music'); const btn = document.getElementById('music-toggle'); audio.volume = 0.5; // Try to play immediately const playPromise = audio.play(); if (playPromise !== undefined) { playPromise.then(() => { btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); }).catch(() => { btn.innerHTML = '▶️ Play'; btn.classList.add('paused'); // Add click listener to start music on first user interaction document.body.addEventListener('click', function startMusic() { audio.play().then(() => { btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); }); document.body.removeEventListener('click', startMusic); }, { once: true }); }); } }); // Also try playing on any user interaction window.addEventListener('click', function initAudio() { const audio = document.getElementById('bg-music'); const btn = document.getElementById('music-toggle'); if (audio.paused) { audio.play().then(() => { btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); }); } window.removeEventListener('click', initAudio); }, { once: true });</script><audio autoplay="autoplay" id="bg-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><button id="music-toggle" onclick="toggleMusic()">⏸️ Pause</button></body>
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0;"></div><div class="planet-container"><div class="planet"><div class="planet-surface"></div><div class="planet-atmosphere"></div><div class="planet-shadow"></div></div><div class="ring"></div><div class="ring ring-2"></div><div class="moon-orbit"><div class="moon"><div class="moon-craters"></div></div></div><div class="kitty-orbit"><div class="space-kitty">🐱<div class="kitty-sparkles"></div></div></div></div><div class="stars"></div><div class="light-overlay"></div><div class="sun-corona"></div><div class="sun-rays"></div><div class="sun-flare"></div><script>function toggleMusic() { const audio = document.getElementById('bg-music'); const btn = document.getElementById('music-toggle'); if (audio.paused) { audio.play(); btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); } else { audio.pause(); btn.innerHTML = '▶️ Play'; btn.classList.add('paused'); } } document.addEventListener('DOMContentLoaded', function() { const audio = document.getElementById('bg-music'); const btn = document.getElementById('music-toggle'); audio.volume = 0.5; // Try to play immediately const playPromise = audio.play(); if (playPromise !== undefined) { playPromise.then(() => { btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); }).catch(() => { btn.innerHTML = '▶️ Play'; btn.classList.add('paused'); // Add click listener to start music on first user interaction document.body.addEventListener('click', function startMusic() { audio.play().then(() => { btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); }); document.body.removeEventListener('click', startMusic); }, { once: true }); }); } }); // Also try playing on any user interaction window.addEventListener('click', function initAudio() { const audio = document.getElementById('bg-music'); const btn = document.getElementById('music-toggle'); if (audio.paused) { audio.play().then(() => { btn.innerHTML = '🎵 Pause'; btn.classList.remove('paused'); }); } window.removeEventListener('click', initAudio); }, { once: true });</script><audio autoplay="autoplay" id="bg-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><button id="music-toggle" onclick="toggleMusic()">⏸️ Pause</button><style>.sun-flare { position: fixed; top: 10%; left: 15%; width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, #fff9e6 0%, #ffdd44 30%, #ff9900 60%, transparent 70%); box-shadow: 0 0 60px 30px rgba(255, 200, 50, 0.6), 0 0 120px 60px rgba(255, 150, 50, 0.4), 0 0 200px 100px rgba(255, 100, 50, 0.2); animation: sunPulse 4s ease-in-out infinite, sunRotate 30s linear infinite; z-index: 2; } @keyframes sunPulse { 0%, 100% { transform: scale(1); box-shadow: 0 0 60px 30px rgba(255, 200, 50, 0.6), 0 0 120px 60px rgba(255, 150, 50, 0.4), 0 0 200px 100px rgba(255, 100, 50, 0.2); } 50% { transform: scale(1.1); box-shadow: 0 0 80px 40px rgba(255, 200, 50, 0.7), 0 0 150px 75px rgba(255, 150, 50, 0.5), 0 0 250px 120px rgba(255, 100, 50, 0.3); } } @keyframes sunRotate { from { filter: hue-rotate(0deg); } to { filter: hue-rotate(20deg); } } .sun-rays { position: fixed; top: 10%; left: 15%; width: 120px; height: 120px; z-index: 1; animation: raysSpin 60s linear infinite; } .sun-rays::before, .sun-rays::after { content: ''; position: absolute; top: 50%; left: 50%; width: 300px; height: 2px; margin-left: -150px; background: linear-gradient(90deg, transparent, rgba(255, 220, 100, 0.4), transparent); transform-origin: center; } .sun-rays::before { transform: rotate(0deg); box-shadow: 0 0 0 0 transparent, 0 60px 0 0 rgba(255, 220, 100, 0.1), 0 -60px 0 0 rgba(255, 220, 100, 0.1); } .sun-rays::after { transform: rotate(90deg); } @keyframes raysSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } } .light-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(ellipse at 15% 15%, rgba(255, 200, 100, 0.15) 0%, transparent 50%); pointer-events: none; z-index: 1; animation: lightFlicker 8s ease-in-out infinite; } @keyframes lightFlicker { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } } .planet-shadow { position: absolute; top: 50px; left: 50px; width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.9) 100%); z-index: 6; pointer-events: none; animation: shadowShift 20s linear infinite; } @keyframes shadowShift { 0% { background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.9) 100%); } 50% { background: linear-gradient(145deg, transparent 0%, transparent 35%, rgba(0,0,0,0.7) 55%, rgba(0,0,0,0.9) 100%); } 100% { background: linear-gradient(135deg, transparent 0%, transparent 40%, rgba(0,0,0,0.7) 60%, rgba(0,0,0,0.9) 100%); } } .sun-corona { position: fixed; top: calc(10% - 40px); left: calc(15% - 40px); width: 200px; height: 200px; border-radius: 50%; background: transparent; z-index: 1; } .sun-corona::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 50%; background: radial-gradient(circle, transparent 30%, rgba(255, 150, 50, 0.1) 50%, transparent 70%); animation: coronaPulse 6s ease-in-out infinite; } @keyframes coronaPulse { 0%, 100% { transform: scale(1); opacity: 0.5; } 50% { transform: scale(1.3); opacity: 0.8; } }</style><script>// Three.js sun with volumetric light
+(function() {
+  const container = document.getElementById('sun-container');
+  if (!container || typeof THREE === 'undefined') return;
+  
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000, 0);
+  container.appendChild(renderer.domElement);
+  
+  // Sun geometry with glow
+  const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
+  const sunMaterial = new THREE.MeshBasicMaterial({
+    color: 0xffdd44,
+    transparent: true,
+    opacity: 0.9
+  });
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-8, 5, -10);
+  scene.add(sun);
+  
+  // Glow layers
+  for (let i = 1; i <= 4; i++) {
+    const glowGeometry = new THREE.SphereGeometry(2 + i * 0.5, 32, 32);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+      color: new THREE.Color().setHSL(0.1, 1, 0.5 + i * 0.1),
+      transparent: true,
+      opacity: 0.15 / i,
+      side: THREE.BackSide
+    });
+    const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    glow.position.copy(sun.position);
+    scene.add(glow);
+  }
+  
+  // Light rays (particles)
+  const rayCount = 200;
+  const rayGeometry = new THREE.BufferGeometry();
+  const rayPositions = new Float32Array(rayCount * 3);
+  
+  for (let i = 0; i < rayCount; i++) {
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    const r = 3 + Math.random() * 8;
+    rayPositions[i * 3] = sun.position.x + r * Math.sin(phi) * Math.cos(theta);
+    rayPositions[i * 3 + 1] = sun.position.y + r * Math.sin(phi) * Math.sin(theta);
+    rayPositions[i * 3 + 2] = sun.position.z + r * Math.cos(phi);
+  }
+  
+  rayGeometry.setAttribute('position', new THREE.BufferAttribute(rayPositions, 3));
+  
+  const rayMaterial = new THREE.PointsMaterial({
+    color: 0xffaa33,
+    size: 0.1,
+    transparent: true,
+    opacity: 0.6,
+    blending: THREE.AdditiveBlending
+  });
+  
+  const rays = new THREE.Points(rayGeometry, rayMaterial);
+  scene.add(rays);
+  
+  camera.position.z = 5;
+  
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    
+    sun.scale.setScalar(1 + Math.sin(time) * 0.05);
+    rays.rotation.x += 0.001;
+    rays.rotation.y += 0.002;
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();</script></body>
 </html>
