@@ -5,231 +5,178 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            gap: 40px;
-        }
-        h1 { font-size: 3rem; text-align: center; }
-        
-        .planet-system {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .planet {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5e 100%);
-            box-shadow: 
-                inset -20px -20px 40px rgba(0,0,0,0.5),
-                inset 10px 10px 20px rgba(255,255,255,0.2),
-                0 0 60px rgba(74, 144, 217, 0.4);
-            animation: float 3s ease-in-out infinite;
-            position: relative;
-            transition: background 0.3s ease, box-shadow 0.3s ease;
-        }
-        
-        .planet.caught {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 50%, #c0392b 100%) !important;
-            box-shadow: 
-                inset -30px -20px 40px rgba(0,0,0,0.7),
-                inset 20px 15px 30px rgba(255,220,100,0.3),
-                -15px 15px 40px rgba(0, 0, 0, 0.5),
-                0 0 80px rgba(255, 100, 100, 0.6) !important;
-        }
-        
-        .planet::before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 15%;
-            width: 20px;
-            height: 15px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 50%;
-            filter: blur(3px);
-        }
-        
-        .planet::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(75deg);
-            width: 220px;
-            height: 220px;
-            border: 3px solid rgba(200, 180, 150, 0.5);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(200, 180, 150, 0.3);
-        }
-        
-        .moon-orbit {
-            position: absolute;
-            width: 250px;
-            height: 250px;
-            border-radius: 50%;
-            animation: orbit 8s linear infinite;
-        }
-        
-        .moon {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%);
-            box-shadow: 
-                inset -5px -5px 15px rgba(0,0,0,0.4),
-                inset 3px 3px 8px rgba(255,255,255,0.3),
-                0 0 20px rgba(255, 255, 255, 0.2);
-        }
-        
-        .moon::before {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 6px;
-            width: 8px;
-            height: 8px;
-            background: rgba(100, 100, 100, 0.5);
-            border-radius: 50%;
-        }
-        
-        .moon::after {
-            content: '';
-            position: absolute;
-            top: 18px;
-            left: 18px;
-            width: 5px;
-            height: 5px;
-            background: rgba(100, 100, 100, 0.4);
-            border-radius: 50%;
-        }
-        
-        .kitty-orbit {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-        }
-        
-        .kitty {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 28px;
-            animation: kitty-wobble 0.5s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
-            transition: filter 0.3s;
-        }
-        
-        .kitty.scared {
-            filter: drop-shadow(0 0 20px rgba(255, 50, 50, 0.8));
-        }
-        
-        .dog-orbit {
-            position: absolute;
-            width: 220px;
-            height: 220px;
-            border-radius: 50%;
-        }
-        
-        .dog {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 26px;
-            animation: dog-wobble 0.3s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(139, 90, 43, 0.6));
-        }
-        
-        @keyframes dog-wobble {
-            0%, 100% { transform: translateX(-50%) rotate(-15deg) scaleX(1); }
-            50% { transform: translateX(-50%) rotate(15deg) scaleX(-1); }
-        }
-        
-        @keyframes orbit {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes orbit-reverse {
-            from { transform: rotate(360deg); }
-            to { transform: rotate(0deg); }
-        }
-        
-        @keyframes kitty-wobble {
-            0%, 100% { transform: translateX(-50%) rotate(-10deg); }
-            50% { transform: translateX(-50%) rotate(10deg); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        #musicToggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            padding: 12px 24px;
-            font-size: 1.1rem;
-            background: rgba(255, 255, 255, 0.15);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 30px;
-            color: white;
-            cursor: pointer;
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        
-        #musicToggle:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: scale(1.05);
-        }
+<style>
+* {
+  box-sizing: border-box;
+}
 
-#sun-container canvas {
+body { 
+  font-family: system-ui, sans-serif; 
+  display: flex; 
+  flex-direction: column;
+  min-height: 100vh; 
+  margin: 0;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: white;
+}
+
+/* Navigation Menu */
+.nav-menu {
   position: fixed;
   top: 0;
   left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
+.nav-btn {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+.nav-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Sections */
+.section {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 100px 20px 40px;
+  gap: 30px;
+}
+
+.section.active {
+  display: flex;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+}
+
+/* Space Section */
 .planet-system {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   filter: drop-shadow(-20px 20px 30px rgba(0, 0, 0, 0.6));
 }
 
 .planet {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4a90d9 0%, #1e5799 50%, #0d2f5e 100%);
   box-shadow: 
     inset -30px -20px 40px rgba(0,0,0,0.7),
     inset 20px 15px 30px rgba(255,220,100,0.3),
     -15px 15px 40px rgba(0, 0, 0, 0.5),
     0 0 60px rgba(74, 144, 217, 0.4);
+  animation: float 3s ease-in-out infinite;
+  position: relative;
+}
+
+.planet::before {
+  content: '';
+  position: absolute;
+  top: 20%;
+  left: 15%;
+  width: 20px;
+  height: 15px;
+  background: rgba(255,255,255,0.3);
+  border-radius: 50%;
+  filter: blur(3px);
+}
+
+.planet::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg);
+  width: 220px;
+  height: 220px;
+  border: 3px solid rgba(200, 180, 150, 0.5);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(200, 180, 150, 0.3);
+}
+
+.moon-orbit {
+  position: absolute;
+  width: 250px;
+  height: 250px;
+  border-radius: 50%;
+  animation: orbit 8s linear infinite;
 }
 
 .moon {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%);
   box-shadow: 
     inset -8px -5px 15px rgba(0,0,0,0.6),
     inset 5px 5px 10px rgba(255,220,150,0.4),
     -5px 5px 15px rgba(0, 0, 0, 0.4),
     0 0 20px rgba(255, 255, 255, 0.2);
 }
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+/* Animals Section */
+#elephant-container {
+  position: relative;
+  z-index: 10;
+}
+
+#elephant {
+  font-size: 100px;
+  text-align: center;
+  animation: elephant-bounce 1s ease-in-out infinite;
+}
+
 @keyframes elephant-bounce {
   0%, 100% { transform: translateY(0) rotate(-5deg); }
   50% { transform: translateY(-10px) rotate(5deg); }
@@ -255,353 +202,186 @@
   font-size: 20px;
   pointer-events: none;
 }
+
+.chase-arena {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kitty-orbit {
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+
+.kitty {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 40px;
+  animation: kitty-wobble 0.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
+}
+
+.kitty.scared {
+  filter: drop-shadow(0 0 20px rgba(255, 50, 50, 0.8));
+}
+
+.dog-orbit {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+}
+
+.dog {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 36px;
+  animation: dog-wobble 0.3s ease-in-out infinite;
+  filter: drop-shadow(0 0 10px rgba(139, 90, 43, 0.6));
+}
+
+@keyframes dog-wobble {
+  0%, 100% { transform: translateX(-50%) rotate(-15deg) scaleX(1); }
+  50% { transform: translateX(-50%) rotate(15deg) scaleX(-1); }
+}
+
+@keyframes kitty-wobble {
+  0%, 100% { transform: translateX(-50%) rotate(-10deg); }
+  50% { transform: translateX(-50%) rotate(10deg); }
+}
+
+#scoreboard {
+  font-size: 1.5rem;
+  background: rgba(255,255,255,0.1);
+  padding: 15px 30px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+}
+
+/* Games Section */
+#openSnakeGame {
+  padding: 20px 40px;
+  font-size: 1.4rem;
+  background: linear-gradient(135deg, #00b894, #00cec9);
+  border: none;
+  border-radius: 20px;
+  color: white;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 4px 20px rgba(0, 206, 201, 0.4);
+  transition: all 0.3s ease;
+}
+
+#openSnakeGame:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 30px rgba(0, 206, 201, 0.6);
+}
+
+/* Music Toggle */
+#musicToggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  font-size: 1.1rem;
+  background: rgba(255, 255, 255, 0.15);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  z-index: 50;
+}
+
+#musicToggle:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.05);
+}
+
+/* Sun Container */
+#sun-container canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+/* Snake Game Modal */
+#snakeGameModal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.9);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
 <body>
-<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div><h1>Hello World</h1><div id="scoreboard" style="font-size: 1.5rem; background: rgba(255,255,255,0.1); padding: 15px 30px; border-radius: 15px; backdrop-filter: blur(10px);">🐕 Dog Score: <span id="dogScore">0</span></div><button id="openSnakeGame" style="margin-top: 20px; padding: 15px 30px; font-size: 1.2rem; background: linear-gradient(135deg, #00b894, #00cec9); border: none; border-radius: 15px; color: white; cursor: pointer; font-weight: bold; box-shadow: 0 4px 15px rgba(0, 206, 201, 0.4); transition: all 0.3s ease;">🐍 Play Snake Game!</button>
-<div id="elephant-container" style="position: relative; z-index: 10; margin-bottom: 20px;"><div id="elephant" style="font-size: 80px; text-align: center; animation: elephant-bounce 1s ease-in-out infinite;">🐘</div><div id="water-spray" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); pointer-events: none;"></div></div><div class="planet-system"><div class="planet" id="planet"></div><div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty">🐱</div></div><div class="dog-orbit"><div class="dog">🐕</div></div></div><audio id="bgMusic" loop="">
+<!-- Navigation Menu -->
+<nav class="nav-menu">
+<button class="nav-btn active" data-section="space">🌌 Space</button>
+<button class="nav-btn" data-section="animals">🐾 Animals</button>
+<button class="nav-btn" data-section="games">🎮 Games</button>
+</nav>
+<!-- Sun Background (always visible) -->
+<div id="sun-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none;"></div>
+<!-- SPACE SECTION -->
+<section class="section active" id="section-space">
+<h1 class="section-title">🌌 Space Explorer</h1>
+<div class="planet-system">
+<div class="planet" id="planet"></div>
+<div class="moon-orbit">
+<div class="moon"></div>
+</div>
+</div>
+</section>
+<!-- ANIMALS SECTION -->
+<section class="section" id="section-animals">
+<h1 class="section-title">🐾 Animal Kingdom</h1>
+<div id="elephant-container">
+<div id="elephant">🐘</div>
+<div id="water-spray" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); pointer-events: none;"></div>
+</div>
+<div id="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
+<div class="chase-arena">
+<div class="kitty-orbit">
+<div class="kitty">🐱</div>
+</div>
+<div class="dog-orbit">
+<div class="dog">🐕</div>
+</div>
+</div>
+</section>
+<!-- GAMES SECTION -->
+<section class="section" id="section-games">
+<h1 class="section-title">🎮 Game Zone</h1>
+<p style="font-size: 1.2rem; color: #b2bec3; text-align: center;">Challenge yourself with our mini-games!</p>
+<button id="openSnakeGame">🐍 Play Snake Game!</button>
+</section>
+<!-- Audio -->
+<audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
 <button id="musicToggle">🎵 Play Music</button>
-<script>
-const music = document.getElementById('bgMusic');
-const toggleBtn = document.getElementById('musicToggle');
-let isPlaying = false;
-
-// Auto-play on page load
-window.addEventListener('load', () => {
-  music.play().then(() => {
-    isPlaying = true;
-    toggleBtn.textContent = '⏸️ Pause Music';
-  }).catch(() => {
-    // Autoplay blocked by browser, user needs to click
-    console.log('Autoplay blocked, click the button to play');
-  });
-});
-
-toggleBtn.addEventListener('click', () => {
-  if (isPlaying) {
-    music.pause();
-    toggleBtn.textContent = '🎵 Play Music';
-  } else {
-    music.play();
-    toggleBtn.textContent = '⏸️ Pause Music';
-  }
-  isPlaying = !isPlaying;
-});
-</script><script>
-(function() {
-  const container = document.getElementById('sun-container');
-  
-  // Scene setup
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.z = 5;
-  
-  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-  container.appendChild(renderer.domElement);
-  
-  // Sun geometry
-  const sunGeometry = new THREE.SphereGeometry(1.2, 64, 64);
-  
-  // Sun material with glow effect
-  const sunMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffdd00,
-  });
-  
-  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-  sun.position.set(-3, 2, 0);
-  scene.add(sun);
-  
-  // Sun glow layers
-  const glowGeometry = new THREE.SphereGeometry(1.4, 32, 32);
-  const glowMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffaa00,
-    transparent: true,
-    opacity: 0.3,
-  });
-  const glow1 = new THREE.Mesh(glowGeometry, glowMaterial);
-  glow1.position.copy(sun.position);
-  scene.add(glow1);
-  
-  const glow2Geometry = new THREE.SphereGeometry(1.7, 32, 32);
-  const glow2Material = new THREE.MeshBasicMaterial({
-    color: 0xff6600,
-    transparent: true,
-    opacity: 0.15,
-  });
-  const glow2 = new THREE.Mesh(glow2Geometry, glow2Material);
-  glow2.position.copy(sun.position);
-  scene.add(glow2);
-  
-  const glow3Geometry = new THREE.SphereGeometry(2.2, 32, 32);
-  const glow3Material = new THREE.MeshBasicMaterial({
-    color: 0xff4400,
-    transparent: true,
-    opacity: 0.08,
-  });
-  const glow3 = new THREE.Mesh(glow3Geometry, glow3Material);
-  glow3.position.copy(sun.position);
-  scene.add(glow3);
-  
-  // Point light from sun
-  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
-  sunLight.position.copy(sun.position);
-  sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 1024;
-  sunLight.shadow.mapSize.height = 1024;
-  scene.add(sunLight);
-  
-  // Ambient light
-  const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-  scene.add(ambientLight);
-  
-  // Floating particles (sun rays)
-  const particlesGeometry = new THREE.BufferGeometry();
-  const particleCount = 200;
-  const positions = new Float32Array(particleCount * 3);
-  
-  for(let i = 0; i < particleCount * 3; i += 3) {
-    const angle = Math.random() * Math.PI * 2;
-    const radius = 1.5 + Math.random() * 2;
-    positions[i] = sun.position.x + Math.cos(angle) * radius;
-    positions[i + 1] = sun.position.y + Math.sin(angle) * radius;
-    positions[i + 2] = (Math.random() - 0.5) * 2;
-  }
-  
-  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-  
-  const particlesMaterial = new THREE.PointsMaterial({
-    color: 0xffcc00,
-    size: 0.05,
-    transparent: true,
-    opacity: 0.8,
-  });
-  
-  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-  scene.add(particles);
-  
-  // Animation
-  let time = 0;
-  function animate() {
-    requestAnimationFrame(animate);
-    time += 0.01;
-    
-    // Pulsing glow
-    const pulse = Math.sin(time * 2) * 0.1 + 1;
-    glow1.scale.set(pulse, pulse, pulse);
-    glow2.scale.set(pulse * 1.05, pulse * 1.05, pulse * 1.05);
-    glow3.scale.set(pulse * 1.1, pulse * 1.1, pulse * 1.1);
-    
-    // Rotate particles
-    particles.rotation.z += 0.002;
-    
-    // Light intensity variation
-    sunLight.intensity = 1.8 + Math.sin(time * 3) * 0.3;
-    
-    renderer.render(scene, camera);
-  }
-  
-  animate();
-  
-  // Handle resize
-  window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  });
-})();
-</script><script>
-(function() {
-  const kittyOrbit = document.querySelector('.kitty-orbit');
-  const dogOrbit = document.querySelector('.dog-orbit');
-  const kitty = document.querySelector('.kitty');
-  const dogScoreEl = document.getElementById('dogScore');
-  
-  let catAngle = 0;
-  let dogAngle = Math.PI; // Start opposite to cat
-  
-  const catOrbitRadius = 100;
-  const dogOrbitRadius = 110;
-  
-  const catNormalSpeed = 0.02;
-  const catEscapeSpeed = 0.12;
-  const dogSpeed = 0.04;
-  
-  const dangerDistance = 80;
-  const catchDistance = 35;
-  
-  let catSpeed = catNormalSpeed;
-  let dogScore = 0;
-  let canScore = true;
-  
-  function getPosition(angle, radius) {
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius
-    };
-  }
-  
-  function getDistance(pos1, pos2) {
-    const dx = pos1.x - pos2.x;
-    const dy = pos1.y - pos2.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-  
-  function catchCat() {
-    dogScore++;
-    dogScoreEl.textContent = dogScore;
-    dogScoreEl.style.color = '#ffcc00';
-    dogScoreEl.style.transform = 'scale(1.5)';
-    setTimeout(() => {
-      dogScoreEl.style.color = 'white';
-      dogScoreEl.style.transform = 'scale(1)';
-    }, 300);
-    
-    // Teleport cat to opposite side
-    catAngle = dogAngle + Math.PI;
-    canScore = false;
-    setTimeout(() => { canScore = true; }, 1000);
-  }
-  
-  function animate() {
-    // Get positions
-    const catPos = getPosition(catAngle, catOrbitRadius);
-    const dogPos = getPosition(dogAngle, dogOrbitRadius);
-    
-    // Check distance
-    const distance = getDistance(catPos, dogPos);
-    
-    // Check if dog caught the cat
-    if (distance < catchDistance && canScore) {
-      catchCat();
-    }
-    
-    // Adjust cat speed based on distance
-    if (distance < dangerDistance) {
-      catSpeed = catEscapeSpeed;
-      kitty.classList.add('scared');
-    } else {
-      catSpeed = catNormalSpeed;
-      kitty.classList.remove('scared');
-    }
-    
-    // Update angles (cat goes counter-clockwise, dog chases)
-    catAngle -= catSpeed;
-    dogAngle -= dogSpeed;
-    
-    // Apply transforms
-    kittyOrbit.style.transform = `rotate(${-catAngle * 180 / Math.PI}deg)`;
-    dogOrbit.style.transform = `rotate(${-dogAngle * 180 / Math.PI}deg)`;
-    
-    requestAnimationFrame(animate);
-  }
-  
-  // Add transition for score animation
-  dogScoreEl.style.transition = 'all 0.3s ease';
-  
-  animate();
-})();
-</script><script>
-(function() {
-  const kittyOrbit = document.querySelector('.kitty-orbit');
-  const dogOrbit = document.querySelector('.dog-orbit');
-  const kitty = document.querySelector('.kitty');
-  const dogScoreEl = document.getElementById('dogScore');
-  
-  let catAngle = 0;
-  let dogAngle = Math.PI; // Start opposite to cat
-  
-  const catOrbitRadius = 100;
-  const dogOrbitRadius = 110;
-  
-  const catNormalSpeed = 0.02;
-  const catEscapeSpeed = 0.12;
-  const dogSpeed = 0.04;
-  
-  const dangerDistance = 80;
-  const catchDistance = 35;
-  
-  let catSpeed = catNormalSpeed;
-  let dogScore = 0;
-  let canScore = true;
-  
-  function getPosition(angle, radius) {
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius
-    };
-  }
-  
-  function getDistance(pos1, pos2) {
-    const dx = pos1.x - pos2.x;
-    const dy = pos1.y - pos2.y;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
-  
-  function catchCat() {
-    dogScore++;
-    dogScoreEl.textContent = dogScore;
-    dogScoreEl.style.color = '#ffcc00';
-    dogScoreEl.style.transform = 'scale(1.5)';
-    setTimeout(() => {
-      dogScoreEl.style.color = 'white';
-      dogScoreEl.style.transform = 'scale(1)';
-    }, 300);
-    
-    // Trigger planet color change
-    if (window.triggerPlanetColorChange) {
-      window.triggerPlanetColorChange();
-    }
-    
-    // Teleport cat to opposite side
-    catAngle = dogAngle + Math.PI;
-    canScore = false;
-    setTimeout(() => { canScore = true; }, 1000);
-  }
-  
-  function animate() {
-    // Get positions
-    const catPos = getPosition(catAngle, catOrbitRadius);
-    const dogPos = getPosition(dogAngle, dogOrbitRadius);
-    
-    // Check distance
-    const distance = getDistance(catPos, dogPos);
-    
-    // Check if dog caught the cat
-    if (distance < catchDistance && canScore) {
-      catchCat();
-    }
-    
-    // Adjust cat speed based on distance
-    if (distance < dangerDistance) {
-      catSpeed = catEscapeSpeed;
-      kitty.classList.add('scared');
-    } else {
-      catSpeed = catNormalSpeed;
-      kitty.classList.remove('scared');
-    }
-    
-    // Update angles (cat goes counter-clockwise, dog chases)
-    catAngle -= catSpeed;
-    dogAngle -= dogSpeed;
-    
-    // Apply transforms
-    kittyOrbit.style.transform = `rotate(${-catAngle * 180 / Math.PI}deg)`;
-    dogOrbit.style.transform = `rotate(${-dogAngle * 180 / Math.PI}deg)`;
-    
-    requestAnimationFrame(animate);
-  }
-  
-  // Add transition for score animation
-  dogScoreEl.style.transition = 'all 0.3s ease';
-  
-  animate();
-})();
-</script><div id="snakeGameModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; flex-direction: column;">
+<!-- Snake Game Modal -->
+<div id="snakeGameModal">
 <div style="background: linear-gradient(135deg, #2d3436, #636e72); padding: 20px; border-radius: 20px; box-shadow: 0 0 50px rgba(0, 206, 201, 0.3);">
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
 <h2 style="margin: 0; color: #00cec9;">🐍 Snake Game</h2>
@@ -618,6 +398,214 @@ toggleBtn.addEventListener('click', () => {
 </div>
 </div>
 </div>
+<!-- Navigation Script -->
+<script>
+(function() {
+  const navBtns = document.querySelectorAll('.nav-btn');
+  const sections = document.querySelectorAll('.section');
+  
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const targetSection = btn.dataset.section;
+      
+      // Update buttons
+      navBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Update sections
+      sections.forEach(s => s.classList.remove('active'));
+      document.getElementById('section-' + targetSection).classList.add('active');
+    });
+  });
+})();
+</script>
+<!-- Music Script -->
+<script>
+const music = document.getElementById('bgMusic');
+const toggleBtn = document.getElementById('musicToggle');
+let isPlaying = false;
+
+window.addEventListener('load', () => {
+  music.play().then(() => {
+    isPlaying = true;
+    toggleBtn.textContent = '⏸️ Pause Music';
+  }).catch(() => {
+    console.log('Autoplay blocked, click the button to play');
+  });
+});
+
+toggleBtn.addEventListener('click', () => {
+  if (isPlaying) {
+    music.pause();
+    toggleBtn.textContent = '🎵 Play Music';
+  } else {
+    music.play();
+    toggleBtn.textContent = '⏸️ Pause Music';
+  }
+  isPlaying = !isPlaying;
+});
+</script>
+<!-- Sun 3D Script -->
+<script>
+(function() {
+  const container = document.getElementById('sun-container');
+  
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.z = 5;
+  
+  const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  container.appendChild(renderer.domElement);
+  
+  const sunGeometry = new THREE.SphereGeometry(1.2, 64, 64);
+  const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+  const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+  sun.position.set(-3, 2, 0);
+  scene.add(sun);
+  
+  const glowGeometry = new THREE.SphereGeometry(1.4, 32, 32);
+  const glowMaterial = new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.3 });
+  const glow1 = new THREE.Mesh(glowGeometry, glowMaterial);
+  glow1.position.copy(sun.position);
+  scene.add(glow1);
+  
+  const glow2Geometry = new THREE.SphereGeometry(1.7, 32, 32);
+  const glow2Material = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.15 });
+  const glow2 = new THREE.Mesh(glow2Geometry, glow2Material);
+  glow2.position.copy(sun.position);
+  scene.add(glow2);
+  
+  const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
+  sunLight.position.copy(sun.position);
+  scene.add(sunLight);
+  
+  const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+  scene.add(ambientLight);
+  
+  let time = 0;
+  function animate() {
+    requestAnimationFrame(animate);
+    time += 0.01;
+    const pulse = Math.sin(time * 2) * 0.1 + 1;
+    glow1.scale.set(pulse, pulse, pulse);
+    glow2.scale.set(pulse * 1.05, pulse * 1.05, pulse * 1.05);
+    sunLight.intensity = 1.8 + Math.sin(time * 3) * 0.3;
+    renderer.render(scene, camera);
+  }
+  animate();
+  
+  window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+<!-- Cat & Dog Chase Script -->
+<script>
+(function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const dogOrbit = document.querySelector('.dog-orbit');
+  const kitty = document.querySelector('.kitty');
+  const dogScoreEl = document.getElementById('dogScore');
+  
+  let catAngle = 0;
+  let dogAngle = Math.PI;
+  
+  const catOrbitRadius = 100;
+  const dogOrbitRadius = 110;
+  const catNormalSpeed = 0.02;
+  const catEscapeSpeed = 0.12;
+  const dogSpeed = 0.04;
+  const dangerDistance = 80;
+  const catchDistance = 35;
+  
+  let catSpeed = catNormalSpeed;
+  let dogScore = 0;
+  let canScore = true;
+  
+  function getPosition(angle, radius) {
+    return { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
+  }
+  
+  function getDistance(pos1, pos2) {
+    return Math.sqrt((pos1.x - pos2.x) ** 2 + (pos1.y - pos2.y) ** 2);
+  }
+  
+  function catchCat() {
+    dogScore++;
+    dogScoreEl.textContent = dogScore;
+    dogScoreEl.style.color = '#ffcc00';
+    dogScoreEl.style.transform = 'scale(1.5)';
+    setTimeout(() => {
+      dogScoreEl.style.color = 'white';
+      dogScoreEl.style.transform = 'scale(1)';
+    }, 300);
+    catAngle = dogAngle + Math.PI;
+    canScore = false;
+    setTimeout(() => { canScore = true; }, 1000);
+  }
+  
+  function animate() {
+    const catPos = getPosition(catAngle, catOrbitRadius);
+    const dogPos = getPosition(dogAngle, dogOrbitRadius);
+    const distance = getDistance(catPos, dogPos);
+    
+    if (distance < catchDistance && canScore) catchCat();
+    
+    if (distance < dangerDistance) {
+      catSpeed = catEscapeSpeed;
+      kitty.classList.add('scared');
+    } else {
+      catSpeed = catNormalSpeed;
+      kitty.classList.remove('scared');
+    }
+    
+    catAngle -= catSpeed;
+    dogAngle -= dogSpeed;
+    
+    kittyOrbit.style.transform = `rotate(${-catAngle * 180 / Math.PI}deg)`;
+    dogOrbit.style.transform = `rotate(${-dogAngle * 180 / Math.PI}deg)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  dogScoreEl.style.transition = 'all 0.3s ease';
+  animate();
+})();
+</script>
+<!-- Elephant Water Spray Script -->
+<script>
+(function() {
+  const waterSpray = document.getElementById('water-spray');
+  const waterEmojis = ['💧', '💦', '🌊'];
+  
+  function createWaterDroplet() {
+    const droplet = document.createElement('span');
+    droplet.className = 'water-droplet';
+    droplet.textContent = waterEmojis[Math.floor(Math.random() * waterEmojis.length)];
+    droplet.style.left = ((Math.random() - 0.5) * 60) + 'px';
+    droplet.style.top = '0px';
+    
+    const animationType = Math.random();
+    if (animationType < 0.33) {
+      droplet.style.animation = 'water-drop 1.5s ease-out forwards';
+    } else if (animationType < 0.66) {
+      droplet.style.animation = 'water-spray-left 1.2s ease-out forwards';
+    } else {
+      droplet.style.animation = 'water-spray-right 1.2s ease-out forwards';
+    }
+    
+    waterSpray.appendChild(droplet);
+    setTimeout(() => droplet.remove(), 1500);
+  }
+  
+  setInterval(createWaterDroplet, 150);
+  for (let i = 0; i < 5; i++) setTimeout(createWaterDroplet, i * 50);
+})();
+</script>
+<!-- Snake Game Script -->
 <script>
 (function() {
   const modal = document.getElementById('snakeGameModal');
@@ -644,11 +632,7 @@ toggleBtn.addEventListener('click', () => {
   highScoreEl.textContent = highScore;
   
   function initGame() {
-    snake = [
-      { x: 5, y: 10 },
-      { x: 4, y: 10 },
-      { x: 3, y: 10 }
-    ];
+    snake = [{ x: 5, y: 10 }, { x: 4, y: 10 }, { x: 3, y: 10 }];
     direction = { x: 1, y: 0 };
     nextDirection = { x: 1, y: 0 };
     score = 0;
@@ -658,237 +642,108 @@ toggleBtn.addEventListener('click', () => {
   }
   
   function placeFood() {
-    food = {
-      x: Math.floor(Math.random() * tileCount),
-      y: Math.floor(Math.random() * tileCount)
-    };
-    // Make sure food doesn't spawn on snake
+    food = { x: Math.floor(Math.random() * tileCount), y: Math.floor(Math.random() * tileCount) };
     for (let segment of snake) {
-      if (segment.x === food.x && segment.y === food.y) {
-        placeFood();
-        return;
-      }
+      if (segment.x === food.x && segment.y === food.y) { placeFood(); return; }
     }
   }
   
   function update() {
     if (gameOver) return;
-    
     direction = { ...nextDirection };
-    
     const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
     
-    // Wall collision
-    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) {
-      endGame();
-      return;
-    }
-    
-    // Self collision
-    for (let segment of snake) {
-      if (head.x === segment.x && head.y === segment.y) {
-        endGame();
-        return;
-      }
-    }
+    if (head.x < 0 || head.x >= tileCount || head.y < 0 || head.y >= tileCount) { endGame(); return; }
+    for (let segment of snake) { if (head.x === segment.x && head.y === segment.y) { endGame(); return; } }
     
     snake.unshift(head);
-    
-    // Check food collision
     if (head.x === food.x && head.y === food.y) {
       score += 10;
       scoreEl.textContent = score;
-      if (score > highScore) {
-        highScore = score;
-        highScoreEl.textContent = highScore;
-        localStorage.setItem('snakeHighScore', highScore);
-      }
+      if (score > highScore) { highScore = score; highScoreEl.textContent = highScore; localStorage.setItem('snakeHighScore', highScore); }
       placeFood();
-    } else {
-      snake.pop();
-    }
+    } else { snake.pop(); }
   }
   
   function draw() {
-    // Clear canvas
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Draw grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
-    for (let i = 0; i < tileCount; i++) {
-      ctx.beginPath();
-      ctx.moveTo(i * gridSize, 0);
-      ctx.lineTo(i * gridSize, canvas.height);
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, i * gridSize);
-      ctx.lineTo(canvas.width, i * gridSize);
-      ctx.stroke();
-    }
-    
-    // Draw food
     ctx.fillStyle = '#e74c3c';
     ctx.beginPath();
     ctx.arc(food.x * gridSize + gridSize/2, food.y * gridSize + gridSize/2, gridSize/2 - 2, 0, Math.PI * 2);
     ctx.fill();
-    ctx.fillStyle = '#c0392b';
-    ctx.beginPath();
-    ctx.arc(food.x * gridSize + gridSize/2 - 3, food.y * gridSize + gridSize/2 - 3, 3, 0, Math.PI * 2);
-    ctx.fill();
     
-    // Draw snake
     snake.forEach((segment, index) => {
-      const gradient = ctx.createRadialGradient(
-        segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, 0,
-        segment.x * gridSize + gridSize/2, segment.y * gridSize + gridSize/2, gridSize/2
-      );
-      if (index === 0) {
-        gradient.addColorStop(0, '#00cec9');
-        gradient.addColorStop(1, '#00b894');
-      } else {
-        gradient.addColorStop(0, '#00b894');
-        gradient.addColorStop(1, '#00a884');
-      }
-      ctx.fillStyle = gradient;
+      ctx.fillStyle = index === 0 ? '#00cec9' : '#00b894';
       ctx.beginPath();
       ctx.roundRect(segment.x * gridSize + 1, segment.y * gridSize + 1, gridSize - 2, gridSize - 2, 5);
       ctx.fill();
-      
-      // Draw eyes on head
-      if (index === 0) {
-        ctx.fillStyle = 'white';
-        const eyeOffset = 4;
-        ctx.beginPath();
-        ctx.arc(segment.x * gridSize + gridSize/2 - eyeOffset, segment.y * gridSize + gridSize/2 - 2, 3, 0, Math.PI * 2);
-        ctx.arc(segment.x * gridSize + gridSize/2 + eyeOffset, segment.y * gridSize + gridSize/2 - 2, 3, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = 'black';
-        ctx.beginPath();
-        ctx.arc(segment.x * gridSize + gridSize/2 - eyeOffset + direction.x, segment.y * gridSize + gridSize/2 - 2 + direction.y, 1.5, 0, Math.PI * 2);
-        ctx.arc(segment.x * gridSize + gridSize/2 + eyeOffset + direction.x, segment.y * gridSize + gridSize/2 - 2 + direction.y, 1.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
     });
     
-    // Game over text
     if (gameOver) {
       ctx.fillStyle = 'rgba(0,0,0,0.7)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#e74c3c';
       ctx.font = 'bold 40px system-ui';
       ctx.textAlign = 'center';
-      ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2 - 20);
-      ctx.fillStyle = '#ffeaa7';
-      ctx.font = '24px system-ui';
-      ctx.fillText('Score: ' + score, canvas.width/2, canvas.height/2 + 20);
+      ctx.fillText('GAME OVER', canvas.width/2, canvas.height/2);
     }
   }
   
-  function endGame() {
-    gameOver = true;
-    clearInterval(gameLoop);
-  }
+  function endGame() { gameOver = true; clearInterval(gameLoop); }
+  function gameStep() { update(); draw(); }
+  function startGame() { initGame(); if (gameLoop) clearInterval(gameLoop); gameLoop = setInterval(gameStep, 100); }
   
-  function gameStep() {
-    update();
-    draw();
-  }
-  
-  function startGame() {
-    initGame();
-    if (gameLoop) clearInterval(gameLoop);
-    gameLoop = setInterval(gameStep, 100);
-  }
-  
-  // Controls
   document.addEventListener('keydown', (e) => {
-    if (!modal.style.display || modal.style.display === 'none') return;
-    
+    if (modal.style.display === 'none') return;
     switch(e.key) {
-      case 'ArrowUp':
-      case 'w':
-      case 'W':
-        if (direction.y !== 1) nextDirection = { x: 0, y: -1 };
-        e.preventDefault();
-        break;
-      case 'ArrowDown':
-      case 's':
-      case 'S':
-        if (direction.y !== -1) nextDirection = { x: 0, y: 1 };
-        e.preventDefault();
-        break;
-      case 'ArrowLeft':
-      case 'a':
-      case 'A':
-        if (direction.x !== 1) nextDirection = { x: -1, y: 0 };
-        e.preventDefault();
-        break;
-      case 'ArrowRight':
-      case 'd':
-      case 'D':
-        if (direction.x !== -1) nextDirection = { x: 1, y: 0 };
-        e.preventDefault();
-        break;
+      case 'ArrowUp': case 'w': case 'W': if (direction.y !== 1) nextDirection = { x: 0, y: -1 }; e.preventDefault(); break;
+      case 'ArrowDown': case 's': case 'S': if (direction.y !== -1) nextDirection = { x: 0, y: 1 }; e.preventDefault(); break;
+      case 'ArrowLeft': case 'a': case 'A': if (direction.x !== 1) nextDirection = { x: -1, y: 0 }; e.preventDefault(); break;
+      case 'ArrowRight': case 'd': case 'D': if (direction.x !== -1) nextDirection = { x: 1, y: 0 }; e.preventDefault(); break;
     }
   });
   
-  openBtn.addEventListener('click', () => {
-    modal.style.display = 'flex';
-    startGame();
-  });
-  
-  openBtn.addEventListener('mouseenter', () => {
-    openBtn.style.transform = 'scale(1.1)';
-  });
-  openBtn.addEventListener('mouseleave', () => {
-    openBtn.style.transform = 'scale(1)';
-  });
-  
-  closeBtn.addEventListener('click', () => {
-    modal.style.display = 'none';
-    if (gameLoop) clearInterval(gameLoop);
-  });
-  
+  openBtn.addEventListener('click', () => { modal.style.display = 'flex'; startGame(); });
+  closeBtn.addEventListener('click', () => { modal.style.display = 'none'; if (gameLoop) clearInterval(gameLoop); });
   restartBtn.addEventListener('click', startGame);
 })();
-</script><script>
+</script>
+<script>
 (function() {
-  const waterSpray = document.getElementById('water-spray');
-  const waterEmojis = ['💧', '💦', '🌊'];
+  const sections = ['space', 'animals', 'games'];
+  let currentIndex = 0;
   
-  function createWaterDroplet() {
-    const droplet = document.createElement('span');
-    droplet.className = 'water-droplet';
-    droplet.textContent = waterEmojis[Math.floor(Math.random() * waterEmojis.length)];
+  function rotateSection() {
+    currentIndex = (currentIndex + 1) % sections.length;
+    const targetSection = sections[currentIndex];
     
-    const offsetX = (Math.random() - 0.5) * 60;
-    droplet.style.left = offsetX + 'px';
-    droplet.style.top = '0px';
+    // Update navigation buttons
+    const navBtns = document.querySelectorAll('.nav-btn');
+    navBtns.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.section === targetSection) {
+        btn.classList.add('active');
+      }
+    });
     
-    const animationType = Math.random();
-    if (animationType < 0.33) {
-      droplet.style.animation = 'water-drop 1.5s ease-out forwards';
-    } else if (animationType < 0.66) {
-      droplet.style.animation = 'water-spray-left 1.2s ease-out forwards';
-    } else {
-      droplet.style.animation = 'water-spray-right 1.2s ease-out forwards';
-    }
-    
-    waterSpray.appendChild(droplet);
-    
-    setTimeout(() => {
-      droplet.remove();
-    }, 1500);
+    // Update sections visibility
+    const sectionElements = document.querySelectorAll('.section');
+    sectionElements.forEach(s => s.classList.remove('active'));
+    document.getElementById('section-' + targetSection).classList.add('active');
   }
   
-  // Create water droplets continuously
-  setInterval(createWaterDroplet, 150);
+  // Auto-rotate every 30 seconds
+  setInterval(rotateSection, 30000);
   
-  // Initial burst
-  for (let i = 0; i < 5; i++) {
-    setTimeout(createWaterDroplet, i * 50);
-  }
+  // Sync currentIndex when user manually clicks navigation
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const clickedSection = btn.dataset.section;
+      currentIndex = sections.indexOf(clickedSection);
+    });
+  });
 })();
 </script></body>
 </html>
