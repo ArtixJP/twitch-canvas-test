@@ -4,8 +4,8 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🥐 Golden Crust Bakery - Fresh Daily</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;family=Lato:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<title>🍞 Sunrise Artisan Bakery - Handcrafted Daily</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&amp;family=Nunito:wght@300;400;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
         * {
             margin: 0;
@@ -14,23 +14,28 @@
         }
         
         :root {
-            --cream: #FFF8F0;
-            --warm-brown: #8B5E3C;
-            --golden: #D4A574;
-            --dark-brown: #3D2314;
-            --soft-pink: #F5E1DA;
-            --butter: #F5DEB3;
+            --honey: #E8A849;
+            --crust: #A0522D;
+            --flour: #FDF5E6;
+            --chocolate: #3C1F0E;
+            --cream: #FFF8DC;
+            --berry: #8B4557;
+            --sage: #9CAF88;
+        }
+        
+        html {
+            scroll-behavior: smooth;
         }
         
         body {
-            font-family: 'Lato', sans-serif;
-            background: var(--cream);
-            color: var(--dark-brown);
+            font-family: 'Nunito', sans-serif;
+            background: var(--flour);
+            color: var(--chocolate);
             overflow-x: hidden;
         }
         
-        /* Floating flour particles */
-        .flour-particles {
+        /* Wheat particles animation */
+        .wheat-bg {
             position: fixed;
             top: 0;
             left: 0;
@@ -41,28 +46,22 @@
             overflow: hidden;
         }
         
-        .flour {
+        .wheat-grain {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            background: rgba(255, 255, 255, 0.6);
-            border-radius: 50%;
-            animation: float-down 15s linear infinite;
+            font-size: 20px;
+            opacity: 0.3;
+            animation: drift 20s linear infinite;
         }
         
-        @keyframes float-down {
+        @keyframes drift {
             0% {
-                transform: translateY(-100px) rotate(0deg);
+                transform: translateY(-50px) rotate(0deg) translateX(0);
                 opacity: 0;
             }
-            10% {
-                opacity: 0.8;
-            }
-            90% {
-                opacity: 0.8;
-            }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
             100% {
-                transform: translateY(100vh) rotate(360deg);
+                transform: translateY(100vh) rotate(720deg) translateX(100px);
                 opacity: 0;
             }
         }
@@ -72,293 +71,492 @@
             position: fixed;
             top: 0;
             width: 100%;
-            background: rgba(255, 248, 240, 0.95);
-            backdrop-filter: blur(10px);
-            z-index: 100;
-            padding: 1rem 2rem;
+            padding: 1rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 2px 20px rgba(139, 94, 60, 0.1);
+            z-index: 1000;
+            transition: all 0.4s ease;
+            background: transparent;
+        }
+        
+        nav.scrolled {
+            background: rgba(253, 245, 230, 0.98);
+            box-shadow: 0 4px 30px rgba(60, 31, 14, 0.1);
+            padding: 0.8rem 3rem;
         }
         
         .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.8rem;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
             font-weight: 700;
-            color: var(--warm-brown);
+            color: var(--crust);
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            text-decoration: none;
         }
         
-        .nav-links {
+        .logo-icon {
+            font-size: 2.2rem;
+            animation: wiggle 3s ease-in-out infinite;
+        }
+        
+        @keyframes wiggle {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        .nav-menu {
             display: flex;
-            gap: 2rem;
+            gap: 2.5rem;
             list-style: none;
         }
         
-        .nav-links a {
+        .nav-menu a {
             text-decoration: none;
-            color: var(--dark-brown);
+            color: var(--chocolate);
             font-weight: 600;
-            transition: color 0.3s;
+            font-size: 1rem;
             position: relative;
+            transition: color 0.3s;
         }
         
-        .nav-links a::after {
+        .nav-menu a::before {
             content: '';
             position: absolute;
-            bottom: -5px;
-            left: 0;
+            bottom: -8px;
+            left: 50%;
             width: 0;
-            height: 2px;
-            background: var(--golden);
-            transition: width 0.3s;
+            height: 3px;
+            background: var(--honey);
+            border-radius: 3px;
+            transition: all 0.3s;
+            transform: translateX(-50%);
         }
         
-        .nav-links a:hover::after {
+        .nav-menu a:hover {
+            color: var(--crust);
+        }
+        
+        .nav-menu a:hover::before {
             width: 100%;
         }
         
         /* Hero Section */
-        .hero {
+        #hero {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 6rem 2rem 4rem;
-            background: linear-gradient(135deg, var(--cream) 0%, var(--soft-pink) 50%, var(--butter) 100%);
             position: relative;
+            background: linear-gradient(165deg, var(--flour) 0%, var(--cream) 40%, #F5DEB3 100%);
+            overflow: hidden;
         }
         
-        .hero-content {
+        .hero-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 3rem;
+            gap: 4rem;
+            align-items: center;
             position: relative;
             z-index: 1;
         }
         
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 4rem;
-            color: var(--dark-brown);
-            margin-bottom: 1rem;
-            line-height: 1.2;
+        .hero-text h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 4.5rem;
+            line-height: 1.1;
+            color: var(--chocolate);
+            margin-bottom: 1.5rem;
         }
         
-        .hero h1 span {
-            color: var(--warm-brown);
+        .hero-text h1 .accent {
+            color: var(--crust);
             font-style: italic;
-        }
-        
-        .hero p {
-            font-size: 1.3rem;
-            color: var(--warm-brown);
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        
-        .cta-btn {
-            display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--warm-brown);
-            color: var(--cream);
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s;
-            box-shadow: 0 4px 15px rgba(139, 94, 60, 0.3);
-        }
-        
-        .cta-btn:hover {
-            background: var(--dark-brown);
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(139, 94, 60, 0.4);
-        }
-        
-        .hero-emojis {
-            font-size: 4rem;
-            margin-bottom: 2rem;
-            animation: bounce 2s ease-in-out infinite;
-        }
-        
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        
-        /* Featured Products */
-        .featured {
-            padding: 5rem 2rem;
-            background: white;
-        }
-        
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            text-align: center;
-            color: var(--dark-brown);
-            margin-bottom: 3rem;
-        }
-        
-        .section-title::after {
-            content: '';
             display: block;
-            width: 80px;
-            height: 3px;
-            background: var(--golden);
-            margin: 1rem auto 0;
+        }
+        
+        .hero-text p {
+            font-size: 1.25rem;
+            color: var(--crust);
+            line-height: 1.8;
+            margin-bottom: 2.5rem;
+            max-width: 500px;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .btn-primary {
+            background: var(--crust);
+            color: var(--flour);
+            box-shadow: 0 8px 25px rgba(160, 82, 45, 0.3);
+        }
+        
+        .btn-primary:hover {
+            background: var(--chocolate);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(160, 82, 45, 0.4);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: var(--crust);
+            border: 2px solid var(--crust);
+        }
+        
+        .btn-secondary:hover {
+            background: var(--crust);
+            color: var(--flour);
+        }
+        
+        .hero-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .bread-showcase {
+            font-size: 15rem;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 30px 40px rgba(60, 31, 14, 0.2));
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-20px) rotate(3deg); }
+        }
+        
+        .floating-items {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .float-item {
+            position: absolute;
+            font-size: 3rem;
+            animation: orbit 8s linear infinite;
+        }
+        
+        .float-item:nth-child(1) { top: 10%; left: 10%; animation-delay: 0s; }
+        .float-item:nth-child(2) { top: 20%; right: 10%; animation-delay: -2s; }
+        .float-item:nth-child(3) { bottom: 20%; left: 5%; animation-delay: -4s; }
+        .float-item:nth-child(4) { bottom: 10%; right: 15%; animation-delay: -6s; }
+        
+        @keyframes orbit {
+            0% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-30px) scale(1.1); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        
+        /* Products Section */
+        #products {
+            padding: 8rem 3rem;
+            background: white;
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-header h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            color: var(--chocolate);
+            margin-bottom: 1rem;
+        }
+        
+        .section-header p {
+            color: var(--crust);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .divider {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--honey), var(--crust));
+            margin: 1.5rem auto;
+            border-radius: 4px;
         }
         
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            max-width: 1200px;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+            max-width: 1300px;
             margin: 0 auto;
         }
         
         .product-card {
-            background: var(--cream);
-            border-radius: 20px;
+            background: var(--flour);
+            border-radius: 24px;
             overflow: hidden;
-            transition: all 0.3s;
-            box-shadow: 0 5px 20px rgba(139, 94, 60, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
         }
         
         .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(139, 94, 60, 0.2);
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(60, 31, 14, 0.15);
         }
         
-        .product-image {
-            height: 200px;
+        .product-badge {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--berry);
+            color: white;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            z-index: 2;
+        }
+        
+        .product-img {
+            height: 220px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 6rem;
-            background: linear-gradient(135deg, var(--soft-pink), var(--butter));
+            font-size: 7rem;
+            background: linear-gradient(135deg, var(--cream) 0%, #F5DEB3 100%);
+            position: relative;
+            overflow: hidden;
         }
         
-        .product-info {
-            padding: 1.5rem;
-            text-align: center;
+        .product-img::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(transparent, var(--flour));
         }
         
-        .product-info h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.4rem;
-            color: var(--dark-brown);
+        .product-details {
+            padding: 1.5rem 2rem 2rem;
+        }
+        
+        .product-details h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            color: var(--chocolate);
             margin-bottom: 0.5rem;
         }
         
-        .product-info p {
-            color: var(--warm-brown);
+        .product-details p {
+            color: var(--crust);
             font-size: 0.95rem;
-            margin-bottom: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
         }
         
-        .price {
-            font-weight: 700;
-            font-size: 1.3rem;
-            color: var(--warm-brown);
-        }
-        
-        /* About Section */
-        .about {
-            padding: 5rem 2rem;
-            background: linear-gradient(135deg, var(--butter) 0%, var(--soft-pink) 100%);
-        }
-        
-        .about-content {
-            max-width: 900px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 3rem;
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
         
-        .about-text h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            color: var(--dark-brown);
+        .price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--crust);
+        }
+        
+        .add-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--honey);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .add-btn:hover {
+            background: var(--crust);
+            transform: rotate(90deg);
+        }
+        
+        /* Story Section */
+        #story {
+            padding: 8rem 3rem;
+            background: linear-gradient(180deg, var(--cream) 0%, var(--flour) 100%);
+        }
+        
+        .story-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 5rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            align-items: center;
+        }
+        
+        .story-image {
+            position: relative;
+        }
+        
+        .story-emoji-main {
+            font-size: 12rem;
+            display: block;
+            text-align: center;
+            filter: drop-shadow(0 20px 30px rgba(60, 31, 14, 0.15));
+        }
+        
+        .story-deco {
+            position: absolute;
+            font-size: 3rem;
+        }
+        
+        .story-deco:nth-child(2) { top: 0; right: 20%; }
+        .story-deco:nth-child(3) { bottom: 10%; left: 10%; }
+        .story-deco:nth-child(4) { top: 30%; left: 0; }
+        
+        .story-content h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            color: var(--chocolate);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+        
+        .story-content p {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: var(--chocolate);
             margin-bottom: 1.5rem;
         }
         
-        .about-text p {
-            color: var(--dark-brown);
-            line-height: 1.8;
-            margin-bottom: 1rem;
-        }
-        
-        .about-image {
-            font-size: 8rem;
-            text-align: center;
-            animation: rotate-slow 20s linear infinite;
-        }
-        
-        @keyframes rotate-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Hours & Location */
-        .info-section {
-            padding: 5rem 2rem;
-            background: var(--dark-brown);
-            color: var(--cream);
-        }
-        
-        .info-grid {
-            max-width: 1000px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        .story-stats {
+            display: flex;
             gap: 3rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--honey);
+        }
+        
+        .stat {
             text-align: center;
         }
         
-        .info-box h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: var(--golden);
+        .stat-number {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            color: var(--crust);
+            display: block;
         }
         
-        .info-box p {
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--chocolate);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* Contact Section */
+        #contact {
+            padding: 6rem 3rem;
+            background: var(--chocolate);
+            color: var(--flour);
+        }
+        
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .contact-card {
+            text-align: center;
+            padding: 2.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            transition: all 0.3s;
+        }
+        
+        .contact-card:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-5px);
+        }
+        
+        .contact-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: block;
+        }
+        
+        .contact-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            color: var(--honey);
+            margin-bottom: 1rem;
+        }
+        
+        .contact-card p {
             line-height: 1.8;
             opacity: 0.9;
-        }
-        
-        .info-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
         }
         
         /* Footer */
         footer {
-            padding: 3rem 2rem;
-            background: var(--warm-brown);
-            color: var(--cream);
+            padding: 3rem;
+            background: var(--crust);
+            color: var(--flour);
             text-align: center;
         }
         
-        footer p {
-            opacity: 0.9;
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
         }
         
-        .social-icons {
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .social-links {
             display: flex;
             justify-content: center;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
+            gap: 1rem;
+            margin: 1.5rem 0;
         }
         
-        .social-icon {
+        .social-link {
             width: 50px;
             height: 50px;
             background: rgba(255, 255, 255, 0.1);
@@ -366,162 +564,287 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             transition: all 0.3s;
             cursor: pointer;
         }
         
-        .social-icon:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: scale(1.1);
+        .social-link:hover {
+            background: var(--honey);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
         
         /* Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2.5rem;
+        @media (max-width: 992px) {
+            .hero-wrapper {
+                grid-template-columns: 1fr;
+                text-align: center;
             }
             
-            .nav-links {
+            .hero-text p {
+                margin: 0 auto 2.5rem;
+            }
+            
+            .btn-group {
+                justify-content: center;
+            }
+            
+            .story-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
                 display: none;
             }
             
-            .about-content {
-                grid-template-columns: 1fr;
-                text-align: center;
+            .hero-text h1 {
+                font-size: 3rem;
+            }
+            
+            .bread-showcase {
+                font-size: 10rem;
             }
         }
     </style>
 </head>
 <body>
-<div class="flour-particles" id="flour"></div>
-<nav>
-<div class="logo">🥐 Golden Crust</div>
-<ul class="nav-links">
-<li><a href="#home">Home</a></li>
-<li><a href="#menu">Menu</a></li>
-<li><a href="#about">About</a></li>
-<li><a href="#visit">Visit Us</a></li>
+<div class="wheat-bg" id="wheat-container"></div>
+<nav id="navbar">
+<a class="logo" href="#hero">
+<span class="logo-icon">🌾</span>
+            Sunrise Bakery
+        </a>
+<ul class="nav-menu">
+<li><a href="#hero">Home</a></li>
+<li><a href="#products">Our Breads</a></li>
+<li><a href="#story">Our Story</a></li>
+<li><a href="#contact">Visit Us</a></li>
 </ul>
 </nav>
-<section class="hero" id="home">
-<div class="hero-content">
-<div class="hero-emojis">🥖🍞🥐</div>
-<h1>Freshly Baked <span>Happiness</span></h1>
-<p>Artisan breads, delicate pastries, and sweet treats made with love every morning since 1987</p>
-<a class="cta-btn" href="#menu">View Our Menu</a>
+<section id="hero">
+<div class="hero-wrapper">
+<div class="hero-text">
+<h1>
+                    Where Every Loaf
+                    <span class="accent">Tells a Story</span>
+</h1>
+<p>Handcrafted artisan breads baked fresh each morning using century-old recipes and locally sourced ingredients. Taste the tradition.</p>
+<div class="btn-group">
+<a class="btn btn-primary" href="#products">Explore Our Breads</a>
+<a class="btn btn-secondary" href="#story">Our Story</a>
+</div>
+</div>
+<div class="hero-visual">
+<div class="floating-items">
+<span class="float-item">🥐</span>
+<span class="float-item">🌾</span>
+<span class="float-item">🧈</span>
+<span class="float-item">☕</span>
+</div>
+<span class="bread-showcase">🍞</span>
+</div>
 </div>
 </section>
-<section class="featured" id="menu">
-<h2 class="section-title">Today's Specials</h2>
+<section id="products">
+<div class="section-header">
+<h2>Fresh From Our Oven</h2>
+<div class="divider"></div>
+<p>Each creation is made with love, patience, and the finest ingredients we can find</p>
+</div>
 <div class="products-grid">
 <div class="product-card">
-<div class="product-image">🥐</div>
-<div class="product-info">
+<span class="product-badge">Bestseller</span>
+<div class="product-img">🥖</div>
+<div class="product-details">
+<h3>Classic Baguette</h3>
+<p>Crispy golden crust with a soft, airy interior. Perfect for any meal.</p>
+<div class="product-footer">
+<span class="price">$4.50</span>
+<button class="add-btn">+</button>
+</div>
+</div>
+</div>
+<div class="product-card">
+<div class="product-img">🥐</div>
+<div class="product-details">
 <h3>Butter Croissant</h3>
-<p>Flaky, golden layers of pure buttery bliss</p>
-<span class="price">$3.50</span>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🍞</div>
-<div class="product-info">
-<h3>Sourdough Loaf</h3>
-<p>24-hour fermented with a perfect crust</p>
-<span class="price">$7.00</span>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🧁</div>
-<div class="product-info">
-<h3>Vanilla Bean Cupcake</h3>
-<p>Topped with silky cream cheese frosting</p>
+<p>48 layers of pure French butter folded into flaky perfection.</p>
+<div class="product-footer">
 <span class="price">$4.25</span>
+<button class="add-btn">+</button>
+</div>
 </div>
 </div>
 <div class="product-card">
-<div class="product-image">🥧</div>
-<div class="product-info">
-<h3>Apple Cinnamon Pie</h3>
-<p>Grandma's secret recipe with local apples</p>
-<span class="price">$22.00</span>
+<span class="product-badge">New</span>
+<div class="product-img">🍞</div>
+<div class="product-details">
+<h3>Sourdough Boule</h3>
+<p>72-hour fermented with our 50-year-old starter. Tangy and complex.</p>
+<div class="product-footer">
+<span class="price">$8.00</span>
+<button class="add-btn">+</button>
+</div>
+</div>
+</div>
+<div class="product-card">
+<div class="product-img">🧁</div>
+<div class="product-details">
+<h3>Honey Lavender Cake</h3>
+<p>Delicate sponge infused with local honey and Provence lavender.</p>
+<div class="product-footer">
+<span class="price">$5.50</span>
+<button class="add-btn">+</button>
+</div>
+</div>
+</div>
+<div class="product-card">
+<div class="product-img">🥯</div>
+<div class="product-details">
+<h3>Everything Bagel</h3>
+<p>Hand-rolled, kettle-boiled, loaded with seeds and seasonings.</p>
+<div class="product-footer">
+<span class="price">$3.00</span>
+<button class="add-btn">+</button>
+</div>
+</div>
+</div>
+<div class="product-card">
+<span class="product-badge">Seasonal</span>
+<div class="product-img">🥧</div>
+<div class="product-details">
+<h3>Rustic Apple Tart</h3>
+<p>Caramelized orchard apples on buttery pâte brisée.</p>
+<div class="product-footer">
+<span class="price">$24.00</span>
+<button class="add-btn">+</button>
+</div>
 </div>
 </div>
 </div>
 </section>
-<section class="about" id="about">
-<div class="about-content">
-<div class="about-text">
-<h2>Baked with Love &amp; Tradition</h2>
-<p>For over 35 years, Golden Crust Bakery has been the heart of our community. Every morning at 4 AM, our bakers begin crafting the perfect loaves, pastries, and treats.</p>
-<p>We use only the finest ingredients: organic flour, farm-fresh eggs, and real butter. No shortcuts, no preservatives – just honest, delicious baking.</p>
-<p>Come taste the difference that passion makes! ☕🥐</p>
+<section id="story">
+<div class="story-grid">
+<div class="story-image">
+<span class="story-emoji-main">👨‍🍳</span>
+<span class="story-deco">🌾</span>
+<span class="story-deco">🥖</span>
+<span class="story-deco">❤️</span>
 </div>
-<div class="about-image">🎂</div>
+<div class="story-content">
+<h2>Three Generations of Baking Excellence</h2>
+<p>In 1952, our grandmother opened a tiny bakery with nothing but a wood-fired oven and a dream. She believed that bread was more than food—it was a way to bring people together.</p>
+<p>Today, we honor her legacy by baking every loaf by hand, using the same techniques and recipes she perfected over decades. Our sourdough starter? It's been alive and thriving for over 50 years.</p>
+<p>We source our flour from local mills, our butter from family farms, and our love for baking from deep in our hearts. Welcome to our family.</p>
+<div class="story-stats">
+<div class="stat">
+<span class="stat-number">72</span>
+<span class="stat-label">Years of Tradition</span>
+</div>
+<div class="stat">
+<span class="stat-number">4AM</span>
+<span class="stat-label">We Start Baking</span>
+</div>
+<div class="stat">
+<span class="stat-number">100%</span>
+<span class="stat-label">Made with Love</span>
+</div>
+</div>
+</div>
 </div>
 </section>
-<section class="info-section" id="visit">
-<div class="info-grid">
-<div class="info-box">
-<div class="info-icon">📍</div>
+<section id="contact">
+<div class="section-header" style="margin-bottom: 3rem;">
+<h2 style="color: var(--flour);">Come Say Hello</h2>
+<div class="divider"></div>
+</div>
+<div class="contact-grid">
+<div class="contact-card">
+<span class="contact-icon">📍</span>
 <h3>Find Us</h3>
-<p>123 Baker Street<br/>Flourtown, PA 19031</p>
+<p>42 Baker's Lane<br/>Wheatfield, CA 95012</p>
 </div>
-<div class="info-box">
-<div class="info-icon">🕐</div>
-<h3>Hours</h3>
-<p>Mon - Fri: 6AM - 7PM<br/>Sat - Sun: 7AM - 5PM</p>
+<div class="contact-card">
+<span class="contact-icon">🕐</span>
+<h3>Open Hours</h3>
+<p>Tuesday - Saturday: 6AM - 6PM<br/>Sunday: 7AM - 2PM<br/>Monday: Closed (We rest!)</p>
 </div>
-<div class="info-box">
-<div class="info-icon">📞</div>
-<h3>Contact</h3>
-<p>(555) 123-BAKE<br/>hello@goldencrust.com</p>
+<div class="contact-card">
+<span class="contact-icon">☎️</span>
+<h3>Get in Touch</h3>
+<p>(555) FRESH-22<br/>hello@sunrisebakery.com</p>
 </div>
 </div>
 </section>
 <footer>
-<p>© 2024 Golden Crust Bakery. Made with 🤍 and lots of flour.</p>
-<div class="social-icons">
-<div class="social-icon">📸</div>
-<div class="social-icon">📘</div>
-<div class="social-icon">🐦</div>
-<div class="social-icon">📧</div>
+<div class="footer-content">
+<div class="footer-logo">🌾 Sunrise Artisan Bakery</div>
+<div class="social-links">
+<div class="social-link">📸</div>
+<div class="social-link">📘</div>
+<div class="social-link">🐦</div>
+<div class="social-link">📧</div>
+</div>
+<p class="copyright">© 2024 Sunrise Artisan Bakery. Baked with 🤍 and a lot of flour dust.</p>
 </div>
 </footer>
 <script>
-        // Create floating flour particles
-        const flourContainer = document.getElementById('flour');
-        for (let i = 0; i < 30; i++) {
-            const flour = document.createElement('div');
-            flour.className = 'flour';
-            flour.style.left = Math.random() * 100 + '%';
-            flour.style.animationDelay = Math.random() * 15 + 's';
-            flour.style.animationDuration = (Math.random() * 10 + 10) + 's';
-            flour.style.width = (Math.random() * 6 + 4) + 'px';
-            flour.style.height = flour.style.width;
-            flour.style.opacity = Math.random() * 0.5 + 0.2;
-            flourContainer.appendChild(flour);
+        // Create floating wheat particles
+        const wheatContainer = document.getElementById('wheat-container');
+        const grains = ['🌾', '✨', '•'];
+        
+        for (let i = 0; i < 25; i++) {
+            const grain = document.createElement('span');
+            grain.className = 'wheat-grain';
+            grain.textContent = grains[Math.floor(Math.random() * grains.length)];
+            grain.style.left = Math.random() * 100 + '%';
+            grain.style.animationDelay = Math.random() * 20 + 's';
+            grain.style.animationDuration = (Math.random() * 15 + 15) + 's';
+            wheatContainer.appendChild(grain);
         }
         
-        // Smooth scroll for navigation
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
                 e.preventDefault();
                 const target = document.querySelector(this.getAttribute('href'));
                 if (target) {
-                    target.scrollIntoView({ behavior: 'smooth' });
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
         
-        // Add scroll effect to nav
-        window.addEventListener('scroll', () => {
-            const nav = document.querySelector('nav');
-            if (window.scrollY > 100) {
-                nav.style.boxShadow = '0 4px 30px rgba(139, 94, 60, 0.2)';
-            } else {
-                nav.style.boxShadow = '0 2px 20px rgba(139, 94, 60, 0.1)';
-            }
+        // Add button interaction
+        document.querySelectorAll('.add-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.textContent = '✓';
+                this.style.background = '#9CAF88';
+                setTimeout(() => {
+                    this.textContent = '+';
+                    this.style.background = '';
+                }, 1500);
+            });
         });
     </script>
 </body>
