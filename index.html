@@ -1,24 +1,56 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code</title>
+<style>body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
+            flex-direction: column;
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
+            gap: 20px;
         }
-        h1 { font-size: 3rem; text-align: center; }
-    </style>
+        h1 { 
+            font-size: 3rem; 
+            text-align: center; 
+            text-shadow: 0 0 20px rgba(255,200,100,0.5);
+        }
+        .house-container {
+            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.5));
+        }
+        .house {
+            animation: float 3s ease-in-out infinite;
+        }
+        .window {
+            animation: windowGlow 2s ease-in-out infinite alternate;
+        }
+        .smoke {
+            animation: smokeRise 3s ease-out infinite;
+        }
+        .smoke1 { animation-delay: 0s; }
+        .smoke2 { animation-delay: 1s; }
+        .smoke3 { animation-delay: 2s; }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes windowGlow {
+            0% { fill: #FFF8DC; filter: url(#glow); }
+            100% { fill: #FFE4B5; filter: url(#glow); }
+        }
+        @keyframes smokeRise {
+            0% { opacity: 0.6; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-30px) scale(2); }
+        }</style>
 </head>
 <body>
-    <h1>Hello World</h1>
-</body>
+<h1>Welcome Home</h1>
+<div class="house-container"><svg class="house" height="300" viewbox="0 0 200 200" width="300"><defs><lineargradient id="roofGrad" x1="0%" x2="0%" y1="0%" y2="100%"><stop offset="0%" style="stop-color:#8B4513"></stop><stop offset="100%" style="stop-color:#654321"></stop></lineargradient><lineargradient id="wallGrad" x1="0%" x2="100%" y1="0%" y2="0%"><stop offset="0%" style="stop-color:#DEB887"></stop><stop offset="100%" style="stop-color:#D2B48C"></stop></lineargradient><filter id="glow"><fegaussianblur result="coloredBlur" stddeviation="3"></fegaussianblur><femerge><femergenode in="coloredBlur"></femergenode><femergenode in="SourceGraphic"></femergenode></femerge></filter></defs><!-- Chimney --><rect fill="#8B4513" height="35" width="20" x="140" y="45"></rect><!-- Smoke particles --><circle class="smoke smoke1" cx="150" cy="40" fill="rgba(200,200,200,0.6)" r="5"></circle><circle class="smoke smoke2" cx="152" cy="35" fill="rgba(200,200,200,0.5)" r="4"></circle><circle class="smoke smoke3" cx="148" cy="30" fill="rgba(200,200,200,0.4)" r="3"></circle><!-- Roof --><polygon fill="url(#roofGrad)" points="100,40 30,100 170,100"></polygon><!-- Roof detail --><polygon fill="#A0522D" points="100,50 45,100 155,100"></polygon><!-- House body --><rect fill="url(#wallGrad)" height="80" width="110" x="45" y="100"></rect><!-- Door --><rect fill="#654321" height="50" rx="2" width="30" x="85" y="130"></rect><circle cx="108" cy="158" fill="#FFD700" r="3"></circle><!-- Window left --><rect class="window" fill="#FFF8DC" filter="url(#glow)" height="25" width="25" x="55" y="115"></rect><line stroke="#654321" stroke-width="2" x1="67.5" x2="67.5" y1="115" y2="140"></line><line stroke="#654321" stroke-width="2" x1="55" x2="80" y1="127.5" y2="127.5"></line><!-- Window right --><rect class="window" fill="#FFF8DC" filter="url(#glow)" height="25" width="25" x="120" y="115"></rect><line stroke="#654321" stroke-width="2" x1="132.5" x2="132.5" y1="115" y2="140"></line><line stroke="#654321" stroke-width="2" x1="120" x2="145" y1="127.5" y2="127.5"></line><!-- Ground --><ellipse cx="100" cy="185" fill="#228B22" rx="80" ry="10"></ellipse></svg></div></body>
 </html>
