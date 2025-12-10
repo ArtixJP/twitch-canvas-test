@@ -248,32 +248,234 @@
 <div class="pixel-item">🌟</div>
 <div class="pixel-item">🎨</div>
 </div>
-<main class="main-content">
-<div class="card">
-<div class="card-icon">🏠</div>
-<h3>Safe Space</h3>
-<p>This is your cozy corner of the internet. No judgment, just good vibes and warm pixels. Grab a blanket and stay a while!</p>
+<main class="main-content" style="display: block;">
+<div class="game-container" style="background: rgba(45, 27, 78, 0.8); border-radius: 20px; padding: 1.5rem; border: 2px solid rgba(255, 159, 159, 0.3);">
+<div style="text-align: center; margin-bottom: 1rem;">
+<h2 style="font-family: 'Press Start 2P', cursive; font-size: 1rem; color: #ffd1dc; margin-bottom: 0.5rem;">🎮 MONSTER ESCAPE 🎮</h2>
+<p style="color: #a89cc8; font-size: 0.9rem;">Help the little monster escape the AI hunters!</p>
+<p style="color: #9fffc8; font-size: 0.8rem; margin-top: 0.5rem;">Use WASD or Arrow Keys to move</p>
 </div>
-<div class="card">
-<div class="card-icon">🎮</div>
-<h3>Retro Vibes</h3>
-<p>From 8-bit classics to modern indies, we celebrate gaming in all its pixelated glory. Every game tells a story worth sharing.</p>
+<canvas id="gameCanvas" style="display: block; margin: 0 auto; border-radius: 10px; border: 3px solid rgba(159, 159, 255, 0.4);"></canvas>
+<div id="gameUI" style="text-align: center; margin-top: 1rem;">
+<p style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #baffc9;">Score: <span id="score">0</span> | Level: <span id="level">1</span></p>
+<button id="restartBtn" style="margin-top: 0.8rem; padding: 0.8rem 1.5rem; font-family: 'Press Start 2P', cursive; font-size: 0.6rem; background: linear-gradient(135deg, #ff9f9f, #9f9fff); border: none; border-radius: 10px; color: #1a1a2e; cursor: pointer; transition: transform 0.2s;">RESTART GAME</button>
 </div>
-<div class="card">
-<div class="card-icon">🎨</div>
-<h3>Digital Art</h3>
-<p>Where creativity flows freely. Pixel art, digital paintings, lo-fi aesthetics... Express yourself in any medium that speaks to your soul.</p>
-</div>
-<div class="card">
-<div class="card-icon">💜</div>
-<h3>Community</h3>
-<p>We're all in this together. Share your wins, your struggles, your favorite snacks. This community lifts each other up!</p>
 </div>
 </main>
+<script>
+(function() {
+  const canvas = document.getElementById('gameCanvas');
+  const ctx = canvas.getContext('2d');
+  
+  // Responsive canvas size
+  const size = Math.min(500, window.innerWidth - 80);
+  canvas.width = size;
+  canvas.height = size;
+  
+  const CELL_SIZE = Math.floor(size / 15);
+  const GRID_SIZE = 15;
+  
+  let maze = [];
+  let player = { x: 1, y: 1, emoji: '👾' };
+  let enemies = [];
+  let exit = { x: 13, y: 13 };
+  let score = 0;
+  let level = 1;
+  let gameOver = false;
+  let won = false;
+  
+  function generateMaze() {
+    maze = [];
+    for (let y = 0; y < GRID_SIZE; y++) {
+      maze[y] = [];
+      for (let x = 0; x < GRID_SIZE; x++) {
+        maze[y][x] = 1;
+      }
+    }
+    
+    function carve(x, y) {
+      maze[y][x] = 0;
+      const dirs = [[0,-2],[0,2],[-2,0],[2,0]].sort(() => Math.random() - 0.5);
+      for (let [dx, dy] of dirs) {
+        const nx = x + dx, ny = y + dy;
+        if (nx > 0 && nx < GRID_SIZE-1 && ny > 0 && ny < GRID_SIZE-1 && maze[ny][nx] === 1) {
+          maze[y + dy/2][x + dx/2] = 0;
+          carve(nx, ny);
+        }
+      }
+    }
+    carve(1, 1);
+    
+    // Ensure exit is reachable
+    maze[13][13] = 0;
+    maze[12][13] = 0;
+    maze[13][12] = 0;
+    maze[1][1] = 0;
+    maze[1][2] = 0;
+    maze[2][1] = 0;
+  }
+  
+  function spawnEnemies() {
+    enemies = [];
+    const numEnemies = Math.min(2 + level, 6);
+    for (let i = 0; i < numEnemies; i++) {
+      let ex, ey;
+      do {
+        ex = Math.floor(Math.random() * (GRID_SIZE - 4)) + 4;
+        ey = Math.floor(Math.random() * (GRID_SIZE - 4)) + 4;
+      } while (maze[ey][ex] === 1 || (ex === player.x && ey === player.y));
+      enemies.push({ x: ex, y: ey, emoji: '🤖', moveTimer: 0 });
+    }
+  }
+  
+  function init() {
+    generateMaze();
+    player = { x: 1, y: 1, emoji: '👾' };
+    exit = { x: 13, y: 13 };
+    spawnEnemies();
+    gameOver = false;
+    won = false;
+    updateUI();
+  }
+  
+  function updateUI() {
+    document.getElementById('score').textContent = score;
+    document.getElementById('level').textContent = level;
+  }
+  
+  function draw() {
+    // Background
+    ctx.fillStyle = '#1a1a2e';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw maze
+    for (let y = 0; y < GRID_SIZE; y++) {
+      for (let x = 0; x < GRID_SIZE; x++) {
+        if (maze[y][x] === 1) {
+          ctx.fillStyle = '#2d1b4e';
+          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          ctx.strokeStyle = '#9f9fff33';
+          ctx.strokeRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        } else {
+          ctx.fillStyle = '#0d0d1a';
+          ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+        }
+      }
+    }
+    
+    // Draw exit
+    ctx.font = `${CELL_SIZE * 0.8}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🚪', exit.x * CELL_SIZE + CELL_SIZE/2, exit.y * CELL_SIZE + CELL_SIZE/2);
+    
+    // Draw enemies
+    enemies.forEach(e => {
+      ctx.fillText(e.emoji, e.x * CELL_SIZE + CELL_SIZE/2, e.y * CELL_SIZE + CELL_SIZE/2);
+    });
+    
+    // Draw player
+    ctx.fillText(player.emoji, player.x * CELL_SIZE + CELL_SIZE/2, player.y * CELL_SIZE + CELL_SIZE/2);
+    
+    // Game over overlay
+    if (gameOver || won) {
+      ctx.fillStyle = 'rgba(0,0,0,0.7)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = won ? '#9fffc8' : '#ff9f9f';
+      ctx.font = "bold 20px 'Press Start 2P'";
+      ctx.fillText(won ? 'LEVEL UP!' : 'CAUGHT!', canvas.width/2, canvas.height/2);
+      ctx.font = '14px Quicksand';
+      ctx.fillStyle = '#fff';
+      ctx.fillText('Press RESTART to play again', canvas.width/2, canvas.height/2 + 40);
+    }
+  }
+  
+  function movePlayer(dx, dy) {
+    if (gameOver || won) return;
+    const nx = player.x + dx;
+    const ny = player.y + dy;
+    if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE && maze[ny][nx] === 0) {
+      player.x = nx;
+      player.y = ny;
+      checkCollisions();
+    }
+  }
+  
+  function moveEnemies() {
+    if (gameOver || won) return;
+    enemies.forEach(e => {
+      e.moveTimer++;
+      if (e.moveTimer < 15) return;
+      e.moveTimer = 0;
+      
+      // Simple AI: move towards player
+      const dx = player.x - e.x;
+      const dy = player.y - e.y;
+      let moves = [];
+      
+      if (dx > 0 && maze[e.y][e.x + 1] === 0) moves.push([1, 0]);
+      if (dx < 0 && maze[e.y][e.x - 1] === 0) moves.push([-1, 0]);
+      if (dy > 0 && maze[e.y + 1][e.x] === 0) moves.push([0, 1]);
+      if (dy < 0 && maze[e.y - 1][e.x] === 0) moves.push([0, -1]);
+      
+      if (moves.length > 0) {
+        const [mx, my] = moves[Math.floor(Math.random() * moves.length)];
+        e.x += mx;
+        e.y += my;
+      }
+    });
+    checkCollisions();
+  }
+  
+  function checkCollisions() {
+    // Check enemy collision
+    for (let e of enemies) {
+      if (e.x === player.x && e.y === player.y) {
+        gameOver = true;
+        return;
+      }
+    }
+    // Check exit
+    if (player.x === exit.x && player.y === exit.y) {
+      won = true;
+      score += level * 100;
+      level++;
+      setTimeout(() => {
+        init();
+      }, 1500);
+    }
+  }
+  
+  document.addEventListener('keydown', (e) => {
+    switch(e.key) {
+      case 'ArrowUp': case 'w': case 'W': movePlayer(0, -1); e.preventDefault(); break;
+      case 'ArrowDown': case 's': case 'S': movePlayer(0, 1); e.preventDefault(); break;
+      case 'ArrowLeft': case 'a': case 'A': movePlayer(-1, 0); e.preventDefault(); break;
+      case 'ArrowRight': case 'd': case 'D': movePlayer(1, 0); e.preventDefault(); break;
+    }
+  });
+  
+  document.getElementById('restartBtn').addEventListener('click', () => {
+    score = 0;
+    level = 1;
+    init();
+  });
+  
+  function gameLoop() {
+    moveEnemies();
+    draw();
+    updateUI();
+    requestAnimationFrame(gameLoop);
+  }
+  
+  init();
+  gameLoop();
+})();
+</script>
 <div class="cozy-corner">
-<h2 style="font-family: 'Press Start 2P', cursive; font-size: 1rem; color: #ffd1dc; margin-bottom: 1rem;">Today's Mood</h2>
+<h2 style="font-family: 'Press Start 2P', cursive; font-size: 1rem; color: #ffd1dc; margin-bottom: 1rem;">Game Tips</h2>
 <div class="chat-bubble">
-<p>"Remember: You're doing amazing! Take breaks, drink water, and know that you belong here." 🌸</p>
+<p>"The 🤖 AI hunters will chase you! Find the 🚪 exit to escape and level up. Each level adds more hunters!" 🌸</p>
 </div>
 </div>
 <footer>
