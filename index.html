@@ -12,7 +12,7 @@
         font-family: system-ui, sans-serif; 
         display: flex; 
         flex-direction: column;
-        justify-content: center; 
+        justify-content: flex-start; 
         align-items: center; 
         min-height: 100vh; 
         margin: 0;
@@ -20,6 +20,52 @@
         color: white;
         overflow: hidden;
     }
+    
+    /* Navigation Menu */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(0,0,0,0.8);
+        backdrop-filter: blur(10px);
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 15px;
+        border-bottom: 2px solid rgba(255,255,255,0.1);
+    }
+    .nav-btn {
+        background: rgba(255,255,255,0.1);
+        border: 2px solid rgba(255,255,255,0.2);
+        color: white;
+        padding: 12px 30px;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+    .nav-btn:hover, .nav-btn.active {
+        background: rgba(255,255,255,0.3);
+        border-color: rgba(255,255,255,0.5);
+        transform: scale(1.05);
+    }
+    .nav-btn.active {
+        box-shadow: 0 0 20px rgba(100,200,255,0.5);
+    }
+    
+    /* Sections */
+    .section {
+        display: none;
+        width: 100%;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    .section.active {
+        display: block;
+    }
+    
     h1 { 
         font-size: 2.5rem; 
         text-align: center; 
@@ -29,7 +75,7 @@
     }
     .score-board {
         position: fixed;
-        top: 20px;
+        top: 80px;
         left: 50%;
         transform: translateX(-50%);
         z-index: 100;
@@ -79,6 +125,9 @@
         height: 300px;
         perspective: 1000px;
         z-index: 5;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
     .planet {
         width: 200px;
@@ -180,6 +229,9 @@
         width: 300px;
         height: 300px;
         z-index: 6;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
     }
     .moon {
         position: absolute;
@@ -189,12 +241,16 @@
         background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 50%, #888 100%);
         box-shadow: inset -8px -8px 15px rgba(0,0,0,0.4), 0 0 20px rgba(255,255,255,0.3);
         animation: orbitMoon 8s linear infinite;
+        top: 50%;
+        left: 50%;
     }
     .kitty-orbit {
         position: absolute;
         font-size: 30px;
         animation: orbitKitty 6s linear infinite;
         filter: drop-shadow(0 0 8px rgba(255,200,200,0.8));
+        top: 50%;
+        left: 50%;
     }
     @keyframes orbitMoon {
         0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
@@ -216,14 +272,98 @@
         font-size: 0.9rem;
         text-align: center;
     }
+    
+    /* Animals Section */
+    .animals-section {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding-top: 80px;
+    }
+    .animal-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 30px;
+    }
+    .animal-card {
+        background: rgba(255,255,255,0.1);
+        border-radius: 20px;
+        padding: 30px;
+        text-align: center;
+        font-size: 60px;
+        transition: transform 0.3s, box-shadow 0.3s;
+        cursor: pointer;
+    }
+    .animal-card:hover {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 0 30px rgba(255,255,255,0.3);
+    }
+    .animal-card span {
+        display: block;
+        font-size: 1rem;
+        margin-top: 10px;
+    }
+    
+    /* Elephant */
+    .elephant-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 200;
+        font-size: 120px;
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+    .elephant-container:hover {
+        transform: translate(-50%, -50%) scale(1.1);
+    }
+    .water-drop {
+        position: absolute;
+        font-size: 30px;
+        pointer-events: none;
+        animation: waterSpray 1.5s ease-out forwards;
+    }
+    @keyframes waterSpray {
+        0% { 
+            opacity: 1; 
+            transform: translate(0, 0) scale(1);
+        }
+        100% { 
+            opacity: 0; 
+            transform: translate(var(--tx), var(--ty)) scale(0.5);
+        }
+    }
+    
+    /* Timer display */
+    .timer-display {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        background: rgba(0,0,0,0.6);
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-size: 0.9rem;
+        z-index: 999;
+    }
 </style>
 </head>
 <body>
+<!-- Navigation Menu -->
+<nav class="nav-menu">
+<button class="nav-btn active" data-section="space">🚀 Space</button>
+<button class="nav-btn" data-section="animals">🐾 Animals</button>
+<button class="nav-btn" data-section="games">🎮 Games</button>
+</nav>
+<div class="timer-display">Next section in: <span id="countdown">30</span>s</div>
+<!-- SPACE SECTION -->
+<section class="section active" id="section-space">
 <div id="sun-container"></div>
 <div class="stars" id="stars"></div>
-<div class="score-board">
-    🐕 Dog: <span class="dog-score" id="dogScore">0</span>
-</div>
 <h1>Space Chase!</h1>
 <div class="planet-container">
 <div class="planet" id="planet"></div>
@@ -233,13 +373,37 @@
 <div class="moon"></div>
 <div class="kitty-orbit">🐱</div>
 </div>
+</section>
+<!-- ANIMALS SECTION -->
+<section class="section" id="section-animals">
+<div class="animals-section">
+<h1>🐾 Animal Kingdom 🐾</h1>
+<div class="animal-container">
+<div class="animal-card">🦁<span>Lion</span></div>
+<div class="animal-card">🐼<span>Panda</span></div>
+<div class="animal-card">🦊<span>Fox</span></div>
+<div class="animal-card">🐨<span>Koala</span></div>
+<div class="animal-card">🦄<span>Unicorn</span></div>
+<div class="animal-card">🐙<span>Octopus</span></div>
+</div>
+<!-- ELEPHANT -->
+<div class="elephant-container" id="elephant">🐘</div>
+</div>
+</section>
+<!-- GAMES SECTION -->
+<section class="section" id="section-games">
+<div class="score-board">
+        🐕 Dog: <span class="dog-score" id="dogScore">0</span>
+</div>
+<h1 style="margin-top: 100px;">🎮 Cat &amp; Dog Chase! 🎮</h1>
 <div id="game-area">
 <div class="game-character cat" id="cat">😺</div>
 <div class="game-character dog" id="dog">🐕</div>
 </div>
 <div class="instructions">
-    🎮 Use WASD or Arrow Keys to control the cat! Escape the dog!
-</div>
+        🎮 Use WASD or Arrow Keys to control the cat! Escape the dog!
+    </div>
+</section>
 <div class="music-controls">
 <button class="music-btn" id="musicToggle">⏸️ Pause Music</button>
 </div>
@@ -247,6 +411,59 @@
 <source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
 </audio>
 <script>
+// Navigation System
+const sections = ['space', 'animals', 'games'];
+let currentSectionIndex = 0;
+let countdownValue = 30;
+let countdownInterval;
+
+const navBtns = document.querySelectorAll('.nav-btn');
+const countdownEl = document.getElementById('countdown');
+
+function switchSection(sectionName) {
+    // Update buttons
+    navBtns.forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.dataset.section === sectionName) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update sections
+    document.querySelectorAll('.section').forEach(sec => {
+        sec.classList.remove('active');
+    });
+    document.getElementById('section-' + sectionName).classList.add('active');
+    
+    // Update index
+    currentSectionIndex = sections.indexOf(sectionName);
+    
+    // Reset countdown
+    countdownValue = 30;
+    countdownEl.textContent = countdownValue;
+}
+
+// Click handlers for nav buttons
+navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        switchSection(btn.dataset.section);
+    });
+});
+
+// Auto-rotate sections every 30 seconds
+function startAutoRotation() {
+    countdownInterval = setInterval(() => {
+        countdownValue--;
+        countdownEl.textContent = countdownValue;
+        
+        if (countdownValue <= 0) {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            switchSection(sections[currentSectionIndex]);
+        }
+    }, 1000);
+}
+startAutoRotation();
+
 // Music controls
 const music = document.getElementById('bgMusic');
 const btn = document.getElementById('musicToggle');
@@ -331,6 +548,35 @@ window.addEventListener('resize', () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
 });
 
+// ELEPHANT WATER SPRAY
+const elephant = document.getElementById('elephant');
+
+function sprayWater() {
+    for (let i = 0; i < 12; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'water-drop';
+        drop.textContent = '💧';
+        
+        const angle = (Math.random() - 0.5) * Math.PI;
+        const distance = 100 + Math.random() * 150;
+        const tx = Math.cos(angle) * distance;
+        const ty = -Math.abs(Math.sin(angle) * distance) - 50;
+        
+        drop.style.setProperty('--tx', tx + 'px');
+        drop.style.setProperty('--ty', ty + 'px');
+        drop.style.left = '60px';
+        drop.style.top = '0px';
+        
+        elephant.appendChild(drop);
+        
+        setTimeout(() => drop.remove(), 1500);
+    }
+}
+
+// Auto spray every 2 seconds
+setInterval(sprayWater, 2000);
+elephant.addEventListener('click', sprayWater);
+
 // Game Logic
 const cat = document.getElementById('cat');
 const dog = document.getElementById('dog');
@@ -374,12 +620,14 @@ let colorIndex = 0;
 function changePlanetColor() {
     colorIndex = (colorIndex + 1) % planetColors.length;
     const color = planetColors[colorIndex];
-    planet.style.background = color.bg;
-    planet.style.boxShadow = `
-        inset -30px -30px 60px rgba(0,0,0,0.6),
-        inset 20px 20px 40px rgba(100,200,255,0.2),
-        0 0 60px ${color.shadow},
-        0 0 120px ${color.shadow.replace('0.4', '0.2')}`;
+    if (planet) {
+        planet.style.background = color.bg;
+        planet.style.boxShadow = `
+            inset -30px -30px 60px rgba(0,0,0,0.6),
+            inset 20px 20px 40px rgba(100,200,255,0.2),
+            0 0 60px ${color.shadow},
+            0 0 120px ${color.shadow.replace('0.4', '0.2')}`;
+    }
 }
 
 function createCatchEffect(x, y) {
@@ -397,6 +645,13 @@ function distance(x1, y1, x2, y2) {
 }
 
 function gameLoop() {
+    // Only run game logic when games section is active
+    const gamesSection = document.getElementById('section-games');
+    if (!gamesSection.classList.contains('active')) {
+        requestAnimationFrame(gameLoop);
+        return;
+    }
+    
     // Move cat based on keys
     let currentCatSpeed = catSpeed;
     const dist = distance(catX, catY, dogX, dogY);
@@ -416,7 +671,7 @@ function gameLoop() {
     
     // Keep cat in bounds
     catX = Math.max(20, Math.min(window.innerWidth - 60, catX));
-    catY = Math.max(20, Math.min(window.innerHeight - 60, catY));
+    catY = Math.max(100, Math.min(window.innerHeight - 60, catY));
     
     // Dog chases cat (fast dog!)
     const angle = Math.atan2(catY - dogY, catX - dogX);
@@ -442,14 +697,14 @@ function gameLoop() {
         
         // Reset positions
         catX = Math.random() * (window.innerWidth - 100) + 50;
-        catY = Math.random() * (window.innerHeight - 100) + 50;
+        catY = Math.random() * (window.innerHeight - 200) + 150;
         dogX = Math.random() * (window.innerWidth - 100) + 50;
-        dogY = Math.random() * (window.innerHeight - 100) + 50;
+        dogY = Math.random() * (window.innerHeight - 200) + 150;
         
         // Make sure they don't spawn too close
         while (distance(catX, catY, dogX, dogY) < 200) {
             dogX = Math.random() * (window.innerWidth - 100) + 50;
-            dogY = Math.random() * (window.innerHeight - 100) + 50;
+            dogY = Math.random() * (window.innerHeight - 200) + 150;
         }
     }
     
