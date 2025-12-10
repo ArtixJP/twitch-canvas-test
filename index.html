@@ -666,6 +666,7 @@ function spawnTrainer() {
 
 // Check collision with trainers
 function checkTrainerCollision() {
+  if (game.inBattle) return;
   for (const trainer of opponentTrainers) {
     if (trainer.defeated) continue;
     const dist = Math.hypot(trainer.x - player.x, trainer.y - player.y);
@@ -678,13 +679,14 @@ function checkTrainerCollision() {
 
 // Start battle
 function startBattle(trainer) {
+  console.log('Starting battle with', trainer.name);
   game.inBattle = true;
   battle.active = true;
   battle.opponentTrainer = trainer;
-  battle.opponentPokemon = trainer.pokemon;
+  battle.opponentPokemon = {...trainer.pokemon};
   battle.playerPokemon = game.caughtPokemon.length > 0 
-    ? POKEMON_TYPES.find(p => p.emoji === game.caughtPokemon[game.caughtPokemon.length - 1]) || POKEMON_TYPES[0]
-    : POKEMON_TYPES[0];
+    ? {...POKEMON_TYPES.find(p => p.emoji === game.caughtPokemon[game.caughtPokemon.length - 1])} || {...POKEMON_TYPES[0]}
+    : {...POKEMON_TYPES[0]};
   
   battle.playerHP = 100;
   battle.playerMaxHP = 100;
@@ -693,8 +695,12 @@ function startBattle(trainer) {
   battle.playerTurn = true;
   battle.defending = false;
   
+  // Show battle screen
+  const battleScreen = document.getElementById('battle-screen');
+  battleScreen.style.display = 'flex';
+  battleScreen.classList.add('active');
+  
   // Update battle UI
-  document.getElementById('battle-screen').classList.add('active');
   document.getElementById('opponent-pokemon').textContent = battle.opponentPokemon.emoji;
   document.getElementById('player-pokemon').textContent = battle.playerPokemon.emoji;
   document.getElementById('opponent-name').textContent = trainer.name + "'s " + battle.opponentPokemon.name;
@@ -703,13 +709,19 @@ function startBattle(trainer) {
   updateBattleHP();
   
   // Flash effect
-  document.getElementById('battle-flash').classList.add('active');
-  setTimeout(() => document.getElementById('battle-flash').classList.remove('active'), 500);
+  const flash = document.getElementById('battle-flash');
+  flash.classList.add('active');
+  setTimeout(() => flash.classList.remove('active'), 500);
 }
 
-// Battle action
-function battleAction(action) {
-  if (!battle.playerTurn) return;
+// Battle action - make it global
+window.battleAction = function(action) {
+  if (!battle.playerTurn || !battle.active) {
+    console.log('Not player turn or battle not active');
+    return;
+  }
+  
+  console.log('Battle action:', action);
   
   let damage = 0;
   let message = '';
@@ -750,7 +762,8 @@ function battleAction(action) {
   
   // Check win condition
   if (battle.opponentHP <= 0) {
-    setTimeout(() => endBattle(true), 1000);
+    document.getElementById('battle-log').textContent = 'You won the battle!';
+    setTimeout(() => endBattle(true), 1500);
     return;
   }
   
@@ -761,6 +774,8 @@ function battleAction(action) {
 
 // Opponent turn
 function opponentTurn() {
+  if (!battle.active) return;
+  
   const actions = ['attack', 'attack', 'attack', 'special'];
   const action = actions[Math.floor(Math.random() * actions.length)];
   
@@ -793,7 +808,8 @@ function opponentTurn() {
   
   // Check lose condition
   if (battle.playerHP <= 0) {
-    setTimeout(() => endBattle(false), 1000);
+    document.getElementById('battle-log').textContent = 'You lost the battle...';
+    setTimeout(() => endBattle(false), 1500);
     return;
   }
   
@@ -829,7 +845,11 @@ function updateBattleHP() {
 
 // End battle
 function endBattle(won) {
-  document.getElementById('battle-screen').classList.remove('active');
+  console.log('Ending battle, won:', won);
+  const battleScreen = document.getElementById('battle-screen');
+  battleScreen.style.display = 'none';
+  battleScreen.classList.remove('active');
+  
   game.inBattle = false;
   battle.active = false;
   
@@ -843,7 +863,7 @@ function endBattle(won) {
     // Spawn new trainer
     setTimeout(spawnTrainer, 3000);
   } else {
-    showMessage('You fled from battle! 🏃');
+    showMessage('Battle ended! 🏃');
   }
   
   updateUI();
@@ -1201,8 +1221,10 @@ function gameLoop() {
     return;
   }
   
+  // Always update and draw the world, even during battle
+  game.time++;
+  
   if (!game.inBattle) {
-    game.time++;
     if (game.time % 180 === 0) spawnPokemon();
     if (game.time % 600 === 0 && game.pokeballs < 15) {
       game.pokeballs++;
@@ -1218,8 +1240,9 @@ function gameLoop() {
     updateTrainers();
     updatePokeballs();
     updateParticles();
-    draw();
   }
+  
+  draw();
   
   requestAnimationFrame(gameLoop);
 }
@@ -1232,6 +1255,9 @@ document.getElementById('start-btn').addEventListener('click', () => {
     setTimeout(() => spawnPokemon(), i * 500);
   }
 });
+
+// Hide battle screen initially
+document.getElementById('battle-screen').style.display = 'none';
 
 gameLoop();
 </script>
