@@ -1,24 +1,312 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
-        body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cozy Corner ✨ Welcome Home</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Quicksand:wght@400;600&amp;display=swap" rel="stylesheet"/>
+<style>
+        * {
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
+            padding: 0;
+            box-sizing: border-box;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1a1a2e 0%, #2d1b4e 50%, #1a1a2e 100%);
+            color: #f0e6d3;
+            overflow-x: hidden;
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            padding: 3rem 1rem;
+        }
+        
+        .logo {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem;
+            color: #ff9f9f;
+            text-shadow: 0 0 20px rgba(255, 159, 159, 0.5);
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-text {
+            font-size: 2.5rem;
+            font-weight: 600;
+            background: linear-gradient(90deg, #ffd1dc, #bae1ff, #baffc9);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #a89cc8;
+            font-size: 1.1rem;
+        }
+        
+        .pixel-border {
+            border: 4px solid transparent;
+            border-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Crect x='0' y='0' width='4' height='4' fill='%23ff9f9f'/%3E%3Crect x='4' y='4' width='4' height='4' fill='%239f9fff'/%3E%3Crect x='8' y='8' width='4' height='4' fill='%239fffc8'/%3E%3C/svg%3E") 4 round;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .card {
+            background: rgba(45, 27, 78, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid rgba(255, 159, 159, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff9f9f, #9f9fff, #9fffc8);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 159, 159, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .card h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: #ffd1dc;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .card p {
+            color: #c4b8db;
+            line-height: 1.8;
+        }
+        
+        .cozy-corner {
+            background: rgba(255, 159, 159, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 3rem;
+            text-align: center;
+        }
+        
+        .pixel-art {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .pixel-item {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: rgba(159, 159, 255, 0.2);
+            border-radius: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .pixel-item:nth-child(2) { animation-delay: 0.5s; }
+        .pixel-item:nth-child(3) { animation-delay: 1s; }
+        .pixel-item:nth-child(4) { animation-delay: 1.5s; }
+        .pixel-item:nth-child(5) { animation-delay: 2s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .chat-bubble {
+            background: linear-gradient(135deg, rgba(159, 255, 200, 0.2), rgba(159, 159, 255, 0.2));
+            border-radius: 20px 20px 20px 5px;
+            padding: 1.5rem;
+            margin: 1rem auto;
+            max-width: 500px;
+            position: relative;
+        }
+        
+        .chat-bubble::after {
+            content: '💜';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #a89cc8;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 159, 159, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .social-link:hover {
+            background: rgba(255, 159, 159, 0.4);
+            transform: scale(1.1);
+        }
+        
+        .glow-text {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px rgba(255, 159, 159, 0.5); }
+            to { text-shadow: 0 0 20px rgba(159, 159, 255, 0.8), 0 0 30px rgba(159, 255, 200, 0.6); }
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="stars" id="stars"></div>
+<div class="container">
+<header>
+<div class="logo glow-text">✨ COZY CORNER ✨</div>
+<h1 class="welcome-text">Welcome, Friend!</h1>
+<p class="subtitle">A safe space for gamers, creators &amp; dreamers 🌙</p>
+</header>
+<div class="pixel-art">
+<div class="pixel-item">🎮</div>
+<div class="pixel-item">🕹️</div>
+<div class="pixel-item">👾</div>
+<div class="pixel-item">🌟</div>
+<div class="pixel-item">🎨</div>
+</div>
+<main class="main-content">
+<div class="card">
+<div class="card-icon">🏠</div>
+<h3>Safe Space</h3>
+<p>This is your cozy corner of the internet. No judgment, just good vibes and warm pixels. Grab a blanket and stay a while!</p>
+</div>
+<div class="card">
+<div class="card-icon">🎮</div>
+<h3>Retro Vibes</h3>
+<p>From 8-bit classics to modern indies, we celebrate gaming in all its pixelated glory. Every game tells a story worth sharing.</p>
+</div>
+<div class="card">
+<div class="card-icon">🎨</div>
+<h3>Digital Art</h3>
+<p>Where creativity flows freely. Pixel art, digital paintings, lo-fi aesthetics... Express yourself in any medium that speaks to your soul.</p>
+</div>
+<div class="card">
+<div class="card-icon">💜</div>
+<h3>Community</h3>
+<p>We're all in this together. Share your wins, your struggles, your favorite snacks. This community lifts each other up!</p>
+</div>
+</main>
+<div class="cozy-corner">
+<h2 style="font-family: 'Press Start 2P', cursive; font-size: 1rem; color: #ffd1dc; margin-bottom: 1rem;">Today's Mood</h2>
+<div class="chat-bubble">
+<p>"Remember: You're doing amazing! Take breaks, drink water, and know that you belong here." 🌸</p>
+</div>
+</div>
+<footer>
+<p class="glow-text">Made with 💜 and too much coffee</p>
+<div class="social-links">
+<div class="social-link">📺</div>
+<div class="social-link">🐦</div>
+<div class="social-link">💬</div>
+<div class="social-link">🎵</div>
+</div>
+<p style="margin-top: 1.5rem; font-size: 0.9rem;">Press START to begin your adventure ▶️</p>
+</footer>
+</div>
+<script>
+        // Create twinkling stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.width = (Math.random() * 3 + 1) + 'px';
+            star.style.height = star.style.width;
+            starsContainer.appendChild(star);
+        }
+        
+        // Add gentle parallax to stars
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            starsContainer.style.transform = `translate(${x}px, ${y}px)`;
+        });
+    </script>
 </body>
 </html>
