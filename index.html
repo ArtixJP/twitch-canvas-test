@@ -877,6 +877,28 @@
         // Check chase status every 100ms
         setInterval(updateChase, 100);
 
+        // Auto-rotate sections every 30 seconds
+        const sections = ['space', 'animals', 'games'];
+        let currentSectionIndex = 0;
+        
+        setInterval(() => {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            const nextSection = sections[currentSectionIndex];
+            
+            // Update sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(nextSection + '-section').classList.add('active');
+            
+            // Update nav buttons
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            const navButtons = document.querySelectorAll('.nav-item');
+            navButtons[currentSectionIndex].classList.add('active');
+        }, 30000);
+
         // SPACE SHOOTER GAME
         const gameOverlay = document.getElementById('gameOverlay');
         const gameCanvas = document.getElementById('gameCanvas');
