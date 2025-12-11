@@ -361,6 +361,116 @@
         moonOrbit.add(moonGlow);
         moonGlow.position.copy(moon.position);
         
+        // Create cute kitty!
+        function createKitty() {
+            const kittyGroup = new THREE.Group();
+            
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
+            const kittyMaterial = new THREE.MeshPhongMaterial({ color: 0xFF9966 });
+            const head = new THREE.Mesh(headGeometry, kittyMaterial);
+            kittyGroup.add(head);
+            
+            // Left ear
+            const earGeometry = new THREE.ConeGeometry(0.08, 0.2, 16);
+            const leftEar = new THREE.Mesh(earGeometry, kittyMaterial);
+            leftEar.position.set(-0.08, 0.14, 0);
+            leftEar.rotation.z = -0.3;
+            kittyGroup.add(leftEar);
+            
+            // Right ear
+            const rightEar = new THREE.Mesh(earGeometry, kittyMaterial);
+            rightEar.position.set(0.08, 0.14, 0);
+            rightEar.rotation.z = 0.3;
+            kittyGroup.add(rightEar);
+            
+            // Left eye
+            const eyeGeometry = new THREE.SphereGeometry(0.04, 16, 16);
+            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.05, 0.05, 0.14);
+            kittyGroup.add(leftEye);
+            
+            // Right eye
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.05, 0.05, 0.14);
+            kittyGroup.add(rightEye);
+            
+            // Left eye shine
+            const shineGeometry = new THREE.SphereGeometry(0.015, 8, 8);
+            const shineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            const leftShine = new THREE.Mesh(shineGeometry, shineMaterial);
+            leftShine.position.set(-0.03, 0.06, 0.18);
+            kittyGroup.add(leftShine);
+            
+            // Right eye shine
+            const rightShine = new THREE.Mesh(shineGeometry, shineMaterial);
+            rightShine.position.set(0.07, 0.06, 0.18);
+            kittyGroup.add(rightShine);
+            
+            // Nose
+            const noseGeometry = new THREE.SphereGeometry(0.025, 16, 16);
+            const noseMaterial = new THREE.MeshPhongMaterial({ color: 0xFF6B9D });
+            const nose = new THREE.Mesh(noseGeometry, noseMaterial);
+            nose.position.set(0, -0.02, 0.15);
+            kittyGroup.add(nose);
+            
+            // Mouth (smile)
+            const mouthGeometry = new THREE.SphereGeometry(0.02, 16, 16);
+            const mouthMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            const mouth1 = new THREE.Mesh(mouthGeometry, mouthMaterial);
+            mouth1.position.set(-0.04, -0.06, 0.15);
+            mouth1.scale.set(0.6, 0.8, 0.6);
+            kittyGroup.add(mouth1);
+            
+            const mouth2 = new THREE.Mesh(mouthGeometry, mouthMaterial);
+            mouth2.position.set(0.04, -0.06, 0.15);
+            mouth2.scale.set(0.6, 0.8, 0.6);
+            kittyGroup.add(mouth2);
+            
+            // Body
+            const bodyGeometry = new THREE.BoxGeometry(0.12, 0.18, 0.1);
+            const body = new THREE.Mesh(bodyGeometry, kittyMaterial);
+            body.position.set(0, -0.15, 0);
+            kittyGroup.add(body);
+            
+            // Tail
+            const tailGeometry = new THREE.BoxGeometry(0.04, 0.12, 0.04);
+            const tail = new THREE.Mesh(tailGeometry, kittyMaterial);
+            tail.position.set(0.08, -0.15, -0.08);
+            tail.rotation.z = 0.3;
+            kittyGroup.add(tail);
+            
+            // Front left paw
+            const pawGeometry = new THREE.SphereGeometry(0.035, 16, 16);
+            const paw1 = new THREE.Mesh(pawGeometry, kittyMaterial);
+            paw1.position.set(-0.06, -0.32, 0.02);
+            kittyGroup.add(paw1);
+            
+            // Front right paw
+            const paw2 = new THREE.Mesh(pawGeometry, kittyMaterial);
+            paw2.position.set(0.06, -0.32, 0.02);
+            kittyGroup.add(paw2);
+            
+            // Back left paw
+            const paw3 = new THREE.Mesh(pawGeometry, kittyMaterial);
+            paw3.position.set(-0.06, -0.32, -0.06);
+            kittyGroup.add(paw3);
+            
+            // Back right paw
+            const paw4 = new THREE.Mesh(pawGeometry, kittyMaterial);
+            paw4.position.set(0.06, -0.32, -0.06);
+            kittyGroup.add(paw4);
+            
+            return kittyGroup;
+        }
+        
+        const kitty = createKitty();
+        const kittyOrbit = new THREE.Group();
+        kittyOrbit.add(kitty);
+        kitty.position.x = 2.0;
+        scene.add(kittyOrbit);
+        
         // Add lighting
         const light = new THREE.PointLight(0xffffff, 1.5);
         light.position.set(5, 3, 5);
@@ -393,6 +503,27 @@
             // Orbit moon around planet
             const time = Date.now() * 0.0003;
             moonOrbit.rotation.z = time;
+            
+            // Orbit kitty in a figure-8 pattern
+            const kittyTime = Date.now() * 0.0004;
+            const kittyX = Math.sin(kittyTime) * 2.2;
+            const kittyY = Math.sin(kittyTime * 0.5) * 1.2;
+            const kittyZ = Math.cos(kittyTime) * 1.8;
+            
+            kitty.position.set(kittyX, kittyY, kittyZ);
+            
+            // Make kitty look at the planet
+            kitty.lookAt(planet.position);
+            
+            // Playful tail animation
+            const tailWag = Math.sin(Date.now() * 0.01) * 0.5;
+            kitty.children.forEach(child => {
+                if (child.geometry && child.geometry.type === 'BoxGeometry') {
+                    if (child.position.z < -0.05) { // This is the tail
+                        child.rotation.z = 0.3 + tailWag;
+                    }
+                }
+            });
             
             // Orbit camera around planet
             const cameraTime = Date.now() * 0.0001;
