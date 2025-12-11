@@ -97,7 +97,19 @@
     </style>
 </head>
 <body>
-<h1>Hello World</h1><audio autoplay="" loop="">
+<h1>Hello World</h1><style>
+@keyframes orbitKitty {
+  from { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+  to { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+}
+.kitty {
+  animation: floatKitty 3s ease-in-out infinite;
+}
+@keyframes floatKitty {
+  0%, 100% { transform: translateX(-50%) translateY(0px) scale(1); }
+  50% { transform: translateX(-50%) translateY(-8px) scale(1.1); }
+}
+</style><audio autoplay="" loop="">
 <source src="https://cdn.pixabay.com/audio/2022/03/10/audio_2c87ba15c0.mp3" type="audio/mpeg"/>
 </audio>
 <div style="position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 10px;">
@@ -123,11 +135,8 @@ function toggleAudio() {
 <div class="planet-surface"></div>
 <div class="planet-glow"></div>
 </div>
-<div class="moon-orbit">
-<div class="moon">
-<div class="moon-surface"></div>
-<div class="moon-glow"></div>
-</div>
+<div class="kitty-orbit" style="position: absolute; width: 100%; height: 100%; animation: orbitKitty 15s linear infinite;">
+<div class="kitty" style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 3rem; filter: drop-shadow(0 0 10px rgba(255, 200, 150, 0.6));" title="Space Kitty!">🐱</div>
 </div>
 </div>
 </body>
