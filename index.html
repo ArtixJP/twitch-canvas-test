@@ -107,32 +107,5 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-    </script><audio autoplay="" id="bg-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/></audio><button id="music-toggle" style="position: fixed; top: 20px; right: 20px; z-index: 100; background: rgba(74, 144, 226, 0.9); color: white; border: 2px solid rgba(100, 200, 255, 0.8); padding: 12px 24px; font-size: 16px; border-radius: 25px; cursor: pointer; font-weight: bold; box-shadow: 0 0 20px rgba(100, 200, 255, 0.6); transition: all 0.3s ease;">⏸ Pause Music</button><script>
-        const audio = document.getElementById('bg-music');
-        const toggleBtn = document.getElementById('music-toggle');
-        let isPlaying = true;
-        
-        toggleBtn.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                toggleBtn.textContent = '▶ Play Music';
-                toggleBtn.style.background = 'rgba(100, 100, 100, 0.9)';
-            } else {
-                audio.play();
-                toggleBtn.textContent = '⏸ Pause Music';
-                toggleBtn.style.background = 'rgba(74, 144, 226, 0.9)';
-            }
-            isPlaying = !isPlaying;
-        });
-        
-        toggleBtn.addEventListener('mouseenter', () => {
-            toggleBtn.style.transform = 'scale(1.1)';
-            toggleBtn.style.boxShadow = '0 0 30px rgba(100, 200, 255, 0.9)';
-        });
-        
-        toggleBtn.addEventListener('mouseleave', () => {
-            toggleBtn.style.transform = 'scale(1)';
-            toggleBtn.style.boxShadow = '0 0 20px rgba(100, 200, 255, 0.6)';
-        });
     </script></body>
 </html>
