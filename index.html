@@ -180,6 +180,84 @@
             10%, 70% { opacity: 1; transform: scale(1); }
         }
         
+        /* Pokemon Game */
+        .pokemon-game {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(255, 203, 5, 0.95);
+            border-radius: 15px;
+            padding: 1rem;
+            z-index: 50;
+            border: 3px solid #3d7dca;
+            box-shadow: 0 0 20px rgba(255, 203, 5, 0.5);
+            min-width: 200px;
+        }
+        .pokemon-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #3d7dca;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            text-shadow: 1px 1px 0 #fff;
+        }
+        .pokemon-score {
+            color: #2a2a2a;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        .pokemon-collection {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 0.5rem;
+            max-width: 180px;
+        }
+        .pokemon-caught {
+            font-size: 1.5rem;
+            animation: pokemon-bounce 0.5s ease;
+        }
+        .wild-pokemon {
+            position: fixed;
+            font-size: 3rem;
+            cursor: pointer;
+            z-index: 40;
+            animation: pokemon-wild 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+            transition: transform 0.2s;
+        }
+        .wild-pokemon:hover {
+            transform: scale(1.3);
+        }
+        .wild-pokemon.caught {
+            animation: pokemon-catch 0.5s ease forwards;
+        }
+        @keyframes pokemon-wild {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        @keyframes pokemon-catch {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5) rotate(360deg); }
+            100% { transform: scale(0); opacity: 0; }
+        }
+        @keyframes pokemon-bounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        .pokeball {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 45;
+            animation: pokeball-throw 0.5s ease forwards;
+        }
+        @keyframes pokeball-throw {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); }
+            100% { transform: scale(1) rotate(360deg); opacity: 0; }
+        }
+        
         /* Bat friends */
         .bat {
             position: fixed;
@@ -234,6 +312,13 @@
         <div class="elon-speech" id="elon-speech">Rain? Time to build a weather-proof Tesla! 🚀</div>
         <div class="umbrella">☂️</div>
         <div class="elon">🧑‍💼</div>
+    </div>
+    
+    <!-- Pokemon Game -->
+    <div class="pokemon-game">
+        <div class="pokemon-title">🎮 Pokemon Catcher!</div>
+        <div class="pokemon-score">Caught: <span id="pokemon-count">0</span></div>
+        <div class="pokemon-collection" id="pokemon-collection"></div>
     </div>
     
     <!-- Rain container -->
@@ -363,6 +448,70 @@
                 elonSpeech.textContent = elonQuotes[elonQuoteIndex];
             }
         }, 5000);
+        
+        // Pokemon Game Logic
+        const wildPokemon = ['⚡', '🔥', '💧', '🌿', '👻', '🐉', '🦋', '🐢', '🐭', '🐱', '🦆', '🐍', '🌟', '💫', '🎃'];
+        const pokemonNames = ['Pikachu', 'Charmander', 'Squirtle', 'Bulbasaur', 'Gengar', 'Dragonite', 'Butterfree', 'Squirtle', 'Pichu', 'Meowth', 'Psyduck', 'Ekans', 'Staryu', 'Clefairy', 'Pumpkaboo'];
+        let caughtPokemon = [];
+        let pokemonCount = 0;
+        
+        function spawnWildPokemon() {
+            const pokemon = document.createElement('div');
+            pokemon.className = 'wild-pokemon';
+            const index = Math.floor(Math.random() * wildPokemon.length);
+            pokemon.textContent = wildPokemon[index];
+            pokemon.dataset.name = pokemonNames[index];
+            pokemon.style.top = (Math.random() * 60 + 10) + '%';
+            pokemon.style.left = (Math.random() * 70 + 10) + '%';
+            
+            pokemon.addEventListener('click', () => catchPokemon(pokemon, index));
+            document.body.appendChild(pokemon);
+            
+            // Pokemon disappears after 5 seconds if not caught
+            setTimeout(() => {
+                if (pokemon.parentNode && !pokemon.classList.contains('caught')) {
+                    pokemon.style.animation = 'pokemon-catch 0.3s ease forwards';
+                    setTimeout(() => pokemon.remove(), 300);
+                }
+            }, 5000);
+        }
+        
+        function catchPokemon(pokemon, index) {
+            if (pokemon.classList.contains('caught')) return;
+            pokemon.classList.add('caught');
+            
+            // Throw pokeball effect
+            const pokeball = document.createElement('div');
+            pokeball.className = 'pokeball';
+            pokeball.textContent = '🔴';
+            pokeball.style.top = pokemon.style.top;
+            pokeball.style.left = pokemon.style.left;
+            document.body.appendChild(pokeball);
+            setTimeout(() => pokeball.remove(), 500);
+            
+            // Add to collection
+            pokemonCount++;
+            document.getElementById('pokemon-count').textContent = pokemonCount;
+            
+            const caught = document.createElement('span');
+            caught.className = 'pokemon-caught';
+            caught.textContent = wildPokemon[index];
+            caught.title = pokemonNames[index];
+            document.getElementById('pokemon-collection').appendChild(caught);
+            
+            setTimeout(() => pokemon.remove(), 500);
+        }
+        
+        // Spawn Pokemon every 3-6 seconds
+        setInterval(() => {
+            if (document.querySelectorAll('.wild-pokemon').length < 3) {
+                spawnWildPokemon();
+            }
+        }, 3000);
+        
+        // Initial spawn
+        setTimeout(spawnWildPokemon, 1000);
+        setTimeout(spawnWildPokemon, 2000);
         
         document.getElementById('dracula').addEventListener('click', () => {
             speech.textContent = "You dare disturb Count Dracula?! 🦇";
