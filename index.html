@@ -96,7 +96,53 @@
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         container.appendChild(renderer.domElement);
+        
+        // Create SUN - the star of our system!
+        const sunGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+        const sunMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffd700,
+            emissive: 0xffa500,
+            emissiveIntensity: 1
+        });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sun.position.set(-8, 2, -5);
+        scene.add(sun);
+        
+        // Sun corona glow layers
+        const coronaGeo1 = new THREE.SphereGeometry(1.8, 64, 64);
+        const coronaMat1 = new THREE.MeshBasicMaterial({
+            color: 0xffaa00,
+            transparent: true,
+            opacity: 0.3,
+            side: THREE.BackSide
+        });
+        const corona1 = new THREE.Mesh(coronaGeo1, coronaMat1);
+        corona1.position.copy(sun.position);
+        scene.add(corona1);
+        
+        const coronaGeo2 = new THREE.SphereGeometry(2.2, 64, 64);
+        const coronaMat2 = new THREE.MeshBasicMaterial({
+            color: 0xff8800,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const corona2 = new THREE.Mesh(coronaGeo2, coronaMat2);
+        corona2.position.copy(sun.position);
+        scene.add(corona2);
+        
+        // Sun rays (point light for realistic lighting)
+        const sunLight = new THREE.PointLight(0xffd700, 2, 50);
+        sunLight.position.copy(sun.position);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 50;
+        scene.add(sunLight);
         
         // Create planet
         const geometry = new THREE.SphereGeometry(2, 64, 64);
@@ -107,6 +153,8 @@
             specular: 0x88ccff
         });
         const planet = new THREE.Mesh(geometry, material);
+        planet.castShadow = true;
+        planet.receiveShadow = true;
         scene.add(planet);
         
         // Add atmosphere glow
@@ -128,6 +176,8 @@
             shininess: 10
         });
         const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        moon.castShadow = true;
+        moon.receiveShadow = true;
         
         // Create moon glow
         const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
@@ -156,12 +206,14 @@
             shininess: 50
         });
         const kittyBody = new THREE.Mesh(kittyBodyGeo, kittyMaterial);
+        kittyBody.castShadow = true;
         kittyGroup.add(kittyBody);
         
         // Kitty head (smaller sphere)
         const kittyHeadGeo = new THREE.SphereGeometry(0.25, 32, 32);
         const kittyHead = new THREE.Mesh(kittyHeadGeo, kittyMaterial);
         kittyHead.position.y = 0.4;
+        kittyHead.castShadow = true;
         kittyGroup.add(kittyHead);
         
         // Kitty ears (triangular cones)
@@ -171,11 +223,13 @@
         const leftEar = new THREE.Mesh(earGeo, earMaterial);
         leftEar.position.set(-0.15, 0.6, 0);
         leftEar.rotation.z = 0.3;
+        leftEar.castShadow = true;
         kittyGroup.add(leftEar);
         
         const rightEar = new THREE.Mesh(earGeo, earMaterial);
         rightEar.position.set(0.15, 0.6, 0);
         rightEar.rotation.z = -0.3;
+        rightEar.castShadow = true;
         kittyGroup.add(rightEar);
         
         // Kitty eyes (white spheres with black pupils)
@@ -233,6 +287,7 @@
             const tailSegment = new THREE.Mesh(tailSegmentGeo, kittyMaterial);
             tailSegment.position.set(0, -0.2 - (i * 0.15), -0.15 - (i * 0.1));
             tailSegment.rotation.x = 0.5 + (i * 0.3);
+            tailSegment.castShadow = true;
             kittyGroup.add(tailSegment);
         }
         
@@ -263,13 +318,15 @@
         const starsMesh = new THREE.Points(starGeometry, starMaterial);
         scene.add(starsMesh);
         
-        // Lighting
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(5, 3, 5);
-        scene.add(light);
-        
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        // Additional ambient light for subtle fill
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
         scene.add(ambientLight);
+        
+        // Directional light from sun direction
+        const directionalLight = new THREE.DirectionalLight(0xffd700, 0.5);
+        directionalLight.position.copy(sun.position);
+        directionalLight.target = planet;
+        scene.add(directionalLight);
         
         camera.position.z = 6;
         
@@ -278,13 +335,24 @@
         const moonOrbitRadius = 4;
         const moonOrbitSpeed = 0.01;
         
-        let kittyAngle = Math.PI; // Start opposite to moon
+        let kittyAngle = Math.PI;
         const kittyOrbitRadius = 3.5;
-        const kittyOrbitSpeed = 0.015; // Slightly faster than moon
+        const kittyOrbitSpeed = 0.015;
         
         // Animation
         function animate() {
             requestAnimationFrame(animate);
+            
+            // Animate sun (pulsing glow)
+            const sunScale = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+            sun.scale.set(sunScale, sunScale, sunScale);
+            corona1.scale.set(sunScale * 1.1, sunScale * 1.1, sunScale * 1.1);
+            corona2.scale.set(sunScale * 1.2, sunScale * 1.2, sunScale * 1.2);
+            
+            // Rotate sun
+            sun.rotation.y += 0.002;
+            corona1.rotation.y -= 0.003;
+            corona2.rotation.y += 0.001;
             
             // Rotate planet
             planet.rotation.y += 0.003;
@@ -304,7 +372,7 @@
             kittyAngle += kittyOrbitSpeed;
             kittyGroup.position.x = Math.cos(kittyAngle) * kittyOrbitRadius;
             kittyGroup.position.z = Math.sin(kittyAngle) * kittyOrbitRadius;
-            kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8; // More vertical movement
+            kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8;
             
             // Make kitty look at planet
             kittyGroup.lookAt(planet.position);
@@ -315,7 +383,7 @@
             
             // Animate tail
             kittyGroup.children.forEach((child, index) => {
-                if(index >= 14 && index <= 16) { // Tail segments
+                if(index >= 14 && index <= 16) {
                     child.rotation.z = Math.sin(Date.now() * 0.005 + index) * 0.3;
                 }
             });
