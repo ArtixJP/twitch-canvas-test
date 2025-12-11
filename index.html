@@ -16,9 +16,25 @@
             color: white;
         }
         h1 { font-size: 3rem; text-align: center; }
+        .red-cube {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 60px;
+            height: 60px;
+            background: #ff0000;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+            animation: blink 0.8s ease-in-out infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); }
+            50% { opacity: 0.3; box-shadow: 0 0 40px rgba(255, 0, 0, 0.9); }
+        }
     </style>
 </head>
 <body>
+    <div class="red-cube"></div>
     <h1>✨ Welcome to Twitch Versus Code ✨</h1>
 </body>
 </html>
