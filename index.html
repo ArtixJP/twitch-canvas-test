@@ -79,6 +79,17 @@
             0%, 100% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
         }
+        .greeting {
+            font-size: 1.8rem;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            animation: wave 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes wave {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
         .red-cube {
             position: fixed;
             top: 20px;
@@ -99,6 +110,7 @@
     <div class="red-cube"></div>
     <div class="scene">
         <h1>✨ Welcome to the Void ✨</h1>
+        <p class="greeting">👋 Bonjour Madame Michu ! 🥐</p>
         <div class="tree">
             <div class="foliage">
                 <div class="apple apple-1"></div>
