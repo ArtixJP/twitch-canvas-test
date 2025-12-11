@@ -660,6 +660,14 @@
         // SECTION NAVIGATION
         let currentSection = 'space';
         let gameActive = false;
+        const sections = ['space', 'animals', 'games'];
+        let currentSectionIndex = 0;
+        
+        // Auto-rotate sections every 30 seconds
+        setInterval(() => {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            showSection(sections[currentSectionIndex]);
+        }, 30000);
         
         function showSection(sectionName) {
             // Hide all sections
@@ -671,6 +679,7 @@
             document.getElementById('btn-' + sectionName).classList.add('active');
             
             currentSection = sectionName;
+            currentSectionIndex = sections.indexOf(sectionName);
             
             // Handle game canvas
             const canvas = document.getElementById('gameCanvas');
