@@ -22,9 +22,7 @@
         .planet::before { content: ''; position: absolute; top: 20%; left: 30%; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; box-shadow: 60px 40px 0 10px rgba(255,255,255,0.08), -20px 60px 0 5px rgba(255,255,255,0.06); }
         .ring { position: absolute; top: 50%; left: 50%; width: 300px; height: 80px; border: 15px solid rgba(200, 180, 140, 0.4); border-radius: 50%; transform: translate(-50%, -50%) rotateX(75deg); box-shadow: 0 0 20px rgba(200, 180, 140, 0.3); }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .audio-control { position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 100%); border: 3px solid rgba(255,255,255,0.3); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4); z-index: 1000; }
-        .audio-control:hover { transform: scale(1.1); box-shadow: 0 6px 25px rgba(74, 144, 226, 0.6); }
-        .audio-control:active { transform: scale(0.95); }
+
     </style>
 </head>
 <body>
@@ -35,31 +33,6 @@
             <div class="ring"></div>
         </div>
     </div>
-    <audio id="bgMusic" autoplay loop>
-        <source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg">
-    </audio>
-    <button class="audio-control" id="musicToggle" title="Pause/Play Music">⏸️</button>
-    <script>
-        const audio = document.getElementById('bgMusic');
-        const toggle = document.getElementById('musicToggle');
-        let isPlaying = true;
-        
-        toggle.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                toggle.textContent = '▶️';
-            } else {
-                audio.play();
-                toggle.textContent = '⏸️';
-            }
-            isPlaying = !isPlaying;
-        });
-        
-        // Handle autoplay restrictions
-        audio.play().catch(() => {
-            isPlaying = false;
-            toggle.textContent = '▶️';
-        });
-    </script>
+
 </body>
 </html>
