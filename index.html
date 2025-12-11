@@ -21,5 +21,5 @@
 </head>
 <body>
 <h1>Hello World</h1>
-<div style="text-align: center; margin-top: 20px;"><img alt="Planet" src="https://example.com/planet.png" style="width: 150px; height: auto;"/><button id="pause-button" style="margin-top: 20px; padding: 10px 20px; font-size: 1rem;">Pause Music</button></div><audio autoplay="" id="background-music" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3"></audio><script>document.getElementById('pause-button').onclick = function() { var music = document.getElementById('background-music'); if (music.paused) { music.play(); this.innerText = 'Pause Music'; } else { music.pause(); this.innerText = 'Play Music'; } }</script></body>
+<div style="text-align: center; margin-top: 20px;"><img alt="Planet" src="https://example.com/planet.png" style="width: 150px; height: auto;"/><button id="pause-button" style="margin-top: 20px; padding: 10px 20px; font-size: 1rem;">Pause Music</button></div><script>document.getElementById('pause-button').onclick = function() { var music = document.getElementById('background-music'); if (music.paused) { music.play(); this.innerText = 'Pause Music'; } else { music.pause(); this.innerText = 'Play Music'; } }</script></body>
 </html>
