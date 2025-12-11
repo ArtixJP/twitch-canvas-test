@@ -137,7 +137,7 @@
             bottom: 10%;
             right: 10%;
             z-index: 6;
-            display: none;
+            display: block;
             animation: elon-bounce 3s ease-in-out infinite;
         }
         .elon-container.visible {
@@ -230,7 +230,7 @@
     </div>
     
     <!-- Elon with umbrella (appears when raining) -->
-    <div class="elon-container" id="elon-container">
+    <div class="elon-container visible" id="elon-container">
         <div class="elon-speech" id="elon-speech">Rain? Time to build a weather-proof Tesla! 🚀</div>
         <div class="umbrella">☂️</div>
         <div class="elon">🧑‍💼</div>
@@ -282,13 +282,11 @@
                 document.getElementById('weather-icon').textContent = icon;
                 document.getElementById('description').textContent = desc;
                 
-                // Show Elon with umbrella if it's raining
+                // Show Elon with umbrella if it's raining (or always show for fun!)
                 const elonContainer = document.getElementById('elon-container');
-                if (weatherCode >= 51 && weatherCode <= 82) {
-                    elonContainer.classList.add('visible');
-                } else {
-                    elonContainer.classList.remove('visible');
-                }
+                // Always visible now - Elon loves Paris rain or shine!
+                elonContainer.classList.add('visible');
+                elonContainer.style.display = 'block';
             } catch (e) {
                 document.getElementById('description').textContent = 'Error loading weather';
             }
