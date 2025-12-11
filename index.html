@@ -5,8 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>
-        body { 
+<style>body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             flex-direction: column;
@@ -112,6 +111,36 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
+        .music-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.3), rgba(30, 90, 168, 0.5));
+            border: 2px solid rgba(100, 180, 255, 0.4);
+            border-radius: 50px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+            transition: all 0.3s ease;
+            z-index: 100;
+        }
+        
+        .music-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(74, 158, 255, 0.5);
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.5), rgba(30, 90, 168, 0.7));
+        }
+        
+        .music-btn:active {
+            transform: scale(0.98);
+        }
+        
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -125,8 +154,7 @@
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
-        }
-    </style>
+        }</style>
 </head>
 <body>
 <h1>🌌 Hello World 🌌</h1>
@@ -149,5 +177,27 @@
             starsContainer.appendChild(star);
         }
     </script>
-</body>
+<audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
+</audio>
+<button class="music-btn" id="musicToggle" onclick="toggleMusic()">
+<span id="btnIcon">⏸️</span>
+<span id="btnText">Pause</span>
+</button>
+<script>
+function toggleMusic() {
+  const audio = document.getElementById('bgMusic');
+  const icon = document.getElementById('btnIcon');
+  const text = document.getElementById('btnText');
+  if (audio.paused) {
+    audio.play();
+    icon.textContent = '⏸️';
+    text.textContent = 'Pause';
+  } else {
+    audio.pause();
+    icon.textContent = '▶️';
+    text.textContent = 'Play';
+  }
+}
+</script></body>
 </html>
