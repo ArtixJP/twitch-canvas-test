@@ -19,7 +19,7 @@
         }
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
         .planet-container { position: relative; width: 200px; height: 200px; margin: 2rem auto; }
-        .planet { width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 50%, #1a3a6e 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(74, 144, 226, 0.6); animation: rotate 20s linear infinite; position: relative; overflow: hidden; }
+        .planet { width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 50%, #1a3a6e 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(74, 144, 226, 0.6); animation: rotate 20s linear infinite; position: relative; overflow: hidden; transition: background 0.8s ease, box-shadow 0.8s ease; }
         .planet::before { content: ''; position: absolute; top: 20%; left: 30%; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; box-shadow: 60px 40px 0 10px rgba(255,255,255,0.08), -20px 60px 0 5px rgba(255,255,255,0.06); }
         .ring { position: absolute; top: 50%; left: 50%; width: 300px; height: 80px; border: 15px solid rgba(200, 180, 140, 0.4); border-radius: 50%; transform: translate(-50%, -50%) rotateX(75deg); box-shadow: 0 0 20px rgba(200, 180, 140, 0.3); }
         .moon-orbit { position: absolute; top: 50%; left: 50%; width: 280px; height: 280px; transform: translate(-50%, -50%); animation: orbit 12s linear infinite; }
@@ -326,6 +326,7 @@
             metalness: 0.3
         });
         const planet3D = new THREE.Mesh(planetGeometry, planetMaterial);
+        planet3D.name = 'planet3D';
         planet3D.position.set(0, 0, 0);
         planet3D.receiveShadow = true;
         planet3D.castShadow = true;
@@ -427,6 +428,24 @@
                     dogOrbit.style.filter = 'brightness(1)';
                     kittyOrbit.style.filter = 'brightness(1)';
                 }, 300);
+                
+                // Change planet color on catch
+                const planet = document.querySelector('.planet');
+                const planet3D = scene.getObjectByName('planet3D');
+                const colors = [
+                    { gradient: 'linear-gradient(135deg, #ff6b9d 0%, #ff5e7e 50%, #d63f6f 100%)', shadow: 'rgba(255, 107, 157, 0.6)', three: 0xff6b9d },
+                    { gradient: 'linear-gradient(135deg, #a8e063 0%, #56ab2f 50%, #3d7a1f 100%)', shadow: 'rgba(168, 224, 99, 0.6)', three: 0xa8e063 },
+                    { gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #d63f8f 100%)', shadow: 'rgba(240, 147, 251, 0.6)', three: 0xf093fb },
+                    { gradient: 'linear-gradient(135deg, #ffd89b 0%, #f39c12 50%, #d68910 100%)', shadow: 'rgba(255, 216, 155, 0.6)', three: 0xffd89b },
+                    { gradient: 'linear-gradient(135deg, #a18cd1 0%, #7b68ee 50%, #5a4fcf 100%)', shadow: 'rgba(161, 140, 209, 0.6)', three: 0xa18cd1 },
+                    { gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #00c9ff 100%)', shadow: 'rgba(79, 172, 254, 0.6)', three: 0x4facfe }
+                ];
+                const randomColor = colors[Math.floor(Math.random() * colors.length)];
+                planet.style.background = randomColor.gradient;
+                planet.style.boxShadow = `inset -30px -30px 60px rgba(0,0,0,0.4), 0 0 40px ${randomColor.shadow}`;
+                if (planet3D) {
+                    planet3D.material.color.setHex(randomColor.three);
+                }
             }
         }
         
