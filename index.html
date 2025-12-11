@@ -453,7 +453,166 @@ function checkDistance() {
 // Check distance every 100ms
 setInterval(checkDistance, 100);
 updateAnimations();
-</script></div><div id="game-container" style="position: relative; z-index: 10; margin-top: 50px; width: 600px; height: 400px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 20px; overflow: hidden; box-shadow: 0 0 40px rgba(138, 153, 230, 0.5);"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script>
+</script></div><div id="elephant-container" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 15; text-align: center;">
+<div id="elephant" style="font-size: 6rem; cursor: pointer; filter: drop-shadow(0 0 20px rgba(100, 150, 255, 0.5)); transition: transform 0.3s ease;" title="Click me to spray water!">🐘</div>
+<canvas id="water-canvas" style="position: absolute; top: 0; left: 0; pointer-events: none; width: 100vw; height: 100vh; margin-left: -50vw; margin-top: -50vh;"></canvas>
+</div>
+<style>
+@keyframes elephantBreathe {
+  0%, 100% { transform: scale(1) translateY(0px); }
+  50% { transform: scale(1.05) translateY(-10px); }
+}
+
+#elephant {
+  animation: elephantBreathe 3s ease-in-out infinite;
+}
+
+#elephant:hover {
+  transform: scale(1.2) !important;
+}
+
+@keyframes trunkWave {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+</style>
+<script>
+// Elephant water spray system
+const elephant = document.getElementById('elephant');
+const waterCanvas = document.getElementById('water-canvas');
+const ctx = waterCanvas.getContext('2d');
+
+waterCanvas.width = window.innerWidth;
+waterCanvas.height = window.innerHeight;
+
+let waterParticles = [];
+let isSpraying = false;
+let autoSprayInterval;
+
+class WaterDrop {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+    this.vx = Math.random() * 8 - 4;
+    this.vy = Math.random() * -8 - 5;
+    this.gravity = 0.3;
+    this.size = Math.random() * 6 + 3;
+    this.life = 100;
+    this.maxLife = 100;
+    this.color = `rgba(100, 150, 255, ${Math.random() * 0.5 + 0.5})`;
+  }
+  
+  update() {
+    this.vy += this.gravity;
+    this.x += this.vx;
+    this.y += this.vy;
+    this.life -= 2;
+    
+    // Splash effect on ground
+    if (this.y > window.innerHeight - 50) {
+      this.vy *= -0.4;
+      this.vx *= 0.8;
+      this.y = window.innerHeight - 50;
+    }
+  }
+  
+  draw() {
+    const alpha = this.life / this.maxLife;
+    ctx.fillStyle = this.color.replace(/[\d.]+\)$/, `${alpha})`);
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Water shine
+    ctx.fillStyle = `rgba(255, 255, 255, ${alpha * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(this.x - this.size * 0.3, this.y - this.size * 0.3, this.size * 0.4, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  
+  isDead() {
+    return this.life <= 0;
+  }
+}
+
+function sprayWater() {
+  const rect = elephant.getBoundingClientRect();
+  const elephantX = rect.left + rect.width / 2;
+  const elephantY = rect.top + rect.height / 3;
+  
+  // Create burst of water drops
+  for (let i = 0; i < 30; i++) {
+    waterParticles.push(new WaterDrop(elephantX, elephantY));
+  }
+  
+  // Elephant reaction
+  elephant.style.transform = 'scale(1.15) rotate(-5deg)';
+  setTimeout(() => {
+    elephant.style.transform = '';
+  }, 200);
+  
+  // Sound effect (visual feedback)
+  const splash = document.createElement('div');
+  splash.textContent = '💦';
+  splash.style.position = 'fixed';
+  splash.style.left = elephantX + 'px';
+  splash.style.top = elephantY + 'px';
+  splash.style.fontSize = '3rem';
+  splash.style.pointerEvents = 'none';
+  splash.style.zIndex = '20';
+  splash.style.animation = 'splashFade 1s ease-out forwards';
+  document.body.appendChild(splash);
+  
+  setTimeout(() => splash.remove(), 1000);
+}
+
+function animate() {
+  ctx.clearRect(0, 0, waterCanvas.width, waterCanvas.height);
+  
+  // Update and draw particles
+  for (let i = waterParticles.length - 1; i >= 0; i--) {
+    waterParticles[i].update();
+    waterParticles[i].draw();
+    
+    if (waterParticles[i].isDead()) {
+      waterParticles.splice(i, 1);
+    }
+  }
+  
+  requestAnimationFrame(animate);
+}
+
+// Click to spray
+elephant.addEventListener('click', sprayWater);
+
+// Auto spray every 5 seconds
+autoSprayInterval = setInterval(() => {
+  sprayWater();
+}, 5000);
+
+// Initial spray after 1 second
+setTimeout(sprayWater, 1000);
+
+animate();
+
+// Handle window resize
+window.addEventListener('resize', () => {
+  waterCanvas.width = window.innerWidth;
+  waterCanvas.height = window.innerHeight;
+});
+</script>
+<style>
+@keyframes splashFade {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(0.5) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -200%) scale(2) rotate(360deg);
+  }
+}
+</style><div id="game-container" style="position: relative; z-index: 10; margin-top: 50px; width: 600px; height: 400px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 20px; overflow: hidden; box-shadow: 0 0 40px rgba(138, 153, 230, 0.5);"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script>
 let ship;
 let asteroids = [];
 let stars = [];
