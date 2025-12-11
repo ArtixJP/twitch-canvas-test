@@ -1176,5 +1176,45 @@ function toggleMusic() {
   gameLoop();
 })();
 </script>
-</body>
+<script>
+(function() {
+  const sectionOrder = ['space', 'animals', 'games'];
+  let currentIndex = 0;
+  
+  function rotateSection() {
+    currentIndex = (currentIndex + 1) % sectionOrder.length;
+    const targetSection = sectionOrder[currentIndex];
+    
+    // Update navigation buttons
+    const navBtns = document.querySelectorAll('.nav-btn');
+    navBtns.forEach(btn => {
+      btn.classList.remove('active');
+      if (btn.dataset.section === targetSection) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // Update sections
+    const sections = document.querySelectorAll('.section');
+    sections.forEach(s => s.classList.remove('active'));
+    document.getElementById(targetSection + '-section').classList.add('active');
+    
+    console.log('🔄 Auto-rotated to:', targetSection);
+  }
+  
+  // Start auto-rotation every 30 seconds
+  const autoRotateInterval = setInterval(rotateSection, 30000);
+  
+  // Reset timer when user manually clicks navigation
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentIndex = sectionOrder.indexOf(btn.dataset.section);
+      clearInterval(autoRotateInterval);
+      setInterval(rotateSection, 30000);
+    });
+  });
+  
+  console.log('✨ Auto-rotation enabled: sections will change every 30 seconds');
+})();
+</script></body>
 </html>
