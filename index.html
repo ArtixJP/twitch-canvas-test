@@ -253,6 +253,77 @@
             margin-top: 20px;
             position: relative;
             z-index: 1;
+        }
+        
+        .dracula {
+            position: fixed;
+            bottom: 5%;
+            left: 8%;
+            font-size: 10rem;
+            z-index: 40;
+            animation: dracula-float 3s ease-in-out infinite, dracula-appear 0.5s ease-out;
+            filter: drop-shadow(0 0 20px rgba(139, 0, 0, 0.5));
+        }
+        
+        @keyframes dracula-float {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        
+        @keyframes dracula-appear {
+            0% { opacity: 0; transform: scale(0.5) translateY(50px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        
+        .dracula-eyes {
+            position: fixed;
+            bottom: calc(5% + 6rem);
+            left: calc(8% + 3.5rem);
+            font-size: 1.5rem;
+            z-index: 41;
+            animation: eyes-glow 2s ease-in-out infinite;
+            text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000;
+        }
+        
+        @keyframes eyes-glow {
+            0%, 100% { opacity: 1; text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 30px #ff0000; }
+            50% { opacity: 0.7; text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000; }
+        }
+        
+        .bats {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 45;
+            animation: bat-fly 8s linear infinite;
+            opacity: 0.7;
+        }
+        
+        .bats:nth-child(1) { top: 20%; animation-delay: 0s; }
+        .bats:nth-child(2) { top: 35%; animation-delay: -2s; font-size: 1.5rem; }
+        .bats:nth-child(3) { top: 15%; animation-delay: -4s; font-size: 2.5rem; }
+        
+        @keyframes bat-fly {
+            0% { left: -5%; transform: translateY(0) scaleX(1); }
+            25% { transform: translateY(-20px) scaleX(1); }
+            49% { transform: translateY(10px) scaleX(1); }
+            50% { left: 105%; transform: translateY(10px) scaleX(-1); }
+            75% { transform: translateY(-15px) scaleX(-1); }
+            99% { transform: translateY(5px) scaleX(-1); }
+            100% { left: -5%; transform: translateY(0) scaleX(1); }
+        }
+        
+        .blood-drip {
+            position: fixed;
+            top: 0;
+            font-size: 1.5rem;
+            animation: drip 4s ease-in infinite;
+            opacity: 0.6;
+        }
+        
+        @keyframes drip {
+            0% { transform: translateY(-20px); opacity: 0; }
+            10% { opacity: 0.6; }
+            100% { transform: translateY(100vh); opacity: 0; }
         }</style>
 </head>
 <body><div class="rain-container" id="rain"></div><div class="lightning" id="lightning"></div>
@@ -282,7 +353,7 @@
 <div class="detail-label">Feels Like</div>
 </div>
 </div>
-<div class="update-time">Updated just now • Severe thunderstorm warning in effect ⚠️</div>
+<div class="update-time">Updated just now • Severe thunderstorm warning ⚠️ • Vampire sighting reported 🧛</div>
 </div>
 <div class="lightning-bolt">⚡</div><div class="lightning-bolt">⚡</div><div class="lightning-bolt">⚡</div><script>
 (function() {
@@ -307,5 +378,13 @@
         randomBolt.style.left = Math.random() * 80 + 10 + '%';
     }, 4000);
 })();
-</script></body>
+</script><div class="dracula">🧛</div>
+<div class="dracula-eyes">👀</div>
+<div class="bats">🦇</div>
+<div class="bats">🦇</div>
+<div class="bats">🦇</div>
+<div class="blood-drip" style="left: 15%; animation-delay: 0s;">🩸</div>
+<div class="blood-drip" style="left: 45%; animation-delay: 1.5s;">🩸</div>
+<div class="blood-drip" style="left: 75%; animation-delay: 3s;">🩸</div>
+<div class="blood-drip" style="left: 85%; animation-delay: 2s;">🩸</div></body>
 </html>
