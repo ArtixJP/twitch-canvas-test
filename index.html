@@ -882,5 +882,35 @@ function closeGame() {
 document.getElementById('scoreboard').style.display = 'none';
 document.getElementById('catch-effect').style.display = 'none';
 </script>
-</body>
+<script>
+// Auto-rotate sections every 30 seconds
+(function() {
+    const sections = ['space', 'animals', 'games'];
+    let currentIndex = 0;
+    
+    function rotateSection() {
+        currentIndex = (currentIndex + 1) % sections.length;
+        showSection(sections[currentIndex]);
+        console.log('🔄 Auto-switched to: ' + sections[currentIndex]);
+    }
+    
+    // Start auto-rotation after 30 seconds
+    setInterval(rotateSection, 30000);
+    
+    // Visual indicator for countdown
+    const indicator = document.createElement('div');
+    indicator.id = 'rotation-indicator';
+    indicator.style.cssText = 'position: fixed; bottom: 30px; left: 30px; z-index: 1000; background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); padding: 10px 20px; border-radius: 20px; font-family: system-ui, sans-serif; font-size: 0.9rem; color: #aaa;';
+    document.body.appendChild(indicator);
+    
+    let countdown = 30;
+    function updateCountdown() {
+        indicator.innerHTML = '⏱️ Next section in: <span style="color: #00ff88; font-weight: bold;">' + countdown + 's</span>';
+        countdown--;
+        if (countdown < 0) countdown = 30;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+})();
+</script></body>
 </html>
