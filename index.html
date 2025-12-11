@@ -253,6 +253,8 @@
         
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0x000000, 0);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowShadowMap;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
         
         camera.position.z = 4;
@@ -312,6 +314,8 @@
         const texture = new THREE.CanvasTexture(planetCanvas);
         const planetMaterial = new THREE.MeshPhongMaterial({ map: texture });
         const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        planet.castShadow = true;
+        planet.receiveShadow = true;
         scene.add(planet);
         
         // Create moon
@@ -343,6 +347,8 @@
         const moonTexture = new THREE.CanvasTexture(moonCanvas);
         const moonMaterial = new THREE.MeshPhongMaterial({ map: moonTexture });
         const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        moon.castShadow = true;
+        moon.receiveShadow = true;
         
         // Create a group to hold the moon and its orbital path
         const moonOrbit = new THREE.Group();
@@ -369,6 +375,8 @@
             const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
             const kittyMaterial = new THREE.MeshPhongMaterial({ color: 0xFF9966 });
             const head = new THREE.Mesh(headGeometry, kittyMaterial);
+            head.castShadow = true;
+            head.receiveShadow = true;
             kittyGroup.add(head);
             
             // Left ear
@@ -376,12 +384,16 @@
             const leftEar = new THREE.Mesh(earGeometry, kittyMaterial);
             leftEar.position.set(-0.08, 0.14, 0);
             leftEar.rotation.z = -0.3;
+            leftEar.castShadow = true;
+            leftEar.receiveShadow = true;
             kittyGroup.add(leftEar);
             
             // Right ear
             const rightEar = new THREE.Mesh(earGeometry, kittyMaterial);
             rightEar.position.set(0.08, 0.14, 0);
             rightEar.rotation.z = 0.3;
+            rightEar.castShadow = true;
+            rightEar.receiveShadow = true;
             kittyGroup.add(rightEar);
             
             // Left eye
@@ -389,11 +401,13 @@
             const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
             const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
             leftEye.position.set(-0.05, 0.05, 0.14);
+            leftEye.castShadow = true;
             kittyGroup.add(leftEye);
             
             // Right eye
             const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
             rightEye.position.set(0.05, 0.05, 0.14);
+            rightEye.castShadow = true;
             kittyGroup.add(rightEye);
             
             // Left eye shine
@@ -413,6 +427,7 @@
             const noseMaterial = new THREE.MeshPhongMaterial({ color: 0xFF6B9D });
             const nose = new THREE.Mesh(noseGeometry, noseMaterial);
             nose.position.set(0, -0.02, 0.15);
+            nose.castShadow = true;
             kittyGroup.add(nose);
             
             // Mouth (smile)
@@ -421,17 +436,21 @@
             const mouth1 = new THREE.Mesh(mouthGeometry, mouthMaterial);
             mouth1.position.set(-0.04, -0.06, 0.15);
             mouth1.scale.set(0.6, 0.8, 0.6);
+            mouth1.castShadow = true;
             kittyGroup.add(mouth1);
             
             const mouth2 = new THREE.Mesh(mouthGeometry, mouthMaterial);
             mouth2.position.set(0.04, -0.06, 0.15);
             mouth2.scale.set(0.6, 0.8, 0.6);
+            mouth2.castShadow = true;
             kittyGroup.add(mouth2);
             
             // Body
             const bodyGeometry = new THREE.BoxGeometry(0.12, 0.18, 0.1);
             const body = new THREE.Mesh(bodyGeometry, kittyMaterial);
             body.position.set(0, -0.15, 0);
+            body.castShadow = true;
+            body.receiveShadow = true;
             kittyGroup.add(body);
             
             // Tail
@@ -439,27 +458,37 @@
             const tail = new THREE.Mesh(tailGeometry, kittyMaterial);
             tail.position.set(0.08, -0.15, -0.08);
             tail.rotation.z = 0.3;
+            tail.castShadow = true;
+            tail.receiveShadow = true;
             kittyGroup.add(tail);
             
             // Front left paw
             const pawGeometry = new THREE.SphereGeometry(0.035, 16, 16);
             const paw1 = new THREE.Mesh(pawGeometry, kittyMaterial);
             paw1.position.set(-0.06, -0.32, 0.02);
+            paw1.castShadow = true;
+            paw1.receiveShadow = true;
             kittyGroup.add(paw1);
             
             // Front right paw
             const paw2 = new THREE.Mesh(pawGeometry, kittyMaterial);
             paw2.position.set(0.06, -0.32, 0.02);
+            paw2.castShadow = true;
+            paw2.receiveShadow = true;
             kittyGroup.add(paw2);
             
             // Back left paw
             const paw3 = new THREE.Mesh(pawGeometry, kittyMaterial);
             paw3.position.set(-0.06, -0.32, -0.06);
+            paw3.castShadow = true;
+            paw3.receiveShadow = true;
             kittyGroup.add(paw3);
             
             // Back right paw
             const paw4 = new THREE.Mesh(pawGeometry, kittyMaterial);
             paw4.position.set(0.06, -0.32, -0.06);
+            paw4.castShadow = true;
+            paw4.receiveShadow = true;
             kittyGroup.add(paw4);
             
             return kittyGroup;
@@ -471,12 +500,64 @@
         kitty.position.x = 2.0;
         scene.add(kittyOrbit);
         
-        // Add lighting
-        const light = new THREE.PointLight(0xffffff, 1.5);
-        light.position.set(5, 3, 5);
-        scene.add(light);
+        // Create SUN with corona effect
+        const sunGroup = new THREE.Group();
         
-        const ambientLight = new THREE.AmbientLight(0x404040);
+        // Main sun sphere
+        const sunGeometry = new THREE.SphereGeometry(0.6, 32, 32);
+        const sunMaterial = new THREE.MeshBasicMaterial({
+            color: 0xFDB813,
+            emissive: 0xFDB813
+        });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sunGroup.add(sun);
+        
+        // Inner glow layer
+        const sunGlowInner = new THREE.SphereGeometry(0.65, 32, 32);
+        const sunGlowInnerMaterial = new THREE.MeshBasicMaterial({
+            color: 0xFDB813,
+            transparent: true,
+            opacity: 0.3
+        });
+        const sunGlowInnerMesh = new THREE.Mesh(sunGlowInner, sunGlowInnerMaterial);
+        sunGroup.add(sunGlowInnerMesh);
+        
+        // Outer corona glow
+        const sunGlowOuter = new THREE.SphereGeometry(0.8, 32, 32);
+        const sunGlowOuterMaterial = new THREE.MeshBasicMaterial({
+            color: 0xFF8C00,
+            transparent: true,
+            opacity: 0.15
+        });
+        const sunGlowOuterMesh = new THREE.Mesh(sunGlowOuter, sunGlowOuterMaterial);
+        sunGroup.add(sunGlowOuterMesh);
+        
+        // Extended halo
+        const sunHalo = new THREE.SphereGeometry(1.0, 32, 32);
+        const sunHaloMaterial = new THREE.MeshBasicMaterial({
+            color: 0xFFD700,
+            transparent: true,
+            opacity: 0.08
+        });
+        const sunHaloMesh = new THREE.Mesh(sunHalo, sunHaloMaterial);
+        sunGroup.add(sunHaloMesh);
+        
+        // Position sun in the scene
+        sunGroup.position.set(5, 3, 5);
+        scene.add(sunGroup);
+        
+        // Add main directional light from the sun
+        const sunLight = new THREE.PointLight(0xFDB813, 2.5, 100);
+        sunLight.position.set(5, 3, 5);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.far = 50;
+        sunLight.shadow.camera.near = 0.5;
+        scene.add(sunLight);
+        
+        // Add ambient light for fill
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
         scene.add(ambientLight);
         
         // Add glow effect to planet
@@ -496,6 +577,16 @@
             // Rotate planet
             planet.rotation.y += 0.0005;
             glow.rotation.y -= 0.0003;
+            
+            // Rotate sun on its axis
+            sun.rotation.y += 0.003;
+            sunGlowInnerMesh.rotation.y -= 0.002;
+            sunGlowOuterMesh.rotation.y += 0.001;
+            
+            // Pulsing corona effect
+            const pulse = 0.2 + Math.sin(Date.now() * 0.001) * 0.05;
+            sunGlowOuterMesh.material.opacity = pulse * 0.15;
+            sunHaloMesh.material.opacity = pulse * 0.08;
             
             // Rotate moon on its axis
             moon.rotation.y += 0.01;
