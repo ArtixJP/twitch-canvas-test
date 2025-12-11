@@ -298,5 +298,181 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+</script><script>
+// Dog chasing cat logic - integrated into existing animation loop
+let dogGroup = null;
+let catEscaping = false;
+let escapeStartTime = 0;
+const ESCAPE_DURATION = 2000; // 2 seconds of fast speed
+const SAFE_DISTANCE = 1.2;
+const NORMAL_KITTY_SPEED = 0.0003;
+const ESCAPE_KITTY_SPEED = 0.002;
+let currentKittySpeed = NORMAL_KITTY_SPEED;
+
+// Create dog function
+function createDog() {
+  const dog = new THREE.Group();
+  
+  // Dog body
+  const bodyGeometry = new THREE.BoxGeometry(0.35, 0.25, 0.3);
+  const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+  const dogBody = new THREE.Mesh(bodyGeometry, bodyMaterial);
+  dogBody.position.z = 0.1;
+  dogBody.castShadow = true;
+  dogBody.receiveShadow = true;
+  dog.add(dogBody);
+  
+  // Dog head
+  const headGeometry = new THREE.SphereGeometry(0.12, 32, 32);
+  const headMaterial = new THREE.MeshPhongMaterial({ color: 0xA0522D });
+  const dogHead = new THREE.Mesh(headGeometry, headMaterial);
+  dogHead.position.set(0.18, 0.08, 0.15);
+  dogHead.castShadow = true;
+  dogHead.receiveShadow = true;
+  dog.add(dogHead);
+  
+  // Dog snout
+  const snoutGeometry = new THREE.SphereGeometry(0.07, 16, 16);
+  const snoutMaterial = new THREE.MeshPhongMaterial({ color: 0xD2691E });
+  const snout = new THREE.Mesh(snoutGeometry, snoutMaterial);
+  snout.position.set(0.28, 0.05, 0.25);
+  snout.scale.set(1.2, 0.9, 0.8);
+  snout.castShadow = true;
+  snout.receiveShadow = true;
+  dog.add(snout);
+  
+  // Dog ears
+  const earGeometry = new THREE.ConeGeometry(0.07, 0.18, 8);
+  const earMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+  const leftEar = new THREE.Mesh(earGeometry, earMaterial);
+  leftEar.position.set(0.1, 0.22, 0.15);
+  leftEar.rotation.z = 0.4;
+  leftEar.castShadow = true;
+  leftEar.receiveShadow = true;
+  dog.add(leftEar);
+  
+  const rightEar = new THREE.Mesh(earGeometry, earMaterial);
+  rightEar.position.set(0.26, 0.22, 0.15);
+  rightEar.rotation.z = -0.4;
+  rightEar.castShadow = true;
+  rightEar.receiveShadow = true;
+  dog.add(rightEar);
+  
+  // Dog eyes
+  const eyeGeometry = new THREE.SphereGeometry(0.035, 16, 16);
+  const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+  const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+  leftEye.position.set(0.12, 0.14, 0.22);
+  dog.add(leftEye);
+  
+  const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+  rightEye.position.set(0.24, 0.14, 0.22);
+  dog.add(rightEye);
+  
+  // Dog tail - wagging
+  const tailCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(-0.18, -0.08, 0.1),
+    new THREE.Vector3(-0.35, 0.05, 0.2),
+    new THREE.Vector3(-0.4, 0.25, 0.1)
+  ]);
+  const tailGeometry = new THREE.TubeGeometry(tailCurve, 10, 0.04, 4);
+  const tailMaterial = new THREE.MeshPhongMaterial({ color: 0x654321 });
+  const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+  tail.castShadow = true;
+  tail.receiveShadow = true;
+  dog.add(tail);
+  dog.tail = tail;
+  
+  // Dog legs
+  const legGeometry = new THREE.CylinderGeometry(0.04, 0.04, 0.15, 8);
+  const legMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+  
+  const positions = [
+    { x: -0.1, z: 0.05 },
+    { x: 0.1, z: 0.05 },
+    { x: -0.1, z: -0.1 },
+    { x: 0.1, z: -0.1 }
+  ];
+  
+  positions.forEach(pos => {
+    const leg = new THREE.Mesh(legGeometry, legMaterial);
+    leg.position.set(pos.x, -0.15, pos.z);
+    leg.castShadow = true;
+    leg.receiveShadow = true;
+    dog.add(leg);
+  });
+  
+  return dog;
+}
+
+// Initialize dog after scene is ready
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (typeof scene !== 'undefined' && !dogGroup) {
+      dogGroup = createDog();
+      scene.add(dogGroup);
+    }
+  }, 100);
+});
+
+// Store original animate function
+const originalAnimate = window.animationFrameId;
+
+// Override the animation loop to add dog logic
+const originalRequestAnimationFrame = window.requestAnimationFrame;
+let animationCallback = null;
+
+window.requestAnimationFrame = function(callback) {
+  animationCallback = callback;
+  return originalRequestAnimationFrame(() => {
+    if (callback) callback();
+    updateDogLogic();
+  });
+};
+
+function updateDogLogic() {
+  if (!dogGroup || !kittyGroup) return;
+  
+  // Calculate distance between dog and cat
+  const distance = kittyGroup.position.distanceTo(dogGroup.position);
+  
+  // Cat escape logic
+  const now = Date.now();
+  if (distance < SAFE_DISTANCE && !catEscaping) {
+    catEscaping = true;
+    escapeStartTime = now;
+    currentKittySpeed = ESCAPE_KITTY_SPEED;
+  } else if (catEscaping && (now - escapeStartTime) > ESCAPE_DURATION) {
+    catEscaping = false;
+    currentKittySpeed = NORMAL_KITTY_SPEED;
+  }
+  
+  // Dog chases cat
+  const dogOrbitRadius = 3.5;
+  const dogOrbitSpeed = 0.0005; // Faster than cat's normal speed
+  
+  // Dog tries to reach cat's position
+  const catAngle = Math.atan2(kittyGroup.position.z, kittyGroup.position.x);
+  const targetDogX = Math.cos(catAngle) * dogOrbitRadius;
+  const targetDogZ = Math.sin(catAngle) * dogOrbitRadius;
+  
+  // Smooth movement toward target
+  dogGroup.position.x += (targetDogX - dogGroup.position.x) * 0.05;
+  dogGroup.position.z += (targetDogZ - dogGroup.position.z) * 0.05;
+  dogGroup.position.y = Math.sin(now * 0.0002) * 0.25;
+  
+  // Dog looks at cat
+  dogGroup.lookAt(kittyGroup.position);
+  
+  // Excited tail wag
+  dogGroup.tail.rotation.z = Math.sin(now * 0.008) * 0.5;
+  
+  // Add a visual indicator when cat is escaping (glow effect)
+  if (catEscaping && kittyGroup.children[0]) {
+    kittyGroup.children[0].material.emissive.setHex(0xff6600);
+  } else if (kittyGroup.children[0]) {
+    kittyGroup.children[0].material.emissive.setHex(0x000000);
+  }
+}
 </script></body>
 </html>
