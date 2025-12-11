@@ -1,24 +1,193 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code</title>
+<style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+        
         body { 
-            font-family: system-ui, sans-serif; 
+            font-family: 'Poppins', sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             color: white;
+            overflow: hidden;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        
+        .weather-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
+            position: relative;
+            overflow: hidden;
+            min-width: 350px;
+        }
+        
+        .weather-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 8s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .location {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .location span {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        .weather-icon {
+            font-size: 6rem;
+            margin: 20px 0;
+            position: relative;
+            z-index: 1;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .temperature {
+            font-size: 5rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            background: linear-gradient(135deg, #fff 0%, #a8d8ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .description {
+            font-size: 1.3rem;
+            font-weight: 300;
+            text-transform: capitalize;
+            margin: 10px 0 30px;
+            position: relative;
+            z-index: 1;
+            opacity: 0.9;
+        }
+        
+        .details {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            position: relative;
+            z-index: 1;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            padding-top: 25px;
+            margin-top: 10px;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-icon {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+        
+        .detail-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .detail-label {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+        
+        .eiffel {
+            position: fixed;
+            bottom: -20px;
+            right: 5%;
+            font-size: 15rem;
+            opacity: 0.05;
+            z-index: 0;
+        }
+        
+        .cloud {
+            position: fixed;
+            font-size: 4rem;
+            opacity: 0.1;
+            animation: drift 20s linear infinite;
+        }
+        
+        .cloud:nth-child(1) { top: 10%; left: -10%; animation-duration: 25s; }
+        .cloud:nth-child(2) { top: 30%; left: -10%; animation-duration: 30s; animation-delay: -10s; }
+        .cloud:nth-child(3) { top: 60%; left: -10%; animation-duration: 22s; animation-delay: -5s; }
+        
+        @keyframes drift {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(110vw); }
+        }
+        
+        .update-time {
+            font-size: 0.75rem;
+            opacity: 0.5;
+            margin-top: 20px;
+            position: relative;
+            z-index: 1;
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="cloud">☁️</div>
+<div class="cloud">☁️</div>
+<div class="cloud">☁️</div>
+<div class="eiffel">🗼</div>
+<div class="weather-card">
+<div class="location">Paris, France <span>🇫🇷</span></div>
+<div class="weather-icon">⛅</div>
+<div class="temperature">18°C</div>
+<div class="description">Partly Cloudy</div>
+<div class="details">
+<div class="detail-item">
+<div class="detail-icon">💧</div>
+<div class="detail-value">65%</div>
+<div class="detail-label">Humidity</div>
+</div>
+<div class="detail-item">
+<div class="detail-icon">💨</div>
+<div class="detail-value">12 km/h</div>
+<div class="detail-label">Wind</div>
+</div>
+<div class="detail-item">
+<div class="detail-icon">🌡️</div>
+<div class="detail-value">16°</div>
+<div class="detail-label">Feels Like</div>
+</div>
+</div>
+<div class="update-time">Updated just now • Typical spring weather in Paris</div>
+</div>
 </body>
 </html>
