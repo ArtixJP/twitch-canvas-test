@@ -152,7 +152,6 @@
             height: 280px;
             margin-left: -140px;
             margin-top: -140px;
-            animation: orbit-reverse 12s linear infinite;
             pointer-events: none;
         }
         
@@ -296,6 +295,147 @@
             background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.3), transparent);
         }
         
+        /* Space Dog */
+        .dog-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            margin-left: -140px;
+            margin-top: -140px;
+            pointer-events: none;
+        }
+        
+        .doggy {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 55px;
+            height: 50px;
+            margin-left: -27px;
+            margin-top: -25px;
+            animation: doggy-float 1.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(210, 180, 140, 0.6));
+        }
+        
+        .doggy-head {
+            position: absolute;
+            width: 42px;
+            height: 38px;
+            background: linear-gradient(135deg, #d2b48c 0%, #c4a574 50%, #a67c52 100%);
+            border-radius: 50% 50% 45% 45%;
+            top: 8px;
+            left: 6px;
+            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), inset 3px 3px 10px rgba(255,255,255,0.3);
+        }
+        
+        .doggy-ear-left, .doggy-ear-right {
+            position: absolute;
+            width: 14px;
+            height: 22px;
+            background: linear-gradient(135deg, #c4a574 0%, #8b6914 100%);
+            border-radius: 50% 50% 60% 60%;
+            top: 2px;
+        }
+        
+        .doggy-ear-left {
+            left: 0;
+            transform: rotate(-20deg);
+        }
+        
+        .doggy-ear-right {
+            right: 0;
+            transform: rotate(20deg);
+        }
+        
+        .doggy-eye {
+            position: absolute;
+            width: 11px;
+            height: 13px;
+            background: #222;
+            border-radius: 50%;
+            top: 18px;
+            animation: dog-blink 3s ease-in-out infinite;
+        }
+        
+        .doggy-eye::after {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+        }
+        
+        .doggy-eye-left {
+            left: 12px;
+        }
+        
+        .doggy-eye-right {
+            right: 12px;
+        }
+        
+        .doggy-nose {
+            position: absolute;
+            width: 10px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            top: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .doggy-tongue {
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: #ff6b8a;
+            border-radius: 0 0 50% 50%;
+            top: 34px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: tongue-wag 0.3s ease-in-out infinite;
+        }
+        
+        .doggy-helmet {
+            position: absolute;
+            width: 52px;
+            height: 46px;
+            border: 3px solid rgba(255,255,255,0.5);
+            border-radius: 50%;
+            top: 4px;
+            left: 1px;
+            background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.3), transparent);
+        }
+        
+        .doggy-tail {
+            position: absolute;
+            width: 6px;
+            height: 18px;
+            background: #c4a574;
+            border-radius: 50%;
+            top: 30px;
+            right: -8px;
+            transform-origin: top center;
+            animation: tail-wag 0.2s ease-in-out infinite;
+        }
+        
+        .kitty.escaping {
+            animation: kitty-float 0.5s ease-in-out infinite !important;
+        }
+        
+        .kitty.escaping .kitty-eye {
+            transform: scaleY(0.5);
+        }
+        
+        .doggy.chasing-fast {
+            animation: doggy-float 0.3s ease-in-out infinite !important;
+        }
+        
         .stars {
             position: fixed;
             top: 0;
@@ -370,9 +510,29 @@
             50% { transform: translateY(-5px) rotate(5deg); }
         }
         
+        @keyframes doggy-float {
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-4px) rotate(-5deg); }
+        }
+        
         @keyframes blink {
             0%, 45%, 55%, 100% { transform: scaleY(1); }
             50% { transform: scaleY(0.1); }
+        }
+        
+        @keyframes dog-blink {
+            0%, 40%, 50%, 100% { transform: scaleY(1); }
+            45% { transform: scaleY(0.1); }
+        }
+        
+        @keyframes tongue-wag {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        
+        @keyframes tail-wag {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(15deg); }
         }
         
         @keyframes twinkle {
@@ -417,7 +577,7 @@
 <div class="planet-container">
 <div class="planet"></div>
 <div class="ring"></div>
-<div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-ear-inner-left"></div><div class="kitty-ear-inner-right"></div><div class="kitty-head"><div class="kitty-eye kitty-eye-left"></div><div class="kitty-eye kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker kitty-whisker-left-1"></div><div class="kitty-whisker kitty-whisker-left-2"></div><div class="kitty-whisker kitty-whisker-right-1"></div><div class="kitty-whisker kitty-whisker-right-2"></div></div></div></div></div>
+<div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-ear-inner-left"></div><div class="kitty-ear-inner-right"></div><div class="kitty-head"><div class="kitty-eye kitty-eye-left"></div><div class="kitty-eye kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker kitty-whisker-left-1"></div><div class="kitty-whisker kitty-whisker-left-2"></div><div class="kitty-whisker kitty-whisker-right-1"></div><div class="kitty-whisker kitty-whisker-right-2"></div></div></div></div><div class="dog-orbit" id="dogOrbit"><div class="doggy" id="spaceDog"><div class="doggy-helmet"></div><div class="doggy-ear-left"></div><div class="doggy-ear-right"></div><div class="doggy-head"><div class="doggy-eye doggy-eye-left"></div><div class="doggy-eye doggy-eye-right"></div><div class="doggy-nose"></div><div class="doggy-tongue"></div></div><div class="doggy-tail"></div></div></div></div>
 <div class="stars" id="stars"></div>
 <script>
         // Generate random stars
@@ -632,6 +792,92 @@ window.addEventListener('load', function() {
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
+})();
+</script><script>
+(function() {
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const dogOrbit = document.getElementById('dogOrbit');
+  const kitty = document.querySelector('.kitty');
+  const dog = document.getElementById('spaceDog');
+  
+  let kittyAngle = 0;
+  let dogAngle = Math.PI; // Start on opposite side
+  
+  const normalKittySpeed = 0.008;
+  const escapingKittySpeed = 0.04;
+  const dogSpeed = 0.015;
+  
+  let currentKittySpeed = normalKittySpeed;
+  let isEscaping = false;
+  let escapeTimer = null;
+  
+  const orbitRadius = 140;
+  const dangerDistance = 60; // When dog gets this close, cat escapes
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    return Math.sqrt(Math.pow(pos2.x - pos1.x, 2) + Math.pow(pos2.y - pos1.y, 2));
+  }
+  
+  function animate() {
+    // Move kitty (counter-clockwise)
+    kittyAngle -= currentKittySpeed;
+    
+    // Move dog (counter-clockwise, faster to chase)
+    dogAngle -= dogSpeed;
+    
+    // Get positions
+    const kittyPos = getPosition(kittyAngle, orbitRadius);
+    const dogPos = getPosition(dogAngle, orbitRadius);
+    
+    // Calculate distance between them
+    const distance = getDistance(kittyPos, dogPos);
+    
+    // Check if dog is too close
+    if (distance < dangerDistance && !isEscaping) {
+      isEscaping = true;
+      currentKittySpeed = escapingKittySpeed;
+      kitty.classList.add('escaping');
+      dog.classList.add('chasing-fast');
+      
+      // Clear any existing timer
+      if (escapeTimer) clearTimeout(escapeTimer);
+      
+      // Return to normal after escaping
+      escapeTimer = setTimeout(() => {
+        if (getDistance(getPosition(kittyAngle, orbitRadius), getPosition(dogAngle, orbitRadius)) > dangerDistance * 2) {
+          isEscaping = false;
+          currentKittySpeed = normalKittySpeed;
+          kitty.classList.remove('escaping');
+          dog.classList.remove('chasing-fast');
+        }
+      }, 800);
+    } else if (isEscaping && distance > dangerDistance * 2.5) {
+      // Safe distance reached, slow down
+      isEscaping = false;
+      currentKittySpeed = normalKittySpeed;
+      kitty.classList.remove('escaping');
+      dog.classList.remove('chasing-fast');
+    }
+    
+    // Apply transforms
+    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
+    dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
+    
+    // Keep the animals upright
+    kitty.style.transform = `rotate(${-kittyAngle}rad)`;
+    dog.style.transform = `rotate(${-dogAngle}rad)`;
+    
+    requestAnimationFrame(animate);
+  }
+  
+  animate();
 })();
 </script></body>
 </html>
