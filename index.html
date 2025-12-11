@@ -201,6 +201,16 @@
         const playIcon = document.getElementById('playIcon');
         let isPlaying = false;
         
+        // Auto-play music on page load
+        window.addEventListener('load', function() {
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                playPauseBtn.innerHTML = '<span id="playIcon">⏸️</span> Pause Music';
+            }).catch(e => {
+                console.log('Autoplay blocked by browser, click to play');
+            });
+        });
+        
         function toggleMusic() {
             if (isPlaying) {
                 bgMusic.pause();
