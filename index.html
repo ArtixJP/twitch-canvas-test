@@ -77,7 +77,78 @@ window.updateDogLogic = function() {
   originalUpdateDogLogic();
   checkCatch();
 };
-</script><script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script></head>
+</script><script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js">function initializeMenu() {
+  const menuButtons = document.querySelectorAll('.menu-btn');
+  const sections = ['space', 'animals', 'games'];
+  let currentSectionIndex = 0;
+  let autoRotateTimer = null;
+  
+  // Set initial section to 'space'
+  function showSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('[data-section]').forEach(el => {
+      el.classList.remove('active');
+    });
+    
+    // Remove active state from all menu buttons
+    menuButtons.forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    // Show selected section
+    document.querySelectorAll(`[data-section="${sectionName}"]`).forEach(el => {
+      el.classList.add('active');
+    });
+    
+    // Highlight active menu button
+    document.querySelector(`[data-section="${sectionName}"]`).closest('nav') || 
+    document.querySelector(`.menu-btn[data-section="${sectionName}"]`).classList.add('active');
+    
+    // Update active button styling
+    menuButtons.forEach(btn => {
+      if (btn.dataset.section === sectionName) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // Trigger resize event for Three.js canvas if showing space section
+    if (sectionName === 'space') {
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    }
+  }
+  
+  // Auto-rotate sections every 30 seconds
+  function startAutoRotate() {
+    autoRotateTimer = setInterval(() => {
+      currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+      showSection(sections[currentSectionIndex]);
+    }, 30000);
+  }
+  
+  // Add click listeners to menu buttons
+  menuButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Find the index of clicked section
+      currentSectionIndex = sections.indexOf(btn.dataset.section);
+      showSection(btn.dataset.section);
+      
+      // Restart the auto-rotate timer
+      clearInterval(autoRotateTimer);
+      startAutoRotate();
+    });
+  });
+  
+  // Show space section by default and start auto-rotation
+  showSection('space');
+  startAutoRotate();
+}
+
+// Initialize menu when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMenu);
+} else {
+  initializeMenu();
+}</script></head>
 <body style="font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding-top: 80px;"><nav id="main-menu" style="position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%); border-bottom: 3px solid #00ff00; z-index: 200; display: flex; justify-content: center; align-items: center; gap: 40px; font-family: system-ui, sans-serif; box-shadow: 0 4px 15px rgba(0, 255, 0, 0.2);"><button class="menu-btn" data-section="space" style="padding: 12px 30px; background: rgba(0, 255, 0, 0.3); border: 2px solid #00ff00; color: #00ff00; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease;">🌍 Space</button><button class="menu-btn" data-section="animals" style="padding: 12px 30px; background: rgba(100, 150, 255, 0.2); border: 2px solid #6496ff; color: #6496ff; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease;">🐾 Animals</button><button class="menu-btn" data-section="games" style="padding: 12px 30px; background: rgba(255, 200, 0, 0.2); border: 2px solid #ffc800; color: #ffc800; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease;">🎮 Games</button></nav><div data-section="animals" id="score-display" style="position: fixed; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; padding: 15px 25px; border-radius: 10px; font-size: 24px; font-weight: bold; z-index: 99; font-family: system-ui, sans-serif;">🐕 Dog: <span id="dog-score">0</span> | 🐱 Cat: <span id="cat-score">0</span></div><audio data-section="animals" id="background-music" style="display: none;"><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/><script>
 // Hook updateElephant into the animation loop
 const originalUpdateDogLogic = window.updateDogLogic;
