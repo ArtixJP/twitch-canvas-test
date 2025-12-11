@@ -72,7 +72,7 @@
         </div>
     </div>
 
-    <audio id="bgMusic" loop>
+    <audio id="bgMusic" loop autoplay>
         <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg">
     </audio>
 
@@ -103,10 +103,25 @@
                 isPlaying = true;
                 btn.textContent = '⏸';
             }).catch(() => {
-                // Auto-play blocked, user will need to click
-                console.log('Auto-play blocked - click to play');
+                console.log('Auto-play blocked - waiting for user interaction');
             });
         });
+
+        // Try to play on any user interaction
+        document.body.addEventListener('click', () => {
+            if (!isPlaying) {
+                music.play().then(() => {
+                    isPlaying = true;
+                    btn.textContent = '⏸';
+                }).catch(() => {});
+            }
+        }, { once: true });
+
+        // Immediate play attempt
+        music.play().then(() => {
+            isPlaying = true;
+            btn.textContent = '⏸';
+        }).catch(() => {});
     </script>
 
 </body>
