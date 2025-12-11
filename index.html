@@ -11,43 +11,55 @@
             padding: 0;
             box-sizing: border-box;
         }
+        
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
+            margin: 0;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
             overflow: hidden;
             position: relative;
         }
-        #canvas {
+        
+        #canvas-container {
             position: absolute;
             top: 0;
             left: 0;
-            display: block;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
         }
+        
         .content {
             position: relative;
-            z-index: 10;
+            z-index: 2;
             text-align: center;
             pointer-events: none;
         }
+        
         h1 { 
             font-size: 3rem; 
             text-align: center;
-            text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
             animation: glow 3s ease-in-out infinite;
         }
+        
         @keyframes glow {
-            0%, 100% { text-shadow: 0 0 20px rgba(100, 200, 255, 0.8); }
-            50% { text-shadow: 0 0 40px rgba(100, 200, 255, 1), 0 0 60px rgba(100, 200, 255, 0.6); }
+            0%, 100% {
+                text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+            }
+            50% {
+                text-shadow: 0 0 40px rgba(100, 200, 255, 0.8);
+            }
         }
     </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
+<div id="canvas-container"></div>
 <div class="content">
 <h1>Hello World</h1>
 </div>
@@ -56,15 +68,18 @@
         // Scene setup
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setClearColor(0x000000, 0);
-        camera.position.z = 5;
-
-        // Create stars
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+        
+        camera.position.z = 4;
+        
+        // Create stars background
         const starsGeometry = new THREE.BufferGeometry();
         const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 });
+        
         const starsVertices = [];
         for (let i = 0; i < 1000; i++) {
             const x = (Math.random() - 0.5) * 200;
@@ -72,82 +87,89 @@
             const z = (Math.random() - 0.5) * 200;
             starsVertices.push(x, y, z);
         }
+        
         starsGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starsVertices), 3));
         const stars = new THREE.Points(starsGeometry, starsMaterial);
         scene.add(stars);
-
+        
         // Create planet
-        const planetGeometry = new THREE.IcosahedronGeometry(1, 32);
-        const planetMaterial = new THREE.MeshPhongMaterial({
-            map: new THREE.CanvasTexture(createPlanetTexture()),
-            shininess: 10
-        });
+        const planetGeometry = new THREE.SphereGeometry(1, 64, 64);
+        const planetCanvas = document.createElement('canvas');
+        planetCanvas.width = 2048;
+        planetCanvas.height = 1024;
+        const ctx = planetCanvas.getContext('2d');
+        
+        // Draw planet texture
+        const gradient = ctx.createLinearGradient(0, 0, planetCanvas.width, planetCanvas.height);
+        gradient.addColorStop(0, '#1a5f7a');
+        gradient.addColorStop(0.5, '#2d8a9e');
+        gradient.addColorStop(1, '#0d3d52');
+        ctx.fillStyle = gradient;
+        ctx.fillRect(0, 0, planetCanvas.width, planetCanvas.height);
+        
+        // Add clouds and features
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+        for (let i = 0; i < 50; i++) {
+            const x = Math.random() * planetCanvas.width;
+            const y = Math.random() * planetCanvas.height;
+            const size = Math.random() * 100 + 50;
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        // Add landmasses
+        ctx.fillStyle = 'rgba(34, 139, 34, 0.6)';
+        for (let i = 0; i < 30; i++) {
+            const x = Math.random() * planetCanvas.width;
+            const y = Math.random() * planetCanvas.height;
+            const width = Math.random() * 150 + 50;
+            const height = Math.random() * 150 + 50;
+            ctx.fillRect(x, y, width, height);
+        }
+        
+        const texture = new THREE.CanvasTexture(planetCanvas);
+        const planetMaterial = new THREE.MeshPhongMaterial({ map: texture });
         const planet = new THREE.Mesh(planetGeometry, planetMaterial);
         scene.add(planet);
-
-        // Add lights
+        
+        // Add lighting
         const light = new THREE.PointLight(0xffffff, 1.5);
         light.position.set(5, 3, 5);
         scene.add(light);
-        const ambientLight = new THREE.AmbientLight(0x404040, 1);
+        
+        const ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
-
-        // Create planet texture
-        function createPlanetTexture() {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d');
-            
-            // Gradient background
-            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
-            gradient.addColorStop(0, '#1e3a8a');
-            gradient.addColorStop(0.5, '#3b82f6');
-            gradient.addColorStop(1, '#60a5fa');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 512, 512);
-            
-            // Add some continents
-            ctx.fillStyle = '#10b981';
-            ctx.beginPath();
-            ctx.arc(150, 150, 80, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(350, 250, 70, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(250, 100, 60, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Add clouds
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            ctx.beginPath();
-            ctx.arc(200, 200, 50, 0, Math.PI * 2);
-            ctx.fill();
-            ctx.beginPath();
-            ctx.arc(400, 150, 40, 0, Math.PI * 2);
-            ctx.fill();
-            
-            return canvas;
-        }
-
+        
+        // Add glow effect
+        const glowGeometry = new THREE.SphereGeometry(1.1, 32, 32);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x64c8ff,
+            transparent: true,
+            opacity: 0.1
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        scene.add(glow);
+        
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
             
             // Rotate planet
-            planet.rotation.x += 0.0005;
-            planet.rotation.y += 0.001;
+            planet.rotation.y += 0.0005;
+            glow.rotation.y -= 0.0003;
             
-            // Orbit animation
-            const time = Date.now() * 0.0003;
-            planet.position.x = Math.cos(time) * 2;
-            planet.position.y = Math.sin(time * 0.7) * 1.5;
+            // Orbit camera around planet
+            const time = Date.now() * 0.0001;
+            camera.position.x = Math.cos(time) * 4;
+            camera.position.z = Math.sin(time) * 4 + 2;
+            camera.lookAt(planet.position);
             
             renderer.render(scene, camera);
         }
+        
         animate();
-
+        
         // Handle window resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
