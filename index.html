@@ -608,9 +608,135 @@ h1 {
 .planet.caught-purple { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 30%, #5f27cd 70%, #341f97 100%) !important; }
 .planet.caught-teal { background: linear-gradient(135deg, #55efc4 0%, #00b894 30%, #00cec9 70%, #0984e3 100%) !important; }
 .planet.caught-gold { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 30%, #f39c12 70%, #e17055 100%) !important; }
-.planet.caught-pink { background: linear-gradient(135deg, #fd79a8 0%, #e84393 30%, #d63384 70%, #c2185b 100%) !important; }</style>
+.planet.caught-pink { background: linear-gradient(135deg, #fd79a8 0%, #e84393 30%, #d63384 70%, #c2185b 100%) !important; }
+/* Asteroid Game Styles */
+#gameCanvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  pointer-events: auto;
+  cursor: crosshair;
+}
+#gameUI {
+  position: fixed;
+  top: 20px;
+  left: 30px;
+  z-index: 100;
+  background: linear-gradient(135deg, rgba(74, 144, 164, 0.8), rgba(45, 90, 107, 0.9));
+  border: 2px solid rgba(200, 180, 150, 0.6);
+  border-radius: 15px;
+  padding: 15px 25px;
+  box-shadow: 0 0 20px rgba(74, 144, 164, 0.5), 0 0 40px rgba(74, 144, 164, 0.3);
+  font-family: system-ui, sans-serif;
+}
+#gameUI .label {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  margin-bottom: 5px;
+}
+#gameUI .value {
+  font-size: 28px;
+  font-weight: bold;
+  color: #55efc4;
+  text-shadow: 0 0 10px rgba(85, 239, 196, 0.8);
+}
+#gameUI .lives {
+  font-size: 20px;
+  margin-top: 10px;
+}
+#gameInstructions {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(0,0,0,0.7);
+  border: 2px solid rgba(100, 200, 255, 0.5);
+  border-radius: 10px;
+  padding: 10px 20px;
+  color: white;
+  font-family: system-ui, sans-serif;
+  text-align: center;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.8; transform: translateX(-50%) scale(1); }
+  50% { opacity: 1; transform: translateX(-50%) scale(1.05); }
+}
+.explosion {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffd700 0%, #ff6b00 40%, transparent 70%);
+  animation: explode 0.5s ease-out forwards;
+  pointer-events: none;
+  z-index: 60;
+}
+@keyframes explode {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+}
+#gameOver {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 200;
+  background: linear-gradient(135deg, rgba(20, 20, 40, 0.95), rgba(40, 40, 80, 0.95));
+  border: 3px solid #ffd700;
+  border-radius: 20px;
+  padding: 40px 60px;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+  display: none;
+}
+#gameOver h2 {
+  color: #ffd700;
+  font-size: 36px;
+  margin-bottom: 20px;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+}
+#gameOver .final-score {
+  color: #55efc4;
+  font-size: 48px;
+  font-weight: bold;
+  margin: 20px 0;
+}
+#restartBtn {
+  background: linear-gradient(135deg, #55efc4, #00b894);
+  border: none;
+  padding: 15px 40px;
+  font-size: 20px;
+  border-radius: 30px;
+  cursor: pointer;
+  color: #1a1a2e;
+  font-weight: bold;
+  transition: all 0.3s ease;
+  margin-top: 20px;
+}
+#restartBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(85, 239, 196, 0.7);
+}
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
-<body>
+<body><canvas id="gameCanvas"></canvas>
+<div id="gameUI">
+<div class="label">🚀 ASTEROID SCORE</div>
+<div class="value" id="asteroidScore">0</div>
+<div class="lives" id="livesDisplay">❤️❤️❤️</div>
+</div>
+<div id="gameInstructions">🎮 Click anywhere to shoot lasers! Destroy asteroids! 🌟</div>
+<div id="gameOver">
+<h2>🌌 GAME OVER 🌌</h2>
+<div>Final Score:</div>
+<div class="final-score" id="finalScore">0</div>
+<button id="restartBtn" onclick="restartGame()">🚀 PLAY AGAIN</button>
+</div>
 <h1>Welcome to the Cosmos</h1><div id="scoreBoard" style="position: fixed; top: 20px; right: 30px; z-index: 100; background: linear-gradient(135deg, rgba(74, 144, 164, 0.8), rgba(45, 90, 107, 0.9)); border: 2px solid rgba(200, 180, 150, 0.6); border-radius: 15px; padding: 15px 25px; box-shadow: 0 0 20px rgba(74, 144, 164, 0.5), 0 0 40px rgba(74, 144, 164, 0.3); font-family: system-ui, sans-serif;"><div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">🐕 DOG SCORE</div><div id="dogScore" style="font-size: 36px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);">0</div></div>
 <div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></div><div class="planet-container">
 <div class="ring"></div>
@@ -1076,5 +1202,309 @@ dogCatchesCat = function() {
     canCatch = true;
   }, catchCooldown);
 };
+</script><script>
+// ASTEROID BLASTER GAME!
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+let gameWidth, gameHeight;
+let asteroids = [];
+let lasers = [];
+let particles = [];
+let asteroidScore = 0;
+let lives = 3;
+let gameRunning = true;
+let spawnRate = 2000;
+let lastSpawn = 0;
+
+function resizeCanvas() {
+  gameWidth = window.innerWidth;
+  gameHeight = window.innerHeight;
+  canvas.width = gameWidth;
+  canvas.height = gameHeight;
+}
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
+
+// Asteroid class
+class Asteroid {
+  constructor() {
+    this.size = Math.random() * 40 + 20;
+    this.x = Math.random() * gameWidth;
+    this.y = -this.size;
+    this.speedY = Math.random() * 2 + 1;
+    this.speedX = (Math.random() - 0.5) * 2;
+    this.rotation = 0;
+    this.rotationSpeed = (Math.random() - 0.5) * 0.1;
+    this.vertices = [];
+    const points = Math.floor(Math.random() * 5) + 7;
+    for (let i = 0; i < points; i++) {
+      const angle = (i / points) * Math.PI * 2;
+      const dist = this.size * (0.7 + Math.random() * 0.3);
+      this.vertices.push({ x: Math.cos(angle) * dist, y: Math.sin(angle) * dist });
+    }
+    this.color = `hsl(${Math.random() * 60 + 20}, 30%, ${Math.random() * 20 + 30}%)`;
+  }
+  
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.rotation += this.rotationSpeed;
+  }
+  
+  draw() {
+    ctx.save();
+    ctx.translate(this.x, this.y);
+    ctx.rotate(this.rotation);
+    ctx.beginPath();
+    ctx.moveTo(this.vertices[0].x, this.vertices[0].y);
+    for (let v of this.vertices) {
+      ctx.lineTo(v.x, v.y);
+    }
+    ctx.closePath();
+    ctx.fillStyle = this.color;
+    ctx.fill();
+    ctx.strokeStyle = '#8b7355';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    // Craters
+    ctx.fillStyle = 'rgba(0,0,0,0.3)';
+    ctx.beginPath();
+    ctx.arc(this.size * 0.2, -this.size * 0.1, this.size * 0.15, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(-this.size * 0.3, this.size * 0.2, this.size * 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+// Laser class
+class Laser {
+  constructor(x, y, targetX, targetY) {
+    this.x = gameWidth / 2;
+    this.y = gameHeight - 50;
+    const angle = Math.atan2(targetY - this.y, targetX - this.x);
+    this.speedX = Math.cos(angle) * 15;
+    this.speedY = Math.sin(angle) * 15;
+    this.length = 20;
+    this.color = `hsl(${Math.random() * 60 + 160}, 100%, 60%)`;
+  }
+  
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
+  
+  draw() {
+    ctx.save();
+    ctx.strokeStyle = this.color;
+    ctx.lineWidth = 4;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 15;
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y);
+    ctx.lineTo(this.x - this.speedX * 1.5, this.y - this.speedY * 1.5);
+    ctx.stroke();
+    ctx.restore();
+  }
+}
+
+// Particle class for explosions
+class Particle {
+  constructor(x, y, color) {
+    this.x = x;
+    this.y = y;
+    this.size = Math.random() * 5 + 2;
+    const angle = Math.random() * Math.PI * 2;
+    const speed = Math.random() * 5 + 2;
+    this.speedX = Math.cos(angle) * speed;
+    this.speedY = Math.sin(angle) * speed;
+    this.life = 1;
+    this.decay = Math.random() * 0.03 + 0.02;
+    this.color = color || `hsl(${Math.random() * 60 + 20}, 100%, 60%)`;
+  }
+  
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.speedY += 0.1;
+    this.life -= this.decay;
+  }
+  
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.life;
+    ctx.fillStyle = this.color;
+    ctx.shadowColor = this.color;
+    ctx.shadowBlur = 10;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function spawnAsteroid() {
+  asteroids.push(new Asteroid());
+}
+
+function createExplosion(x, y) {
+  for (let i = 0; i < 15; i++) {
+    particles.push(new Particle(x, y));
+  }
+}
+
+function checkCollisions() {
+  for (let i = lasers.length - 1; i >= 0; i--) {
+    for (let j = asteroids.length - 1; j >= 0; j--) {
+      const dx = lasers[i].x - asteroids[j].x;
+      const dy = lasers[i].y - asteroids[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      
+      if (dist < asteroids[j].size) {
+        createExplosion(asteroids[j].x, asteroids[j].y);
+        asteroids.splice(j, 1);
+        lasers.splice(i, 1);
+        asteroidScore += 10;
+        document.getElementById('asteroidScore').textContent = asteroidScore;
+        // Speed up spawning as score increases
+        spawnRate = Math.max(500, 2000 - asteroidScore * 5);
+        break;
+      }
+    }
+  }
+}
+
+function checkAsteroidReachedBottom() {
+  for (let i = asteroids.length - 1; i >= 0; i--) {
+    if (asteroids[i].y > gameHeight + asteroids[i].size) {
+      asteroids.splice(i, 1);
+      lives--;
+      updateLives();
+      if (lives <= 0) {
+        gameOver();
+      }
+    }
+  }
+}
+
+function updateLives() {
+  document.getElementById('livesDisplay').textContent = '❤️'.repeat(lives) + '🖤'.repeat(3 - lives);
+}
+
+function gameOver() {
+  gameRunning = false;
+  document.getElementById('finalScore').textContent = asteroidScore;
+  document.getElementById('gameOver').style.display = 'block';
+  document.getElementById('gameInstructions').style.display = 'none';
+}
+
+function restartGame() {
+  asteroids = [];
+  lasers = [];
+  particles = [];
+  asteroidScore = 0;
+  lives = 3;
+  spawnRate = 2000;
+  gameRunning = true;
+  document.getElementById('asteroidScore').textContent = '0';
+  updateLives();
+  document.getElementById('gameOver').style.display = 'none';
+  document.getElementById('gameInstructions').style.display = 'block';
+}
+
+function drawShip() {
+  const shipX = gameWidth / 2;
+  const shipY = gameHeight - 50;
+  
+  ctx.save();
+  ctx.translate(shipX, shipY);
+  
+  // Ship body
+  ctx.fillStyle = '#55efc4';
+  ctx.shadowColor = '#55efc4';
+  ctx.shadowBlur = 20;
+  ctx.beginPath();
+  ctx.moveTo(0, -20);
+  ctx.lineTo(-15, 15);
+  ctx.lineTo(0, 8);
+  ctx.lineTo(15, 15);
+  ctx.closePath();
+  ctx.fill();
+  
+  // Cockpit
+  ctx.fillStyle = '#00cec9';
+  ctx.beginPath();
+  ctx.arc(0, 0, 6, 0, Math.PI * 2);
+  ctx.fill();
+  
+  // Engine glow
+  ctx.fillStyle = '#ffd700';
+  ctx.shadowColor = '#ff6b00';
+  ctx.shadowBlur = 15;
+  ctx.beginPath();
+  ctx.moveTo(-8, 15);
+  ctx.lineTo(0, 25 + Math.random() * 5);
+  ctx.lineTo(8, 15);
+  ctx.closePath();
+  ctx.fill();
+  
+  ctx.restore();
+}
+
+function gameLoop(timestamp) {
+  ctx.clearRect(0, 0, gameWidth, gameHeight);
+  
+  if (gameRunning) {
+    // Spawn asteroids
+    if (timestamp - lastSpawn > spawnRate) {
+      spawnAsteroid();
+      lastSpawn = timestamp;
+    }
+    
+    // Update and draw asteroids
+    asteroids.forEach(a => {
+      a.update();
+      a.draw();
+    });
+    
+    // Update and draw lasers
+    lasers = lasers.filter(l => l.y > 0 && l.y < gameHeight && l.x > 0 && l.x < gameWidth);
+    lasers.forEach(l => {
+      l.update();
+      l.draw();
+    });
+    
+    // Update and draw particles
+    particles = particles.filter(p => p.life > 0);
+    particles.forEach(p => {
+      p.update();
+      p.draw();
+    });
+    
+    checkCollisions();
+    checkAsteroidReachedBottom();
+    drawShip();
+  }
+  
+  requestAnimationFrame(gameLoop);
+}
+
+// Click to shoot
+canvas.addEventListener('click', (e) => {
+  if (!gameRunning) return;
+  lasers.push(new Laser(gameWidth / 2, gameHeight - 50, e.clientX, e.clientY));
+});
+
+// Hide instructions after first click
+canvas.addEventListener('click', () => {
+  setTimeout(() => {
+    document.getElementById('gameInstructions').style.opacity = '0.3';
+  }, 3000);
+}, { once: true });
+
+// Start game
+requestAnimationFrame(gameLoop);
 </script></body>
 </html>
