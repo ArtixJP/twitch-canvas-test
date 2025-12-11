@@ -5,8 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>
-        body { 
+<style>body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
             flex-direction: column;
@@ -107,6 +106,37 @@
             border-radius: 50%;
             animation: twinkle 2s ease-in-out infinite;
         }
+        #musicToggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(74, 144, 164, 0.8), rgba(45, 90, 107, 0.9));
+            border: 2px solid rgba(200, 180, 150, 0.6);
+            cursor: pointer;
+            z-index: 100;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 0 20px rgba(74, 144, 164, 0.5),
+                0 0 40px rgba(74, 144, 164, 0.3),
+                inset 0 0 15px rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        #musicToggle:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                0 0 30px rgba(74, 144, 164, 0.7),
+                0 0 60px rgba(74, 144, 164, 0.4),
+                inset 0 0 20px rgba(255,255,255,0.2);
+        }
+        #musicToggle:active {
+            transform: scale(0.95);
+        }
         @keyframes planetRotate {
             from { box-shadow: inset -30px -20px 40px rgba(0,0,0,0.6), inset 10px 10px 30px rgba(100,180,220,0.3), 0 0 60px rgba(74, 144, 164, 0.4); }
             50% { box-shadow: inset -35px -15px 40px rgba(0,0,0,0.7), inset 15px 15px 30px rgba(100,180,220,0.2), 0 0 70px rgba(74, 144, 164, 0.5); }
@@ -119,8 +149,7 @@
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.2); }
-        }
-    </style>
+        }</style>
 </head>
 <body>
 <h1>Welcome to the Cosmos</h1>
@@ -144,5 +173,32 @@
             starsContainer.appendChild(star);
         }
     </script>
-</body>
+<audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle" onclick="toggleMusic()" title="Toggle Music">
+<span id="musicIcon">⏸️</span>
+</button>
+<script>
+  const audio = document.getElementById('bgMusic');
+  const musicIcon = document.getElementById('musicIcon');
+  let isPlaying = true;
+  
+  // Handle autoplay restrictions
+  audio.play().catch(() => {
+    isPlaying = false;
+    musicIcon.textContent = '▶️';
+  });
+  
+  function toggleMusic() {
+    if (isPlaying) {
+      audio.pause();
+      musicIcon.textContent = '▶️';
+    } else {
+      audio.play();
+      musicIcon.textContent = '⏸️';
+    }
+    isPlaying = !isPlaying;
+  }
+</script></body>
 </html>
