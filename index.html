@@ -372,6 +372,78 @@
             color: #8b0000;
         }
         
+        .elephant-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            font-size: 80px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 0 20px rgba(100, 149, 237, 0.5));
+        }
+        
+        .elephant-container:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+        
+        .elephant-container:active {
+            transform: translate(-50%, -50%) scale(0.95);
+        }
+        
+        .water-drop {
+            position: fixed;
+            font-size: 20px;
+            pointer-events: none;
+            z-index: 49;
+            animation: waterFall 1.5s ease-in forwards;
+        }
+        
+        @keyframes waterFall {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(200px) scale(0.5);
+            }
+        }
+        
+        .water-spray {
+            position: fixed;
+            pointer-events: none;
+            z-index: 49;
+            font-size: 16px;
+            animation: sprayArc 1s ease-out forwards;
+        }
+        
+        @keyframes sprayArc {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--spray-x), var(--spray-y)) scale(0.3);
+            }
+        }
+        
+        .trunk-spray {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            animation: trunkWiggle 0.3s ease-in-out infinite;
+        }
+        
+        @keyframes trunkWiggle {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        
         .game-instructions {
             position: fixed;
             bottom: 80px;
@@ -457,7 +529,12 @@
     
     <canvas id="gameCanvas"></canvas>
     
-    <div class="game-instructions">🎮 Click to shoot asteroids! Protect your planet! 🌍</div>
+    <div class="elephant-container" id="elephant" onclick="sprayWater()">
+        🐘
+        <div class="trunk-spray" id="trunkSpray" style="display: none;">💦</div>
+    </div>
+    
+    <div class="game-instructions">🎮 Click to shoot asteroids! Click the elephant for water! 🌍</div>
     
     <div class="planet-health-bar">
         <div class="planet-health-fill" id="healthFill" style="width: 100%"></div>
@@ -1080,6 +1157,65 @@
         // Start game
         setInterval(spawnAsteroid, 2000);
         gameLoop();
+        
+        // Elephant water spray!
+        let isSprayingWater = false;
+        let sprayInterval = null;
+        
+        function sprayWater() {
+            if (isSprayingWater) return;
+            isSprayingWater = true;
+            
+            const elephant = document.getElementById('elephant');
+            const trunkSpray = document.getElementById('trunkSpray');
+            const rect = elephant.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top;
+            
+            trunkSpray.style.display = 'block';
+            
+            let sprayCount = 0;
+            sprayInterval = setInterval(() => {
+                if (sprayCount >= 15) {
+                    clearInterval(sprayInterval);
+                    isSprayingWater = false;
+                    trunkSpray.style.display = 'none';
+                    return;
+                }
+                
+                // Create multiple water droplets
+                for (let i = 0; i < 5; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'water-spray';
+                    drop.textContent = ['💧', '💦', '🌊'][Math.floor(Math.random() * 3)];
+                    drop.style.left = centerX + 'px';
+                    drop.style.top = centerY + 'px';
+                    
+                    // Random spray direction (upward arc)
+                    const angle = -30 - Math.random() * 120; // -30 to -150 degrees (upward)
+                    const distance = 100 + Math.random() * 150;
+                    const radians = angle * Math.PI / 180;
+                    const sprayX = Math.cos(radians) * distance;
+                    const sprayY = Math.sin(radians) * distance;
+                    
+                    drop.style.setProperty('--spray-x', sprayX + 'px');
+                    drop.style.setProperty('--spray-y', sprayY + 'px');
+                    
+                    document.body.appendChild(drop);
+                    
+                    setTimeout(() => drop.remove(), 1000);
+                }
+                
+                sprayCount++;
+            }, 100);
+        }
+        
+        // Auto spray every few seconds for fun!
+        setInterval(() => {
+            if (Math.random() > 0.7 && !isSprayingWater) {
+                sprayWater();
+            }
+        }, 5000);
     </script>
 </body>
 </html>
