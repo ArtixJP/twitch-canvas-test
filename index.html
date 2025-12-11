@@ -292,6 +292,41 @@
             transform: scale(0.98);
         }
         
+        .score-display {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.9), rgba(212, 165, 116, 0.9));
+            border: 3px solid #f4e4bc;
+            border-radius: 15px;
+            padding: 15px 25px;
+            font-family: Georgia, serif;
+            font-size: 1.3rem;
+            color: #3d2914;
+            box-shadow: 0 4px 15px rgba(139, 90, 43, 0.5);
+            z-index: 100;
+        }
+        
+        .score-display span {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #8b0000;
+        }
+        
+        .catch-effect {
+            position: fixed;
+            pointer-events: none;
+            font-size: 3rem;
+            animation: catchPop 1s ease-out forwards;
+            z-index: 1000;
+        }
+        
+        @keyframes catchPop {
+            0% { transform: scale(0.5); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 1; }
+            100% { transform: scale(2) translateY(-50px); opacity: 0; }
+        }
+        
         .music-title {
             font-size: 0.9rem;
             color: #d4a574;
@@ -303,6 +338,10 @@
 </head>
 <body>
     <div class="stars" id="stars"></div>
+    
+    <div class="score-display">
+        🐕 Dog Score: <span id="dogScore">0</span>
+    </div>
     
     
     <div id="sun-container"></div>
@@ -471,6 +510,9 @@
         let dogAngle = 0;
         let catSpeed = 1.2; // degrees per frame
         let dogSpeed = 1.8; // dog is faster base speed
+        let dogScore = 0;
+        const catchDistance = 30; // degrees to catch
+        let catchCooldown = false;
         const catNormalSpeed = 1.2;
         const catEscapeSpeed = 4.5;
         const dangerDistance = 60; // degrees
@@ -488,6 +530,27 @@
         function animateChase() {
             // Calculate distance between cat and dog
             const distance = getAngleDifference(catAngle, dogAngle);
+            
+            // Check if dog caught the cat!
+            if (distance < catchDistance && !catchCooldown) {
+                dogScore++;
+                document.getElementById('dogScore').textContent = dogScore;
+                
+                // Create catch effect
+                const effect = document.createElement('div');
+                effect.className = 'catch-effect';
+                effect.textContent = '🎉 CAUGHT!';
+                effect.style.left = '50%';
+                effect.style.top = '50%';
+                effect.style.transform = 'translate(-50%, -50%)';
+                document.body.appendChild(effect);
+                setTimeout(() => effect.remove(), 1000);
+                
+                // Reset positions - cat escapes to opposite side
+                catAngle = (dogAngle + 180) % 360;
+                catchCooldown = true;
+                setTimeout(() => catchCooldown = false, 500);
+            }
             
             // Cat speeds up when dog is close!
             if (distance < dangerDistance) {
