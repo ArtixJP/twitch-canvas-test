@@ -551,10 +551,51 @@ h1 {
 @keyframes doggyExcitedBounce {
   0%, 100% { transform: translateX(-50%) rotate(180deg) translateY(0); }
   50% { transform: translateX(-50%) rotate(180deg) translateY(-8px); }
+}
+/* Score and catch effects */
+#scoreBoard {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#scoreBoard.point-scored {
+  transform: scale(1.2);
+  box-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 80px rgba(255, 215, 0, 0.5) !important;
+}
+@keyframes catchCelebration {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.3) rotate(-10deg); }
+  50% { transform: scale(1.5) rotate(10deg); }
+  75% { transform: scale(1.3) rotate(-5deg); }
+  100% { transform: scale(1); }
+}
+.space-doggy.catching {
+  animation: catchCelebration 0.5s ease-out !important;
+}
+.catch-text {
+  position: fixed;
+  font-size: 48px;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 2px 2px 4px rgba(0,0,0,0.5);
+  z-index: 200;
+  pointer-events: none;
+  animation: catchTextAnim 1s ease-out forwards;
+}
+@keyframes catchTextAnim {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(0.5); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+  100% { opacity: 0; transform: translate(-50%, -100%) scale(1); }
+}
+.space-kitty.caught {
+  animation: caughtShake 0.3s ease-in-out !important;
+}
+@keyframes caughtShake {
+  0%, 100% { transform: translateX(-50%) rotate(0deg); }
+  25% { transform: translateX(-50%) rotate(-15deg); }
+  75% { transform: translateX(-50%) rotate(15deg); }
 }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
-<h1>Welcome to the Cosmos</h1>
+<h1>Welcome to the Cosmos</h1><div id="scoreBoard" style="position: fixed; top: 20px; right: 30px; z-index: 100; background: linear-gradient(135deg, rgba(74, 144, 164, 0.8), rgba(45, 90, 107, 0.9)); border: 2px solid rgba(200, 180, 150, 0.6); border-radius: 15px; padding: 15px 25px; box-shadow: 0 0 20px rgba(74, 144, 164, 0.5), 0 0 40px rgba(74, 144, 164, 0.3); font-family: system-ui, sans-serif;"><div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">🐕 DOG SCORE</div><div id="dogScore" style="font-size: 36px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);">0</div></div>
 <div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></div><div class="planet-container">
 <div class="ring"></div>
 <div class="planet"></div>
@@ -858,5 +899,109 @@ doggyOrbit.style.animation = 'none';
 
 // Start the chase!
 updateChase();
+</script><script>
+// Score system
+let dogPoints = 0;
+let canCatch = true;
+const catchCooldown = 2000; // 2 seconds between catches
+
+function dogCatchesCat() {
+  if (!canCatch) return;
+  
+  canCatch = false;
+  dogPoints++;
+  
+  // Update score display
+  const scoreDisplay = document.getElementById('dogScore');
+  scoreDisplay.textContent = dogPoints;
+  
+  // Animate score board
+  const scoreBoard = document.getElementById('scoreBoard');
+  scoreBoard.classList.add('point-scored');
+  setTimeout(() => scoreBoard.classList.remove('point-scored'), 500);
+  
+  // Add catch celebration
+  spaceDoggy.classList.add('catching');
+  spaceKitty.classList.add('caught');
+  setTimeout(() => {
+    spaceDoggy.classList.remove('catching');
+    spaceKitty.classList.remove('caught');
+  }, 500);
+  
+  // Show catch text
+  const catchText = document.createElement('div');
+  catchText.className = 'catch-text';
+  catchText.textContent = '+1 CAUGHT!';
+  catchText.style.left = '50%';
+  catchText.style.top = '50%';
+  document.body.appendChild(catchText);
+  setTimeout(() => catchText.remove(), 1000);
+  
+  // Cooldown before next catch
+  setTimeout(() => {
+    canCatch = true;
+  }, catchCooldown);
+}
+
+// Override the chase update to include catch detection
+const originalUpdateChase = updateChase;
+let lastCatchCheck = 0;
+
+function updateChaseWithScore() {
+  // Update angles based on current animation
+  kittyAngle += kittySpeed;
+  doggyAngle += doggySpeed;
+  
+  // Normalize angles
+  kittyAngle = normalizeAngle(kittyAngle);
+  doggyAngle = normalizeAngle(doggyAngle);
+  
+  // Apply rotations directly
+  kittyOrbit.style.transform = `translate(-50%, -50%) rotate(${kittyAngle}deg)`;
+  doggyOrbit.style.transform = `translate(-50%, -50%) rotate(${doggyAngle}deg)`;
+  
+  // Check distance between cat and dog
+  const angleDiff = getAngleDifference(kittyAngle, doggyAngle);
+  
+  // CATCH DETECTION - Dog catches cat when very close!
+  if (angleDiff < 25 && canCatch) {
+    dogCatchesCat();
+  }
+  
+  if (angleDiff < 45 && !isEscaping) {
+    // Dog is close! Cat escapes!
+    isEscaping = true;
+    kittySpeed = -3; // Super fast escape!
+    spaceKitty.classList.add('scared');
+    spaceDoggy.classList.add('excited');
+    
+    // Clear any existing timer
+    if (escapeTimer) clearTimeout(escapeTimer);
+    
+    // Return to normal after escaping
+    escapeTimer = setTimeout(() => {
+      if (getAngleDifference(kittyAngle, doggyAngle) > 90) {
+        isEscaping = false;
+        kittySpeed = -0.5;
+        spaceKitty.classList.remove('scared');
+        spaceDoggy.classList.remove('excited');
+      }
+    }, 1500);
+  } else if (isEscaping && angleDiff > 120) {
+    // Cat has escaped far enough
+    isEscaping = false;
+    kittySpeed = -0.5;
+    spaceKitty.classList.remove('scared');
+    spaceDoggy.classList.remove('excited');
+  }
+  
+  requestAnimationFrame(updateChaseWithScore);
+}
+
+// Stop the original animation loop by setting a flag
+window.stopOriginalChase = true;
+
+// Start the new chase with scoring!
+updateChaseWithScore();
 </script></body>
 </html>
