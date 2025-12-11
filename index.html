@@ -57,6 +57,84 @@
             }
         }
         
+        #score-display {
+            position: fixed;
+            top: 30px;
+            left: 30px;
+            z-index: 10;
+            pointer-events: none;
+            background: rgba(26, 26, 46, 0.95);
+            border: 2px solid rgba(100, 200, 255, 0.6);
+            border-radius: 15px;
+            padding: 25px 35px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3), inset 0 0 20px rgba(100, 200, 255, 0.1);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: slideInLeft 0.5s ease-out;
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+        
+        .score-label {
+            font-size: 0.85rem;
+            color: rgba(100, 200, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
+        }
+        
+        #score-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #64c8ff;
+            text-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
+            text-align: center;
+            letter-spacing: 2px;
+        }
+        
+        #catch-notification {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 11;
+            pointer-events: none;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.8);
+            opacity: 0;
+            animation: catchPopup 1s ease-out forwards;
+        }
+        
+        @keyframes catchPopup {
+            0% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(0.5);
+                color: #FF6B9D;
+            }
+            50% {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(1);
+                color: #FF6B9D;
+            }
+        }
+        
         #audio-control {
             position: fixed;
             bottom: 30px;
@@ -196,6 +274,11 @@
 <div class="content">
 <h1>Hello World</h1>
 </div>
+<div id="score-display">
+<div class="score-label">🐕 Dog Catches</div>
+<div id="score-value">0</div>
+</div>
+<div id="catch-notification"></div>
 <div id="audio-control">
 <div class="audio-title">🎵 Background Music</div>
 <button id="play-pause-btn">Pause</button>
@@ -245,6 +328,30 @@
         audio.addEventListener('pause', () => {
             playPauseBtn.textContent = 'Play';
         });
+        
+        // Score tracking
+        let dogScore = 0;
+        const scoreDisplay = document.getElementById('score-value');
+        const catchNotification = document.getElementById('catch-notification');
+        let isCaught = false;
+        
+        function showCatchNotification() {
+            catchNotification.textContent = '🎉 CAUGHT! 🎉';
+            catchNotification.style.animation = 'none';
+            setTimeout(() => {
+                catchNotification.style.animation = 'catchPopup 1s ease-out forwards';
+            }, 10);
+        }
+        
+        function updateScore() {
+            dogScore++;
+            scoreDisplay.textContent = dogScore;
+            scoreDisplay.style.animation = 'none';
+            setTimeout(() => {
+                scoreDisplay.style.animation = 'glow 0.6s ease-out';
+            }, 10);
+            showCatchNotification();
+        }
         
         // Scene setup
         const scene = new THREE.Scene();
@@ -715,10 +822,22 @@
         const CHASE_SPEED = 0.002;
         const ESCAPE_SPEED = 0.008;
         const CHASE_DISTANCE = 1.5;
+        const CATCH_DISTANCE = 0.35;
+        let timeSinceCatch = 0;
+        const RESET_TIME = 2000; // 2 seconds before cat can be caught again
         
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
+            
+            // Update catch cooldown
+            if (isCaught) {
+                timeSinceCatch += 16; // Approximate frame time
+                if (timeSinceCatch > RESET_TIME) {
+                    isCaught = false;
+                    timeSinceCatch = 0;
+                }
+            }
             
             // Rotate planet
             planet.rotation.y += 0.0005;
@@ -753,8 +872,19 @@
             const dz = kittyZ - dog.position.z;
             const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
             
+            // Check if dog caught the cat!
+            if (distance < CATCH_DISTANCE && !isCaught) {
+                isCaught = true;
+                timeSinceCatch = 0;
+                updateScore();
+                // Teleport cat to a safe distance
+                kittyX = Math.sin(kittyTime + Math.PI) * 2.2;
+                kittyY = Math.sin((kittyTime + Math.PI) * 0.5) * 1.2;
+                kittyZ = Math.cos(kittyTime + Math.PI) * 1.8;
+            }
+            
             // If dog is too close, cat escapes!
-            if (distance < CHASE_DISTANCE) {
+            if (distance < CHASE_DISTANCE && !isCaught) {
                 dogIsChasing = true;
                 catEscapeSpeed = 3; // Boost escape speed
                 
