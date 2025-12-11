@@ -180,6 +180,140 @@
             10%, 70% { opacity: 1; transform: scale(1); }
         }
         
+        /* Crepe Game */
+        .crepe-game {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(139, 90, 43, 0.95);
+            border-radius: 15px;
+            padding: 1rem;
+            z-index: 50;
+            border: 3px solid #5c3d2e;
+            box-shadow: 0 0 20px rgba(139, 90, 43, 0.5);
+            min-width: 280px;
+            font-family: 'Georgia', serif;
+        }
+        .crepe-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fff8dc;
+            text-align: center;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 0 #3d2314;
+        }
+        .crepe-score {
+            color: #fff8dc;
+            text-align: center;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .crepe-station {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 0.5rem 0;
+        }
+        .ingredient {
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.2s;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            padding: 5px;
+        }
+        .ingredient:hover {
+            transform: scale(1.2);
+        }
+        .ingredient.selected {
+            background: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 0 10px gold;
+        }
+        .cooking-pan {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #2a2a2a 70%, #1a1a1a 100%);
+            border-radius: 50%;
+            margin: 0.5rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            border: 4px solid #444;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .cooking-pan:hover {
+            box-shadow: 0 0 20px orange;
+        }
+        .cooking-pan.cooking {
+            animation: pan-sizzle 0.5s ease infinite;
+        }
+        @keyframes pan-sizzle {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
+        .customer-queue {
+            display: flex;
+            gap: 5px;
+            justify-content: center;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+        .customer {
+            font-size: 2rem;
+            position: relative;
+            animation: customer-wait 1s ease-in-out infinite;
+        }
+        .customer-order {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 0.8rem;
+            white-space: nowrap;
+        }
+        .customer.happy {
+            animation: customer-happy 0.5s ease;
+        }
+        .customer.angry {
+            animation: customer-angry 0.3s ease;
+        }
+        @keyframes customer-wait {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes customer-happy {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(10deg); }
+            100% { transform: scale(0); }
+        }
+        @keyframes customer-angry {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .serve-btn {
+            display: block;
+            margin: 0.5rem auto;
+            padding: 8px 20px;
+            background: linear-gradient(180deg, #ffd700, #daa520);
+            border: none;
+            border-radius: 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            color: #3d2314;
+            transition: all 0.2s;
+        }
+        .serve-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px gold;
+        }
+        
         /* Pokemon Game */
         .pokemon-game {
             position: fixed;
@@ -333,6 +467,23 @@
         <div class="elon-speech" id="elon-speech">Rain? Time to build a weather-proof Tesla! 🚀</div>
         <div class="umbrella">☂️</div>
         <div class="elon">🧑‍💼</div>
+    </div>
+    
+    <!-- Crepe Game -->
+    <div class="crepe-game">
+        <div class="crepe-title">🥞 Crêperie Bretonne!</div>
+        <div class="crepe-score">Served: <span id="crepe-count">0</span> | 💰 <span id="crepe-money">0</span>€</div>
+        <div class="crepe-station">
+            <div class="ingredient" data-ing="🥚" title="Oeuf">🥚</div>
+            <div class="ingredient" data-ing="🧈" title="Beurre">🧈</div>
+            <div class="ingredient" data-ing="🍫" title="Chocolat">🍫</div>
+            <div class="ingredient" data-ing="🍓" title="Fraise">🍓</div>
+            <div class="ingredient" data-ing="🍌" title="Banane">🍌</div>
+            <div class="ingredient" data-ing="🍯" title="Miel">🍯</div>
+        </div>
+        <div class="cooking-pan" id="cooking-pan" title="Click to cook!"></div>
+        <button class="serve-btn" id="serve-btn">🍽️ Servir!</button>
+        <div class="customer-queue" id="customer-queue"></div>
     </div>
     
     <!-- Pokemon Game -->
@@ -538,6 +689,120 @@
         // Initial spawn
         setTimeout(spawnWildPokemon, 1000);
         setTimeout(spawnWildPokemon, 2000);
+        
+        // ===== CREPE GAME =====
+        const crepeRecipes = [
+            { name: 'Classique', ingredients: ['🥚', '🧈'], emoji: '🥞', price: 3 },
+            { name: 'Chocolat', ingredients: ['🥚', '🧈', '🍫'], emoji: '🥞🍫', price: 4 },
+            { name: 'Fraise', ingredients: ['🥚', '🧈', '🍓'], emoji: '🥞🍓', price: 4 },
+            { name: 'Banane-Choco', ingredients: ['🥚', '🧈', '🍫', '🍌'], emoji: '🥞🍌', price: 5 },
+            { name: 'Miel', ingredients: ['🥚', '🧈', '🍯'], emoji: '🥞🍯', price: 4 },
+        ];
+        const customerEmojis = ['👨', '👩', '👴', '👵', '🧑', '👦', '👧', '🧔'];
+        let selectedIngredients = [];
+        let currentCrepe = '';
+        let customers = [];
+        let crepeServed = 0;
+        let crepeMoney = 0;
+        
+        // Ingredient selection
+        document.querySelectorAll('.ingredient').forEach(ing => {
+            ing.addEventListener('click', () => {
+                const ingredient = ing.dataset.ing;
+                if (ing.classList.contains('selected')) {
+                    ing.classList.remove('selected');
+                    selectedIngredients = selectedIngredients.filter(i => i !== ingredient);
+                } else {
+                    ing.classList.add('selected');
+                    selectedIngredients.push(ingredient);
+                }
+            });
+        });
+        
+        // Cooking
+        document.getElementById('cooking-pan').addEventListener('click', () => {
+            const pan = document.getElementById('cooking-pan');
+            if (selectedIngredients.length < 2) {
+                pan.textContent = '❌';
+                setTimeout(() => { pan.textContent = currentCrepe; }, 500);
+                return;
+            }
+            
+            pan.classList.add('cooking');
+            pan.textContent = '🔥';
+            
+            setTimeout(() => {
+                pan.classList.remove('cooking');
+                // Check recipe
+                const recipe = crepeRecipes.find(r => {
+                    return r.ingredients.length === selectedIngredients.length &&
+                           r.ingredients.every(i => selectedIngredients.includes(i));
+                });
+                
+                if (recipe) {
+                    currentCrepe = recipe.emoji;
+                    pan.textContent = recipe.emoji;
+                } else {
+                    currentCrepe = '🥞';
+                    pan.textContent = '🥞';
+                }
+                
+                // Reset ingredients
+                selectedIngredients = [];
+                document.querySelectorAll('.ingredient').forEach(i => i.classList.remove('selected'));
+            }, 1000);
+        });
+        
+        // Serve
+        document.getElementById('serve-btn').addEventListener('click', () => {
+            if (!currentCrepe || customers.length === 0) return;
+            
+            const recipe = crepeRecipes.find(r => r.emoji === currentCrepe);
+            const customer = customers[0];
+            const customerEl = document.querySelector('.customer');
+            
+            if (recipe && customer.wants === recipe.name) {
+                // Happy customer!
+                customerEl.classList.add('happy');
+                crepeServed++;
+                crepeMoney += recipe.price;
+                document.getElementById('crepe-count').textContent = crepeServed;
+                document.getElementById('crepe-money').textContent = crepeMoney;
+                
+                setTimeout(() => {
+                    customers.shift();
+                    renderCustomers();
+                }, 500);
+            } else {
+                // Wrong order!
+                customerEl.classList.add('angry');
+                setTimeout(() => customerEl.classList.remove('angry'), 300);
+            }
+            
+            currentCrepe = '';
+            document.getElementById('cooking-pan').textContent = '';
+        });
+        
+        // Spawn customers
+        function spawnCustomer() {
+            if (customers.length >= 4) return;
+            const recipe = crepeRecipes[Math.floor(Math.random() * crepeRecipes.length)];
+            const emoji = customerEmojis[Math.floor(Math.random() * customerEmojis.length)];
+            customers.push({ emoji, wants: recipe.name, display: recipe.emoji });
+            renderCustomers();
+        }
+        
+        function renderCustomers() {
+            const queue = document.getElementById('customer-queue');
+            queue.innerHTML = customers.map(c => 
+                `<div class="customer">${c.emoji}<div class="customer-order">${c.display}</div></div>`
+            ).join('');
+        }
+        
+        // Customer spawning
+        setInterval(spawnCustomer, 4000);
+        setTimeout(spawnCustomer, 500);
+        setTimeout(spawnCustomer, 1500);
         
         document.getElementById('dracula').addEventListener('click', () => {
             speech.textContent = "You dare disturb Count Dracula?! 🦇";
