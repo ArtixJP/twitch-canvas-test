@@ -6,20 +6,153 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
 <style>
-        body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-        }
-        h1 { font-size: 3rem; text-align: center; }
-    </style>
+    body { 
+        font-family: system-ui, sans-serif; 
+        display: flex; 
+        flex-direction: column;
+        justify-content: center; 
+        align-items: center; 
+        min-height: 100vh; 
+        margin: 0;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: white;
+    }
+    h1 { font-size: 3rem; text-align: center; }
+    
+    .music-container {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+    }
+    
+    #musicToggle {
+        background: linear-gradient(135deg, #9b59b6, #8e44ad);
+        border: none;
+        padding: 15px 30px;
+        border-radius: 50px;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+        transition: all 0.3s ease;
+    }
+    
+    #musicToggle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(155, 89, 182, 0.6);
+    }
+    
+    .visualizer {
+        display: flex;
+        align-items: flex-end;
+        gap: 4px;
+        height: 50px;
+    }
+    
+    .bar {
+        width: 8px;
+        background: linear-gradient(to top, #9b59b6, #e74c3c);
+        border-radius: 4px;
+        animation: bounce 0.5s ease infinite alternate;
+    }
+    
+    .bar:nth-child(1) { animation-delay: 0s; }
+    .bar:nth-child(2) { animation-delay: 0.1s; }
+    .bar:nth-child(3) { animation-delay: 0.2s; }
+    .bar:nth-child(4) { animation-delay: 0.3s; }
+    .bar:nth-child(5) { animation-delay: 0.4s; }
+    .bar:nth-child(6) { animation-delay: 0.2s; }
+    .bar:nth-child(7) { animation-delay: 0.1s; }
+    
+    @keyframes bounce {
+        from { height: 10px; }
+        to { height: 50px; }
+    }
+    
+    .paused .bar {
+        animation-play-state: paused;
+        height: 10px;
+    }
+</style>
 </head>
 <body>
-<h1>Hello World 🎵</h1><script>let isPlaying = true; function toggleMusic() { const audio = document.getElementById('bgMusic'); const icon = document.getElementById('musicIcon'); const text = document.getElementById('musicText'); if (isPlaying) { audio.pause(); icon.textContent = '▶️'; text.textContent = 'Play Music'; } else { audio.play(); icon.textContent = '⏸️'; text.textContent = 'Pause Music'; } isPlaying = !isPlaying; } document.getElementById('musicToggle').addEventListener('mouseenter', function() { this.style.transform = 'scale(1.05)'; this.style.boxShadow = '0 6px 20px rgba(155, 89, 182, 0.6)'; }); document.getElementById('musicToggle').addEventListener('mouseleave', function() { this.style.transform = 'scale(1)'; this.style.boxShadow = '0 4px 15px rgba(155, 89, 182, 0.4)'; });</script>
+<h1>Hello World 🎵</h1>
+<div class="music-container">
+<div class="visualizer" id="visualizer">
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
+<audio id="bgMusic" loop="">
+<source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle">
+<span id="musicIcon">⏸️</span>
+<span id="musicText">Pause Music</span>
+</button>
+<p style="opacity: 0.7; font-size: 0.9rem;">🎧 Click anywhere to start the vibes!</p>
+</div>
+<script>
+    let isPlaying = false;
+    const audio = document.getElementById('bgMusic');
+    const visualizer = document.getElementById('visualizer');
+    
+    // Autoplay on page load (with user interaction fallback)
+    function startMusic() {
+        audio.play().then(() => {
+            isPlaying = true;
+            updateUI();
+        }).catch(() => {
+            // Autoplay blocked, wait for user interaction
+            document.body.addEventListener('click', playOnce, { once: true });
+        });
+    }
+    
+    function playOnce() {
+        if (!isPlaying) {
+            audio.play();
+            isPlaying = true;
+            updateUI();
+        }
+    }
+    
+    function updateUI() {
+        const icon = document.getElementById('musicIcon');
+        const text = document.getElementById('musicText');
+        if (isPlaying) {
+            icon.textContent = '⏸️';
+            text.textContent = 'Pause Music';
+            visualizer.classList.remove('paused');
+        } else {
+            icon.textContent = '▶️';
+            text.textContent = 'Play Music';
+            visualizer.classList.add('paused');
+        }
+    }
+    
+    function toggleMusic() {
+        if (isPlaying) {
+            audio.pause();
+        } else {
+            audio.play();
+        }
+        isPlaying = !isPlaying;
+        updateUI();
+    }
+    
+    document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+    
+    // Start music on page load
+    window.addEventListener('load', startMusic);
+</script>
 </body>
 </html>
