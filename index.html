@@ -123,6 +123,31 @@
         const glow = new THREE.Mesh(glowGeometry, glowMaterial);
         scene.add(glow);
         
+        // Create moon
+        const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const moonMaterial = new THREE.MeshPhongMaterial({
+            color: 0xcccccc,
+            emissive: 0x222222,
+            shininess: 10
+        });
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        
+        // Create moon glow
+        const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
+        const moonGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+        
+        // Group moon and its glow together
+        const moonGroup = new THREE.Group();
+        moonGroup.add(moon);
+        moonGroup.add(moonGlow);
+        scene.add(moonGroup);
+        
         // Add stars
         const starGeometry = new THREE.BufferGeometry();
         const starVertices = [];
@@ -134,8 +159,8 @@
         }
         starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
         const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-        const stars = new THREE.Points(starGeometry, starMaterial);
-        scene.add(stars);
+        const starsMesh = new THREE.Points(starGeometry, starMaterial);
+        scene.add(starsMesh);
         
         // Lighting
         const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -147,12 +172,32 @@
         
         camera.position.z = 6;
         
+        // Animation variables
+        let moonAngle = 0;
+        const moonOrbitRadius = 4;
+        const moonOrbitSpeed = 0.01;
+        
         // Animation
         function animate() {
             requestAnimationFrame(animate);
+            
+            // Rotate planet
             planet.rotation.y += 0.003;
             glow.rotation.y += 0.003;
-            stars.rotation.y += 0.0002;
+            
+            // Orbit moon around planet
+            moonAngle += moonOrbitSpeed;
+            moonGroup.position.x = Math.cos(moonAngle) * moonOrbitRadius;
+            moonGroup.position.z = Math.sin(moonAngle) * moonOrbitRadius;
+            moonGroup.position.y = Math.sin(moonAngle * 0.5) * 0.5; // Slight vertical movement
+            
+            // Rotate moon on its own axis
+            moon.rotation.y += 0.005;
+            moonGlow.rotation.y += 0.005;
+            
+            // Rotate stars
+            starsMesh.rotation.y += 0.0002;
+            
             renderer.render(scene, camera);
         }
         animate();
