@@ -15,98 +15,95 @@
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            flex-direction: column;
         }
         h1 { font-size: 3rem; text-align: center; }
+        
+        .planet-container {
+          position: relative;
+          width: 300px;
+          height: 300px;
+          margin-top: 50px;
+        }
+        
+        .orbit-ring {
+          position: absolute;
+          width: 280px;
+          height: 280px;
+          border: 2px dashed rgba(255, 255, 255, 0.2);
+          border-radius: 50%;
+          top: 10px;
+          left: 10px;
+          animation: rotate 30s linear infinite;
+        }
+        
+        .planet {
+          position: absolute;
+          width: 200px;
+          height: 200px;
+          top: 50px;
+          left: 50px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #4a5899 0%, #2d3561 50%, #1a1f3a 100%);
+          box-shadow: 
+            inset -30px -30px 50px rgba(0, 0, 0, 0.5),
+            inset 20px 20px 40px rgba(255, 255, 255, 0.1),
+            0 0 60px rgba(74, 88, 153, 0.4);
+          animation: float 6s ease-in-out infinite;
+          overflow: hidden;
+        }
+        
+        .planet-surface {
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          background: 
+            radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, rgba(100, 120, 180, 0.3) 0%, transparent 40%);
+          animation: surfaceRotate 20s linear infinite;
+        }
+        
+        .planet-glow {
+          position: absolute;
+          width: 220px;
+          height: 220px;
+          top: -10px;
+          left: -10px;
+          border-radius: 50%;
+          background: radial-gradient(circle, rgba(138, 153, 230, 0.3) 0%, transparent 70%);
+          animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes rotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        @keyframes float {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-20px); }
+        }
+        
+        @keyframes surfaceRotate {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+          0%, 100% { opacity: 0.6; }
+          50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-<h1>Hello World</h1><audio autoplay="" id="bgMusic" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>Your browser does not support audio.</audio><button id="musicToggle" onclick="toggleMusic()" style="position: fixed; top: 20px; right: 20px; padding: 12px 24px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50px; color: white; font-size: 16px; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; z-index: 1000;">⏸️ Pause Music</button><script>function toggleMusic() { const audio = document.getElementById('bgMusic'); const btn = document.getElementById('musicToggle'); if (audio.paused) { audio.play(); btn.textContent = '⏸️ Pause Music'; btn.style.background = 'rgba(255, 255, 255, 0.1)'; } else { audio.pause(); btn.textContent = '▶️ Play Music'; btn.style.background = 'rgba(255, 100, 100, 0.2)'; } } document.getElementById('musicToggle').addEventListener('mouseenter', function() { this.style.background = 'rgba(255, 255, 255, 0.2)'; this.style.transform = 'scale(1.05)'; }); document.getElementById('musicToggle').addEventListener('mouseleave', function() { const audio = document.getElementById('bgMusic'); this.style.background = audio.paused ? 'rgba(255, 100, 100, 0.2)' : 'rgba(255, 255, 255, 0.1)'; this.style.transform = 'scale(1)'; });</script><div class="planet-container">
+<h1>Hello World</h1>
+<div class="planet-container">
 <div class="orbit-ring"></div>
 <div class="planet">
 <div class="planet-surface"></div>
 <div class="planet-glow"></div>
 </div>
 </div>
-<style>
-  .planet-container {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    margin-top: 50px;
-  }
-  
-  .orbit-ring {
-    position: absolute;
-    width: 280px;
-    height: 280px;
-    border: 2px dashed rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
-    top: 10px;
-    left: 10px;
-    animation: rotate 30s linear infinite;
-  }
-  
-  .planet {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    top: 50px;
-    left: 50px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #4a5899 0%, #2d3561 50%, #1a1f3a 100%);
-    box-shadow: 
-      inset -30px -30px 50px rgba(0, 0, 0, 0.5),
-      inset 20px 20px 40px rgba(255, 255, 255, 0.1),
-      0 0 60px rgba(74, 88, 153, 0.4);
-    animation: float 6s ease-in-out infinite;
-    overflow: hidden;
-  }
-  
-  .planet-surface {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: 
-      radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 50%),
-      radial-gradient(circle at 70% 60%, rgba(100, 120, 180, 0.3) 0%, transparent 40%);
-    animation: surfaceRotate 20s linear infinite;
-  }
-  
-  .planet-glow {
-    position: absolute;
-    width: 220px;
-    height: 220px;
-    top: -10px;
-    left: -10px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(138, 153, 230, 0.3) 0%, transparent 70%);
-    animation: pulse 4s ease-in-out infinite;
-  }
-  
-  @keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-  }
-  
-  @keyframes surfaceRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-  
-  @keyframes pulse {
-    0%, 100% { opacity: 0.6; }
-    50% { opacity: 1; }
-  }
-  
-  body {
-    flex-direction: column;
-  }
-</style>
 </body>
 </html>
