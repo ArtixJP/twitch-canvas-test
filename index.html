@@ -78,15 +78,15 @@ window.updateDogLogic = function() {
   checkCatch();
 };
 </script><script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script></head>
-<body><div id="score-display" style="position: fixed; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; padding: 15px 25px; border-radius: 10px; font-size: 24px; font-weight: bold; z-index: 99; font-family: system-ui, sans-serif;">🐕 Dog: <span id="dog-score">0</span> | 🐱 Cat: <span id="cat-score">0</span></div><audio id="background-music" style="display: none;"><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/><script>
+<body style="font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding-top: 80px;"><nav id="main-menu" style="position: fixed; top: 0; left: 0; width: 100%; height: 80px; background: linear-gradient(135deg, rgba(26, 26, 46, 0.95) 0%, rgba(22, 33, 62, 0.95) 100%); border-bottom: 3px solid #00ff00; z-index: 200; display: flex; justify-content: center; align-items: center; gap: 40px; font-family: system-ui, sans-serif; box-shadow: 0 4px 15px rgba(0, 255, 0, 0.2);"><button class="menu-btn" data-section="space" style="padding: 12px 30px; background: rgba(0, 255, 0, 0.3); border: 2px solid #00ff00; color: #00ff00; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease;">🌍 Space</button><button class="menu-btn" data-section="animals" style="padding: 12px 30px; background: rgba(100, 150, 255, 0.2); border: 2px solid #6496ff; color: #6496ff; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease;">🐾 Animals</button><button class="menu-btn" data-section="games" style="padding: 12px 30px; background: rgba(255, 200, 0, 0.2); border: 2px solid #ffc800; color: #ffc800; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: all 0.3s ease;">🎮 Games</button></nav><div data-section="animals" id="score-display" style="position: fixed; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; padding: 15px 25px; border-radius: 10px; font-size: 24px; font-weight: bold; z-index: 99; font-family: system-ui, sans-serif;">🐕 Dog: <span id="dog-score">0</span> | 🐱 Cat: <span id="cat-score">0</span></div><audio data-section="animals" id="background-music" style="display: none;"><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/><script>
 // Hook updateElephant into the animation loop
 const originalUpdateDogLogic = window.updateDogLogic;
 window.updateDogLogic = function() {
   if (originalUpdateDogLogic) originalUpdateDogLogic();
   if (window.updateElephant) window.updateElephant();
 };
-</script></audio><div id="canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
-<h1 id="game-title" style="position: relative; z-index: 2; cursor: pointer; transition: all 0.3s ease;">🎮 Tap to Play</h1><button id="music-toggle" style="position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; z-index: 100; transition: all 0.3s ease;">▶ Play Music</button>
+</script></audio><div data-section="space" id="canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+<h1 data-section="games" id="game-title" style="position: relative; z-index: 2; cursor: pointer; transition: all 0.3s ease;">🎮 Tap to Play</h1><button data-section="animals" id="music-toggle" style="position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; z-index: 100; transition: all 0.3s ease;">▶ Play Music</button>
 <script>
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -576,7 +576,7 @@ window.updateDogLogic = function() {
   originalUpdateDogLogic();
   checkCatch();
 };
-</script><div id="game-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 101; background: rgba(0, 0, 0, 0.95);"></div><div id="game-overlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 102; background: rgba(20, 20, 40, 0.95); border: 3px solid #00ff00; border-radius: 20px; padding: 40px; text-align: center; color: white; font-family: system-ui, sans-serif; min-width: 300px;"><h2 id="game-status" style="font-size: 2rem; margin: 0 0 20px 0; color: #00ff00;">Game Over!</h2><p id="final-score" style="font-size: 1.5rem; margin: 20px 0; color: #ffff00;">Score: 0</p><p id="best-score" style="font-size: 1.2rem; margin: 20px 0; color: #ff00ff;">Best: 0</p><button id="restart-game" style="padding: 15px 40px; background: #00ff00; color: black; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: all 0.3s ease;">Play Again</button><button id="back-to-scene" style="padding: 15px 40px; background: #0099ff; color: white; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 10px; margin-left: 10px; transition: all 0.3s ease;">Back to Scene</button></div><script>
+</script><div data-section="games" id="game-container" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 101; background: rgba(0, 0, 0, 0.95);"></div><div data-section="games" id="game-overlay" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 102; background: rgba(20, 20, 40, 0.95); border: 3px solid #00ff00; border-radius: 20px; padding: 40px; text-align: center; color: white; font-family: system-ui, sans-serif; min-width: 300px;"><h2 id="game-status" style="font-size: 2rem; margin: 0 0 20px 0; color: #00ff00;">Game Over!</h2><p id="final-score" style="font-size: 1.5rem; margin: 20px 0; color: #ffff00;">Score: 0</p><p id="best-score" style="font-size: 1.2rem; margin: 20px 0; color: #ff00ff;">Best: 0</p><button id="restart-game" style="padding: 15px 40px; background: #00ff00; color: black; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: all 0.3s ease;">Play Again</button><button id="back-to-scene" style="padding: 15px 40px; background: #0099ff; color: white; border: none; border-radius: 10px; font-size: 1.2rem; font-weight: bold; cursor: pointer; margin-top: 10px; margin-left: 10px; transition: all 0.3s ease;">Back to Scene</button></div><script>
 let phaserGame = null;
 let bestScore = localStorage.getItem('flappyBirdBest') ? parseInt(localStorage.getItem('flappyBirdBest')) : 0;
 
@@ -1038,5 +1038,122 @@ window.updateElephant = function() {
     }
   }
 };
+</script><style>
+[data-section] {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+[data-section].active {
+  display: block;
+  opacity: 1;
+}
+
+#canvas-container.active {
+  display: block;
+  opacity: 1;
+  position: absolute;
+  top: 80px;
+  left: 0;
+  width: 100%;
+  height: calc(100vh - 80px);
+  z-index: 1;
+}
+
+.menu-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 255, 0, 0.3);
+}
+
+.menu-btn.active {
+  background: rgba(0, 255, 0, 0.6) !important;
+  box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+  transform: scale(1.05);
+}
+
+#score-display.active {
+  display: block;
+  opacity: 1;
+}
+
+#background-music.active {
+  display: none;
+}
+
+#game-title.active {
+  display: block;
+  opacity: 1;
+}
+
+#music-toggle.active {
+  display: block;
+  opacity: 1;
+}
+
+#game-container.active {
+  display: block;
+  opacity: 1;
+}
+
+#game-overlay.active {
+  display: block;
+  opacity: 1;
+}
+</style><script>
+function initializeMenu() {
+  const menuButtons = document.querySelectorAll('.menu-btn');
+  
+  // Set initial section to 'space'
+  function showSection(sectionName) {
+    // Hide all sections
+    document.querySelectorAll('[data-section]').forEach(el => {
+      el.classList.remove('active');
+    });
+    
+    // Remove active state from all menu buttons
+    menuButtons.forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    // Show selected section
+    document.querySelectorAll(`[data-section="${sectionName}"]`).forEach(el => {
+      el.classList.add('active');
+    });
+    
+    // Highlight active menu button
+    document.querySelector(`[data-section="${sectionName}"]`).closest('nav') || 
+    document.querySelector(`.menu-btn[data-section="${sectionName}"]`).classList.add('active');
+    
+    // Update active button styling
+    menuButtons.forEach(btn => {
+      if (btn.dataset.section === sectionName) {
+        btn.classList.add('active');
+      }
+    });
+    
+    // Trigger resize event for Three.js canvas if showing space section
+    if (sectionName === 'space') {
+      setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
+    }
+  }
+  
+  // Add click listeners to menu buttons
+  menuButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      showSection(btn.dataset.section);
+    });
+  });
+  
+  // Show space section by default
+  showSection('space');
+}
+
+// Initialize menu when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeMenu);
+} else {
+  initializeMenu();
+}
 </script></body>
 </html>
