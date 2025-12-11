@@ -210,7 +210,7 @@
                 0 0 6px rgba(200, 180, 160, 0.3);
         }
         
-        /* Kitty orbit */
+        /* Kitty orbit - controlled by JS */
         .kitty-orbit {
             position: absolute;
             top: 50%;
@@ -218,7 +218,6 @@
             transform: translate(-50%, -50%);
             width: 350px;
             height: 350px;
-            animation: orbit 10s linear infinite;
             z-index: 20;
         }
         
@@ -228,7 +227,6 @@
             left: 50%;
             transform: translateX(-50%);
             font-size: 35px;
-            animation: kittyBounce 0.5s ease-in-out infinite, kittyRotate 10s linear infinite reverse;
             filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
             cursor: pointer;
             transition: transform 0.2s;
@@ -254,6 +252,84 @@
             animation: sparkle 0.6s ease-in-out infinite 0.3s;
             right: -15px;
             top: 10px;
+        }
+        
+        .kitty.escaping {
+            animation: kittyPanic 0.15s ease-in-out infinite;
+        }
+        
+        .kitty.escaping::after {
+            content: '💨';
+            font-size: 16px;
+        }
+        
+        .kitty.escaping::before {
+            content: '😱';
+            font-size: 14px;
+        }
+        
+        /* Dog orbit - controlled by JS */
+        .dog-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            z-index: 19;
+        }
+        
+        .dog {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.8));
+            cursor: pointer;
+        }
+        
+        .dog::after {
+            content: '🦴';
+            position: absolute;
+            font-size: 10px;
+            animation: boneBounce 0.4s ease-in-out infinite;
+            right: -18px;
+            top: 5px;
+        }
+        
+        .dog.chasing {
+            animation: dogExcited 0.2s ease-in-out infinite;
+        }
+        
+        .dog.chasing::before {
+            content: '❗';
+            position: absolute;
+            font-size: 14px;
+            left: 50%;
+            top: -20px;
+            transform: translateX(-50%);
+            animation: exclaim 0.3s ease-in-out infinite;
+        }
+        
+        @keyframes kittyPanic {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        
+        @keyframes dogExcited {
+            0%, 100% { transform: translateX(-50%) scale(1) rotate(-3deg); }
+            50% { transform: translateX(-50%) scale(1.1) rotate(3deg); }
+        }
+        
+        @keyframes boneBounce {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(20deg); }
+        }
+        
+        @keyframes exclaim {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
+            50% { transform: translateX(-50%) scale(1.3); opacity: 0.7; }
         }
         
         .kitty-trail {
@@ -475,6 +551,29 @@
             z-index: 2;
             background: radial-gradient(ellipse at 10% 10%, rgba(255, 200, 100, 0.15) 0%, transparent 50%);
         }
+        
+        .chase-status {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            z-index: 100;
+            transition: all 0.3s ease;
+        }
+        
+        .chase-status.danger {
+            background: rgba(255, 50, 50, 0.6);
+            animation: statusPulse 0.3s ease-in-out infinite;
+        }
+        
+        @keyframes statusPulse {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.05); }
+        }
     </style>
 </head>
 <body>
@@ -501,13 +600,17 @@
 <div class="moon-orbit-2">
 <div class="moon-2"></div>
 </div>
-<div class="kitty-orbit">
+<div class="dog-orbit" id="dogOrbit">
+<div class="dog" id="dog" title="Woof! 🐕">🐕</div>
+</div>
+<div class="kitty-orbit" id="kittyOrbit">
 <div class="kitty-trail"></div>
 <div class="kitty-trail"></div>
 <div class="kitty-trail"></div>
 <div class="kitty" id="kitty" title="Meow! 🐱">🐱</div>
 </div>
 </div>
+<div class="chase-status" id="chaseStatus">🐱 Cat: Relaxed | 🐕 Dog: Patrolling</div>
 <div class="music-controls">
 <audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
@@ -626,8 +729,8 @@
         
         // Animation
         let time = 0;
-        function animate() {
-            requestAnimationFrame(animate);
+        function animateThree() {
+            requestAnimationFrame(animateThree);
             time += 0.01;
             
             // Pulsing glow effect
@@ -646,7 +749,7 @@
             
             renderer.render(scene, camera);
         }
-        animate();
+        animateThree();
         
         // Handle resize
         window.addEventListener('resize', () => {
@@ -669,14 +772,93 @@
             starsContainer.appendChild(star);
         }
         
-        // Kitty interaction
+        // ===== CAT AND DOG CHASE SYSTEM =====
+        const kittyOrbit = document.getElementById('kittyOrbit');
+        const dogOrbit = document.getElementById('dogOrbit');
         const kitty = document.getElementById('kitty');
+        const dog = document.getElementById('dog');
+        const chaseStatus = document.getElementById('chaseStatus');
+        
+        let catAngle = 0;
+        let dogAngle = Math.PI; // Start opposite to cat
+        
+        const CAT_NORMAL_SPEED = 0.02;
+        const CAT_ESCAPE_SPEED = 0.12;
+        const DOG_SPEED = 0.035; // Dog is faster than normal cat
+        const DANGER_DISTANCE = 0.8; // Radians - when dog gets this close, cat panics
+        const SAFE_DISTANCE = 1.5; // Radians - when cat feels safe again
+        
+        let catSpeed = CAT_NORMAL_SPEED;
+        let isEscaping = false;
+        
         const kittyFaces = ['🐱', '😺', '😸', '😻', '🙀', '😹'];
         let kittyIndex = 0;
         
+        function getAngleDifference(angle1, angle2) {
+            let diff = Math.abs(angle1 - angle2) % (Math.PI * 2);
+            if (diff > Math.PI) diff = Math.PI * 2 - diff;
+            return diff;
+        }
+        
+        function updateChase() {
+            // Calculate distance between cat and dog
+            const distance = getAngleDifference(catAngle, dogAngle);
+            
+            // Check if dog is getting close
+            if (distance < DANGER_DISTANCE && !isEscaping) {
+                isEscaping = true;
+                catSpeed = CAT_ESCAPE_SPEED;
+                kitty.classList.add('escaping');
+                kitty.textContent = '🙀';
+                dog.classList.add('chasing');
+                chaseStatus.textContent = '🙀 Cat: ESCAPING! | 🐕 Dog: CHASING!';
+                chaseStatus.classList.add('danger');
+            } else if (distance > SAFE_DISTANCE && isEscaping) {
+                isEscaping = false;
+                catSpeed = CAT_NORMAL_SPEED;
+                kitty.classList.remove('escaping');
+                kitty.textContent = '😺';
+                dog.classList.remove('chasing');
+                chaseStatus.textContent = '😺 Cat: Phew, safe! | 🐕 Dog: Patrolling';
+                chaseStatus.classList.remove('danger');
+                
+                // After a moment, return to normal face
+                setTimeout(() => {
+                    if (!isEscaping) {
+                        kitty.textContent = '🐱';
+                        chaseStatus.textContent = '🐱 Cat: Relaxed | 🐕 Dog: Patrolling';
+                    }
+                }, 2000);
+            }
+            
+            // Update positions
+            catAngle += catSpeed;
+            dogAngle += DOG_SPEED;
+            
+            // Keep angles in bounds
+            if (catAngle > Math.PI * 2) catAngle -= Math.PI * 2;
+            if (dogAngle > Math.PI * 2) dogAngle -= Math.PI * 2;
+            
+            // Apply rotations
+            kittyOrbit.style.transform = `translate(-50%, -50%) rotate(${catAngle}rad)`;
+            dogOrbit.style.transform = `translate(-50%, -50%) rotate(${dogAngle}rad)`;
+            
+            // Counter-rotate the animals so they stay upright
+            kitty.style.transform = `translateX(-50%) rotate(${-catAngle}rad)`;
+            dog.style.transform = `translateX(-50%) rotate(${-dogAngle}rad)`;
+            
+            requestAnimationFrame(updateChase);
+        }
+        
+        updateChase();
+        
+        // Kitty interaction
         kitty.addEventListener('click', (event) => {
+            event.stopPropagation();
             kittyIndex = (kittyIndex + 1) % kittyFaces.length;
-            kitty.textContent = kittyFaces[kittyIndex];
+            if (!isEscaping) {
+                kitty.textContent = kittyFaces[kittyIndex];
+            }
             
             // Create floating hearts
             for (let i = 0; i < 3; i++) {
@@ -696,6 +878,38 @@
                     setTimeout(() => heart.remove(), 1000);
                 }, i * 100);
             }
+        });
+        
+        // Dog interaction
+        dog.addEventListener('click', (event) => {
+            event.stopPropagation();
+            
+            // Dog barks!
+            const dogFaces = ['🐕', '🐶', '🦮', '🐕‍🦺'];
+            dog.textContent = dogFaces[Math.floor(Math.random() * dogFaces.length)];
+            
+            // Create floating bones
+            for (let i = 0; i < 3; i++) {
+                setTimeout(() => {
+                    const bone = document.createElement('span');
+                    bone.textContent = '🦴';
+                    bone.style.cssText = `
+                        position: fixed;
+                        left: ${event.clientX + (Math.random() - 0.5) * 40}px;
+                        top: ${event.clientY}px;
+                        font-size: 20px;
+                        pointer-events: none;
+                        animation: floatUp 1s ease-out forwards;
+                        z-index: 1000;
+                    `;
+                    document.body.appendChild(bone);
+                    setTimeout(() => bone.remove(), 1000);
+                }, i * 100);
+            }
+            
+            setTimeout(() => {
+                dog.textContent = '🐕';
+            }, 500);
         });
         
         // Add float up animation
