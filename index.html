@@ -470,45 +470,6 @@
                     </div>
                 </div>
             </div>
-            <div class="elephant">
-                <div class="elephant-body">
-                    <div class="elephant-ear left"></div>
-                    <div class="elephant-ear right"></div>
-                    <div class="elephant-eye left"></div>
-                    <div class="elephant-eye right"></div>
-                    <div class="elephant-tusk left"></div>
-                    <div class="elephant-tusk right"></div>
-                    <div class="elephant-trunk">
-                        <div class="water-spray">
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="dog-orbit" id="dogOrbit">
-                <div class="dog">
-                    <div class="dog-body">
-                        <div class="dog-ear left"></div>
-                        <div class="dog-ear right"></div>
-                        <div class="dog-eye left"></div>
-                        <div class="dog-eye right"></div>
-                        <div class="dog-snout">
-                            <div class="dog-nose"></div>
-                            <div class="dog-tongue"></div>
-                        </div>
-                        <div class="dog-tail"></div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -542,45 +503,6 @@
                             </div>
                         </div>
                         <div class="kitty-tail"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="elephant">
-                <div class="elephant-body">
-                    <div class="elephant-ear left"></div>
-                    <div class="elephant-ear right"></div>
-                    <div class="elephant-eye left"></div>
-                    <div class="elephant-eye right"></div>
-                    <div class="elephant-tusk left"></div>
-                    <div class="elephant-tusk right"></div>
-                    <div class="elephant-trunk">
-                        <div class="water-spray">
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                            <div class="water-particle"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="dog-orbit" id="dogOrbit">
-                <div class="dog">
-                    <div class="dog-body">
-                        <div class="dog-ear left"></div>
-                        <div class="dog-ear right"></div>
-                        <div class="dog-eye left"></div>
-                        <div class="dog-eye right"></div>
-                        <div class="dog-snout">
-                            <div class="dog-nose"></div>
-                            <div class="dog-tongue"></div>
-                        </div>
-                        <div class="dog-tail"></div>
                     </div>
                 </div>
             </div>
@@ -979,7 +901,12 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            if (gameActive) gameState.keys[e.key] = true;
+            if (gameActive) {
+                gameState.keys[e.key] = true;
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+            }
             if (e.key === 'Escape' && gameActive) toggleGame();
         });
 
