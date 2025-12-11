@@ -140,6 +140,144 @@
             0%, 100% { text-shadow: 0 0 20px rgba(255, 107, 157, 0.8); }
             50% { text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 60px rgba(255, 107, 157, 0.6); }
         }
+        .elephant {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 70px;
+            z-index: 10;
+        }
+        .elephant-body {
+            width: 80px;
+            height: 60px;
+            background: linear-gradient(135deg, #b8b8b8 0%, #8a8a8a 50%, #6e6e6e 100%);
+            border-radius: 40% 40% 50% 50%;
+            position: relative;
+            box-shadow: 0 0 20px rgba(184, 184, 184, 0.5);
+        }
+        .elephant-ear {
+            position: absolute;
+            width: 35px;
+            height: 45px;
+            background: linear-gradient(135deg, #a0a0a0, #787878);
+            border-radius: 50% 50% 50% 30%;
+            animation: earFlap 2s ease-in-out infinite;
+        }
+        .elephant-ear.left {
+            top: 5px;
+            left: -15px;
+            transform: rotate(-20deg);
+            animation-delay: 0s;
+        }
+        .elephant-ear.right {
+            top: 5px;
+            right: -15px;
+            transform: rotate(20deg);
+            animation-delay: 1s;
+        }
+        @keyframes earFlap {
+            0%, 100% { transform: rotate(-20deg) scaleX(1); }
+            50% { transform: rotate(-25deg) scaleX(1.1); }
+        }
+        .elephant-ear.right {
+            animation-name: earFlapRight;
+        }
+        @keyframes earFlapRight {
+            0%, 100% { transform: rotate(20deg) scaleX(1); }
+            50% { transform: rotate(25deg) scaleX(1.1); }
+        }
+        .elephant-trunk {
+            position: absolute;
+            width: 18px;
+            height: 50px;
+            background: linear-gradient(180deg, #8a8a8a, #b8b8b8);
+            border-radius: 10px;
+            bottom: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            transform-origin: top center;
+            animation: trunkSwing 3s ease-in-out infinite;
+        }
+        @keyframes trunkSwing {
+            0%, 100% { transform: translateX(-50%) rotate(-10deg); }
+            50% { transform: translateX(-50%) rotate(10deg); }
+        }
+        .elephant-trunk::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 15px;
+            background: #8a8a8a;
+            border-radius: 50% 50% 40% 40%;
+        }
+        .elephant-eye {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #2d2d2d;
+            border-radius: 50%;
+            top: 15px;
+            animation: blink 4s infinite;
+        }
+        @keyframes blink {
+            0%, 96%, 100% { transform: scaleY(1); }
+            98% { transform: scaleY(0.1); }
+        }
+        .elephant-eye.left { left: 20px; }
+        .elephant-eye.right { right: 20px; }
+        .elephant-tusk {
+            position: absolute;
+            width: 8px;
+            height: 20px;
+            background: linear-gradient(180deg, #ffffff, #e8e8e8);
+            border-radius: 50% 50% 30% 30%;
+            bottom: 10px;
+        }
+        .elephant-tusk.left { left: 25px; transform: rotate(-15deg); }
+        .elephant-tusk.right { right: 25px; transform: rotate(15deg); }
+        .water-spray {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+        }
+        .water-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(100, 200, 255, 0.9), rgba(50, 150, 255, 0.6));
+            border-radius: 50%;
+            animation: waterSpray 2s ease-out infinite;
+            box-shadow: 0 0 8px rgba(100, 200, 255, 0.8);
+        }
+        @keyframes waterSpray {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0.3);
+                opacity: 0;
+            }
+        }
+        .water-particle:nth-child(1) { --tx: -30px; --ty: -50px; animation-delay: 0s; }
+        .water-particle:nth-child(2) { --tx: -20px; --ty: -60px; animation-delay: 0.1s; }
+        .water-particle:nth-child(3) { --tx: 0px; --ty: -70px; animation-delay: 0.2s; }
+        .water-particle:nth-child(4) { --tx: 20px; --ty: -60px; animation-delay: 0.3s; }
+        .water-particle:nth-child(5) { --tx: 30px; --ty: -50px; animation-delay: 0.4s; }
+        .water-particle:nth-child(6) { --tx: -35px; --ty: -40px; animation-delay: 0.15s; }
+        .water-particle:nth-child(7) { --tx: 35px; --ty: -40px; animation-delay: 0.35s; }
+        .water-particle:nth-child(8) { --tx: -15px; --ty: -55px; animation-delay: 0.25s; }
+        .water-particle:nth-child(9) { --tx: 15px; --ty: -55px; animation-delay: 0.45s; }
+        .water-particle:nth-child(10) { --tx: 0px; --ty: -65px; animation-delay: 0.5s; }
         .catch-celebration {
             animation: celebrate 0.6s ease-out;
         }
@@ -258,6 +396,30 @@
                             </div>
                         </div>
                         <div class="kitty-tail"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="elephant">
+                <div class="elephant-body">
+                    <div class="elephant-ear left"></div>
+                    <div class="elephant-ear right"></div>
+                    <div class="elephant-eye left"></div>
+                    <div class="elephant-eye right"></div>
+                    <div class="elephant-tusk left"></div>
+                    <div class="elephant-tusk right"></div>
+                    <div class="elephant-trunk">
+                        <div class="water-spray">
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                        </div>
                     </div>
                 </div>
             </div>
