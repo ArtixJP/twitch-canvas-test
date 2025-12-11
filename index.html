@@ -6,15 +6,10 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
 <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
+            flex-direction: column;
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
@@ -25,1195 +20,154 @@
             position: relative;
         }
         
-        #canvas-container {
+        h1 { 
+            font-size: 3rem; 
+            text-align: center; 
+            z-index: 10;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+        }
+        
+        .planet-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .planet {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 50%, #1a3a6e 100%);
+            box-shadow: 
+                inset -40px -40px 80px rgba(0, 0, 0, 0.5),
+                inset 20px 20px 40px rgba(255, 255, 255, 0.1),
+                0 0 100px rgba(74, 144, 226, 0.6),
+                0 0 200px rgba(74, 144, 226, 0.3);
+            animation: rotate 20s linear infinite;
+            overflow: hidden;
+        }
+        
+        .planet::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.4), transparent);
+            border-radius: 50%;
+            filter: blur(20px);
+        }
+        
+        .planet::after {
+            content: '';
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 1;
+            background: 
+                linear-gradient(90deg, transparent 0%, rgba(100, 150, 200, 0.3) 50%, transparent 100%);
+            animation: shimmer 8s ease-in-out infinite;
         }
         
-        .content {
-            position: relative;
-            z-index: 2;
-            text-align: center;
-            pointer-events: none;
+        .atmosphere {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            width: 270px;
+            height: 270px;
+            border-radius: 50%;
+            background: radial-gradient(circle, transparent 60%, rgba(74, 144, 226, 0.4) 80%, transparent 100%);
+            animation: pulse 4s ease-in-out infinite;
         }
         
-        h1 { 
-            font-size: 3rem; 
-            text-align: center;
-            text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
-            animation: glow 3s ease-in-out infinite;
-        }
-        
-        @keyframes glow {
-            0%, 100% {
-                text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
-            }
-            50% {
-                text-shadow: 0 0 40px rgba(100, 200, 255, 0.8);
-            }
-        }
-        
-        #score-display {
-            position: fixed;
-            top: 30px;
-            left: 30px;
-            z-index: 10;
-            pointer-events: none;
-            background: rgba(26, 26, 46, 0.95);
-            border: 2px solid rgba(100, 200, 255, 0.6);
-            border-radius: 15px;
-            padding: 25px 35px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3), inset 0 0 20px rgba(100, 200, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            animation: slideInLeft 0.5s ease-out;
-        }
-        
-        @keyframes slideInLeft {
-            from {
-                opacity: 0;
-                transform: translateX(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-        
-        .score-label {
-            font-size: 0.85rem;
-            color: rgba(100, 200, 255, 0.8);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
-        }
-        
-        #score-value {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: #64c8ff;
-            text-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
-            text-align: center;
-            letter-spacing: 2px;
-        }
-        
-        #catch-notification {
-            position: fixed;
+        .ring {
+            position: absolute;
             top: 50%;
             left: 50%;
+            width: 400px;
+            height: 100px;
+            border: 3px solid rgba(150, 180, 220, 0.6);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            box-shadow: 
+                0 0 20px rgba(150, 180, 220, 0.4),
+                inset 0 0 20px rgba(150, 180, 220, 0.3);
+        }
+        
+        .ring::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 90%;
+            height: 80%;
+            border: 2px solid rgba(180, 200, 230, 0.4);
+            border-radius: 50%;
             transform: translate(-50%, -50%);
-            z-index: 11;
-            pointer-events: none;
-            font-size: 3rem;
-            font-weight: bold;
-            text-shadow: 0 0 30px rgba(255, 107, 157, 0.8);
-            opacity: 0;
-            animation: catchPopup 1s ease-out forwards;
         }
         
-        @keyframes catchPopup {
-            0% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(0.5);
-                color: #FF6B9D;
-            }
-            50% {
-                opacity: 1;
-                transform: translate(-50%, -50%) scale(1.2);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(-50%, -50%) scale(1);
-                color: #FF6B9D;
-            }
-        }
-        
-        #audio-control {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            z-index: 10;
-            pointer-events: auto;
-            background: rgba(26, 26, 46, 0.95);
-            border: 2px solid rgba(100, 200, 255, 0.6);
-            border-radius: 15px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 30px rgba(100, 200, 255, 0.3), inset 0 0 20px rgba(100, 200, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            min-width: 250px;
-            animation: slideIn 0.5s ease-out;
-        }
-        
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .audio-title {
-            font-size: 0.85rem;
-            color: rgba(100, 200, 255, 0.8);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(100, 200, 255, 0.3);
-        }
-        
-        #play-pause-btn {
-            background: linear-gradient(135deg, #64c8ff 0%, #3d8fbf 100%);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            font-size: 1rem;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 0 15px rgba(100, 200, 255, 0.4);
-        }
-        
-        #play-pause-btn:hover {
-            background: linear-gradient(135deg, #80d8ff 0%, #4d9fcf 100%);
-            box-shadow: 0 0 25px rgba(100, 200, 255, 0.6);
-            transform: scale(1.05);
-        }
-        
-        #play-pause-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .volume-icon {
-            font-size: 1.2rem;
-            color: rgba(100, 200, 255, 0.7);
-        }
-        
-        #volume-slider {
-            flex: 1;
-            height: 6px;
-            border-radius: 3px;
-            background: rgba(100, 200, 255, 0.2);
-            outline: none;
-            -webkit-appearance: none;
-            appearance: none;
-            cursor: pointer;
-        }
-        
-        #volume-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 14px;
-            height: 14px;
+        .stars {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
             border-radius: 50%;
-            background: #64c8ff;
-            cursor: pointer;
-            box-shadow: 0 0 10px rgba(100, 200, 255, 0.6);
-            transition: all 0.2s ease;
+            box-shadow: 
+                100px 200px white,
+                -150px 100px white,
+                200px -100px white,
+                -200px -150px white,
+                300px 50px white,
+                -300px 200px white,
+                150px -200px white,
+                -100px -250px white,
+                400px 150px white,
+                -350px -100px white,
+                250px 250px rgba(255, 255, 255, 0.5),
+                -250px 150px rgba(255, 255, 255, 0.5),
+                350px -150px rgba(255, 255, 255, 0.5),
+                -400px 50px rgba(255, 255, 255, 0.5);
+            animation: twinkle 3s ease-in-out infinite;
         }
         
-        #volume-slider::-webkit-slider-thumb:hover {
-            width: 18px;
-            height: 18px;
-            box-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
         
-        #volume-slider::-moz-range-thumb {
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: #64c8ff;
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 0 10px rgba(100, 200, 255, 0.6);
-            transition: all 0.2s ease;
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
         
-        #volume-slider::-moz-range-thumb:hover {
-            width: 18px;
-            height: 18px;
-            box-shadow: 0 0 15px rgba(100, 200, 255, 0.8);
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.05); }
         }
         
-        #volume-slider::-moz-range-track {
-            background: transparent;
-            border: none;
+        @keyframes shimmer {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
         }
         
-        .song-info {
-            font-size: 0.75rem;
-            color: rgba(100, 200, 255, 0.6);
-            text-align: center;
-            font-style: italic;
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
     </style>
 </head>
 <body>
-<div id="canvas-container"></div>
-<div class="content">
+<div class="stars"></div>
 <h1>Hello World</h1>
+<div class="planet-container">
+<div class="ring"></div>
+<div class="atmosphere"></div>
+<div class="planet"></div>
 </div>
-<div id="score-display">
-<div class="score-label">🐕 Dog Catches</div>
-<div id="score-value">0</div>
-</div>
-<div id="catch-notification"></div>
-<div id="audio-control">
-<div class="audio-title">🎵 Background Music</div>
-<button id="play-pause-btn">Pause</button>
-<div class="volume-control">
-<span class="volume-icon">🔊</span>
-<input id="volume-slider" max="100" min="0" type="range" value="70"/>
-</div>
-<div class="song-info">More London Streets</div>
-</div>
-<audio autoplay="" crossorigin="anonymous" id="background-audio">
-<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
-    Your browser does not support the audio element.
-</audio>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-        // Audio control setup
-        const audio = document.getElementById('background-audio');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const volumeSlider = document.getElementById('volume-slider');
-        
-        audio.volume = 0.7;
-        
-        // Auto-play on page load
-        audio.play().catch(error => {
-            console.log('Autoplay prevented. User interaction required:', error);
-            playPauseBtn.textContent = 'Play';
-        });
-        
-        playPauseBtn.addEventListener('click', () => {
-            if (audio.paused) {
-                audio.play();
-                playPauseBtn.textContent = 'Pause';
-            } else {
-                audio.pause();
-                playPauseBtn.textContent = 'Play';
-            }
-        });
-        
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value / 100;
-        });
-        
-        audio.addEventListener('play', () => {
-            playPauseBtn.textContent = 'Pause';
-        });
-        
-        audio.addEventListener('pause', () => {
-            playPauseBtn.textContent = 'Play';
-        });
-        
-        // Score tracking
-        let dogScore = 0;
-        const scoreDisplay = document.getElementById('score-value');
-        const catchNotification = document.getElementById('catch-notification');
-        let isCaught = false;
-        
-        function showCatchNotification() {
-            catchNotification.textContent = '🎉 CAUGHT! 🎉';
-            catchNotification.style.animation = 'none';
-            setTimeout(() => {
-                catchNotification.style.animation = 'catchPopup 1s ease-out forwards';
-            }, 10);
-        }
-        
-        function updateScore() {
-            dogScore++;
-            scoreDisplay.textContent = dogScore;
-            scoreDisplay.style.animation = 'none';
-            setTimeout(() => {
-                scoreDisplay.style.animation = 'glow 0.6s ease-out';
-            }, 10);
-            showCatchNotification();
-            triggerPlanetColorChange();
-        }
-        
-        // Scene setup
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 0);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFShadowShadowMap;
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
-        
-        camera.position.z = 4;
-        
-        // Create stars background
-        const starsGeometry = new THREE.BufferGeometry();
-        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 });
-        
-        const starsVertices = [];
-        for (let i = 0; i < 1000; i++) {
-            const x = (Math.random() - 0.5) * 200;
-            const y = (Math.random() - 0.5) * 200;
-            const z = (Math.random() - 0.5) * 200;
-            starsVertices.push(x, y, z);
-        }
-        
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starsVertices), 3));
-        const stars = new THREE.Points(starsGeometry, starsMaterial);
-        scene.add(stars);
-        
-        // Create planet
-        const planetGeometry = new THREE.SphereGeometry(1, 64, 64);
-        const planetCanvas = document.createElement('canvas');
-        planetCanvas.width = 2048;
-        planetCanvas.height = 1024;
-        const ctx = planetCanvas.getContext('2d');
-        
-        // Function to draw planet texture with custom colors
-        function drawPlanetTexture(baseColor1, baseColor2, baseColor3, landColor) {
-            ctx.clearRect(0, 0, planetCanvas.width, planetCanvas.height);
-            
-            const gradient = ctx.createLinearGradient(0, 0, planetCanvas.width, planetCanvas.height);
-            gradient.addColorStop(0, baseColor1);
-            gradient.addColorStop(0.5, baseColor2);
-            gradient.addColorStop(1, baseColor3);
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, planetCanvas.width, planetCanvas.height);
-            
-            // Add clouds and features
-            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-            for (let i = 0; i < 50; i++) {
-                const x = Math.random() * planetCanvas.width;
-                const y = Math.random() * planetCanvas.height;
-                const size = Math.random() * 100 + 50;
-                ctx.beginPath();
-                ctx.arc(x, y, size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-            
-            // Add landmasses
-            ctx.fillStyle = landColor;
-            for (let i = 0; i < 30; i++) {
-                const x = Math.random() * planetCanvas.width;
-                const y = Math.random() * planetCanvas.height;
-                const width = Math.random() * 150 + 50;
-                const height = Math.random() * 150 + 50;
-                ctx.fillRect(x, y, width, height);
-            }
-        }
-        
-        // Initial planet texture
-        drawPlanetTexture('#1a5f7a', '#2d8a9e', '#0d3d52', 'rgba(34, 139, 34, 0.6)');
-        
-        const texture = new THREE.CanvasTexture(planetCanvas);
-        const planetMaterial = new THREE.MeshPhongMaterial({ map: texture });
-        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
-        planet.castShadow = true;
-        planet.receiveShadow = true;
-        scene.add(planet);
-        
-        // Planet color change on catch
-        const planetColors = [
-            { c1: '#FF1493', c2: '#FF69B4', c3: '#FF6B9D', land: 'rgba(255, 192, 203, 0.6)' }, // Hot Pink
-            { c1: '#9370DB', c2: '#BA55D3', c3: '#8A2BE2', land: 'rgba(186, 85, 211, 0.6)' }, // Purple
-            { c1: '#00CED1', c2: '#40E0D0', c3: '#20B2AA', land: 'rgba(64, 224, 208, 0.6)' }, // Turquoise
-            { c1: '#FFD700', c2: '#FFA500', c3: '#FF8C00', land: 'rgba(255, 215, 0, 0.6)' }, // Gold
-            { c1: '#32CD32', c2: '#00FF00', c3: '#228B22', land: 'rgba(50, 205, 50, 0.6)' }  // Lime Green
-        ];
-        
-        let colorIndex = 0;
-        let colorChangeProgress = 0;
-        let isColorChanging = false;
-        
-        function triggerPlanetColorChange() {
-            isColorChanging = true;
-            colorChangeProgress = 0;
-            colorIndex = (colorIndex + 1) % planetColors.length;
-        }
-        
-        // Create moon
-        const moonGeometry = new THREE.SphereGeometry(0.27, 32, 32);
-        const moonCanvas = document.createElement('canvas');
-        moonCanvas.width = 512;
-        moonCanvas.height = 512;
-        const moonCtx = moonCanvas.getContext('2d');
-        
-        // Draw moon texture (gray/rocky)
-        const moonGradient = moonCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
-        moonGradient.addColorStop(0, '#e8e8e8');
-        moonGradient.addColorStop(0.5, '#b0b0b0');
-        moonGradient.addColorStop(1, '#808080');
-        moonCtx.fillStyle = moonGradient;
-        moonCtx.fillRect(0, 0, moonCanvas.width, moonCanvas.height);
-        
-        // Add craters to moon
-        moonCtx.fillStyle = 'rgba(80, 80, 80, 0.5)';
-        for (let i = 0; i < 40; i++) {
-            const x = Math.random() * moonCanvas.width;
-            const y = Math.random() * moonCanvas.height;
-            const radius = Math.random() * 30 + 10;
-            moonCtx.beginPath();
-            moonCtx.arc(x, y, radius, 0, Math.PI * 2);
-            moonCtx.fill();
-        }
-        
-        const moonTexture = new THREE.CanvasTexture(moonCanvas);
-        const moonMaterial = new THREE.MeshPhongMaterial({ map: moonTexture });
-        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-        moon.castShadow = true;
-        moon.receiveShadow = true;
-        
-        // Create a group to hold the moon and its orbital path
-        const moonOrbit = new THREE.Group();
-        moonOrbit.add(moon);
-        moon.position.x = 2.5; // Orbital distance
-        scene.add(moonOrbit);
-        
-        // Add moon glow
-        const moonGlowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-        const moonGlowMaterial = new THREE.MeshBasicMaterial({
-            color: 0xcccccc,
-            transparent: true,
-            opacity: 0.08
-        });
-        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
-        moonOrbit.add(moonGlow);
-        moonGlow.position.copy(moon.position);
-        
-        // Create cute kitty!
-        function createKitty() {
-            const kittyGroup = new THREE.Group();
-            
-            // Head
-            const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
-            const kittyMaterial = new THREE.MeshPhongMaterial({ color: 0xFF9966 });
-            const head = new THREE.Mesh(headGeometry, kittyMaterial);
-            head.castShadow = true;
-            head.receiveShadow = true;
-            kittyGroup.add(head);
-            
-            // Left ear
-            const earGeometry = new THREE.ConeGeometry(0.08, 0.2, 16);
-            const leftEar = new THREE.Mesh(earGeometry, kittyMaterial);
-            leftEar.position.set(-0.08, 0.14, 0);
-            leftEar.rotation.z = -0.3;
-            leftEar.castShadow = true;
-            leftEar.receiveShadow = true;
-            kittyGroup.add(leftEar);
-            
-            // Right ear
-            const rightEar = new THREE.Mesh(earGeometry, kittyMaterial);
-            rightEar.position.set(0.08, 0.14, 0);
-            rightEar.rotation.z = 0.3;
-            rightEar.castShadow = true;
-            rightEar.receiveShadow = true;
-            kittyGroup.add(rightEar);
-            
-            // Left eye
-            const eyeGeometry = new THREE.SphereGeometry(0.04, 16, 16);
-            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
-            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            leftEye.position.set(-0.05, 0.05, 0.14);
-            leftEye.castShadow = true;
-            kittyGroup.add(leftEye);
-            
-            // Right eye
-            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            rightEye.position.set(0.05, 0.05, 0.14);
-            rightEye.castShadow = true;
-            kittyGroup.add(rightEye);
-            
-            // Left eye shine
-            const shineGeometry = new THREE.SphereGeometry(0.015, 8, 8);
-            const shineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            const leftShine = new THREE.Mesh(shineGeometry, shineMaterial);
-            leftShine.position.set(-0.03, 0.06, 0.18);
-            kittyGroup.add(leftShine);
-            
-            // Right eye shine
-            const rightShine = new THREE.Mesh(shineGeometry, shineMaterial);
-            rightShine.position.set(0.07, 0.06, 0.18);
-            kittyGroup.add(rightShine);
-            
-            // Nose
-            const noseGeometry = new THREE.SphereGeometry(0.025, 16, 16);
-            const noseMaterial = new THREE.MeshPhongMaterial({ color: 0xFF6B9D });
-            const nose = new THREE.Mesh(noseGeometry, noseMaterial);
-            nose.position.set(0, -0.02, 0.15);
-            nose.castShadow = true;
-            kittyGroup.add(nose);
-            
-            // Mouth (smile)
-            const mouthGeometry = new THREE.SphereGeometry(0.02, 16, 16);
-            const mouthMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
-            const mouth1 = new THREE.Mesh(mouthGeometry, mouthMaterial);
-            mouth1.position.set(-0.04, -0.06, 0.15);
-            mouth1.scale.set(0.6, 0.8, 0.6);
-            mouth1.castShadow = true;
-            kittyGroup.add(mouth1);
-            
-            const mouth2 = new THREE.Mesh(mouthGeometry, mouthMaterial);
-            mouth2.position.set(0.04, -0.06, 0.15);
-            mouth2.scale.set(0.6, 0.8, 0.6);
-            mouth2.castShadow = true;
-            kittyGroup.add(mouth2);
-            
-            // Body
-            const bodyGeometry = new THREE.BoxGeometry(0.12, 0.18, 0.1);
-            const body = new THREE.Mesh(bodyGeometry, kittyMaterial);
-            body.position.set(0, -0.15, 0);
-            body.castShadow = true;
-            body.receiveShadow = true;
-            kittyGroup.add(body);
-            
-            // Tail
-            const tailGeometry = new THREE.BoxGeometry(0.04, 0.12, 0.04);
-            const tail = new THREE.Mesh(tailGeometry, kittyMaterial);
-            tail.position.set(0.08, -0.15, -0.08);
-            tail.rotation.z = 0.3;
-            tail.castShadow = true;
-            tail.receiveShadow = true;
-            kittyGroup.add(tail);
-            
-            // Front left paw
-            const pawGeometry = new THREE.SphereGeometry(0.035, 16, 16);
-            const paw1 = new THREE.Mesh(pawGeometry, kittyMaterial);
-            paw1.position.set(-0.06, -0.32, 0.02);
-            paw1.castShadow = true;
-            paw1.receiveShadow = true;
-            kittyGroup.add(paw1);
-            
-            // Front right paw
-            const paw2 = new THREE.Mesh(pawGeometry, kittyMaterial);
-            paw2.position.set(0.06, -0.32, 0.02);
-            paw2.castShadow = true;
-            paw2.receiveShadow = true;
-            kittyGroup.add(paw2);
-            
-            // Back left paw
-            const paw3 = new THREE.Mesh(pawGeometry, kittyMaterial);
-            paw3.position.set(-0.06, -0.32, -0.06);
-            paw3.castShadow = true;
-            paw3.receiveShadow = true;
-            kittyGroup.add(paw3);
-            
-            // Back right paw
-            const paw4 = new THREE.Mesh(pawGeometry, kittyMaterial);
-            paw4.position.set(0.06, -0.32, -0.06);
-            paw4.castShadow = true;
-            paw4.receiveShadow = true;
-            kittyGroup.add(paw4);
-            
-            return kittyGroup;
-        }
-        
-        const kitty = createKitty();
-        const kittyOrbit = new THREE.Group();
-        kittyOrbit.add(kitty);
-        kitty.position.x = 2.0;
-        scene.add(kittyOrbit);
-        
-        // Create cute doggy!
-        function createDog() {
-            const dogGroup = new THREE.Group();
-            
-            // Head
-            const headGeometry = new THREE.SphereGeometry(0.15, 32, 32);
-            const dogMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 }); // Brown
-            const head = new THREE.Mesh(headGeometry, dogMaterial);
-            head.castShadow = true;
-            head.receiveShadow = true;
-            dogGroup.add(head);
-            
-            // Left ear (floppy)
-            const earGeometry = new THREE.SphereGeometry(0.08, 16, 16);
-            const leftEar = new THREE.Mesh(earGeometry, dogMaterial);
-            leftEar.position.set(-0.12, 0.08, -0.05);
-            leftEar.scale.set(0.7, 1.2, 0.6);
-            leftEar.rotation.z = 0.4;
-            leftEar.castShadow = true;
-            leftEar.receiveShadow = true;
-            dogGroup.add(leftEar);
-            
-            // Right ear (floppy)
-            const rightEar = new THREE.Mesh(earGeometry, dogMaterial);
-            rightEar.position.set(0.12, 0.08, -0.05);
-            rightEar.scale.set(0.7, 1.2, 0.6);
-            rightEar.rotation.z = -0.4;
-            rightEar.castShadow = true;
-            rightEar.receiveShadow = true;
-            dogGroup.add(rightEar);
-            
-            // Left eye
-            const eyeGeometry = new THREE.SphereGeometry(0.04, 16, 16);
-            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
-            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            leftEye.position.set(-0.05, 0.05, 0.14);
-            leftEye.castShadow = true;
-            dogGroup.add(leftEye);
-            
-            // Right eye
-            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            rightEye.position.set(0.05, 0.05, 0.14);
-            rightEye.castShadow = true;
-            dogGroup.add(rightEye);
-            
-            // Left eye shine
-            const shineGeometry = new THREE.SphereGeometry(0.015, 8, 8);
-            const shineMaterial = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            const leftShine = new THREE.Mesh(shineGeometry, shineMaterial);
-            leftShine.position.set(-0.03, 0.06, 0.18);
-            dogGroup.add(leftShine);
-            
-            // Right eye shine
-            const rightShine = new THREE.Mesh(shineGeometry, shineMaterial);
-            rightShine.position.set(0.07, 0.06, 0.18);
-            dogGroup.add(rightShine);
-            
-            // Snout
-            const snoutGeometry = new THREE.SphereGeometry(0.08, 16, 16);
-            const snoutMaterial = new THREE.MeshPhongMaterial({ color: 0xA0522D });
-            const snout = new THREE.Mesh(snoutGeometry, snoutMaterial);
-            snout.position.set(0, -0.05, 0.15);
-            snout.scale.set(0.8, 0.7, 0.8);
-            snout.castShadow = true;
-            dogGroup.add(snout);
-            
-            // Nose
-            const noseGeometry = new THREE.SphereGeometry(0.03, 16, 16);
-            const noseMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
-            const nose = new THREE.Mesh(noseGeometry, noseMaterial);
-            nose.position.set(0, -0.05, 0.2);
-            nose.castShadow = true;
-            dogGroup.add(nose);
-            
-            // Happy tongue
-            const tongueGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-            const tongueMaterial = new THREE.MeshPhongMaterial({ color: 0xFF69B4 });
-            const tongue = new THREE.Mesh(tongueGeometry, tongueMaterial);
-            tongue.position.set(0, -0.12, 0.18);
-            tongue.scale.set(0.8, 0.5, 0.6);
-            tongue.castShadow = true;
-            dogGroup.add(tongue);
-            
-            // Body
-            const bodyGeometry = new THREE.BoxGeometry(0.14, 0.16, 0.12);
-            const body = new THREE.Mesh(bodyGeometry, dogMaterial);
-            body.position.set(0, -0.15, 0);
-            body.castShadow = true;
-            body.receiveShadow = true;
-            dogGroup.add(body);
-            
-            // Tail
-            const tailGeometry = new THREE.BoxGeometry(0.05, 0.14, 0.05);
-            const tail = new THREE.Mesh(tailGeometry, dogMaterial);
-            tail.position.set(0.05, -0.1, -0.1);
-            tail.rotation.z = 0.4;
-            tail.castShadow = true;
-            tail.receiveShadow = true;
-            dogGroup.add(tail);
-            
-            // Front left paw
-            const pawGeometry = new THREE.SphereGeometry(0.04, 16, 16);
-            const paw1 = new THREE.Mesh(pawGeometry, dogMaterial);
-            paw1.position.set(-0.07, -0.32, 0.02);
-            paw1.castShadow = true;
-            paw1.receiveShadow = true;
-            dogGroup.add(paw1);
-            
-            // Front right paw
-            const paw2 = new THREE.Mesh(pawGeometry, dogMaterial);
-            paw2.position.set(0.07, -0.32, 0.02);
-            paw2.castShadow = true;
-            paw2.receiveShadow = true;
-            dogGroup.add(paw2);
-            
-            // Back left paw
-            const paw3 = new THREE.Mesh(pawGeometry, dogMaterial);
-            paw3.position.set(-0.07, -0.32, -0.08);
-            paw3.castShadow = true;
-            paw3.receiveShadow = true;
-            dogGroup.add(paw3);
-            
-            // Back right paw
-            const paw4 = new THREE.Mesh(pawGeometry, dogMaterial);
-            paw4.position.set(0.07, -0.32, -0.08);
-            paw4.castShadow = true;
-            paw4.receiveShadow = true;
-            dogGroup.add(paw4);
-            
-            return dogGroup;
-        }
-        
-        const dog = createDog();
-        const dogOrbit = new THREE.Group();
-        dogOrbit.add(dog);
-        dog.position.x = -2.5;
-        scene.add(dogOrbit);
-        
-        // Create ELEPHANT in the center!
-        function createElephant() {
-            const elephantGroup = new THREE.Group();
-            const elephantMaterial = new THREE.MeshPhongMaterial({ color: 0x8B7D6B }); // Gray-brown
-            
-            // Body (main trunk)
-            const bodyGeometry = new THREE.SphereGeometry(0.35, 32, 32);
-            const body = new THREE.Mesh(bodyGeometry, elephantMaterial);
-            body.scale.set(1, 0.8, 1);
-            body.castShadow = true;
-            body.receiveShadow = true;
-            elephantGroup.add(body);
-            
-            // Head
-            const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
-            const head = new THREE.Mesh(headGeometry, elephantMaterial);
-            head.position.set(0, 0.35, 0);
-            head.castShadow = true;
-            head.receiveShadow = true;
-            elephantGroup.add(head);
-            
-            // Trunk - curved and flexible
-            const trunkGeometry = new THREE.ConeGeometry(0.08, 0.6, 16);
-            const trunk = new THREE.Mesh(trunkGeometry, elephantMaterial);
-            trunk.position.set(0, 0.15, 0.25);
-            trunk.rotation.x = -0.4;
-            trunk.castShadow = true;
-            trunk.receiveShadow = true;
-            elephantGroup.add(trunk);
-            
-            // Trunk tip (spray point)
-            const trunkTipGeometry = new THREE.SphereGeometry(0.06, 16, 16);
-            const trunkTip = new THREE.Mesh(trunkTipGeometry, elephantMaterial);
-            trunkTip.position.set(0, -0.2, 0.6);
-            trunkTip.name = 'trunkTip';
-            elephantGroup.add(trunkTip);
-            
-            // Left ear
-            const earGeometry = new THREE.SphereGeometry(0.3, 16, 16);
-            const leftEar = new THREE.Mesh(earGeometry, elephantMaterial);
-            leftEar.position.set(-0.3, 0.3, -0.1);
-            leftEar.scale.set(0.8, 1.2, 0.3);
-            leftEar.castShadow = true;
-            leftEar.receiveShadow = true;
-            elephantGroup.add(leftEar);
-            
-            // Right ear
-            const rightEar = new THREE.Mesh(earGeometry, elephantMaterial);
-            rightEar.position.set(0.3, 0.3, -0.1);
-            rightEar.scale.set(0.8, 1.2, 0.3);
-            rightEar.castShadow = true;
-            rightEar.receiveShadow = true;
-            elephantGroup.add(rightEar);
-            
-            // Left eye
-            const eyeGeometry = new THREE.SphereGeometry(0.04, 16, 16);
-            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
-            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            leftEye.position.set(-0.1, 0.45, 0.2);
-            elephantGroup.add(leftEye);
-            
-            // Right eye
-            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
-            rightEye.position.set(0.1, 0.45, 0.2);
-            elephantGroup.add(rightEye);
-            
-            // Front left leg
-            const legGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.4, 16);
-            const leg1 = new THREE.Mesh(legGeometry, elephantMaterial);
-            leg1.position.set(-0.2, -0.35, 0.15);
-            leg1.castShadow = true;
-            leg1.receiveShadow = true;
-            elephantGroup.add(leg1);
-            
-            // Front right leg
-            const leg2 = new THREE.Mesh(legGeometry, elephantMaterial);
-            leg2.position.set(0.2, -0.35, 0.15);
-            leg2.castShadow = true;
-            leg2.receiveShadow = true;
-            elephantGroup.add(leg2);
-            
-            // Back left leg
-            const leg3 = new THREE.Mesh(legGeometry, elephantMaterial);
-            leg3.position.set(-0.2, -0.35, -0.15);
-            leg3.castShadow = true;
-            leg3.receiveShadow = true;
-            elephantGroup.add(leg3);
-            
-            // Back right leg
-            const leg4 = new THREE.Mesh(legGeometry, elephantMaterial);
-            leg4.position.set(0.2, -0.35, -0.15);
-            leg4.castShadow = true;
-            leg4.receiveShadow = true;
-            elephantGroup.add(leg4);
-            
-            // Tusks
-            const tuskGeometry = new THREE.ConeGeometry(0.05, 0.3, 8);
-            const tuskMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFDD0 });
-            
-            const leftTusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
-            leftTusk.position.set(-0.15, 0.1, 0.3);
-            leftTusk.rotation.z = 0.5;
-            leftTusk.castShadow = true;
-            elephantGroup.add(leftTusk);
-            
-            const rightTusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
-            rightTusk.position.set(0.15, 0.1, 0.3);
-            rightTusk.rotation.z = -0.5;
-            rightTusk.castShadow = true;
-            elephantGroup.add(rightTusk);
-            
-            return elephantGroup;
-        }
-        
-        const elephant = createElephant();
-        elephant.position.set(0, 0, 0);
-        scene.add(elephant);
-        
-        // Water particle system
-        class WaterParticle {
-            constructor() {
-                this.reset();
-            }
-            
-            reset() {
-                // Start from trunk tip position
-                const angle = Math.random() * Math.PI * 2;
-                const elevation = Math.random() * 1.2 - 0.3;
-                const speed = 0.03 + Math.random() * 0.02;
-                
-                this.position = new THREE.Vector3(0, -0.2, 0.6);
-                this.velocity = new THREE.Vector3(
-                    Math.cos(angle) * speed,
-                    elevation * 0.02,
-                    Math.sin(angle) * speed
-                );
-                this.life = 1.0;
-                this.maxLife = 1.0;
-                this.gravity = 0.0015;
-            }
-            
-            update() {
-                this.position.add(this.velocity);
-                this.velocity.y -= this.gravity;
-                this.life -= 0.015;
-                
-                if (this.life <= 0) {
-                    this.reset();
-                }
-            }
-        }
-        
-        // Create water particles
-        const waterParticles = [];
-        for (let i = 0; i < 150; i++) {
-            waterParticles.push(new WaterParticle());
-        }
-        
-        // Create water particle geometry and mesh
-        const waterGeometry = new THREE.BufferGeometry();
-        const waterPositions = new Float32Array(waterParticles.length * 3);
-        
-        waterParticles.forEach((particle, i) => {
-            waterPositions[i * 3] = particle.position.x;
-            waterPositions[i * 3 + 1] = particle.position.y;
-            waterPositions[i * 3 + 2] = particle.position.z;
-        });
-        
-        waterGeometry.setAttribute('position', new THREE.BufferAttribute(waterPositions, 3));
-        
-        const waterMaterial = new THREE.PointsMaterial({
-            color: 0x64c8ff,
-            size: 0.05,
-            transparent: true,
-            opacity: 0.8,
-            sizeAttenuation: true
-        });
-        
-        const waterMesh = new THREE.Points(waterGeometry, waterMaterial);
-        scene.add(waterMesh);
-        
-        // Create SUN with corona effect
-        const sunGroup = new THREE.Group();
-        
-        // Main sun sphere
-        const sunGeometry = new THREE.SphereGeometry(0.6, 32, 32);
-        const sunMaterial = new THREE.MeshBasicMaterial({
-            color: 0xFDB813,
-            emissive: 0xFDB813
-        });
-        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sunGroup.add(sun);
-        
-        // Inner glow layer
-        const sunGlowInner = new THREE.SphereGeometry(0.65, 32, 32);
-        const sunGlowInnerMaterial = new THREE.MeshBasicMaterial({
-            color: 0xFDB813,
-            transparent: true,
-            opacity: 0.3
-        });
-        const sunGlowInnerMesh = new THREE.Mesh(sunGlowInner, sunGlowInnerMaterial);
-        sunGroup.add(sunGlowInnerMesh);
-        
-        // Outer corona glow
-        const sunGlowOuter = new THREE.SphereGeometry(0.8, 32, 32);
-        const sunGlowOuterMaterial = new THREE.MeshBasicMaterial({
-            color: 0xFF8C00,
-            transparent: true,
-            opacity: 0.15
-        });
-        const sunGlowOuterMesh = new THREE.Mesh(sunGlowOuter, sunGlowOuterMaterial);
-        sunGroup.add(sunGlowOuterMesh);
-        
-        // Extended halo
-        const sunHalo = new THREE.SphereGeometry(1.0, 32, 32);
-        const sunHaloMaterial = new THREE.MeshBasicMaterial({
-            color: 0xFFD700,
-            transparent: true,
-            opacity: 0.08
-        });
-        const sunHaloMesh = new THREE.Mesh(sunHalo, sunHaloMaterial);
-        sunGroup.add(sunHaloMesh);
-        
-        // Position sun in the scene
-        sunGroup.position.set(5, 3, 5);
-        scene.add(sunGroup);
-        
-        // Add main directional light from the sun
-        const sunLight = new THREE.PointLight(0xFDB813, 2.5, 100);
-        sunLight.position.set(5, 3, 5);
-        sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 2048;
-        sunLight.shadow.mapSize.height = 2048;
-        sunLight.shadow.camera.far = 50;
-        sunLight.shadow.camera.near = 0.5;
-        scene.add(sunLight);
-        
-        // Add ambient light for fill
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-        
-        // Add glow effect to planet
-        const glowGeometry = new THREE.SphereGeometry(1.1, 32, 32);
-        const glowMaterial = new THREE.MeshBasicMaterial({
-            color: 0x64c8ff,
-            transparent: true,
-            opacity: 0.1
-        });
-        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-        scene.add(glow);
-        
-        // Chase variables
-        let dogIsChasing = false;
-        let catEscapeSpeed = 1;
-        const NORMAL_SPEED = 0.0004;
-        const CHASE_SPEED = 0.002;
-        const ESCAPE_SPEED = 0.008;
-        const CHASE_DISTANCE = 1.5;
-        const CATCH_DISTANCE = 0.35;
-        let timeSinceCatch = 0;
-        const RESET_TIME = 2000; // 2 seconds before cat can be caught again
-        
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Update catch cooldown
-            if (isCaught) {
-                timeSinceCatch += 16; // Approximate frame time
-                if (timeSinceCatch > RESET_TIME) {
-                    isCaught = false;
-                    timeSinceCatch = 0;
-                }
-            }
-            
-            // Update planet color if changing
-            if (isColorChanging) {
-                colorChangeProgress += 0.02;
-                if (colorChangeProgress >= 1) {
-                    colorChangeProgress = 1;
-                    isColorChanging = false;
-                }
-                
-                // Get current and next color
-                const prevIndex = (colorIndex - 1 + planetColors.length) % planetColors.length;
-                const currColor = planetColors[colorIndex];
-                const prevColor = planetColors[prevIndex];
-                
-                // Interpolate between colors
-                const progress = Math.sin(colorChangeProgress * Math.PI) * 0.5 + 0.5; // Smooth easing
-                
-                // Draw planet with transitioning colors
-                drawPlanetTexture(
-                    currColor.c1,
-                    currColor.c2,
-                    currColor.c3,
-                    currColor.land
-                );
-                
-                texture.needsUpdate = true;
-            }
-            
-            // Update water particles
-            const positions = waterGeometry.attributes.position.array;
-            waterParticles.forEach((particle, i) => {
-                particle.update();
-                positions[i * 3] = particle.position.x;
-                positions[i * 3 + 1] = particle.position.y;
-                positions[i * 3 + 2] = particle.position.z;
-            });
-            waterGeometry.attributes.position.needsUpdate = true;
-            
-            // Animate elephant trunk
-            const trunkWave = Math.sin(Date.now() * 0.003) * 0.15;
-            elephant.children.forEach(child => {
-                if (child.name === 'trunkTip') {
-                    child.position.z = 0.6 + trunkWave * 0.2;
-                    child.position.y = -0.2 + Math.sin(Date.now() * 0.004) * 0.1;
-                }
-            });
-            
-            // Rotate planet
-            planet.rotation.y += 0.0005;
-            glow.rotation.y -= 0.0003;
-            
-            // Rotate sun on its axis
-            sun.rotation.y += 0.003;
-            sunGlowInnerMesh.rotation.y -= 0.002;
-            sunGlowOuterMesh.rotation.y += 0.001;
-            
-            // Pulsing corona effect
-            const pulse = 0.2 + Math.sin(Date.now() * 0.001) * 0.05;
-            sunGlowOuterMesh.material.opacity = pulse * 0.15;
-            sunHaloMesh.material.opacity = pulse * 0.08;
-            
-            // Rotate moon on its axis
-            moon.rotation.y += 0.01;
-            
-            // Orbit moon around planet
-            const time = Date.now() * 0.0003;
-            moonOrbit.rotation.z = time;
-            
-            // Cat movement - figure-8 pattern with escape mechanics
-            const kittyTime = Date.now() * NORMAL_SPEED;
-            let kittyX = Math.sin(kittyTime) * 2.2;
-            let kittyY = Math.sin(kittyTime * 0.5) * 1.2;
-            let kittyZ = Math.cos(kittyTime) * 1.8;
-            
-            // Calculate distance between cat and dog
-            const dx = kittyX - dog.position.x;
-            const dy = kittyY - dog.position.y;
-            const dz = kittyZ - dog.position.z;
-            const distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
-            
-            // Check if dog caught the cat!
-            if (distance < CATCH_DISTANCE && !isCaught) {
-                isCaught = true;
-                timeSinceCatch = 0;
-                updateScore();
-                // Teleport cat to a safe distance
-                kittyX = Math.sin(kittyTime + Math.PI) * 2.2;
-                kittyY = Math.sin((kittyTime + Math.PI) * 0.5) * 1.2;
-                kittyZ = Math.cos(kittyTime + Math.PI) * 1.8;
-            }
-            
-            // If dog is too close, cat escapes!
-            if (distance < CHASE_DISTANCE && !isCaught) {
-                dogIsChasing = true;
-                catEscapeSpeed = 3; // Boost escape speed
-                
-                // Calculate escape direction (away from dog)
-                const escapeDir = new THREE.Vector3(dx, dy, dz).normalize();
-                const escapeAmount = 0.02 * catEscapeSpeed;
-                kittyX += escapeDir.x * escapeAmount;
-                kittyY += escapeDir.y * escapeAmount;
-                kittyZ += escapeDir.z * escapeAmount;
-            } else {
-                dogIsChasing = false;
-                catEscapeSpeed = Math.max(0.5, catEscapeSpeed - 0.02); // Slow down escape
-            }
-            
-            kitty.position.set(kittyX, kittyY, kittyZ);
-            
-            // Dog movement - chase the cat!
-            const dogSpeed = dogIsChasing ? CHASE_SPEED : NORMAL_SPEED * 0.5;
-            const targetDir = new THREE.Vector3(
-                kittyX - dog.position.x,
-                kittyY - dog.position.y,
-                kittyZ - dog.position.z
-            ).normalize();
-            
-            dog.position.x += targetDir.x * dogSpeed * 60; // 60 = frame factor
-            dog.position.y += targetDir.y * dogSpeed * 60;
-            dog.position.z += targetDir.z * dogSpeed * 60;
-            
-            // Make dog look at cat
-            dog.lookAt(new THREE.Vector3(kittyX, kittyY, kittyZ));
-            
-            // Make kitty look at the dog when being chased
-            if (dogIsChasing) {
-                kitty.lookAt(new THREE.Vector3(dog.position.x, dog.position.y, dog.position.z));
-            } else {
-                kitty.lookAt(planet.position);
-            }
-            
-            // Playful tail animation for cat
-            const tailWag = Math.sin(Date.now() * 0.01) * 0.5;
-            kitty.children.forEach(child => {
-                if (child.geometry && child.geometry.type === 'BoxGeometry') {
-                    if (child.position.z < -0.05) { // This is the tail
-                        child.rotation.z = 0.3 + tailWag;
-                    }
-                }
-            });
-            
-            // Excited tail wagging for dog when chasing
-            const dogTailWag = Math.sin(Date.now() * (dogIsChasing ? 0.02 : 0.01)) * (dogIsChasing ? 0.8 : 0.3);
-            dog.children.forEach(child => {
-                if (child.geometry && child.geometry.type === 'BoxGeometry') {
-                    if (child.position.z < -0.08) { // This is the tail
-                        child.rotation.z = 0.4 + dogTailWag;
-                    }
-                }
-            });
-            
-            // Orbit camera around planet
-            const cameraTime = Date.now() * 0.0001;
-            camera.position.x = Math.cos(cameraTime) * 4;
-            camera.position.z = Math.sin(cameraTime) * 4 + 2;
-            camera.lookAt(planet.position);
-            
-            renderer.render(scene, camera);
-        }
-        
-        animate();
-        
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script>
 </body>
 </html>
