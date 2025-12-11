@@ -131,6 +131,55 @@
             50% { transform: translateX(-50%) scaleX(1.1); }
         }
         
+        /* Elon with umbrella */
+        .elon-container {
+            position: fixed;
+            bottom: 10%;
+            right: 10%;
+            z-index: 6;
+            display: none;
+            animation: elon-bounce 3s ease-in-out infinite;
+        }
+        .elon-container.visible {
+            display: block;
+        }
+        .elon {
+            font-size: 5rem;
+            position: relative;
+        }
+        .umbrella {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 4rem;
+            animation: umbrella-tilt 2s ease-in-out infinite;
+        }
+        .elon-speech {
+            position: absolute;
+            top: -80px;
+            left: -100px;
+            background: rgba(29, 161, 242, 0.9);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            animation: elon-speech-pop 5s ease-in-out infinite;
+        }
+        @keyframes elon-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        @keyframes umbrella-tilt {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        @keyframes elon-speech-pop {
+            0%, 80%, 100% { opacity: 0; transform: scale(0.8); }
+            10%, 70% { opacity: 1; transform: scale(1); }
+        }
+        
         /* Bat friends */
         .bat {
             position: fixed;
@@ -180,6 +229,13 @@
         <div class="dracula-cape"></div>
     </div>
     
+    <!-- Elon with umbrella (appears when raining) -->
+    <div class="elon-container" id="elon-container">
+        <div class="elon-speech" id="elon-speech">Rain? Time to build a weather-proof Tesla! 🚀</div>
+        <div class="umbrella">☂️</div>
+        <div class="elon">🧑‍💼</div>
+    </div>
+    
     <!-- Rain container -->
     <div class="rain-container" id="rain-container"></div>
     <div class="weather-card">
@@ -225,6 +281,14 @@
                 
                 document.getElementById('weather-icon').textContent = icon;
                 document.getElementById('description').textContent = desc;
+                
+                // Show Elon with umbrella if it's raining
+                const elonContainer = document.getElementById('elon-container');
+                if (weatherCode >= 51 && weatherCode <= 82) {
+                    elonContainer.classList.add('visible');
+                } else {
+                    elonContainer.classList.remove('visible');
+                }
             } catch (e) {
                 document.getElementById('description').textContent = 'Error loading weather';
             }
@@ -284,6 +348,24 @@
         }, 10000);
         
         // Dracula click interaction
+        // Elon quotes when raining
+        const elonQuotes = [
+            "Rain? Time to build a weather-proof Tesla! 🚀",
+            "This umbrella runs on sustainable energy ☀️",
+            "Buying Twitter was drier than this... 💀",
+            "Paris rain > Mars dust storms 🔴",
+            "Should I make umbrellas electric? 🤔"
+        ];
+        
+        let elonQuoteIndex = 0;
+        setInterval(() => {
+            const elonSpeech = document.getElementById('elon-speech');
+            if (elonSpeech) {
+                elonQuoteIndex = (elonQuoteIndex + 1) % elonQuotes.length;
+                elonSpeech.textContent = elonQuotes[elonQuoteIndex];
+            }
+        }, 5000);
+        
         document.getElementById('dracula').addEventListener('click', () => {
             speech.textContent = "You dare disturb Count Dracula?! 🦇";
             speech.style.animation = 'none';
