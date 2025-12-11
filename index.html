@@ -3,264 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
+    <title>✨ Twitch Versus Code - Cozy Lounge ✨</title>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
+        * {
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
+            padding: 0;
+            box-sizing: border-box;
         }
-        h1 { font-size: 3rem; text-align: center; }
         
-        .red-cube {
+        body { 
+            font-family: 'VT323', monospace; 
+            min-height: 100vh; 
+            background: linear-gradient(180deg, #1a0a2e 0%, #2d1b4e 30%, #4a2c6a 60%, #3d2054 100%);
+            color: #f4e4bc;
+            overflow-x: hidden;
+            image-rendering: pixelated;
+        }
+        
+        /* Scanlines overlay */
+        body::before {
+            content: '';
             position: fixed;
-            top: 20px;
-            left: 20px;
-            width: 50px;
-            height: 50px;
-            background: #ff0000;
-            animation: blink 0.5s ease-in-out infinite;
-            box-shadow: 0 0 20px #ff0000, 0 0 40px #ff000080;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.1) 0px,
+                rgba(0,0,0,0.1) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
+            z-index: 1000;
         }
         
-        .chess-container {
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .particle {
             position: absolute;
-            top: 380px;
-            top: 20px;
+            width: 4px;
+            height: 4px;
+            background: #ff9f43;
+            animation: float 8s ease-in-out infinite;
+            box-shadow: 0 0 10px #ff9f43;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+        }
+        
+        /* Main container */
+        .main-container {
             display: flex;
             flex-direction: column;
             align-items: center;
-            z-index: 10;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+            z-index: 2;
         }
         
-        .chessboard {
-            display: grid;
-            grid-template-columns: repeat(8, 40px);
-            grid-template-rows: repeat(8, 40px);
-            border: 4px solid #5D4037;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: glow-pulse 3s ease-in-out infinite;
         }
         
-        .chess-square {
-            width: 40px;
-            height: 40px;
+        .header h1 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.8rem;
+            color: #9b59b6;
+            text-shadow: 
+                0 0 10px #9b59b6,
+                0 0 20px #8e44ad,
+                0 0 30px #8e44ad,
+                4px 4px 0 #2c1445;
+            margin-bottom: 10px;
+        }
+        
+        .header .subtitle {
+            font-size: 1.5rem;
+            color: #f39c12;
+            text-shadow: 2px 2px 0 #2c1445;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        /* Cozy room frame */
+        .cozy-room {
+            background: linear-gradient(135deg, #2d1b4e 0%, #1a0a2e 100%);
+            border: 8px solid #8b5a2b;
+            border-image: repeating-linear-gradient(45deg, #8b5a2b, #8b5a2b 10px, #6b4423 10px, #6b4423 20px) 8;
+            border-radius: 4px;
+            padding: 30px;
+            max-width: 900px;
+            width: 95%;
+            box-shadow: 
+                0 0 50px rgba(155, 89, 182, 0.3),
+                inset 0 0 100px rgba(255, 159, 67, 0.1);
+        }
+        
+        /* Welcome message */
+        .welcome-box {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.2), rgba(52, 152, 219, 0.2));
+            border: 4px solid #9b59b6;
+            padding: 20px;
+            margin-bottom: 25px;
+            position: relative;
+            animation: welcome-bounce 2s ease-in-out infinite;
+        }
+        
+        .welcome-box::before {
+            content: '🎮';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 1.5rem;
+            background: #2d1b4e;
+            padding: 0 10px;
+        }
+        
+        .welcome-box h2 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.9rem;
+            color: #e74c3c;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+        
+        .welcome-box p {
+            font-size: 1.4rem;
+            line-height: 1.6;
+            color: #ecf0f1;
+        }
+        
+        @keyframes welcome-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        /* Pixel art decorations */
+        .pixel-decor {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .pixel-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            background: rgba(0,0,0,0.3);
+            border: 3px solid #f39c12;
+            transition: all 0.3s;
+        }
+        
+        .pixel-item:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #f39c12;
+        }
+        
+        .pixel-item .icon {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            animation: pixel-bounce 1s ease-in-out infinite;
+        }
+        
+        .pixel-item:nth-child(2) .icon { animation-delay: 0.2s; }
+        .pixel-item:nth-child(3) .icon { animation-delay: 0.4s; }
+        .pixel-item:nth-child(4) .icon { animation-delay: 0.6s; }
+        
+        @keyframes pixel-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        .pixel-item span {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            color: #f39c12;
+        }
+        
+        /* Music visualizer (trip-hop vibes) */
+        .visualizer {
             display: flex;
             justify-content: center;
-            align-items: center;
-            font-size: 28px;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .chess-square:hover {
-            filter: brightness(1.2);
-        }
-        
-        .white-square {
-            background: #F0D9B5;
-        }
-        
-        .black-square {
-            background: #B58863;
-        }
-        
-        .chess-title {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            text-shadow: 0 0 10px cyan;
-        }
-        
-        .tree-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: absolute;
-            top: 380px;
-        }
-        
-        .tree {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .trunk {
-            width: 30px;
-            height: 100px;
-            background: linear-gradient(90deg, #5D4037 0%, #8B4513 50%, #5D4037 100%);
-            border-radius: 5px;
-        }
-        
-        .foliage {
-            position: relative;
-            margin-bottom: -20px;
-        }
-        
-        .leaves {
-            background: linear-gradient(180deg, #228B22 0%, #006400 100%);
-            border-radius: 50%;
-            position: absolute;
-            top: 380px;
-        }
-        
-        .leaf1 {
-            width: 120px;
-            height: 100px;
-            top: -80px;
-            left: -60px;
-        }
-        
-        .leaf2 {
-            width: 100px;
-            height: 80px;
-            top: -120px;
-            left: -50px;
-        }
-        
-        .leaf3 {
-            width: 80px;
+            align-items: flex-end;
             height: 60px;
-            top: -140px;
-            left: -40px;
+            gap: 4px;
+            margin: 25px 0;
+            padding: 15px;
+            background: rgba(0,0,0,0.4);
+            border: 2px solid #3498db;
         }
         
-        .apple {
-            position: absolute;
-            top: 380px;
-            font-size: 2rem;
-            animation: swing 2s ease-in-out infinite;
+        .bar {
+            width: 8px;
+            background: linear-gradient(0deg, #9b59b6, #3498db, #1abc9c);
+            animation: equalizer 1s ease-in-out infinite;
+            box-shadow: 0 0 10px currentColor;
         }
         
-        .apple:nth-child(4) {
-            top: -60px;
-            left: -30px;
+        .bar:nth-child(1) { animation-duration: 0.8s; height: 20px; }
+        .bar:nth-child(2) { animation-duration: 0.6s; height: 35px; animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-duration: 0.9s; height: 25px; animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-duration: 0.7s; height: 40px; animation-delay: 0.3s; }
+        .bar:nth-child(5) { animation-duration: 1s; height: 30px; animation-delay: 0.4s; }
+        .bar:nth-child(6) { animation-duration: 0.75s; height: 45px; animation-delay: 0.5s; }
+        .bar:nth-child(7) { animation-duration: 0.85s; height: 28px; animation-delay: 0.6s; }
+        .bar:nth-child(8) { animation-duration: 0.65s; height: 38px; animation-delay: 0.7s; }
+        .bar:nth-child(9) { animation-duration: 0.95s; height: 22px; animation-delay: 0.8s; }
+        .bar:nth-child(10) { animation-duration: 0.7s; height: 32px; animation-delay: 0.9s; }
+        
+        @keyframes equalizer {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.3); }
         }
         
-        .apple2 {
-            top: -50px;
-            left: 10px;
-            animation-delay: 0.5s;
-        }
-        
-        .apple3 {
-            top: -90px;
-            left: -10px;
-            animation-delay: 1s;
-        }
-        
-        @keyframes swing {
-            0%, 100% { transform: rotate(-5deg); }
-            50% { transform: rotate(5deg); }
-        }
-        
-        .greeting {
-            position: fixed;
-            bottom: 40px;
+        /* Encouragement section */
+        .encouragement {
             text-align: center;
+            padding: 20px;
+            background: linear-gradient(90deg, rgba(231, 76, 60, 0.2), rgba(241, 196, 15, 0.2), rgba(46, 204, 113, 0.2));
+            border: 4px dashed #2ecc71;
+            margin-top: 20px;
+        }
+        
+        .encouragement h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: #2ecc71;
+            margin-bottom: 15px;
+        }
+        
+        .encouragement p {
+            font-size: 1.5rem;
+            color: #f4e4bc;
+        }
+        
+        .encouragement .hearts {
             font-size: 2rem;
-            animation: fadeInUp 1s ease-out;
-            background: rgba(255,255,255,0.1);
-            padding: 20px 40px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 2px solid rgba(255,255,255,0.2);
-        }
-        
-        .greeting .subtitle {
-            font-size: 1.2rem;
-            opacity: 0.8;
             margin-top: 10px;
+            animation: heart-beat 1.5s ease-in-out infinite;
         }
         
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @keyframes heart-beat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
         }
         
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.2; }
+        /* Twitch chat style box */
+        .chat-box {
+            background: rgba(24, 24, 27, 0.9);
+            border: 3px solid #9b59b6;
+            padding: 15px;
+            margin-top: 25px;
+            max-height: 200px;
+            overflow-y: auto;
         }
+        
+        .chat-box h4 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: #9b59b6;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #9b59b6;
+            padding-bottom: 10px;
+        }
+        
+        .chat-message {
+            margin: 8px 0;
+            font-size: 1.2rem;
+            animation: slide-in 0.5s ease-out;
+        }
+        
+        .chat-message .user {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        
+        .chat-message .user.mod { color: #2ecc71; }
+        .chat-message .user.vip { color: #e91e63; }
+        .chat-message .user.sub { color: #9b59b6; }
+        
+        @keyframes slide-in {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        /* Footer */
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 1.2rem;
+            color: #9b59b6;
+        }
+        
+        .footer .coffee {
+            font-size: 2rem;
+            animation: steam 2s ease-in-out infinite;
+        }
+        
+        @keyframes steam {
+            0%, 100% { transform: translateY(0) rotate(-5deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
+        
+        /* Retro corner decorations */
+        .corner-decor {
+            position: fixed;
+            font-size: 2rem;
+            opacity: 0.6;
+            z-index: 3;
+        }
+        
+        .corner-decor.top-left { top: 20px; left: 20px; }
+        .corner-decor.top-right { top: 20px; right: 20px; }
+        .corner-decor.bottom-left { bottom: 20px; left: 20px; }
+        .corner-decor.bottom-right { bottom: 20px; right: 20px; }
     </style>
 </head>
 <body>
-    <div class="red-cube"></div>
+    <!-- Floating particles -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 6s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 7s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 0.5s;"></div>
+    </div>
     
-    <div class="chess-container">
-        <div class="chess-title">♔ Échecs Twitch ♚</div>
-        <div class="chessboard" id="chessboard"></div>
+    <!-- Corner decorations -->
+    <div class="corner-decor top-left">🕹️</div>
+    <div class="corner-decor top-right">👾</div>
+    <div class="corner-decor bottom-left">🎧</div>
+    <div class="corner-decor bottom-right">✨</div>
+    
+    <div class="main-container">
+        <header class="header">
+            <h1>TWITCH VERSUS CODE</h1>
+            <p class="subtitle">~ Collaborative Pixel Lounge ~</p>
+        </header>
+        
+        <div class="cozy-room">
+            <div class="welcome-box">
+                <h2>WELCOME TO THE COZY ZONE!</h2>
+                <p>Pull up a bean bag, grab some snacks, and let's create something amazing together! 🌟 Every idea matters, every contribution counts. This is YOUR space to experiment, play, and vibe with the community.</p>
+            </div>
+            
+            <div class="pixel-decor">
+                <div class="pixel-item">
+                    <span class="icon">🎮</span>
+                    <span>PLAY</span>
+                </div>
+                <div class="pixel-item">
+                    <span class="icon">💡</span>
+                    <span>CREATE</span>
+                </div>
+                <div class="pixel-item">
+                    <span class="icon">🤝</span>
+                    <span>COLLAB</span>
+                </div>
+                <div class="pixel-item">
+                    <span class="icon">💜</span>
+                    <span>VIBE</span>
+                </div>
+            </div>
+            
+            <!-- Trip-hop visualizer -->
+            <div class="visualizer">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+            
+            <div class="encouragement">
+                <h3>✦ YOU GOT THIS! ✦</h3>
+                <p>Every pixel you add makes this world more beautiful. Don't be shy - drop your wildest ideas in chat!</p>
+                <div class="hearts">💜 🧡 💚 💙 💛</div>
+            </div>
+            
+            <div class="chat-box">
+                <h4>💬 COMMUNITY VIBES</h4>
+                <div class="chat-message"><span class="user mod">PixelWizard:</span> Let's make something epic today! 🚀</div>
+                <div class="chat-message"><span class="user vip">RetroQueen:</span> Love the chill vibes in here 🎧</div>
+                <div class="chat-message"><span class="user sub">CodeNinja42:</span> Who's ready to break things? 😄</div>
+                <div class="chat-message"><span class="user">NewFriend:</span> First time here, this is so cool!</div>
+                <div class="chat-message"><span class="user mod">TripHopSoul:</span> The beats are immaculate tonight 🌙</div>
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <div class="coffee">☕</div>
+            <p>Stay cozy, stay creative, stay awesome</p>
+            <p style="font-size: 0.9rem; margin-top: 10px;">Press any key to add magic ✨</p>
+        </footer>
     </div>
     
     <script>
-        const initialBoard = [
-            ['♜','♞','♝','♛','♚','♝','♞','♜'],
-            ['♟','♟','♟','♟','♟','♟','♟','♟'],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['','','','','','','',''],
-            ['♙','♙','♙','♙','♙','♙','♙','♙'],
-            ['♖','♘','♗','♕','♔','♗','♘','♖']
-        ];
-        
-        const chessboard = document.getElementById('chessboard');
-        
-        for(let row = 0; row < 8; row++) {
-            for(let col = 0; col < 8; col++) {
-                const square = document.createElement('div');
-                square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'white-square' : 'black-square');
-                square.textContent = initialBoard[row][col];
-                square.dataset.row = row;
-                square.dataset.col = col;
-                chessboard.appendChild(square);
-            }
-        }
-        
-        let selectedSquare = null;
-        chessboard.addEventListener('click', (e) => {
-            const square = e.target.closest('.chess-square');
-            if(!square) return;
-            
-            if(selectedSquare) {
-                const piece = selectedSquare.textContent;
-                selectedSquare.textContent = '';
-                square.textContent = piece;
-                selectedSquare.style.outline = '';
-                selectedSquare = null;
-            } else if(square.textContent) {
-                selectedSquare = square;
-                square.style.outline = '3px solid cyan';
+        // Add interactive sparkles on click
+        document.addEventListener('click', (e) => {
+            for(let i = 0; i < 5; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.innerHTML = ['✨', '💜', '🌟', '💫', '⭐'][Math.floor(Math.random() * 5)];
+                sparkle.style.cssText = `
+                    position: fixed;
+                    left: ${e.clientX}px;
+                    top: ${e.clientY}px;
+                    font-size: ${Math.random() * 20 + 15}px;
+                    pointer-events: none;
+                    z-index: 1000;
+                    animation: sparkle-fly 1s ease-out forwards;
+                `;
+                document.body.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1000);
             }
         });
+        
+        // Add sparkle animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes sparkle-fly {
+                to {
+                    transform: translate(${Math.random() * 100 - 50}px, -100px) rotate(360deg);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Keyboard magic
+        document.addEventListener('keydown', () => {
+            document.body.style.filter = 'hue-rotate(30deg)';
+            setTimeout(() => document.body.style.filter = '', 200);
+        });
     </script>
-    <div class="tree-container">
-            <div class="tree">
-                <div class="trunk"></div>
-                <div class="foliage">
-                    <div class="leaves leaf1"></div>
-                    <div class="leaves leaf2"></div>
-                    <div class="leaves leaf3"></div>
-                    <div class="apple">🍎</div>
-                    <div class="apple apple2">🍎</div>
-                    <div class="apple apple3">🍎</div>
-                </div>
-            </div>
-        </div>
-        <h1>✨</h1>
-        <div class="greeting">
-            <p>Bonjour Madame Michu ! 👋</p>
-            <p class="subtitle">Comment allez-vous aujourd'hui ?</p>
-        </div>
 </body>
 </html>
