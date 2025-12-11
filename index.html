@@ -83,6 +83,88 @@
         }
         
         .weather-card { position: relative; z-index: 5; }
+        
+        /* Dracula */
+        .dracula {
+            position: fixed;
+            font-size: 6rem;
+            z-index: 4;
+            animation: dracula-float 6s ease-in-out infinite, dracula-move 20s linear infinite;
+            filter: drop-shadow(0 0 20px rgba(139, 0, 0, 0.5));
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .dracula:hover {
+            transform: scale(1.2);
+        }
+        .dracula-body {
+            animation: dracula-sway 2s ease-in-out infinite;
+        }
+        .dracula-cape {
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 40px;
+            background: linear-gradient(180deg, #1a0a0a, #3d0000);
+            clip-path: polygon(10% 0%, 90% 0%, 100% 100%, 50% 70%, 0% 100%);
+            animation: cape-flutter 1s ease-in-out infinite;
+        }
+        @keyframes dracula-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-30px); }
+        }
+        @keyframes dracula-move {
+            0% { top: 20%; left: -10%; }
+            25% { top: 40%; left: 80%; }
+            50% { top: 15%; left: 60%; }
+            75% { top: 50%; left: 20%; }
+            100% { top: 20%; left: -10%; }
+        }
+        @keyframes dracula-sway {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        @keyframes cape-flutter {
+            0%, 100% { transform: translateX(-50%) scaleX(1); }
+            50% { transform: translateX(-50%) scaleX(1.1); }
+        }
+        
+        /* Bat friends */
+        .bat {
+            position: fixed;
+            font-size: 1.5rem;
+            z-index: 3;
+            animation: bat-fly 8s linear infinite;
+            opacity: 0.7;
+        }
+        @keyframes bat-fly {
+            0% { transform: translateX(-100vw) translateY(0); }
+            25% { transform: translateX(-25vw) translateY(-50px); }
+            50% { transform: translateX(50vw) translateY(20px); }
+            75% { transform: translateX(75vw) translateY(-30px); }
+            100% { transform: translateX(110vw) translateY(0); }
+        }
+        
+        .dracula-speech {
+            position: fixed;
+            top: 10%;
+            right: 5%;
+            background: rgba(61, 0, 0, 0.9);
+            color: #fff;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            z-index: 20;
+            animation: speech-fade 10s ease-in-out infinite;
+            border: 2px solid #8b0000;
+        }
+        @keyframes speech-fade {
+            0%, 100% { opacity: 0; transform: translateY(10px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -91,6 +173,12 @@
     <div class="lightning-bolt" style="left: 30%;">⚡</div>
     <div class="lightning-bolt" style="left: 60%;">⚡</div>
     <div class="lightning-bolt" style="left: 15%;">⚡</div>
+    
+    <!-- Dracula -->
+    <div class="dracula" id="dracula">
+        <div class="dracula-body">🧛</div>
+        <div class="dracula-cape"></div>
+    </div>
     
     <!-- Rain container -->
     <div class="rain-container" id="rain-container"></div>
@@ -160,6 +248,50 @@
             }
         }
         createRain();
+        
+        // Create bats flying around
+        function createBats() {
+            for (let i = 0; i < 5; i++) {
+                const bat = document.createElement('div');
+                bat.className = 'bat';
+                bat.textContent = '🦇';
+                bat.style.top = (Math.random() * 40 + 10) + '%';
+                bat.style.animationDelay = (Math.random() * 8) + 's';
+                bat.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                document.body.appendChild(bat);
+            }
+        }
+        createBats();
+        
+        // Dracula speech bubble
+        const draculaQuotes = [
+            "Ah, Paris... the city of love and blood! 🩸",
+            "This rain reminds me of Transylvania...",
+            "I vant to check ze veather! Bleh!",
+            "The Eiffel Tower looks delicious tonight...",
+            "Perfect weather for a midnight flight!"
+        ];
+        
+        const speech = document.createElement('div');
+        speech.className = 'dracula-speech';
+        speech.textContent = draculaQuotes[0];
+        document.body.appendChild(speech);
+        
+        let quoteIndex = 0;
+        setInterval(() => {
+            quoteIndex = (quoteIndex + 1) % draculaQuotes.length;
+            speech.textContent = draculaQuotes[quoteIndex];
+        }, 10000);
+        
+        // Dracula click interaction
+        document.getElementById('dracula').addEventListener('click', () => {
+            speech.textContent = "You dare disturb Count Dracula?! 🦇";
+            speech.style.animation = 'none';
+            speech.style.opacity = '1';
+            setTimeout(() => {
+                speech.style.animation = 'speech-fade 10s ease-in-out infinite';
+            }, 2000);
+        });
     </script>
 </body>
 </html>
