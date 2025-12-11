@@ -9,19 +9,76 @@
             font-family: system-ui, sans-serif; 
             display: flex; 
             flex-direction: column;
-            justify-content: center; 
+            justify-content: flex-start; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
         }
+        
+        /* NAVIGATION MENU */
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(139, 90, 43, 0.95), rgba(212, 165, 116, 0.95));
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            border-bottom: 3px solid #f4e4bc;
+        }
+        
+        .nav-btn {
+            background: linear-gradient(135deg, #3d2914 0%, #5a3d1a 100%);
+            border: 2px solid #f4e4bc;
+            border-radius: 20px;
+            padding: 10px 25px;
+            font-size: 1rem;
+            color: #f4e4bc;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: Georgia, serif;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-btn:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, #5a3d1a 0%, #7a5d3a 100%);
+            box-shadow: 0 4px 15px rgba(244, 228, 188, 0.4);
+        }
+        
+        .nav-btn.active {
+            background: linear-gradient(135deg, #f4e4bc 0%, #d4a574 100%);
+            color: #3d2914;
+            box-shadow: 0 0 20px rgba(244, 228, 188, 0.6);
+        }
+        
+        /* SECTIONS */
+        .section {
+            display: none;
+            width: 100%;
+            min-height: 100vh;
+            padding-top: 80px;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section.active {
+            display: flex;
+        }
+        
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
         
         #sun-container {
             position: fixed;
-            top: 30px;
+            top: 100px;
             right: 50px;
             width: 150px;
             height: 150px;
@@ -34,10 +91,10 @@
         }
         
         /* Sun light effect on page */
-        body::before {
+        .section-space::before {
             content: '';
             position: fixed;
-            top: -50px;
+            top: 20px;
             right: -50px;
             width: 400px;
             height: 400px;
@@ -145,63 +202,6 @@
             border-radius: 50%;
         }
         
-        .dog-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 320px;
-            height: 320px;
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-        }
-        
-        .dog {
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            margin-left: -20px;
-            font-size: 35px;
-            filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.6));
-            transition: transform 0.1s;
-        }
-        
-        .kitty-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 260px;
-            height: 260px;
-            transform: translate(-50%, -50%);
-            /* animation controlled by JS */
-            pointer-events: none;
-        }
-        
-        .kitty {
-            position: absolute;
-            top: -25px;
-            left: 50%;
-            margin-left: -20px;
-            font-size: 35px;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
-            animation: kittyBounce 0.5s ease-in-out infinite;
-            transition: filter 0.3s ease;
-        }
-        
-        @keyframes orbitKitty {
-            from { transform: translate(-50%, -50%) rotateZ(180deg); }
-            to { transform: translate(-50%, -50%) rotateZ(540deg); }
-        }
-        
-        @keyframes kittyBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-5px); }
-        }
-        
-        @keyframes kittyRotate {
-            from { transform: rotateZ(0deg); }
-            to { transform: rotateZ(360deg); }
-        }
-        
         .moon::after {
             content: '';
             position: absolute;
@@ -248,8 +248,6 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
-        
-        
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -293,10 +291,62 @@
             transform: scale(0.98);
         }
         
+        .music-title {
+            font-size: 0.9rem;
+            color: #d4a574;
+            margin-top: 10px;
+            font-style: italic;
+            opacity: 0.8;
+        }
+        
+        /* ANIMALS SECTION */
+        .dog-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 320px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .dog {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            margin-left: -20px;
+            font-size: 35px;
+            filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.6));
+            transition: transform 0.1s;
+        }
+        
+        .kitty-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 260px;
+            height: 260px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .kitty {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            margin-left: -20px;
+            font-size: 35px;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
+            animation: kittyBounce 0.5s ease-in-out infinite;
+            transition: filter 0.3s ease;
+        }
+        
+        @keyframes kittyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
         .score-display {
-            position: fixed;
-            top: 20px;
-            left: 20px;
             background: linear-gradient(135deg, rgba(139, 90, 43, 0.9), rgba(212, 165, 116, 0.9));
             border: 3px solid #f4e4bc;
             border-radius: 15px;
@@ -305,7 +355,7 @@
             font-size: 1.3rem;
             color: #3d2914;
             box-shadow: 0 4px 15px rgba(139, 90, 43, 0.5);
-            z-index: 100;
+            margin-bottom: 2rem;
         }
         
         .score-display span {
@@ -328,14 +378,77 @@
             100% { transform: scale(2) translateY(-50px); opacity: 0; }
         }
         
-        .music-title {
-            font-size: 0.9rem;
-            color: #d4a574;
-            margin-top: 10px;
-            font-style: italic;
-            opacity: 0.8;
+        .elephant-container {
+            font-size: 120px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 0 20px rgba(100, 149, 237, 0.5));
+            margin: 2rem 0;
         }
         
+        .elephant-container:hover {
+            transform: scale(1.1);
+        }
+        
+        .elephant-container:active {
+            transform: scale(0.95);
+        }
+        
+        .water-spray {
+            position: fixed;
+            pointer-events: none;
+            z-index: 49;
+            font-size: 16px;
+            animation: sprayArc 1s ease-out forwards;
+        }
+        
+        @keyframes sprayArc {
+            0% {
+                opacity: 1;
+                transform: translate(0, 0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translate(var(--spray-x), var(--spray-y)) scale(0.3);
+            }
+        }
+        
+        .trunk-spray {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 30px;
+            animation: trunkWiggle 0.3s ease-in-out infinite;
+        }
+        
+        @keyframes trunkWiggle {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        
+        .animals-arena {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+        
+        .chase-planet {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--planet-color1, #4a90a4) 0%, var(--planet-color2, #2d5a6b) 30%, var(--planet-color3, #1a3a4a) 70%, var(--planet-color4, #0d1f2a) 100%);
+            box-shadow: 
+                inset -20px -20px 40px rgba(0,0,0,0.6),
+                inset 5px 5px 20px rgba(255,255,255,0.1),
+                0 0 40px var(--planet-glow, rgba(74, 144, 164, 0.4));
+        }
+        
+        /* GAMES SECTION */
         #gameCanvas {
             position: fixed;
             top: 0;
@@ -370,78 +483,6 @@
             font-weight: bold;
             font-size: 1.3rem;
             color: #8b0000;
-        }
-        
-        .elephant-container {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 50;
-            font-size: 80px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            filter: drop-shadow(0 0 20px rgba(100, 149, 237, 0.5));
-        }
-        
-        .elephant-container:hover {
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-        
-        .elephant-container:active {
-            transform: translate(-50%, -50%) scale(0.95);
-        }
-        
-        .water-drop {
-            position: fixed;
-            font-size: 20px;
-            pointer-events: none;
-            z-index: 49;
-            animation: waterFall 1.5s ease-in forwards;
-        }
-        
-        @keyframes waterFall {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(200px) scale(0.5);
-            }
-        }
-        
-        .water-spray {
-            position: fixed;
-            pointer-events: none;
-            z-index: 49;
-            font-size: 16px;
-            animation: sprayArc 1s ease-out forwards;
-        }
-        
-        @keyframes sprayArc {
-            0% {
-                opacity: 1;
-                transform: translate(0, 0) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translate(var(--spray-x), var(--spray-y)) scale(0.3);
-            }
-        }
-        
-        .trunk-spray {
-            position: absolute;
-            top: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 30px;
-            animation: trunkWiggle 0.3s ease-in-out infinite;
-        }
-        
-        @keyframes trunkWiggle {
-            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
-            50% { transform: translateX(-50%) rotate(5deg); }
         }
         
         .game-instructions {
@@ -522,66 +563,128 @@
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(212, 165, 116, 0.6);
         }
+        
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px currentColor;
+        }
+        
+        .section-space .section-title { color: #7dd3fc; }
+        .section-animals .section-title { color: #fca5a5; }
+        .section-games .section-title { color: #fcd34d; }
     </style>
 </head>
 <body>
     <div class="stars" id="stars"></div>
     
-    <canvas id="gameCanvas"></canvas>
+    <!-- NAVIGATION MENU -->
+    <nav class="nav-menu">
+        <button class="nav-btn active" onclick="showSection('space')" id="btn-space">🌌 Space</button>
+        <button class="nav-btn" onclick="showSection('animals')" id="btn-animals">🐾 Animals</button>
+        <button class="nav-btn" onclick="showSection('games')" id="btn-games">🎮 Games</button>
+    </nav>
     
-    <div class="elephant-container" id="elephant" onclick="sprayWater()">
-        🐘
-        <div class="trunk-spray" id="trunkSpray" style="display: none;">💦</div>
-    </div>
-    
-    <div class="game-instructions">🎮 Click to shoot asteroids! Click the elephant for water! 🌍</div>
-    
-    <div class="planet-health-bar">
-        <div class="planet-health-fill" id="healthFill" style="width: 100%"></div>
-    </div>
-    
-    <div class="game-ui">
-        <div class="game-stat">☄️ Destroyed: <span id="asteroidsDestroyed">0</span></div>
-        <div class="game-stat">🌟 Wave: <span id="waveNumber">1</span></div>
-    </div>
-    
-    <div class="game-over-screen" id="gameOverScreen">
-        <h2>💥 Planet Destroyed!</h2>
-        <p>You destroyed <span id="finalScore">0</span> asteroids!</p>
-        <button class="restart-btn" onclick="restartGame()">🚀 Play Again</button>
-    </div>
-    
-    <div class="score-display">
-        🐕 Dog Score: <span id="dogScore">0</span>
-    </div>
-    
-    
-    <div id="sun-container"></div>
-    <h1>Hello World</h1>
-    
-    <div class="music-player">
-        <button id="playPauseBtn" onclick="toggleMusic()">
-            <span id="playIcon">▶️</span> Play Music
-        </button>
-        <audio id="bgMusic" loop>
-            <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg">
-        </audio>
-        <p class="music-title">🎩 Professor Layton - More London Streets</p>
-    </div>
-    <div class="planet-container">
-        <div class="planet"></div>
-        <div class="ring"></div>
-        <div class="moon-orbit">
-            <div class="moon"></div>
+    <!-- SPACE SECTION -->
+    <section class="section section-space active" id="section-space">
+        <div id="sun-container"></div>
+        <h1 class="section-title">🌌 Space Explorer</h1>
+        
+        <div class="music-player">
+            <button id="playPauseBtn" onclick="toggleMusic()">
+                <span id="playIcon">▶️</span> Play Music
+            </button>
+            <audio id="bgMusic" loop>
+                <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg">
+            </audio>
+            <p class="music-title">🎩 Professor Layton - More London Streets</p>
         </div>
-        <div class="kitty-orbit" id="kittyOrbit">
-            <div class="kitty" id="kitty">🐱</div>
+        
+        <div class="planet-container">
+            <div class="planet" id="spacePlanet"></div>
+            <div class="ring"></div>
+            <div class="moon-orbit">
+                <div class="moon"></div>
+            </div>
         </div>
-        <div class="dog-orbit" id="dogOrbit">
-            <div class="dog" id="dog">🐕</div>
+    </section>
+    
+    <!-- ANIMALS SECTION -->
+    <section class="section section-animals" id="section-animals">
+        <h1 class="section-title">🐾 Animal Kingdom</h1>
+        
+        <div class="score-display">
+            🐕 Dog Score: <span id="dogScore">0</span>
         </div>
-    </div>
+        
+        <div class="animals-arena">
+            <div class="chase-planet" id="chasePlanet"></div>
+            <div class="kitty-orbit" id="kittyOrbit">
+                <div class="kitty" id="kitty">🐱</div>
+            </div>
+            <div class="dog-orbit" id="dogOrbit">
+                <div class="dog" id="dog">🐕</div>
+            </div>
+        </div>
+        
+        <div class="elephant-container" id="elephant" onclick="sprayWater()">
+            🐘
+            <div class="trunk-spray" id="trunkSpray" style="display: none;">💦</div>
+        </div>
+        <p style="color: #d4a574; font-style: italic;">Click the elephant to spray water! 💦</p>
+    </section>
+    
+    <!-- GAMES SECTION -->
+    <section class="section section-games" id="section-games">
+        <canvas id="gameCanvas"></canvas>
+        
+        <div class="game-instructions">🎮 Click to shoot asteroids! Defend the planet! 🌍</div>
+        
+        <div class="planet-health-bar">
+            <div class="planet-health-fill" id="healthFill" style="width: 100%"></div>
+        </div>
+        
+        <div class="game-ui">
+            <div class="game-stat">☄️ Destroyed: <span id="asteroidsDestroyed">0</span></div>
+            <div class="game-stat">🌟 Wave: <span id="waveNumber">1</span></div>
+        </div>
+        
+        <div class="game-over-screen" id="gameOverScreen">
+            <h2>💥 Planet Destroyed!</h2>
+            <p>You destroyed <span id="finalScore">0</span> asteroids!</p>
+            <button class="restart-btn" onclick="restartGame()">🚀 Play Again</button>
+        </div>
+    </section>
+    
     <script>
+        // SECTION NAVIGATION
+        let currentSection = 'space';
+        let gameActive = false;
+        
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById('section-' + sectionName).classList.add('active');
+            document.getElementById('btn-' + sectionName).classList.add('active');
+            
+            currentSection = sectionName;
+            
+            // Handle game canvas
+            const canvas = document.getElementById('gameCanvas');
+            if (sectionName === 'games') {
+                canvas.style.pointerEvents = 'auto';
+                gameActive = true;
+                if (!gameLoopStarted) startGameLoop();
+            } else {
+                canvas.style.pointerEvents = 'none';
+                gameActive = false;
+            }
+        }
+        
+        // STARS
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 100; i++) {
             const star = document.createElement('div');
@@ -594,58 +697,39 @@
             starsContainer.appendChild(star);
         }
         
+        // MUSIC
         const bgMusic = document.getElementById('bgMusic');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playIcon = document.getElementById('playIcon');
         let isPlaying = false;
         
-        // Auto-play music on page load
-        window.addEventListener('load', function() {
-            bgMusic.play().then(() => {
-                isPlaying = true;
-                playPauseBtn.innerHTML = '<span id="playIcon">⏸️</span> Pause Music';
-            }).catch(e => {
-                console.log('Autoplay blocked by browser, click to play');
-            });
-        });
-        
         function toggleMusic() {
             if (isPlaying) {
                 bgMusic.pause();
-                playIcon.textContent = '▶️';
                 playPauseBtn.innerHTML = '<span id="playIcon">▶️</span> Play Music';
             } else {
                 bgMusic.play();
-                playIcon.textContent = '⏸️';
                 playPauseBtn.innerHTML = '<span id="playIcon">⏸️</span> Pause Music';
             }
             isPlaying = !isPlaying;
         }
-        
-        
     </script>
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // Three.js Sun with lighting effects
+        // Three.js Sun
         const sunContainer = document.getElementById('sun-container');
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
         renderer.setSize(150, 150);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         sunContainer.appendChild(renderer.domElement);
         
-        // Sun sphere with glowing material
         const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
-        const sunMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffdd00
-        });
+        const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
         const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.castShadow = true;
         scene.add(sun);
         
-        // Glow effect using sprite
         const spriteMaterial = new THREE.SpriteMaterial({
             map: createGlowTexture(),
             color: 0xffaa00,
@@ -656,14 +740,9 @@
         glowSprite.scale.set(8, 8, 1);
         sun.add(glowSprite);
         
-        // Point light emanating from sun
         const sunLight = new THREE.PointLight(0xffdd44, 2, 100);
-        sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 512;
-        sunLight.shadow.mapSize.height = 512;
         sun.add(sunLight);
         
-        // Corona/flare particles
         const coronaGeometry = new THREE.BufferGeometry();
         const coronaCount = 200;
         const coronaPositions = new Float32Array(coronaCount * 3);
@@ -700,8 +779,7 @@
             gradient.addColorStop(1, 'rgba(255, 100, 0, 0)');
             ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, 256, 256);
-            const texture = new THREE.CanvasTexture(canvas);
-            return texture;
+            return new THREE.CanvasTexture(canvas);
         }
         
         function animateSun() {
@@ -709,25 +787,25 @@
             sun.rotation.y += 0.005;
             corona.rotation.y -= 0.003;
             corona.rotation.x += 0.002;
-            // Pulsing glow
             const pulse = 1 + Math.sin(Date.now() * 0.002) * 0.1;
             glowSprite.scale.set(8 * pulse, 8 * pulse, 1);
             renderer.render(scene, camera);
         }
         animateSun();
     </script>
+    
     <script>
-        // Dog chases cat with dynamic speed!
+        // DOG CHASES CAT
         let catAngle = 180;
         let dogAngle = 0;
-        let catSpeed = 1.2; // degrees per frame
-        let dogSpeed = 1.8; // dog is faster base speed
+        let catSpeed = 1.2;
+        let dogSpeed = 1.8;
         let dogScore = 0;
-        const catchDistance = 30; // degrees to catch
+        const catchDistance = 30;
         let catchCooldown = false;
         const catNormalSpeed = 1.2;
         const catEscapeSpeed = 4.5;
-        const dangerDistance = 60; // degrees
+        const dangerDistance = 60;
         
         const kittyOrbit = document.getElementById('kittyOrbit');
         const dogOrbit = document.getElementById('dogOrbit');
@@ -739,19 +817,47 @@
             return diff > 180 ? 360 - diff : diff;
         }
         
+        const planetPalettes = [
+            { c1: '#e74c3c', c2: '#c0392b', c3: '#7b241c', c4: '#4a1410', glow: 'rgba(231, 76, 60, 0.4)' },
+            { c1: '#9b59b6', c2: '#8e44ad', c3: '#5b2c6f', c4: '#2c1338', glow: 'rgba(155, 89, 182, 0.4)' },
+            { c1: '#2ecc71', c2: '#27ae60', c3: '#1e8449', c4: '#0e4023', glow: 'rgba(46, 204, 113, 0.4)' },
+            { c1: '#f39c12', c2: '#d68910', c3: '#9a7d0a', c4: '#5c4a06', glow: 'rgba(243, 156, 18, 0.4)' },
+            { c1: '#e91e63', c2: '#c2185b', c3: '#880e4f', c4: '#4a0728', glow: 'rgba(233, 30, 99, 0.4)' },
+            { c1: '#00bcd4', c2: '#0097a7', c3: '#006064', c4: '#003638', glow: 'rgba(0, 188, 212, 0.4)' },
+            { c1: '#ff5722', c2: '#e64a19', c3: '#bf360c', c4: '#6e1f07', glow: 'rgba(255, 87, 34, 0.4)' },
+            { c1: '#4a90a4', c2: '#2d5a6b', c3: '#1a3a4a', c4: '#0d1f2a', glow: 'rgba(74, 144, 164, 0.4)' }
+        ];
+        
+        let currentPaletteIndex = 7;
+        
+        function changePlanetColor() {
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * planetPalettes.length);
+            } while (newIndex === currentPaletteIndex);
+            currentPaletteIndex = newIndex;
+            
+            const palette = planetPalettes[newIndex];
+            const planets = document.querySelectorAll('.planet, .chase-planet');
+            planets.forEach(planet => {
+                planet.style.setProperty('--planet-color1', palette.c1);
+                planet.style.setProperty('--planet-color2', palette.c2);
+                planet.style.setProperty('--planet-color3', palette.c3);
+                planet.style.setProperty('--planet-color4', palette.c4);
+                planet.style.setProperty('--planet-glow', palette.glow);
+                planet.style.filter = 'brightness(1.5)';
+                setTimeout(() => planet.style.filter = '', 300);
+            });
+        }
+        
         function animateChase() {
-            // Calculate distance between cat and dog
             const distance = getAngleDifference(catAngle, dogAngle);
             
-            // Check if dog caught the cat!
             if (distance < catchDistance && !catchCooldown) {
                 dogScore++;
                 document.getElementById('dogScore').textContent = dogScore;
-                
-                // Change planet color!
                 changePlanetColor();
                 
-                // Create catch effect
                 const effect = document.createElement('div');
                 effect.className = 'catch-effect';
                 effect.textContent = '🎉 CAUGHT!';
@@ -761,13 +867,11 @@
                 document.body.appendChild(effect);
                 setTimeout(() => effect.remove(), 1000);
                 
-                // Reset positions - cat escapes to opposite side
                 catAngle = (dogAngle + 180) % 360;
                 catchCooldown = true;
                 setTimeout(() => catchCooldown = false, 500);
             }
             
-            // Cat speeds up when dog is close!
             if (distance < dangerDistance) {
                 catSpeed = catEscapeSpeed;
                 kitty.style.filter = 'drop-shadow(0 0 20px rgba(255, 50, 50, 0.9))';
@@ -780,11 +884,9 @@
                 dog.textContent = '🐕';
             }
             
-            // Update positions
             catAngle = (catAngle + catSpeed) % 360;
             dogAngle = (dogAngle + dogSpeed) % 360;
             
-            // Apply rotations
             kittyOrbit.style.transform = `translate(-50%, -50%) rotateZ(${catAngle}deg)`;
             kitty.style.transform = `rotateZ(${-catAngle}deg)`;
             
@@ -793,50 +895,62 @@
             
             requestAnimationFrame(animateChase);
         }
-        
-        // Planet color palettes for when dog catches cat
-        const planetPalettes = [
-            { c1: '#e74c3c', c2: '#c0392b', c3: '#7b241c', c4: '#4a1410', glow: 'rgba(231, 76, 60, 0.4)' },
-            { c1: '#9b59b6', c2: '#8e44ad', c3: '#5b2c6f', c4: '#2c1338', glow: 'rgba(155, 89, 182, 0.4)' },
-            { c1: '#2ecc71', c2: '#27ae60', c3: '#1e8449', c4: '#0e4023', glow: 'rgba(46, 204, 113, 0.4)' },
-            { c1: '#f39c12', c2: '#d68910', c3: '#9a7d0a', c4: '#5c4a06', glow: 'rgba(243, 156, 18, 0.4)' },
-            { c1: '#e91e63', c2: '#c2185b', c3: '#880e4f', c4: '#4a0728', glow: 'rgba(233, 30, 99, 0.4)' },
-            { c1: '#00bcd4', c2: '#0097a7', c3: '#006064', c4: '#003638', glow: 'rgba(0, 188, 212, 0.4)' },
-            { c1: '#ff5722', c2: '#e64a19', c3: '#bf360c', c4: '#6e1f07', glow: 'rgba(255, 87, 34, 0.4)' },
-            { c1: '#4a90a4', c2: '#2d5a6b', c3: '#1a3a4a', c4: '#0d1f2a', glow: 'rgba(74, 144, 164, 0.4)' }
-        ];
-        
-        let currentPaletteIndex = 7; // Start with original
-        
-        function changePlanetColor() {
-            // Pick a random palette different from current
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * planetPalettes.length);
-            } while (newIndex === currentPaletteIndex);
-            currentPaletteIndex = newIndex;
-            
-            const palette = planetPalettes[newIndex];
-            const planet = document.querySelector('.planet');
-            planet.style.setProperty('--planet-color1', palette.c1);
-            planet.style.setProperty('--planet-color2', palette.c2);
-            planet.style.setProperty('--planet-color3', palette.c3);
-            planet.style.setProperty('--planet-color4', palette.c4);
-            planet.style.setProperty('--planet-glow', palette.glow);
-            planet.style.setProperty('--planet-glow-outer', palette.glow.replace('0.4', '0.2'));
-            
-            // Add a flash effect
-            planet.style.filter = 'brightness(1.5)';
-            setTimeout(() => planet.style.filter = '', 300);
-        }
-        
         animateChase();
+        
+        // ELEPHANT WATER SPRAY
+        let isSprayingWater = false;
+        let sprayInterval = null;
+        
+        function sprayWater() {
+            if (isSprayingWater) return;
+            isSprayingWater = true;
+            
+            const elephant = document.getElementById('elephant');
+            const trunkSpray = document.getElementById('trunkSpray');
+            const rect = elephant.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top;
+            
+            trunkSpray.style.display = 'block';
+            
+            let sprayCount = 0;
+            sprayInterval = setInterval(() => {
+                if (sprayCount >= 15) {
+                    clearInterval(sprayInterval);
+                    isSprayingWater = false;
+                    trunkSpray.style.display = 'none';
+                    return;
+                }
+                
+                for (let i = 0; i < 5; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'water-spray';
+                    drop.textContent = ['💧', '💦', '🌊'][Math.floor(Math.random() * 3)];
+                    drop.style.left = centerX + 'px';
+                    drop.style.top = centerY + 'px';
+                    
+                    const angle = -30 - Math.random() * 120;
+                    const distance = 100 + Math.random() * 150;
+                    const radians = angle * Math.PI / 180;
+                    const sprayX = Math.cos(radians) * distance;
+                    const sprayY = Math.sin(radians) * distance;
+                    
+                    drop.style.setProperty('--spray-x', sprayX + 'px');
+                    drop.style.setProperty('--spray-y', sprayY + 'px');
+                    
+                    document.body.appendChild(drop);
+                    setTimeout(() => drop.remove(), 1000);
+                }
+                sprayCount++;
+            }, 100);
+        }
     </script>
     
     <script>
-        // ASTEROID DEFENSE GAME!
+        // ASTEROID DEFENSE GAME
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        let gameLoopStarted = false;
         
         function resizeCanvas() {
             canvas.width = window.innerWidth;
@@ -845,7 +959,6 @@
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
         
-        // Game state
         let asteroids = [];
         let bullets = [];
         let particles = [];
@@ -856,13 +969,11 @@
         let mouseX = canvas.width / 2;
         let mouseY = canvas.height / 2;
         
-        // Planet center (where the CSS planet is)
         const getPlanetCenter = () => ({
             x: canvas.width / 2,
-            y: canvas.height / 2 + 100
+            y: canvas.height / 2
         });
         
-        // Asteroid class
         class Asteroid {
             constructor() {
                 const angle = Math.random() * Math.PI * 2;
@@ -877,7 +988,6 @@
                 this.vertices = this.generateVertices();
                 this.health = Math.ceil(this.size / 15);
                 
-                // Move towards planet
                 const dx = planet.x - this.x;
                 const dy = planet.y - this.y;
                 const dist = Math.sqrt(dx * dx + dy * dy);
@@ -906,7 +1016,6 @@
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate(this.rotation);
-                
                 ctx.beginPath();
                 this.vertices.forEach((v, i) => {
                     const x = Math.cos(v.angle) * v.radius;
@@ -915,19 +1024,15 @@
                     else ctx.lineTo(x, y);
                 });
                 ctx.closePath();
-                
                 ctx.fillStyle = '#8B7355';
                 ctx.fill();
                 ctx.strokeStyle = '#5D4E37';
                 ctx.lineWidth = 3;
                 ctx.stroke();
-                
-                // Crater details
                 ctx.beginPath();
                 ctx.arc(this.size * 0.2, -this.size * 0.1, this.size * 0.15, 0, Math.PI * 2);
                 ctx.fillStyle = '#6B5344';
                 ctx.fill();
-                
                 ctx.restore();
             }
             
@@ -935,11 +1040,10 @@
                 const planet = getPlanetCenter();
                 const dx = this.x - planet.x;
                 const dy = this.y - planet.y;
-                return Math.sqrt(dx * dx + dy * dy) < 100 + this.size;
+                return Math.sqrt(dx * dx + dy * dy) < 80 + this.size;
             }
         }
         
-        // Bullet class
         class Bullet {
             constructor(x, y, targetX, targetY) {
                 const planet = getPlanetCenter();
@@ -963,32 +1067,23 @@
             }
             
             draw() {
-                // Trail
                 this.trail.forEach((p, i) => {
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, this.size * (i / this.trail.length) * 0.5, 0, Math.PI * 2);
                     ctx.fillStyle = `rgba(255, 200, 100, ${i / this.trail.length * 0.5})`;
                     ctx.fill();
                 });
-                
-                // Bullet
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
                 ctx.fillStyle = '#FFD700';
                 ctx.fill();
-                ctx.shadowColor = '#FFA500';
-                ctx.shadowBlur = 15;
-                ctx.fill();
-                ctx.shadowBlur = 0;
             }
             
             isOffScreen() {
-                return this.x < -50 || this.x > canvas.width + 50 || 
-                       this.y < -50 || this.y > canvas.height + 50;
+                return this.x < -50 || this.x > canvas.width + 50 || this.y < -50 || this.y > canvas.height + 50;
             }
         }
         
-        // Particle class for explosions
         class Particle {
             constructor(x, y, color) {
                 this.x = x;
@@ -1026,7 +1121,7 @@
         }
         
         function spawnAsteroid() {
-            if (!gameOver && asteroids.length < 5 + waveNumber * 2) {
+            if (!gameOver && gameActive && asteroids.length < 5 + waveNumber * 2) {
                 asteroids.push(new Asteroid());
             }
         }
@@ -1049,7 +1144,6 @@
                             asteroidsDestroyed++;
                             document.getElementById('asteroidsDestroyed').textContent = asteroidsDestroyed;
                             
-                            // Check for wave completion
                             if (asteroidsDestroyed % 10 === 0) {
                                 waveNumber++;
                                 document.getElementById('waveNumber').textContent = waveNumber;
@@ -1072,11 +1166,31 @@
         }
         
         function gameLoop() {
+            if (!gameActive) {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                requestAnimationFrame(gameLoop);
+                return;
+            }
+            
             if (gameOver) return;
             
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            // Update and draw asteroids
+            // Draw planet in center
+            const planet = getPlanetCenter();
+            ctx.beginPath();
+            ctx.arc(planet.x, planet.y, 60, 0, Math.PI * 2);
+            const gradient = ctx.createRadialGradient(planet.x - 20, planet.y - 20, 0, planet.x, planet.y, 60);
+            gradient.addColorStop(0, '#4a90a4');
+            gradient.addColorStop(0.5, '#2d5a6b');
+            gradient.addColorStop(1, '#1a3a4a');
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.shadowColor = 'rgba(74, 144, 164, 0.6)';
+            ctx.shadowBlur = 30;
+            ctx.fill();
+            ctx.shadowBlur = 0;
+            
             asteroids.forEach((asteroid, i) => {
                 asteroid.update();
                 asteroid.draw();
@@ -1095,14 +1209,12 @@
                 }
             });
             
-            // Update and draw bullets
             bullets.forEach((bullet, i) => {
                 bullet.update();
                 bullet.draw();
                 if (bullet.isOffScreen()) bullets.splice(i, 1);
             });
             
-            // Update and draw particles
             particles.forEach((particle, i) => {
                 particle.update();
                 particle.draw();
@@ -1111,7 +1223,7 @@
             
             checkCollisions();
             
-            // Draw crosshair
+            // Crosshair
             ctx.beginPath();
             ctx.arc(mouseX, mouseY, 15, 0, Math.PI * 2);
             ctx.strokeStyle = 'rgba(255, 215, 0, 0.7)';
@@ -1127,14 +1239,13 @@
             requestAnimationFrame(gameLoop);
         }
         
-        // Input handlers
         canvas.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
         });
         
         canvas.addEventListener('click', (e) => {
-            if (!gameOver) {
+            if (!gameOver && gameActive) {
                 bullets.push(new Bullet(0, 0, e.clientX, e.clientY));
             }
         });
@@ -1151,71 +1262,13 @@
             document.getElementById('waveNumber').textContent = '1';
             document.getElementById('gameOverScreen').style.display = 'none';
             updateHealthBar();
+        }
+        
+        function startGameLoop() {
+            gameLoopStarted = true;
+            setInterval(spawnAsteroid, 2000);
             gameLoop();
         }
-        
-        // Start game
-        setInterval(spawnAsteroid, 2000);
-        gameLoop();
-        
-        // Elephant water spray!
-        let isSprayingWater = false;
-        let sprayInterval = null;
-        
-        function sprayWater() {
-            if (isSprayingWater) return;
-            isSprayingWater = true;
-            
-            const elephant = document.getElementById('elephant');
-            const trunkSpray = document.getElementById('trunkSpray');
-            const rect = elephant.getBoundingClientRect();
-            const centerX = rect.left + rect.width / 2;
-            const centerY = rect.top;
-            
-            trunkSpray.style.display = 'block';
-            
-            let sprayCount = 0;
-            sprayInterval = setInterval(() => {
-                if (sprayCount >= 15) {
-                    clearInterval(sprayInterval);
-                    isSprayingWater = false;
-                    trunkSpray.style.display = 'none';
-                    return;
-                }
-                
-                // Create multiple water droplets
-                for (let i = 0; i < 5; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'water-spray';
-                    drop.textContent = ['💧', '💦', '🌊'][Math.floor(Math.random() * 3)];
-                    drop.style.left = centerX + 'px';
-                    drop.style.top = centerY + 'px';
-                    
-                    // Random spray direction (upward arc)
-                    const angle = -30 - Math.random() * 120; // -30 to -150 degrees (upward)
-                    const distance = 100 + Math.random() * 150;
-                    const radians = angle * Math.PI / 180;
-                    const sprayX = Math.cos(radians) * distance;
-                    const sprayY = Math.sin(radians) * distance;
-                    
-                    drop.style.setProperty('--spray-x', sprayX + 'px');
-                    drop.style.setProperty('--spray-y', sprayY + 'px');
-                    
-                    document.body.appendChild(drop);
-                    
-                    setTimeout(() => drop.remove(), 1000);
-                }
-                
-                sprayCount++;
-            }, 100);
-        }
-        
-        // Auto spray every few seconds for fun!
-        setInterval(() => {
-            if (Math.random() > 0.7 && !isSprayingWater) {
-                sprayWater();
-            }
-        }, 5000);
     </script>
 </body>
 </html>
