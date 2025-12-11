@@ -79,6 +79,35 @@
             0%, 100% { transform: rotate(-2deg); }
             50% { transform: rotate(2deg); }
         }
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            border: 4px solid #8B4513;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            background: #DEB887;
+        }
+        .chess-square {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chess-square:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px gold;
+        }
+        .chess-square.light {
+            background: #F0D9B5;
+        }
+        .chess-square.dark {
+            background: #B58863;
+        }
         .greeting {
             font-size: 1.8rem;
             color: #FFD700;
@@ -111,6 +140,37 @@
     <div class="scene">
         <h1>✨ Welcome to the Void ✨</h1>
         <p class="greeting">👋 Bonjour Madame Michu ! 🥐</p>
+        <div class="chessboard" id="chessboard"></div>
+        <script>
+            const pieces = {
+                'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+                'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+            };
+            const initialBoard = [
+                ['r','n','b','q','k','b','n','r'],
+                ['p','p','p','p','p','p','p','p'],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['','','','','','','',''],
+                ['P','P','P','P','P','P','P','P'],
+                ['R','N','B','Q','K','B','N','R']
+            ];
+            const board = document.getElementById('chessboard');
+            for(let row = 0; row < 8; row++) {
+                for(let col = 0; col < 8; col++) {
+                    const square = document.createElement('div');
+                    square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+                    const piece = initialBoard[row][col];
+                    if(piece) {
+                        square.textContent = pieces[piece];
+                        square.style.color = piece === piece.toUpperCase() ? '#fff' : '#000';
+                        square.style.textShadow = piece === piece.toUpperCase() ? '1px 1px 2px #000' : '1px 1px 2px #fff';
+                    }
+                    board.appendChild(square);
+                }
+            }
+        </script>
         <div class="tree">
             <div class="foliage">
                 <div class="apple apple-1"></div>
