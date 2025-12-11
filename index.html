@@ -198,14 +198,14 @@
 </div>
 <div id="audio-control">
 <div class="audio-title">🎵 Background Music</div>
-<button id="play-pause-btn">Play</button>
+<button id="play-pause-btn">Pause</button>
 <div class="volume-control">
 <span class="volume-icon">🔊</span>
 <input id="volume-slider" max="100" min="0" type="range" value="70"/>
 </div>
 <div class="song-info">More London Streets</div>
 </div>
-<audio crossorigin="anonymous" id="background-audio">
+<audio autoplay="" crossorigin="anonymous" id="background-audio">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
     Your browser does not support the audio element.
 </audio>
@@ -217,6 +217,12 @@
         const volumeSlider = document.getElementById('volume-slider');
         
         audio.volume = 0.7;
+        
+        // Auto-play on page load
+        audio.play().catch(error => {
+            console.log('Autoplay prevented. User interaction required:', error);
+            playPauseBtn.textContent = 'Play';
+        });
         
         playPauseBtn.addEventListener('click', () => {
             if (audio.paused) {
