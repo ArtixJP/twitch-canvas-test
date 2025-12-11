@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code</title>
+<style>
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
@@ -15,10 +16,25 @@
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        h1 { 
+            font-size: 3rem; 
+            text-align: center; 
+            animation: blink 1s ease-in-out infinite;
+            text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #9b59b6, 0 0 40px #9b59b6;
+        }
+        @keyframes blink {
+            0%, 100% { 
+                opacity: 1; 
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #9b59b6, 0 0 40px #9b59b6;
+            }
+            50% { 
+                opacity: 0.3; 
+                text-shadow: 0 0 5px #fff, 0 0 10px #9b59b6;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1>Hello World</h1>
 </body>
 </html>
