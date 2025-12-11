@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
@@ -584,123 +584,7 @@
     </script><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script></head>
 <body><section class="content-section" id="space-section" style="display: none;"><div id="canvas-container"></div><h1 style="position: relative; z-index: 10; font-size: 3rem; text-align: center; color: white; text-shadow: 0 0 20px rgba(100, 200, 255, 0.8); margin: 100px 50px 50px; animation: glow 2s ease-in-out infinite alternate;">Cosmic Journey</h1></section>
 <nav id="main-nav" style="position: fixed; top: 0; left: 0; right: 0; z-index: 1000; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); border-bottom: 2px solid rgba(100, 200, 255, 0.3); padding: 20px 0; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);"><div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 40px; padding: 0 20px;"><button class="nav-btn" data-section="space" style="background: linear-gradient(135deg, #4a90e2, #6bb6ff); border: none; padding: 12px 30px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4);">🌌 Space</button><button class="nav-btn" data-section="animals" style="background: linear-gradient(135deg, #e74c3c, #ff6b6b); border: none; padding: 12px 30px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);">🐾 Animals</button><button class="nav-btn" data-section="games" style="background: linear-gradient(135deg, #9b59b6, #e74c3c); border: none; padding: 12px 30px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);">🎮 Games</button></div></nav><section class="content-section" id="animals-section" style="display: none; min-height: 100vh; padding-top: 100px;"><div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;"><h1 style="color: white; text-align: center; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(210, 105, 30, 0.8);">Space Animals Adventure</h1><p style="color: rgba(255, 255, 255, 0.7); text-align: center; font-size: 1.2rem; margin-bottom: 60px;">Watch the cosmic chase between our adorable space creatures!</p><div id="animals-canvas-container" style="width: 100%; height: 600px; border-radius: 20px; overflow: hidden; box-shadow: 0 0 40px rgba(100, 200, 255, 0.3);"></div><div id="score-display" style="position: fixed; top: 120px; right: 30px; z-index: 100; background: rgba(0, 0, 0, 0.7); padding: 20px 30px; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid rgba(210, 105, 30, 0.5); box-shadow: 0 0 20px rgba(210, 105, 30, 0.4);"><div style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">Dog Score</div><div id="dog-score" style="color: #d2691e; font-size: 3rem; font-weight: bold; text-shadow: 0 0 15px rgba(210, 105, 30, 0.8);">0</div></div><div style="margin-top: 40px; text-align: center;"><h2 style="color: white; font-size: 2rem; margin-bottom: 20px;">Meet the Characters</h2><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; margin-top: 30px;"><div style="background: rgba(255, 182, 193, 0.1); border: 2px solid rgba(255, 182, 193, 0.3); border-radius: 15px; padding: 30px; text-align: center;"><div style="font-size: 4rem; margin-bottom: 15px;">🐱</div><h3 style="color: #ffb6c1; font-size: 1.5rem; margin-bottom: 10px;">Space Kitty</h3><p style="color: rgba(255, 255, 255, 0.6);">Swift and playful, always on the move!</p></div><div style="background: rgba(210, 105, 30, 0.1); border: 2px solid rgba(210, 105, 30, 0.3); border-radius: 15px; padding: 30px; text-align: center;"><div style="font-size: 4rem; margin-bottom: 15px;">🐕</div><h3 style="color: #d2691e; font-size: 1.5rem; margin-bottom: 10px;">Space Dog</h3><p style="color: rgba(255, 255, 255, 0.6);">Loyal chaser, never gives up!</p></div><div style="background: rgba(128, 128, 128, 0.1); border: 2px solid rgba(128, 128, 128, 0.3); border-radius: 15px; padding: 30px; text-align: center;"><div style="font-size: 4rem; margin-bottom: 15px;">🐘</div><h3 style="color: #808080; font-size: 1.5rem; margin-bottom: 10px;">Space Elephant</h3><p style="color: rgba(255, 255, 255, 0.6);">Wise and majestic, spraying cosmic water!</p></div></div></div></div></section>
-<script>
-        const container = document.getElementById('canvas-container');
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        container.appendChild(renderer.domElement);
-        
-        // Create planet
-        const geometry = new THREE.SphereGeometry(2, 64, 64);
-        const material = new THREE.MeshPhongMaterial({
-            color: 0x4a90e2,
-            emissive: 0x112244,
-            shininess: 30,
-            specular: 0x88ccff
-        });
-        const planet = new THREE.Mesh(geometry, material);
-        scene.add(planet);
-        
-        // Add atmosphere glow
-        const glowGeometry = new THREE.SphereGeometry(2.2, 64, 64);
-        const glowMaterial = new THREE.MeshBasicMaterial({
-            color: 0x6bb6ff,
-            transparent: true,
-            opacity: 0.2,
-            side: THREE.BackSide
-        });
-        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-        scene.add(glow);
-        
-        // Create moon
-        const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const moonMaterial = new THREE.MeshPhongMaterial({
-            color: 0xcccccc,
-            emissive: 0x222222,
-            shininess: 10
-        });
-        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-        
-        // Create moon glow
-        const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
-        const moonGlowMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.15,
-            side: THREE.BackSide
-        });
-        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
-        
-        // Group moon and its glow together
-        const moonGroup = new THREE.Group();
-        moonGroup.add(moon);
-        moonGroup.add(moonGlow);
-        scene.add(moonGroup);
-        
-        // Add stars
-        const starGeometry = new THREE.BufferGeometry();
-        const starVertices = [];
-        for(let i = 0; i < 1000; i++) {
-            const x = (Math.random() - 0.5) * 100;
-            const y = (Math.random() - 0.5) * 100;
-            const z = (Math.random() - 0.5) * 100;
-            starVertices.push(x, y, z);
-        }
-        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
-        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
-        const starsMesh = new THREE.Points(starGeometry, starMaterial);
-        scene.add(starsMesh);
-        
-        // Lighting
-        const light = new THREE.DirectionalLight(0xffffff, 1);
-        light.position.set(5, 3, 5);
-        scene.add(light);
-        
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-        
-        camera.position.z = 6;
-        
-        // Animation variables
-        let moonAngle = 0;
-        const moonOrbitRadius = 4;
-        const moonOrbitSpeed = 0.01;
-        
-        // Animation
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Rotate planet
-            planet.rotation.y += 0.003;
-            glow.rotation.y += 0.003;
-            
-            // Orbit moon around planet
-            moonAngle += moonOrbitSpeed;
-            moonGroup.position.x = Math.cos(moonAngle) * moonOrbitRadius;
-            moonGroup.position.z = Math.sin(moonAngle) * moonOrbitRadius;
-            moonGroup.position.y = Math.sin(moonAngle * 0.5) * 0.5; // Slight vertical movement
-            
-            // Rotate moon on its own axis
-            moon.rotation.y += 0.005;
-            moonGlow.rotation.y += 0.005;
-            
-            // Rotate stars
-            starsMesh.rotation.y += 0.0002;
-            
-            renderer.render(scene, camera);
-        }
-        animate();
-        
-        // Handle resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-    </script><audio id="background-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><section class="content-section" id="games-section" style="display: none; min-height: 100vh; padding-top: 100px;"><div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;"><h1 style="color: white; text-align: center; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(155, 89, 182, 0.8);">Cosmic Games</h1><p style="color: rgba(255, 255, 255, 0.7); text-align: center; font-size: 1.2rem; margin-bottom: 60px;">Challenge yourself with our space-themed mini-games!</p><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;"><div onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 10px 40px rgba(155, 89, 182, 0.5)';" style="background: rgba(155, 89, 182, 0.1); border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 20px; padding: 40px; text-align: center; transition: all 0.3s ease; cursor: pointer;"><div style="font-size: 5rem; margin-bottom: 20px;">🚀</div><h3 style="color: #9b59b6; font-size: 2rem; margin-bottom: 15px;">Cosmic Dodger</h3><p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">Navigate through asteroid fields and collect stars!</p><button id="toggle-game-btn" style="background: linear-gradient(135deg, #9b59b6, #e74c3c); border: none; padding: 15px 30px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5); transition: all 0.3s ease;">🎮 Play Now</button></div><div style="background: rgba(74, 144, 226, 0.1); border: 2px solid rgba(74, 144, 226, 0.3); border-radius: 20px; padding: 40px; text-align: center; opacity: 0.5;"><div style="font-size: 5rem; margin-bottom: 20px;">🌟</div><h3 style="color: #4a90e2; font-size: 2rem; margin-bottom: 15px;">Star Collector</h3><p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">Coming soon...</p><button disabled="" style="background: rgba(100, 100, 100, 0.3); border: none; padding: 15px 30px; border-radius: 50px; color: rgba(255, 255, 255, 0.5); font-weight: bold; cursor: not-allowed; font-size: 1rem;">Soon</button></div><div style="background: rgba(231, 76, 60, 0.1); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 20px; padding: 40px; text-align: center; opacity: 0.5;"><div style="font-size: 5rem; margin-bottom: 20px;">🌍</div><h3 style="color: #e74c3c; font-size: 2rem; margin-bottom: 15px;">Planet Defense</h3><p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">Coming soon...</p><button disabled="" style="background: rgba(100, 100, 100, 0.3); border: none; padding: 15px 30px; border-radius: 50px; color: rgba(255, 255, 255, 0.5); font-weight: bold; cursor: not-allowed; font-size: 1rem;">Soon</button></div></div></div></section><div id="audio-controls"><button id="play-pause-btn" title="Play/Pause Music"><span id="play-icon">▶</span><span id="pause-icon" style="display:none;">⏸</span></button><span id="music-title">Professor Layton - More London Streets</span></div><script>
+<audio id="background-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><section class="content-section" id="games-section" style="display: none; min-height: 100vh; padding-top: 100px;"><div style="max-width: 1200px; margin: 0 auto; padding: 40px 20px;"><h1 style="color: white; text-align: center; font-size: 3rem; margin-bottom: 20px; text-shadow: 0 0 20px rgba(155, 89, 182, 0.8);">Cosmic Games</h1><p style="color: rgba(255, 255, 255, 0.7); text-align: center; font-size: 1.2rem; margin-bottom: 60px;">Challenge yourself with our space-themed mini-games!</p><div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px;"><div onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';" onmouseover="this.style.transform='translateY(-10px)'; this.style.boxShadow='0 10px 40px rgba(155, 89, 182, 0.5)';" style="background: rgba(155, 89, 182, 0.1); border: 2px solid rgba(155, 89, 182, 0.3); border-radius: 20px; padding: 40px; text-align: center; transition: all 0.3s ease; cursor: pointer;"><div style="font-size: 5rem; margin-bottom: 20px;">🚀</div><h3 style="color: #9b59b6; font-size: 2rem; margin-bottom: 15px;">Cosmic Dodger</h3><p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">Navigate through asteroid fields and collect stars!</p><button id="toggle-game-btn" style="background: linear-gradient(135deg, #9b59b6, #e74c3c); border: none; padding: 15px 30px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5); transition: all 0.3s ease;">🎮 Play Now</button></div><div style="background: rgba(74, 144, 226, 0.1); border: 2px solid rgba(74, 144, 226, 0.3); border-radius: 20px; padding: 40px; text-align: center; opacity: 0.5;"><div style="font-size: 5rem; margin-bottom: 20px;">🌟</div><h3 style="color: #4a90e2; font-size: 2rem; margin-bottom: 15px;">Star Collector</h3><p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">Coming soon...</p><button disabled="" style="background: rgba(100, 100, 100, 0.3); border: none; padding: 15px 30px; border-radius: 50px; color: rgba(255, 255, 255, 0.5); font-weight: bold; cursor: not-allowed; font-size: 1rem;">Soon</button></div><div style="background: rgba(231, 76, 60, 0.1); border: 2px solid rgba(231, 76, 60, 0.3); border-radius: 20px; padding: 40px; text-align: center; opacity: 0.5;"><div style="font-size: 5rem; margin-bottom: 20px;">🌍</div><h3 style="color: #e74c3c; font-size: 2rem; margin-bottom: 15px;">Planet Defense</h3><p style="color: rgba(255, 255, 255, 0.6); margin-bottom: 25px;">Coming soon...</p><button disabled="" style="background: rgba(100, 100, 100, 0.3); border: none; padding: 15px 30px; border-radius: 50px; color: rgba(255, 255, 255, 0.5); font-weight: bold; cursor: not-allowed; font-size: 1rem;">Soon</button></div></div></div></section><div id="audio-controls"><button id="play-pause-btn" title="Play/Pause Music"><span id="play-icon">▶</span><span id="pause-icon" style="display:none;">⏸</span></button><span id="music-title">Professor Layton - More London Streets</span></div><script>
         const audio = document.getElementById('background-music');
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playIcon = document.getElementById('play-icon');
@@ -731,229 +615,87 @@
                 }).catch(() => {});
             }
         }, { once: true });
-    </script><script>
-        const audio = document.getElementById('background-music');
-        const playPauseBtn = document.getElementById('play-pause-btn');
-        const playIcon = document.getElementById('play-icon');
-        const pauseIcon = document.getElementById('pause-icon');
-        const dogScoreElement = document.getElementById('dog-score');
+    </script><script>function lerpColor(color1, color2, t) {
+    const r1 = (color1 >> 16) & 0xff;
+    const g1 = (color1 >> 8) & 0xff;
+    const b1 = color1 & 0xff;
+    
+    const r2 = (color2 >> 16) & 0xff;
+    const g2 = (color2 >> 8) & 0xff;
+    const b2 = color2 & 0xff;
+    
+    const r = Math.round(r1 + (r2 - r1) * t);
+    const g = Math.round(g1 + (g2 - g1) * t);
+    const b = Math.round(b1 + (b2 - b1) * t);
+    
+    return (r << 16) | (g << 8) | b;
+}
+
+window.checkCatch = function(distance) {
+    const catchDistance = 0.8;
+    const releaseDistance = 1.2;
+    
+    if (distance < catchDistance && !window.hasCaught) {
+        window.hasCaught = true;
+        window.dogScore++;
+        document.getElementById('dog-score').textContent = window.dogScore;
         
-        window.isPlaying = false;
-        window.dogScore = 0;
-        window.hasCaught = false;
-        const catchDistance = 0.8;
-        const releaseDistance = 1.2;
-        
-        playPauseBtn.addEventListener('click', () => {
-            if (window.isPlaying) {
-                audio.pause();
-                playIcon.style.display = 'inline';
-                pauseIcon.style.display = 'none';
-            } else {
-                audio.play();
-                playIcon.style.display = 'none';
-                pauseIcon.style.display = 'inline';
-            }
-            window.isPlaying = !window.isPlaying;
-        });
-        
-        // Fallback: Auto-play on first user interaction if not already playing
-        document.body.addEventListener('click', () => {
-            if (!window.isPlaying && audio.paused) {
-                audio.play().then(() => {
-                    window.isPlaying = true;
-                    playIcon.style.display = 'none';
-                    pauseIcon.style.display = 'inline';
-                }).catch(() => {});
-            }
-        }, { once: true });
-        
-        // Function to check if dog caught the cat
-        window.checkCatch = function(distance) {
-            if (distance < catchDistance && !window.hasCaught) {
-                window.hasCaught = true;
-                window.dogScore++;
-                dogScoreElement.textContent = window.dogScore;
-                
-                // Celebration animation
-                dogScoreElement.style.transform = 'scale(1.5)';
-                dogScoreElement.style.transition = 'transform 0.3s ease';
-                setTimeout(() => {
-                    dogScoreElement.style.transform = 'scale(1)';
-                }, 300);
-                
-                // Add a fun particle effect
-                const scoreDisplay = document.getElementById('score-display');
-                const particles = [];
-                for(let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.style.position = 'fixed';
-                    particle.style.width = '8px';
-                    particle.style.height = '8px';
-                    particle.style.borderRadius = '50%';
-                    particle.style.background = '#d2691e';
-                    particle.style.boxShadow = '0 0 10px #d2691e';
-                    particle.style.top = scoreDisplay.offsetTop + 50 + 'px';
-                    particle.style.left = scoreDisplay.offsetLeft + 60 + 'px';
-                    particle.style.zIndex = '999';
-                    particle.style.pointerEvents = 'none';
-                    document.body.appendChild(particle);
-                    particles.push(particle);
-                    
-                    const angle = (Math.PI * 2 * i) / 20;
-                    const velocity = 3;
-                    const vx = Math.cos(angle) * velocity;
-                    const vy = Math.sin(angle) * velocity;
-                    
-                    let x = 0, y = 0;
-                    const animate = () => {
-                        x += vx;
-                        y += vy;
-                        particle.style.transform = `translate(${x}px, ${y}px)`;
-                        particle.style.opacity = 1 - (Math.abs(x) + Math.abs(y)) / 200;
-                        
-                        if (Math.abs(x) < 100 && Math.abs(y) < 100) {
-                            requestAnimationFrame(animate);
-                        } else {
-                            particle.remove();
-                        }
-                    };
-                    animate();
-                }
-            } else if (distance > releaseDistance && window.hasCaught) {
-                window.hasCaught = false;
-            }
-        };
-    </script><script>
-        // Store original planet color
-        window.originalPlanetColor = 0x4a90e2;
-        window.originalPlanetEmissive = 0x112244;
-        window.isChangingColor = false;
-        
-        // Override the checkCatch function to include planet color change
-        const originalCheckCatch = window.checkCatch;
-        window.checkCatch = function(distance) {
-            const catchDistance = 0.8;
-            const releaseDistance = 1.2;
+        if (typeof planet !== 'undefined' && !window.isChangingColor) {
+            window.isChangingColor = true;
             
-            if (distance < catchDistance && !window.hasCaught) {
-                window.hasCaught = true;
-                window.dogScore++;
-                document.getElementById('dog-score').textContent = window.dogScore;
+            const celebrationColors = [
+                {color: 0xff69b4, emissive: 0xff1493},
+                {color: 0xffd700, emissive: 0xffa500},
+                {color: 0x00ff00, emissive: 0x00aa00},
+                {color: 0xff6347, emissive: 0xff4500}
+            ];
+            
+            const randomColor = celebrationColors[Math.floor(Math.random() * celebrationColors.length)];
+            
+            let progress = 0;
+            const duration = 2000;
+            const startTime = Date.now();
+            
+            const animateColor = () => {
+                const elapsed = Date.now() - startTime;
+                progress = Math.min(elapsed / duration, 1);
                 
-                // Change planet color!
-                if (typeof planet !== 'undefined' && !window.isChangingColor) {
-                    window.isChangingColor = true;
-                    
-                    // Flash to celebration colors
-                    const celebrationColors = [
-                        {color: 0xff69b4, emissive: 0xff1493}, // Hot pink
-                        {color: 0xffd700, emissive: 0xffa500}, // Gold
-                        {color: 0x00ff00, emissive: 0x00aa00}, // Green
-                        {color: 0xff6347, emissive: 0xff4500}  // Tomato red
-                    ];
-                    
-                    const randomColor = celebrationColors[Math.floor(Math.random() * celebrationColors.length)];
-                    
-                    // Animate color change
-                    let progress = 0;
-                    const duration = 2000; // 2 seconds
-                    const startTime = Date.now();
-                    
-                    const animateColor = () => {
-                        const elapsed = Date.now() - startTime;
-                        progress = Math.min(elapsed / duration, 1);
-                        
-                        if (progress < 0.3) {
-                            // Quick flash to celebration color
-                            const flashProgress = progress / 0.3;
-                            planet.material.color.setHex(lerpColor(window.originalPlanetColor, randomColor.color, flashProgress));
-                            planet.material.emissive.setHex(lerpColor(window.originalPlanetEmissive, randomColor.emissive, flashProgress));
-                        } else {
-                            // Slow fade back to original
-                            const fadeProgress = (progress - 0.3) / 0.7;
-                            planet.material.color.setHex(lerpColor(randomColor.color, window.originalPlanetColor, fadeProgress));
-                            planet.material.emissive.setHex(lerpColor(randomColor.emissive, window.originalPlanetEmissive, fadeProgress));
-                        }
-                        
-                        if (progress < 1) {
-                            requestAnimationFrame(animateColor);
-                        } else {
-                            window.isChangingColor = false;
-                            planet.material.color.setHex(window.originalPlanetColor);
-                            planet.material.emissive.setHex(window.originalPlanetEmissive);
-                        }
-                    };
-                    
-                    animateColor();
+                if (progress < 0.3) {
+                    const flashProgress = progress / 0.3;
+                    planet.material.color.setHex(lerpColor(window.originalPlanetColor, randomColor.color, flashProgress));
+                    planet.material.emissive.setHex(lerpColor(window.originalPlanetEmissive, randomColor.emissive, flashProgress));
+                } else {
+                    const fadeProgress = (progress - 0.3) / 0.7;
+                    planet.material.color.setHex(lerpColor(randomColor.color, window.originalPlanetColor, fadeProgress));
+                    planet.material.emissive.setHex(lerpColor(randomColor.emissive, window.originalPlanetEmissive, fadeProgress));
                 }
                 
-                // Keep original celebration animation
-                const dogScoreElement = document.getElementById('dog-score');
-                dogScoreElement.style.transform = 'scale(1.5)';
-                dogScoreElement.style.transition = 'transform 0.3s ease';
-                setTimeout(() => {
-                    dogScoreElement.style.transform = 'scale(1)';
-                }, 300);
-                
-                // Particle effect
-                const scoreDisplay = document.getElementById('score-display');
-                for(let i = 0; i < 20; i++) {
-                    const particle = document.createElement('div');
-                    particle.style.position = 'fixed';
-                    particle.style.width = '8px';
-                    particle.style.height = '8px';
-                    particle.style.borderRadius = '50%';
-                    particle.style.background = '#d2691e';
-                    particle.style.boxShadow = '0 0 10px #d2691e';
-                    particle.style.top = scoreDisplay.offsetTop + 50 + 'px';
-                    particle.style.left = scoreDisplay.offsetLeft + 60 + 'px';
-                    particle.style.zIndex = '999';
-                    particle.style.pointerEvents = 'none';
-                    document.body.appendChild(particle);
-                    
-                    const angle = (Math.PI * 2 * i) / 20;
-                    const velocity = 3;
-                    const vx = Math.cos(angle) * velocity;
-                    const vy = Math.sin(angle) * velocity;
-                    
-                    let x = 0, y = 0;
-                    const animate = () => {
-                        x += vx;
-                        y += vy;
-                        particle.style.transform = `translate(${x}px, ${y}px)`;
-                        particle.style.opacity = 1 - (Math.abs(x) + Math.abs(y)) / 200;
-                        
-                        if (Math.abs(x) < 100 && Math.abs(y) < 100) {
-                            requestAnimationFrame(animate);
-                        } else {
-                            particle.remove();
-                        }
-                    };
-                    animate();
+                if (progress < 1) {
+                    requestAnimationFrame(animateColor);
+                } else {
+                    window.isChangingColor = false;
+                    planet.material.color.setHex(window.originalPlanetColor);
+                    planet.material.emissive.setHex(window.originalPlanetEmissive);
                 }
-            } else if (distance > releaseDistance && window.hasCaught) {
-                window.hasCaught = false;
-            }
-        };
-        
-        // Helper function to interpolate between two hex colors
-        function lerpColor(color1, color2, t) {
-            const r1 = (color1 >> 16) & 0xff;
-            const g1 = (color1 >> 8) & 0xff;
-            const b1 = color1 & 0xff;
+            };
             
-            const r2 = (color2 >> 16) & 0xff;
-            const g2 = (color2 >> 8) & 0xff;
-            const b2 = color2 & 0xff;
-            
-            const r = Math.round(r1 + (r2 - r1) * t);
-            const g = Math.round(g1 + (g2 - g1) * t);
-            const b = Math.round(b1 + (b2 - b1) * t);
-            
-            return (r << 16) | (g << 8) | b;
+            animateColor();
         }
-    </script><div id="game-panel" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 200; background: rgba(0, 0, 0, 0.9); padding: 20px; border-radius: 20px; border: 3px solid rgba(100, 200, 255, 0.5); box-shadow: 0 0 40px rgba(100, 200, 255, 0.6); display: none;"><div style="text-align: center; margin-bottom: 15px;"><h2 style="color: #6bb6ff; margin: 0 0 10px 0; font-size: 1.8rem; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8);">Cosmic Dodger</h2><p style="color: rgba(255, 255, 255, 0.8); margin: 0 0 10px 0; font-size: 0.9rem;">Arrow keys to move • Dodge asteroids • Collect stars!</p><div style="display: flex; gap: 10px; justify-content: center; align-items: center;"><button id="start-game-btn" style="background: linear-gradient(135deg, #4a90e2, #6bb6ff); border: none; padding: 10px 25px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4); transition: all 0.3s ease;">Start Game</button><button id="close-game-btn" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); padding: 10px 25px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;">Close</button></div></div><div id="game-canvas-container" style="border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);"></div><div id="game-stats" style="margin-top: 15px; text-align: center; color: white; font-size: 1.2rem;"><span style="color: #ffd700;">Score: </span><span id="game-score">0</span><span style="margin-left: 20px; color: #ff6b6b;">Lives: </span><span id="game-lives">3</span></div></div><script>
+        
+        const dogScoreElement = document.getElementById('dog-score');
+        dogScoreElement.style.transform = 'scale(1.5)';
+        dogScoreElement.style.transition = 'transform 0.3s ease';
+        setTimeout(() => {
+            dogScoreElement.style.transform = 'scale(1)';
+        }, 300);
+    } else if (distance > releaseDistance && window.hasCaught) {
+        window.hasCaught = false;
+    }
+};
+
+window.dogScore = 0;
+window.hasCaught = false;
+window.isChangingColor = false;</script><div id="game-panel" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 200; background: rgba(0, 0, 0, 0.9); padding: 20px; border-radius: 20px; border: 3px solid rgba(100, 200, 255, 0.5); box-shadow: 0 0 40px rgba(100, 200, 255, 0.6); display: none;"><div style="text-align: center; margin-bottom: 15px;"><h2 style="color: #6bb6ff; margin: 0 0 10px 0; font-size: 1.8rem; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8);">Cosmic Dodger</h2><p style="color: rgba(255, 255, 255, 0.8); margin: 0 0 10px 0; font-size: 0.9rem;">Arrow keys to move • Dodge asteroids • Collect stars!</p><div style="display: flex; gap: 10px; justify-content: center; align-items: center;"><button id="start-game-btn" style="background: linear-gradient(135deg, #4a90e2, #6bb6ff); border: none; padding: 10px 25px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4); transition: all 0.3s ease;">Start Game</button><button id="close-game-btn" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); padding: 10px 25px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;">Close</button></div></div><div id="game-canvas-container" style="border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);"></div><div id="game-stats" style="margin-top: 15px; text-align: center; color: white; font-size: 1.2rem;"><span style="color: #ffd700;">Score: </span><span id="game-score">0</span><span style="margin-left: 20px; color: #ff6b6b;">Lives: </span><span id="game-lives">3</span></div></div><script>
 // Game variables
 let gameSketch;
 let gameActive = false;
@@ -1379,301 +1121,6 @@ class Particle {
         this.life = 255;
     }
 }
-</script><script>
-// Create adorable space elephant!
-const elephantGroup = new THREE.Group();
-
-// Elephant body (large sphere)
-const elephantBodyGeo = new THREE.SphereGeometry(0.6, 32, 32);
-const elephantMaterial = new THREE.MeshPhongMaterial({
-    color: 0x808080,
-    emissive: 0x202020,
-    shininess: 30
-});
-const elephantBody = new THREE.Mesh(elephantBodyGeo, elephantMaterial);
-elephantBody.castShadow = true;
-elephantGroup.add(elephantBody);
-
-// Elephant head (smaller sphere)
-const elephantHeadGeo = new THREE.SphereGeometry(0.45, 32, 32);
-const elephantHead = new THREE.Mesh(elephantHeadGeo, elephantMaterial);
-elephantHead.position.set(0.7, 0.2, 0);
-elephantHead.castShadow = true;
-elephantGroup.add(elephantHead);
-
-// Elephant trunk (curved cylinders)
-const trunkSegments = [];
-for(let i = 0; i < 5; i++) {
-    const trunkGeo = new THREE.CylinderGeometry(0.08 - i * 0.01, 0.08 - i * 0.01, 0.25, 16);
-    const trunkSegment = new THREE.Mesh(trunkGeo, elephantMaterial);
-    trunkSegment.position.set(
-        1.0 + i * 0.15,
-        0.1 - i * 0.15,
-        0
-    );
-    trunkSegment.rotation.z = 0.3 + i * 0.2;
-    trunkSegment.castShadow = true;
-    elephantGroup.add(trunkSegment);
-    trunkSegments.push(trunkSegment);
-}
-
-// Elephant ears (flat discs)
-const earGeo = new THREE.CircleGeometry(0.35, 32);
-const leftEar = new THREE.Mesh(earGeo, elephantMaterial);
-leftEar.position.set(0.5, 0.4, -0.4);
-leftEar.rotation.y = Math.PI / 4;
-leftEar.castShadow = true;
-elephantGroup.add(leftEar);
-
-const rightEar = new THREE.Mesh(earGeo, elephantMaterial);
-rightEar.position.set(0.5, 0.4, 0.4);
-rightEar.rotation.y = -Math.PI / 4;
-rightEar.castShadow = true;
-elephantGroup.add(rightEar);
-
-// Elephant eyes
-const eyeGeo = new THREE.SphereGeometry(0.08, 16, 16);
-const eyeMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
-
-const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
-leftEye.position.set(0.85, 0.35, -0.15);
-elephantGroup.add(leftEye);
-
-const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
-rightEye.position.set(0.85, 0.35, 0.15);
-elephantGroup.add(rightEye);
-
-// Elephant tusks
-const tuskGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.3, 8);
-const tuskMat = new THREE.MeshPhongMaterial({ color: 0xfffff0, shininess: 80 });
-
-const leftTusk = new THREE.Mesh(tuskGeo, tuskMat);
-leftTusk.position.set(0.9, 0.05, -0.15);
-leftTusk.rotation.z = 0.5;
-leftTusk.rotation.x = 0.3;
-leftTusk.castShadow = true;
-elephantGroup.add(leftTusk);
-
-const rightTusk = new THREE.Mesh(tuskGeo, tuskMat);
-rightTusk.position.set(0.9, 0.05, 0.15);
-rightTusk.rotation.z = 0.5;
-rightTusk.rotation.x = -0.3;
-rightTusk.castShadow = true;
-elephantGroup.add(rightTusk);
-
-// Elephant legs
-const legGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.5, 16);
-const legPositions = [
-    {x: 0.3, z: -0.3},
-    {x: 0.3, z: 0.3},
-    {x: -0.3, z: -0.3},
-    {x: -0.3, z: 0.3}
-];
-legPositions.forEach(pos => {
-    const leg = new THREE.Mesh(legGeo, elephantMaterial);
-    leg.position.set(pos.x, -0.5, pos.z);
-    leg.castShadow = true;
-    elephantGroup.add(leg);
-});
-
-// Elephant tail
-const tailGeo = new THREE.CylinderGeometry(0.05, 0.03, 0.4, 8);
-const tail = new THREE.Mesh(tailGeo, elephantMaterial);
-tail.position.set(-0.6, -0.1, 0);
-tail.rotation.z = -0.5;
-tail.castShadow = true;
-elephantGroup.add(tail);
-
-// Elephant glow
-const elephantGlowGeo = new THREE.SphereGeometry(0.9, 32, 32);
-const elephantGlowMat = new THREE.MeshBasicMaterial({
-    color: 0x808080,
-    transparent: true,
-    opacity: 0.1,
-    side: THREE.BackSide
-});
-const elephantGlow = new THREE.Mesh(elephantGlowGeo, elephantGlowMat);
-elephantGroup.add(elephantGlow);
-
-// Position elephant in center of scene
-elephantGroup.position.set(0, 0, 0);
-scene.add(elephantGroup);
-
-// Water particles system
-const waterParticles = [];
-const maxWaterParticles = 100;
-
-class WaterParticle {
-    constructor() {
-        const geo = new THREE.SphereGeometry(0.05, 8, 8);
-        const mat = new THREE.MeshPhongMaterial({
-            color: 0x4dd0e1,
-            transparent: true,
-            opacity: 0.8,
-            emissive: 0x1a5f7a
-        });
-        this.mesh = new THREE.Mesh(geo, mat);
-        this.reset();
-        scene.add(this.mesh);
-    }
-    
-    reset() {
-        // Start from trunk tip
-        const trunkTip = trunkSegments[trunkSegments.length - 1];
-        this.mesh.position.set(
-            1.6 + Math.random() * 0.1,
-            -0.5 + Math.random() * 0.1,
-            Math.random() * 0.1 - 0.05
-        );
-        
-        // Spray direction
-        this.velocity = new THREE.Vector3(
-            0.03 + Math.random() * 0.02,
-            0.01 + Math.random() * 0.02,
-            (Math.random() - 0.5) * 0.02
-        );
-        
-        this.gravity = -0.001;
-        this.life = 1.0;
-    }
-    
-    update() {
-        this.mesh.position.add(this.velocity);
-        this.velocity.y += this.gravity;
-        this.life -= 0.01;
-        this.mesh.material.opacity = this.life * 0.8;
-        
-        if (this.life <= 0) {
-            this.reset();
-        }
-    }
-}
-
-// Create water particles
-for(let i = 0; i < maxWaterParticles; i++) {
-    waterParticles.push(new WaterParticle());
-}
-
-// Store original animate function
-const originalAnimate = window.animate || animate;
-
-// Enhanced animate function
-function animate() {
-    requestAnimationFrame(animate);
-    
-    // Original animations
-    const sunScale = 1 + Math.sin(Date.now() * 0.001) * 0.05;
-    sun.scale.set(sunScale, sunScale, sunScale);
-    corona1.scale.set(sunScale * 1.1, sunScale * 1.1, sunScale * 1.1);
-    corona2.scale.set(sunScale * 1.2, sunScale * 1.2, sunScale * 1.2);
-    sun.rotation.y += 0.002;
-    corona1.rotation.y -= 0.003;
-    corona2.rotation.y += 0.001;
-    planet.rotation.y += 0.003;
-    glow.rotation.y += 0.003;
-    
-    moonAngle += moonOrbitSpeed;
-    moonGroup.position.x = Math.cos(moonAngle) * moonOrbitRadius;
-    moonGroup.position.z = Math.sin(moonAngle) * moonOrbitRadius;
-    moonGroup.position.y = Math.sin(moonAngle * 0.5) * 0.5;
-    moon.rotation.y += 0.005;
-    moonGlow.rotation.y += 0.005;
-    
-    const distance = Math.sqrt(
-        Math.pow(kittyGroup.position.x - dogGroup.position.x, 2) +
-        Math.pow(kittyGroup.position.y - dogGroup.position.y, 2) +
-        Math.pow(kittyGroup.position.z - dogGroup.position.z, 2)
-    );
-    
-    if (typeof window.checkCatch === 'function') {
-        window.checkCatch(distance);
-    }
-    
-    if (distance < dangerDistance && !kittyIsEscaping) {
-        kittyIsEscaping = true;
-        kittyOrbitSpeed = kittyEscapeSpeed;
-        kittyGlow.material.opacity = 0.35;
-        kittyGlow.material.color.setHex(0xff6b9d);
-    } else if (distance > safeDistance && kittyIsEscaping) {
-        kittyIsEscaping = false;
-        kittyOrbitSpeed = kittyNormalSpeed;
-        kittyGlow.material.opacity = 0.15;
-        kittyGlow.material.color.setHex(0xffb6c1);
-    }
-    
-    kittyAngle += kittyOrbitSpeed;
-    kittyGroup.position.x = Math.cos(kittyAngle) * kittyOrbitRadius;
-    kittyGroup.position.z = Math.sin(kittyAngle) * kittyOrbitRadius;
-    kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8;
-    
-    if (kittyIsEscaping) {
-        const escapeDirection = new THREE.Vector3(
-            kittyGroup.position.x - dogGroup.position.x,
-            kittyGroup.position.y - dogGroup.position.y,
-            kittyGroup.position.z - dogGroup.position.z
-        ).normalize();
-        const lookAtPoint = new THREE.Vector3(
-            kittyGroup.position.x + escapeDirection.x,
-            kittyGroup.position.y + escapeDirection.y,
-            kittyGroup.position.z + escapeDirection.z
-        );
-        kittyGroup.lookAt(lookAtPoint);
-    } else {
-        kittyGroup.lookAt(planet.position);
-    }
-    
-    kittyBody.position.y = Math.sin(Date.now() * 0.003) * 0.05;
-    kittyHead.position.y = 0.4 + Math.sin(Date.now() * 0.003) * 0.05;
-    
-    const tailSpeed = kittyIsEscaping ? 0.015 : 0.005;
-    kittyGroup.children.forEach((child, index) => {
-        if(index >= 14 && index <= 16) {
-            child.rotation.z = Math.sin(Date.now() * tailSpeed + index) * 0.3;
-        }
-    });
-    
-    const angleToKitty = Math.atan2(
-        kittyGroup.position.z - dogGroup.position.z,
-        kittyGroup.position.x - dogGroup.position.x
-    );
-    dogAngle += (angleToKitty - dogAngle) * 0.05 + dogSpeed * 0.3;
-    
-    dogGroup.position.x = Math.cos(dogAngle) * dogOrbitRadius;
-    dogGroup.position.z = Math.sin(dogAngle) * dogOrbitRadius;
-    dogGroup.position.y = Math.cos(dogAngle * 0.5) * 0.6;
-    dogGroup.lookAt(kittyGroup.position);
-    
-    dogBody.position.y = Math.sin(Date.now() * 0.01) * 0.08;
-    dogHead.position.y = 0.1 + Math.sin(Date.now() * 0.01) * 0.08;
-    dogTail.rotation.y = Math.sin(Date.now() * 0.01) * 0.5;
-    leftDogEar.rotation.x = Math.sin(Date.now() * 0.008) * 0.3;
-    rightDogEar.rotation.x = Math.sin(Date.now() * 0.008 + Math.PI) * 0.3;
-    
-    starsMesh.rotation.y += 0.0002;
-    
-    // Elephant animations
-    elephantBody.position.y = Math.sin(Date.now() * 0.002) * 0.05;
-    elephantHead.position.y = 0.2 + Math.sin(Date.now() * 0.002) * 0.05;
-    
-    // Animate trunk (wave motion)
-    trunkSegments.forEach((segment, i) => {
-        segment.rotation.z = 0.3 + i * 0.2 + Math.sin(Date.now() * 0.003 + i * 0.5) * 0.15;
-    });
-    
-    // Animate ears (gentle flapping)
-    leftEar.rotation.x = Math.sin(Date.now() * 0.002) * 0.1;
-    rightEar.rotation.x = Math.sin(Date.now() * 0.002 + Math.PI) * 0.1;
-    
-    // Animate tail
-    tail.rotation.y = Math.sin(Date.now() * 0.004) * 0.3;
-    
-    // Update water particles
-    waterParticles.forEach(particle => particle.update());
-    
-    renderer.render(scene, camera);
-}
-
-animate();
 </script><style>.nav-btn:hover { transform: scale(1.05); box-shadow: 0 6px 25px rgba(100, 200, 255, 0.6); } .nav-btn:active { transform: scale(0.95); } .nav-btn.active { box-shadow: 0 6px 30px rgba(100, 200, 255, 0.8); transform: scale(1.1); } .content-section { opacity: 0; transition: opacity 0.5s ease; } .content-section.active { display: block !important; animation: fadeIn 0.5s ease forwards; } @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }</style><script>
 // Navigation system
 const navButtons = document.querySelectorAll('.nav-btn');
@@ -1812,6 +1259,439 @@ navButtons.forEach(btn => {
         // Restart the timer
         startAutoRotation();
     });
+});
+</script><script>
+// Global variables
+let scene, camera, renderer, container;
+let planet, glow, moon, moonGlow, moonGroup;
+let sun, corona1, corona2, sunLight;
+let kittyGroup, dogGroup, elephantGroup;
+let starsMesh;
+let moonAngle = 0;
+const moonOrbitRadius = 4;
+const moonOrbitSpeed = 0.01;
+let kittyAngle = Math.PI;
+const kittyOrbitRadius = 3.5;
+let kittyOrbitSpeed = 0.015;
+const kittyNormalSpeed = 0.015;
+const kittyEscapeSpeed = 0.08;
+let kittyIsEscaping = false;
+let dogAngle = 0;
+const dogOrbitRadius = 3.5;
+const dogSpeed = 0.025;
+const dangerDistance = 1.5;
+const safeDistance = 2.5;
+let kittyBody, kittyHead;
+let dogBody, dogHead, dogTail, leftDogEar, rightDogEar;
+let trunkSegments = [];
+let leftEar, rightEar, tail;
+let waterParticles = [];
+const maxWaterParticles = 100;
+
+class WaterParticle {
+    constructor() {
+        const geo = new THREE.SphereGeometry(0.05, 8, 8);
+        const mat = new THREE.MeshPhongMaterial({
+            color: 0x4dd0e1,
+            transparent: true,
+            opacity: 0.8,
+            emissive: 0x1a5f7a
+        });
+        this.mesh = new THREE.Mesh(geo, mat);
+        this.reset();
+        scene.add(this.mesh);
+    }
+    
+    reset() {
+        this.mesh.position.set(
+            1.6 + Math.random() * 0.1,
+            -0.5 + Math.random() * 0.1,
+            Math.random() * 0.1 - 0.05
+        );
+        
+        this.velocity = new THREE.Vector3(
+            0.03 + Math.random() * 0.02,
+            0.01 + Math.random() * 0.02,
+            (Math.random() - 0.5) * 0.02
+        );
+        
+        this.gravity = -0.001;
+        this.life = 1.0;
+    }
+    
+    update() {
+        this.mesh.position.add(this.velocity);
+        this.velocity.y += this.gravity;
+        this.life -= 0.01;
+        this.mesh.material.opacity = this.life * 0.8;
+        
+        if (this.life <= 0) {
+            this.reset();
+        }
+    }
+}
+
+function initMainScene() {
+    container = document.getElementById('canvas-container');
+    scene = new THREE.Scene();
+    camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    container.appendChild(renderer.domElement);
+    
+    // Create SUN
+    const sunGeometry = new THREE.SphereGeometry(1.5, 64, 64);
+    const sunMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffd700,
+        emissive: 0xffa500,
+        emissiveIntensity: 1
+    });
+    sun = new THREE.Mesh(sunGeometry, sunMaterial);
+    sun.position.set(-8, 2, -5);
+    scene.add(sun);
+    
+    const coronaGeo1 = new THREE.SphereGeometry(1.8, 64, 64);
+    const coronaMat1 = new THREE.MeshBasicMaterial({
+        color: 0xffaa00,
+        transparent: true,
+        opacity: 0.3,
+        side: THREE.BackSide
+    });
+    corona1 = new THREE.Mesh(coronaGeo1, coronaMat1);
+    corona1.position.copy(sun.position);
+    scene.add(corona1);
+    
+    const coronaGeo2 = new THREE.SphereGeometry(2.2, 64, 64);
+    const coronaMat2 = new THREE.MeshBasicMaterial({
+        color: 0xff8800,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    corona2 = new THREE.Mesh(coronaGeo2, coronaMat2);
+    corona2.position.copy(sun.position);
+    scene.add(corona2);
+    
+    sunLight = new THREE.PointLight(0xffd700, 2, 50);
+    sunLight.position.copy(sun.position);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
+    
+    // Create planet
+    const geometry = new THREE.SphereGeometry(2, 64, 64);
+    const material = new THREE.MeshPhongMaterial({
+        color: 0x4a90e2,
+        emissive: 0x112244,
+        shininess: 30,
+        specular: 0x88ccff
+    });
+    planet = new THREE.Mesh(geometry, material);
+    planet.castShadow = true;
+    planet.receiveShadow = true;
+    scene.add(planet);
+    
+    window.originalPlanetColor = 0x4a90e2;
+    window.originalPlanetEmissive = 0x112244;
+    
+    const glowGeometry = new THREE.SphereGeometry(2.2, 64, 64);
+    const glowMaterial = new THREE.MeshBasicMaterial({
+        color: 0x6bb6ff,
+        transparent: true,
+        opacity: 0.2,
+        side: THREE.BackSide
+    });
+    glow = new THREE.Mesh(glowGeometry, glowMaterial);
+    scene.add(glow);
+    
+    // Create moon
+    const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+    const moonMaterial = new THREE.MeshPhongMaterial({
+        color: 0xcccccc,
+        emissive: 0x222222,
+        shininess: 10
+    });
+    moon = new THREE.Mesh(moonGeometry, moonMaterial);
+    moon.castShadow = true;
+    moon.receiveShadow = true;
+    
+    const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
+    const moonGlowMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+    
+    moonGroup = new THREE.Group();
+    moonGroup.add(moon);
+    moonGroup.add(moonGlow);
+    scene.add(moonGroup);
+    
+    createKitty();
+    createDog();
+    createElephant();
+    createStars();
+    
+    const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+    scene.add(ambientLight);
+    
+    camera.position.z = 6;
+    
+    // Create water particles
+    for(let i = 0; i < maxWaterParticles; i++) {
+        waterParticles.push(new WaterParticle());
+    }
+}
+
+function createKitty() {
+    kittyGroup = new THREE.Group();
+    
+    const kittyBodyGeo = new THREE.SphereGeometry(0.3, 32, 32);
+    const kittyMaterial = new THREE.MeshPhongMaterial({
+        color: 0xffb6c1,
+        emissive: 0x332211,
+        shininess: 50
+    });
+    kittyBody = new THREE.Mesh(kittyBodyGeo, kittyMaterial);
+    kittyBody.castShadow = true;
+    kittyGroup.add(kittyBody);
+    
+    const kittyHeadGeo = new THREE.SphereGeometry(0.25, 32, 32);
+    kittyHead = new THREE.Mesh(kittyHeadGeo, kittyMaterial);
+    kittyHead.position.y = 0.4;
+    kittyHead.castShadow = true;
+    kittyGroup.add(kittyHead);
+    
+    const earGeo = new THREE.ConeGeometry(0.12, 0.2, 4);
+    const earMaterial = new THREE.MeshPhongMaterial({ color: 0xffb6c1 });
+    
+    const leftEar = new THREE.Mesh(earGeo, earMaterial);
+    leftEar.position.set(-0.15, 0.6, 0);
+    leftEar.rotation.z = 0.3;
+    kittyGroup.add(leftEar);
+    
+    const rightEar = new THREE.Mesh(earGeo, earMaterial);
+    rightEar.position.set(0.15, 0.6, 0);
+    rightEar.rotation.z = -0.3;
+    kittyGroup.add(rightEar);
+    
+    const kittyGlowGeo = new THREE.SphereGeometry(0.5, 32, 32);
+    const kittyGlowMat = new THREE.MeshBasicMaterial({
+        color: 0xffb6c1,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    const kittyGlow = new THREE.Mesh(kittyGlowGeo, kittyGlowMat);
+    kittyGroup.add(kittyGlow);
+    
+    scene.add(kittyGroup);
+}
+
+function createDog() {
+    dogGroup = new THREE.Group();
+    
+    const dogBodyGeo = new THREE.SphereGeometry(0.35, 32, 32);
+    dogBodyGeo.scale(1.3, 1, 1);
+    const dogMaterial = new THREE.MeshPhongMaterial({
+        color: 0xd2691e,
+        emissive: 0x221100,
+        shininess: 40
+    });
+    dogBody = new THREE.Mesh(dogBodyGeo, dogMaterial);
+    dogBody.castShadow = true;
+    dogGroup.add(dogBody);
+    
+    const dogHeadGeo = new THREE.SphereGeometry(0.28, 32, 32);
+    dogHead = new THREE.Mesh(dogHeadGeo, dogMaterial);
+    dogHead.position.set(0.4, 0.1, 0);
+    dogHead.castShadow = true;
+    dogGroup.add(dogHead);
+    
+    const dogEarGeo = new THREE.BoxGeometry(0.15, 0.3, 0.05);
+    leftDogEar = new THREE.Mesh(dogEarGeo, dogMaterial);
+    leftDogEar.position.set(0.35, 0.35, -0.15);
+    leftDogEar.rotation.z = 0.4;
+    dogGroup.add(leftDogEar);
+    
+    rightDogEar = new THREE.Mesh(dogEarGeo, dogMaterial);
+    rightDogEar.position.set(0.35, 0.35, 0.15);
+    rightDogEar.rotation.z = 0.4;
+    dogGroup.add(rightDogEar);
+    
+    const dogTailGeo = new THREE.CylinderGeometry(0.05, 0.03, 0.4, 8);
+    dogTail = new THREE.Mesh(dogTailGeo, dogMaterial);
+    dogTail.position.set(-0.4, 0.1, 0);
+    dogTail.rotation.z = -0.5;
+    dogGroup.add(dogTail);
+    
+    scene.add(dogGroup);
+}
+
+function createElephant() {
+    elephantGroup = new THREE.Group();
+    
+    const elephantMaterial = new THREE.MeshPhongMaterial({
+        color: 0x808080,
+        emissive: 0x202020,
+        shininess: 30
+    });
+    
+    const elephantBodyGeo = new THREE.SphereGeometry(0.6, 32, 32);
+    const elephantBody = new THREE.Mesh(elephantBodyGeo, elephantMaterial);
+    elephantBody.castShadow = true;
+    elephantGroup.add(elephantBody);
+    
+    const elephantHeadGeo = new THREE.SphereGeometry(0.45, 32, 32);
+    const elephantHead = new THREE.Mesh(elephantHeadGeo, elephantMaterial);
+    elephantHead.position.set(0.7, 0.2, 0);
+    elephantHead.castShadow = true;
+    elephantGroup.add(elephantHead);
+    
+    for(let i = 0; i < 5; i++) {
+        const trunkGeo = new THREE.CylinderGeometry(0.08 - i * 0.01, 0.08 - i * 0.01, 0.25, 16);
+        const trunkSegment = new THREE.Mesh(trunkGeo, elephantMaterial);
+        trunkSegment.position.set(1.0 + i * 0.15, 0.1 - i * 0.15, 0);
+        trunkSegment.rotation.z = 0.3 + i * 0.2;
+        trunkSegment.castShadow = true;
+        elephantGroup.add(trunkSegment);
+        trunkSegments.push(trunkSegment);
+    }
+    
+    const earGeo = new THREE.CircleGeometry(0.35, 32);
+    leftEar = new THREE.Mesh(earGeo, elephantMaterial);
+    leftEar.position.set(0.5, 0.4, -0.4);
+    leftEar.rotation.y = Math.PI / 4;
+    elephantGroup.add(leftEar);
+    
+    rightEar = new THREE.Mesh(earGeo, elephantMaterial);
+    rightEar.position.set(0.5, 0.4, 0.4);
+    rightEar.rotation.y = -Math.PI / 4;
+    elephantGroup.add(rightEar);
+    
+    const tailGeo = new THREE.CylinderGeometry(0.05, 0.03, 0.4, 8);
+    tail = new THREE.Mesh(tailGeo, elephantMaterial);
+    tail.position.set(-0.6, -0.1, 0);
+    tail.rotation.z = -0.5;
+    elephantGroup.add(tail);
+    
+    elephantGroup.position.set(0, 0, 0);
+    scene.add(elephantGroup);
+}
+
+function createStars() {
+    const starGeometry = new THREE.BufferGeometry();
+    const starVertices = [];
+    for(let i = 0; i < 1000; i++) {
+        const x = (Math.random() - 0.5) * 100;
+        const y = (Math.random() - 0.5) * 100;
+        const z = (Math.random() - 0.5) * 100;
+        starVertices.push(x, y, z);
+    }
+    starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+    starsMesh = new THREE.Points(starGeometry, starMaterial);
+    scene.add(starsMesh);
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    
+    if (!scene) return;
+    
+    const sunScale = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+    sun.scale.set(sunScale, sunScale, sunScale);
+    corona1.scale.set(sunScale * 1.1, sunScale * 1.1, sunScale * 1.1);
+    corona2.scale.set(sunScale * 1.2, sunScale * 1.2, sunScale * 1.2);
+    sun.rotation.y += 0.002;
+    corona1.rotation.y -= 0.003;
+    corona2.rotation.y += 0.001;
+    
+    planet.rotation.y += 0.003;
+    glow.rotation.y += 0.003;
+    
+    moonAngle += moonOrbitSpeed;
+    moonGroup.position.x = Math.cos(moonAngle) * moonOrbitRadius;
+    moonGroup.position.z = Math.sin(moonAngle) * moonOrbitRadius;
+    moonGroup.position.y = Math.sin(moonAngle * 0.5) * 0.5;
+    moon.rotation.y += 0.005;
+    moonGlow.rotation.y += 0.005;
+    
+    const distance = Math.sqrt(
+        Math.pow(kittyGroup.position.x - dogGroup.position.x, 2) +
+        Math.pow(kittyGroup.position.y - dogGroup.position.y, 2) +
+        Math.pow(kittyGroup.position.z - dogGroup.position.z, 2)
+    );
+    
+    if (typeof window.checkCatch === 'function') {
+        window.checkCatch(distance);
+    }
+    
+    if (distance < dangerDistance && !kittyIsEscaping) {
+        kittyIsEscaping = true;
+        kittyOrbitSpeed = kittyEscapeSpeed;
+    } else if (distance > safeDistance && kittyIsEscaping) {
+        kittyIsEscaping = false;
+        kittyOrbitSpeed = kittyNormalSpeed;
+    }
+    
+    kittyAngle += kittyOrbitSpeed;
+    kittyGroup.position.x = Math.cos(kittyAngle) * kittyOrbitRadius;
+    kittyGroup.position.z = Math.sin(kittyAngle) * kittyOrbitRadius;
+    kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8;
+    kittyGroup.lookAt(planet.position);
+    
+    kittyBody.position.y = Math.sin(Date.now() * 0.003) * 0.05;
+    kittyHead.position.y = 0.4 + Math.sin(Date.now() * 0.003) * 0.05;
+    
+    const angleToKitty = Math.atan2(
+        kittyGroup.position.z - dogGroup.position.z,
+        kittyGroup.position.x - dogGroup.position.x
+    );
+    dogAngle += (angleToKitty - dogAngle) * 0.05 + dogSpeed * 0.3;
+    
+    dogGroup.position.x = Math.cos(dogAngle) * dogOrbitRadius;
+    dogGroup.position.z = Math.sin(dogAngle) * dogOrbitRadius;
+    dogGroup.position.y = Math.cos(dogAngle * 0.5) * 0.6;
+    dogGroup.lookAt(kittyGroup.position);
+    
+    dogBody.position.y = Math.sin(Date.now() * 0.01) * 0.08;
+    dogHead.position.y = 0.1 + Math.sin(Date.now() * 0.01) * 0.08;
+    dogTail.rotation.y = Math.sin(Date.now() * 0.01) * 0.5;
+    leftDogEar.rotation.x = Math.sin(Date.now() * 0.008) * 0.3;
+    rightDogEar.rotation.x = Math.sin(Date.now() * 0.008 + Math.PI) * 0.3;
+    
+    trunkSegments.forEach((segment, i) => {
+        segment.rotation.z = 0.3 + i * 0.2 + Math.sin(Date.now() * 0.003 + i * 0.5) * 0.15;
+    });
+    
+    leftEar.rotation.x = Math.sin(Date.now() * 0.002) * 0.1;
+    rightEar.rotation.x = Math.sin(Date.now() * 0.002 + Math.PI) * 0.1;
+    tail.rotation.y = Math.sin(Date.now() * 0.004) * 0.3;
+    
+    waterParticles.forEach(particle => particle.update());
+    
+    starsMesh.rotation.y += 0.0002;
+    
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+});
+
+// Initialize scene when page loads
+window.addEventListener('load', () => {
+    initMainScene();
+    animate();
 });
 </script></body>
 </html>
