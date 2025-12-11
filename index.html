@@ -17,9 +17,9 @@
             color: white;
         }
         h1 { font-size: 3rem; text-align: center; }
-    </style>
+    @keyframes orbit-kitty { from { transform: rotate(0deg) translateX(80px) rotate(0deg); } to { transform: rotate(360deg) translateX(80px) rotate(-360deg); } }</style>
 </head>
 <body>
-<h1>Hello World</h1><img alt="Planet" src="https://example.com/planet.png" style="width: 150px; margin-top: 20px;"/>
+<h1>Hello World</h1><img alt="Planet" src="https://example.com/planet.png" style="width: 150px; margin-top: 20px;"/><div id="kitty" style="position: absolute; width: 50px; height: 50px; background: url('https://example.com/kitty.png') no-repeat center center; background-size: contain; transform-origin: -80px; animation: orbit-kitty 6s linear infinite;"></div>
 <script>document.getElementById('pause-button').addEventListener('click', function() { const audio = document.getElementById('background-music'); if (audio.paused) { audio.play(); this.textContent = 'Pause Music'; } else { audio.pause(); this.textContent = 'Play Music'; } });document.getElementById('pause-button').addEventListener('click', function() { const audio = document.getElementById('background-music'); if (audio.paused) { audio.play(); this.textContent = 'Pause Music'; } else { audio.pause(); this.textContent = 'Play Music'; } });</script><audio id="background-music" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio><button id="pause-button" style="margin-top: 20px;">Play Music</button><script>window.onload = function() { const audio = document.getElementById('background-music'); audio.play(); document.getElementById('pause-button').textContent = 'Pause Music'; };</script><div id="moon" style="position: absolute; width: 30px; height: 30px; background: silver; border-radius: 50%; transform-origin: -60px; animation: orbit 5s linear infinite;"></div><style>@keyframes orbit { from { transform: rotate(0deg) translateX(60px) rotate(0deg); } to { transform: rotate(360deg) translateX(60px) rotate(-360deg); }}</style></body>
 </html>
