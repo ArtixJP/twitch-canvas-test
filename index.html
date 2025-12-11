@@ -158,6 +158,94 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
+        .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #7ed56f 0%, #28b485 100%);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 
+                0 5px 20px rgba(40, 180, 133, 0.4),
+                0 0 40px rgba(126, 213, 111, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 
+                0 8px 30px rgba(40, 180, 133, 0.5),
+                0 0 60px rgba(126, 213, 111, 0.4);
+        }
+        
+        .music-control:active {
+            transform: scale(0.95);
+        }
+        
+        .music-control.paused {
+            background: linear-gradient(135deg, #ff7675 0%, #d63031 100%);
+            box-shadow: 
+                0 5px 20px rgba(214, 48, 49, 0.4),
+                0 0 40px rgba(255, 118, 117, 0.3);
+        }
+        
+        .music-control.paused:hover {
+            box-shadow: 
+                0 8px 30px rgba(214, 48, 49, 0.5),
+                0 0 60px rgba(255, 118, 117, 0.4);
+        }
+        
+        .music-label {
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #7ed56f;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 0.5s ease;
+            z-index: 1000;
+        }
+        
+        .music-visualizer {
+            position: fixed;
+            bottom: 30px;
+            right: 100px;
+            display: flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 40px;
+        }
+        
+        .bar {
+            width: 4px;
+            background: linear-gradient(to top, #7ed56f, #28b485);
+            border-radius: 2px;
+            animation: visualize 0.5s ease-in-out infinite alternate;
+        }
+        
+        .bar:nth-child(1) { animation-delay: 0s; }
+        .bar:nth-child(2) { animation-delay: 0.1s; }
+        .bar:nth-child(3) { animation-delay: 0.2s; }
+        .bar:nth-child(4) { animation-delay: 0.3s; }
+        .bar:nth-child(5) { animation-delay: 0.4s; }
+        
+        .visualizer-paused .bar {
+            animation-play-state: paused;
+            height: 5px !important;
+        }
+        
         @keyframes rotate {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
@@ -182,6 +270,16 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes visualize {
+            from { height: 10px; }
+            to { height: 35px; }
+        }
     </style>
 </head>
 <body>
@@ -195,6 +293,20 @@
 <div class="moon"></div>
 </div>
 </div>
+<audio id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>
+</audio>
+<div class="music-label">🎵 Animal Crossing - Off The Train</div>
+<div class="music-visualizer" id="visualizer">
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+<div class="bar"></div>
+</div>
+<button class="music-control" id="musicBtn" onclick="toggleMusic()">
+    ⏸️
+</button>
 <script>
         // Generate random stars
         const starsContainer = document.getElementById('stars');
@@ -208,6 +320,61 @@
             star.style.animationDelay = Math.random() * 2 + 's';
             star.style.animationDuration = (Math.random() * 2 + 1) + 's';
             starsContainer.appendChild(star);
+        }
+        
+        // Music control
+        const audio = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const visualizer = document.getElementById('visualizer');
+        let isPlaying = false;
+        
+        // Try to autoplay on page load
+        window.addEventListener('load', function() {
+            audio.volume = 0.5;
+            const playPromise = audio.play();
+            
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    isPlaying = true;
+                    musicBtn.textContent = '⏸️';
+                    musicBtn.classList.remove('paused');
+                    visualizer.classList.remove('visualizer-paused');
+                }).catch(() => {
+                    // Autoplay was prevented, wait for user interaction
+                    isPlaying = false;
+                    musicBtn.textContent = '▶️';
+                    musicBtn.classList.add('paused');
+                    visualizer.classList.add('visualizer-paused');
+                });
+            }
+        });
+        
+        // Also try on first user interaction
+        document.addEventListener('click', function initAudio() {
+            if (!isPlaying) {
+                audio.play().then(() => {
+                    isPlaying = true;
+                    musicBtn.textContent = '⏸️';
+                    musicBtn.classList.remove('paused');
+                    visualizer.classList.remove('visualizer-paused');
+                }).catch(() => {});
+            }
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+        
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.textContent = '▶️';
+                musicBtn.classList.add('paused');
+                visualizer.classList.add('visualizer-paused');
+            } else {
+                audio.play();
+                musicBtn.textContent = '⏸️';
+                musicBtn.classList.remove('paused');
+                visualizer.classList.remove('visualizer-paused');
+            }
+            isPlaying = !isPlaying;
         }
     </script>
 </body>
