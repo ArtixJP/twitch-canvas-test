@@ -18,16 +18,65 @@
         }
         h1 { font-size: 3rem; text-align: center; }
     </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><script>
-// Auto-play music on page load
-window.addEventListener('load', () => {
-  const audio = document.getElementById('background-music');
-  const toggleBtn = document.getElementById('music-toggle');
-  audio.play().catch(err => {
-    console.log('Autoplay prevented by browser policy');
-  });
-  toggleBtn.textContent = '⏸ Pause Music';
-});
+<script>
+let dogScore = 0;
+let catScore = 0;
+const CATCH_DISTANCE = 0.5;
+let lastCatchTime = 0;
+const CATCH_COOLDOWN = 1500; // 1.5 seconds before dog can catch again
+
+function updateScoreDisplay() {
+  document.getElementById('dog-score').textContent = dogScore;
+  document.getElementById('cat-score').textContent = catScore;
+}
+
+function checkCatch() {
+  if (!dogGroup || !kittyGroup) return;
+  
+  const distance = dogGroup.position.distanceTo(kittyGroup.position);
+  const now = Date.now();
+  
+  if (distance < CATCH_DISTANCE && (now - lastCatchTime) > CATCH_COOLDOWN) {
+    dogScore++;
+    lastCatchTime = now;
+    updateScoreDisplay();
+    
+    // Visual feedback: flash the dog
+    if (dogGroup.children[0]) {
+      dogGroup.children[0].material.emissive.setHex(0x00ff00);
+      setTimeout(() => {
+        if (dogGroup.children[0]) {
+          dogGroup.children[0].material.emissive.setHex(0x000000);
+        }
+      }, 200);
+    }
+    
+    // Change planet color on catch
+    const colors = [0xff6b6b, 0x4ecdc4, 0xffe66d, 0x95e1d3, 0xf38181, 0xaa96da, 0xfcbad3, 0xa8d8ea];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    if (planet && planet.material) {
+      planet.material.color.setHex(randomColor);
+      // Fade back to original blue after 1 second
+      setTimeout(() => {
+        if (planet && planet.material) {
+          planet.material.color.setHex(0x4a90e2);
+        }
+      }, 1000);
+    }
+    
+    // Reset cat position to escape
+    catEscaping = true;
+    escapeStartTime = Date.now();
+    currentKittySpeed = ESCAPE_KITTY_SPEED;
+  }
+}
+
+// Integrate catch checking into animation loop
+const originalUpdateDogLogic = updateDogLogic;
+window.updateDogLogic = function() {
+  originalUpdateDogLogic();
+  checkCatch();
+};
 </script></head>
 <body><div id="score-display" style="position: fixed; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; padding: 15px 25px; border-radius: 10px; font-size: 24px; font-weight: bold; z-index: 99; font-family: system-ui, sans-serif;">🐕 Dog: <span id="dog-score">0</span> | 🐱 Cat: <span id="cat-score">0</span></div><audio id="background-music" style="display: none;"><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><div id="canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
 <h1 style="position: relative; z-index: 2;">Hello World</h1><button id="music-toggle" style="position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; z-index: 100; transition: all 0.3s ease;">▶ Play Music</button>
