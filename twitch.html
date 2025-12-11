@@ -983,6 +983,9 @@
             { x: 750, y: 700, text: '🎪 CIRCUS MODE', color: '#ff69b4', rare: false }
         ];
         
+        // Colors array for pixels and landmarks
+        const colors = ['#9b59b6', '#e67e22', '#f39c12', '#27ae60', '#3498db', '#e74c3c'];
+        
         // Create secret messages
         secretMessages.forEach((msg, index) => {
             const el = document.createElement('div');
@@ -1061,7 +1064,6 @@
         
         // Floating pixels
         const pixelBg = document.getElementById('pixelBg');
-        const colors = ['#9b59b6', '#e67e22', '#f39c12', '#27ae60', '#3498db', '#e74c3c'];
         
         for(let i = 0; i < 30; i++) {
             const pixel = document.createElement('div');
