@@ -111,6 +111,61 @@
             transform: translate(-50%, -50%);
         }
         
+        .moon-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            transform: translate(-50%, -50%);
+            animation: orbit 15s linear infinite;
+            pointer-events: none;
+        }
+        
+        .moon {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0e0e0 0%, #b0b0b0 50%, #808080 100%);
+            box-shadow: 
+                inset -15px -15px 30px rgba(0, 0, 0, 0.4),
+                inset 8px 8px 15px rgba(255, 255, 255, 0.3),
+                0 0 30px rgba(224, 224, 224, 0.4),
+                0 0 60px rgba(224, 224, 224, 0.2);
+            animation: moon-rotate 15s linear infinite reverse;
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 30%;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(100, 100, 100, 0.4);
+            box-shadow: 
+                15px 10px 0 -2px rgba(100, 100, 100, 0.3),
+                -5px 20px 0 -3px rgba(100, 100, 100, 0.35),
+                20px -5px 0 -1px rgba(100, 100, 100, 0.25);
+        }
+        
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 15%;
+            left: 15%;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 50%;
+            filter: blur(8px);
+        }
+        
         .stars {
             position: absolute;
             width: 2px;
@@ -294,6 +349,16 @@
             to { transform: rotate(360deg); }
         }
         
+        @keyframes orbit {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes moon-rotate {
+            from { transform: translateX(-50%) rotate(0deg); }
+            to { transform: translateX(-50%) rotate(-360deg); }
+        }
+        
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
@@ -322,6 +387,9 @@
 <div class="ring"></div>
 <div class="atmosphere"></div>
 <div class="planet"></div>
+<div class="moon-orbit">
+<div class="moon"></div>
+</div>
 </div>
 <audio id="backgroundMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
