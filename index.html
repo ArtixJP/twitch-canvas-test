@@ -5,972 +5,154 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
-            flex-direction: column;
             justify-content: center; 
             align-items: center; 
             min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 100%);
             color: white;
             overflow: hidden;
+            position: relative;
         }
-        
-        #sunCanvas {
-            position: fixed;
+        #canvas {
+            position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
+            display: block;
+        }
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
             pointer-events: none;
         }
-        
         h1 { 
             font-size: 3rem; 
-            text-align: center; 
-            margin-bottom: 2rem;
-            text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
-            position: relative;
-            z-index: 10;
-        }
-        
-        .space {
-            position: relative;
-            width: 300px;
-            height: 300px;
-            z-index: 10;
-        }
-        
-        .planet {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #4a90a4 0%, #2d5a6b 30%, #1a3a4a 70%, #0d1f2a 100%);
-            box-shadow: 
-                inset -30px -20px 40px rgba(0,0,0,0.6),
-                inset 10px 10px 20px rgba(255,255,255,0.1),
-                0 0 60px rgba(100, 200, 255, 0.4),
-                0 0 100px rgba(100, 200, 255, 0.2),
-                -20px -10px 30px rgba(255, 200, 100, 0.3);
-            animation: rotate 20s linear infinite;
-            z-index: 10;
-        }
-        
-        .planet::before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 10%;
-            width: 80%;
-            height: 15%;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            filter: blur(5px);
-        }
-        
-        .planet::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 5%;
-            width: 90%;
-            height: 10%;
-            background: rgba(100,180,200,0.3);
-            border-radius: 50%;
-            filter: blur(3px);
-        }
-        
-        .atmosphere {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 170px;
-            height: 170px;
-            border-radius: 50%;
-            background: transparent;
-            box-shadow: 
-                0 0 40px rgba(100, 200, 255, 0.3),
-                0 0 80px rgba(100, 200, 255, 0.2);
-            animation: pulse 4s ease-in-out infinite;
-        }
-        
-        .ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(75deg);
-            width: 250px;
-            height: 250px;
-            border: 15px solid transparent;
-            border-radius: 50%;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                rgba(200, 180, 150, 0.4) 20%,
-                rgba(180, 160, 130, 0.6) 40%,
-                rgba(200, 180, 150, 0.3) 60%,
-                transparent 100%);
-            background-clip: padding-box;
-            animation: ringRotate 30s linear infinite;
-            z-index: 5;
-        }
-        
-        .ring::before {
-            content: '';
-            position: absolute;
-            top: -5px;
-            left: -5px;
-            right: -5px;
-            bottom: -5px;
-            border: 8px solid rgba(150, 130, 100, 0.3);
-            border-radius: 50%;
-        }
-        
-        .moon-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 280px;
-            height: 280px;
-            animation: orbit 8s linear infinite;
-            z-index: 15;
-        }
-        
-        .moon {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #888 0%, #555 50%, #333 100%);
-            box-shadow: 
-                inset -5px -3px 8px rgba(0,0,0,0.5),
-                0 0 10px rgba(255,255,255,0.2);
-        }
-        
-        .moon-orbit-2 {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 220px;
-            height: 220px;
-            animation: orbit-reverse 12s linear infinite;
-            z-index: 15;
-        }
-        
-        .moon-2 {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #d4a574 0%, #a67c52 50%, #6b4423 100%);
-            box-shadow: 
-                inset -4px -2px 6px rgba(0,0,0,0.5),
-                0 0 8px rgba(255, 200, 150, 0.3);
-        }
-        
-        .moon-orbit-3 {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotateX(60deg);
-            width: 320px;
-            height: 320px;
-            animation: orbit 15s linear infinite;
-            z-index: 2;
-        }
-        
-        .moon-3 {
-            position: absolute;
-            top: 50%;
-            right: 0;
-            transform: translateY(-50%);
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #c9b8a8 0%, #8a7a6a 50%, #4a3a2a 100%);
-            box-shadow: 
-                inset -3px -2px 5px rgba(0,0,0,0.5),
-                0 0 6px rgba(200, 180, 160, 0.3);
-        }
-        
-        /* Kitty orbit - controlled by JS */
-        .kitty-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px;
-            height: 350px;
-            z-index: 20;
-        }
-        
-        .kitty {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 35px;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        .kitty:hover {
-            transform: translateX(-50%) scale(1.3);
-        }
-        
-        .kitty::after {
-            content: '✨';
-            position: absolute;
-            font-size: 12px;
-            animation: sparkle 0.8s ease-in-out infinite;
-            left: -15px;
-            top: 5px;
-        }
-        
-        .kitty::before {
-            content: '💫';
-            position: absolute;
-            font-size: 10px;
-            animation: sparkle 0.6s ease-in-out infinite 0.3s;
-            right: -15px;
-            top: 10px;
-        }
-        
-        .kitty.escaping {
-            animation: kittyPanic 0.15s ease-in-out infinite;
-        }
-        
-        .kitty.escaping::after {
-            content: '💨';
-            font-size: 16px;
-        }
-        
-        .kitty.escaping::before {
-            content: '😱';
-            font-size: 14px;
-        }
-        
-        /* Dog orbit - controlled by JS */
-        .dog-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 350px;
-            height: 350px;
-            z-index: 19;
-        }
-        
-        .dog {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 32px;
-            filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.8));
-            cursor: pointer;
-        }
-        
-        .dog::after {
-            content: '🦴';
-            position: absolute;
-            font-size: 10px;
-            animation: boneBounce 0.4s ease-in-out infinite;
-            right: -18px;
-            top: 5px;
-        }
-        
-        .dog.chasing {
-            animation: dogExcited 0.2s ease-in-out infinite;
-        }
-        
-        .dog.chasing::before {
-            content: '❗';
-            position: absolute;
-            font-size: 14px;
-            left: 50%;
-            top: -20px;
-            transform: translateX(-50%);
-            animation: exclaim 0.3s ease-in-out infinite;
-        }
-        
-        @keyframes kittyPanic {
-            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
-            50% { transform: translateX(-50%) rotate(5deg); }
-        }
-        
-        @keyframes dogExcited {
-            0%, 100% { transform: translateX(-50%) scale(1) rotate(-3deg); }
-            50% { transform: translateX(-50%) scale(1.1) rotate(3deg); }
-        }
-        
-        @keyframes boneBounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-5px) rotate(20deg); }
-        }
-        
-        @keyframes exclaim {
-            0%, 100% { transform: translateX(-50%) scale(1); opacity: 1; }
-            50% { transform: translateX(-50%) scale(1.3); opacity: 0.7; }
-        }
-        
-        .kitty-trail {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 8px;
-            height: 8px;
-            background: radial-gradient(circle, rgba(255, 182, 193, 0.8) 0%, transparent 70%);
-            border-radius: 50%;
-            animation: trail 1s ease-out infinite;
-        }
-        
-        .kitty-trail:nth-child(2) {
-            animation-delay: 0.2s;
-            opacity: 0.7;
-        }
-        
-        .kitty-trail:nth-child(3) {
-            animation-delay: 0.4s;
-            opacity: 0.5;
-        }
-        
-        @keyframes kittyBounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-8px); }
-        }
-        
-        @keyframes kittyRotate {
-            from { transform: translateX(-50%) rotate(0deg); }
-            to { transform: translateX(-50%) rotate(360deg); }
-        }
-        
-        @keyframes sparkle {
-            0%, 100% { opacity: 0; transform: scale(0.5); }
-            50% { opacity: 1; transform: scale(1.2); }
-        }
-        
-        @keyframes trail {
-            0% { opacity: 0.8; transform: translateX(-50%) scale(1); }
-            100% { opacity: 0; transform: translateX(-50%) scale(0.2) translateY(20px); }
-        }
-        
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s ease-in-out infinite;
-        }
-        
-        .music-controls {
-            margin-top: 2rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            position: relative;
-            z-index: 10;
-        }
-        
-        .music-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            color: white;
-            font-size: 1.1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        }
-        
-        .music-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
-        }
-        
-        .music-btn:active {
-            transform: scale(0.98);
-        }
-        
-        .music-btn.playing {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
-        }
-        
-        .music-btn .icon {
-            font-size: 1.3rem;
-        }
-        
-        .music-title {
-            font-size: 0.9rem;
-            opacity: 0.7;
             text-align: center;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+            animation: glow 3s ease-in-out infinite;
         }
-        
-        .sound-waves {
-            display: flex;
-            gap: 3px;
-            height: 20px;
-            align-items: flex-end;
-        }
-        
-        .sound-wave {
-            width: 4px;
-            background: white;
-            border-radius: 2px;
-            animation: wave 0.5s ease-in-out infinite;
-        }
-        
-        .sound-wave:nth-child(1) { animation-delay: 0s; height: 8px; }
-        .sound-wave:nth-child(2) { animation-delay: 0.1s; height: 15px; }
-        .sound-wave:nth-child(3) { animation-delay: 0.2s; height: 10px; }
-        .sound-wave:nth-child(4) { animation-delay: 0.3s; height: 18px; }
-        .sound-wave:nth-child(5) { animation-delay: 0.4s; height: 12px; }
-        
-        .sound-waves.paused .sound-wave {
-            animation: none;
-            height: 4px !important;
-        }
-        
-        .click-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            cursor: pointer;
-            transition: opacity 0.5s ease;
-        }
-        
-        .click-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        
-        .click-message {
-            text-align: center;
-            animation: pulse-text 1.5s ease-in-out infinite;
-        }
-        
-        .click-message h2 {
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-        
-        .click-message p {
-            font-size: 1.2rem;
-            opacity: 0.7;
-        }
-        
-        @keyframes pulse-text {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        
-        @keyframes rotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
-        }
-        
-        @keyframes ringRotate {
-            from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
-            to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
-        }
-        
-        @keyframes orbit {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
-        
-        @keyframes orbit-reverse {
-            from { transform: translate(-50%, -50%) rotate(360deg); }
-            to { transform: translate(-50%, -50%) rotate(0deg); }
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-        
-        @keyframes wave {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.5); }
-        }
-        
-        /* Sun light rays overlay */
-        .sun-rays {
-            position: fixed;
-            top: 50px;
-            left: 50px;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            background: radial-gradient(ellipse at 10% 10%, rgba(255, 200, 100, 0.15) 0%, transparent 50%);
-        }
-        
-        .chase-status {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.6);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            z-index: 100;
-            transition: all 0.3s ease;
-        }
-        
-        .chase-status.danger {
-            background: rgba(255, 50, 50, 0.6);
-            animation: statusPulse 0.3s ease-in-out infinite;
-        }
-        
-        @keyframes statusPulse {
-            0%, 100% { transform: translateX(-50%) scale(1); }
-            50% { transform: translateX(-50%) scale(1.05); }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 20px rgba(100, 200, 255, 0.8); }
+            50% { text-shadow: 0 0 40px rgba(100, 200, 255, 1), 0 0 60px rgba(100, 200, 255, 0.6); }
         }
     </style>
 </head>
 <body>
-<canvas id="sunCanvas"></canvas>
-<div class="sun-rays"></div>
-<div class="click-overlay" id="clickOverlay">
-<div class="click-message">
-<h2>🎵 Click anywhere to enter 🎵</h2>
-<p>Music will start playing automatically</p>
-</div>
-</div>
-<div class="stars" id="stars"></div>
+<canvas id="canvas"></canvas>
+<div class="content">
 <h1>Hello World</h1>
-<div class="space">
-<div class="atmosphere"></div>
-<div class="moon-orbit-3">
-<div class="moon-3"></div>
 </div>
-<div class="ring"></div>
-<div class="planet"></div>
-<div class="moon-orbit">
-<div class="moon"></div>
-</div>
-<div class="moon-orbit-2">
-<div class="moon-2"></div>
-</div>
-<div class="dog-orbit" id="dogOrbit">
-<div class="dog" id="dog" title="Woof! 🐕">🐕</div>
-</div>
-<div class="kitty-orbit" id="kittyOrbit">
-<div class="kitty-trail"></div>
-<div class="kitty-trail"></div>
-<div class="kitty-trail"></div>
-<div class="kitty" id="kitty" title="Meow! 🐱">🐱</div>
-</div>
-</div>
-<div class="chase-status" id="chaseStatus">🐱 Cat: Relaxed | 🐕 Dog: Patrolling</div>
-<div class="music-controls">
-<audio id="bgMusic" loop="">
-<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
-</audio>
-<button class="music-btn" id="musicBtn" onclick="toggleMusic()">
-<span class="icon" id="musicIcon">▶</span>
-<span id="musicText">Play Music</span>
-<div class="sound-waves paused" id="soundWaves">
-<div class="sound-wave"></div>
-<div class="sound-wave"></div>
-<div class="sound-wave"></div>
-<div class="sound-wave"></div>
-<div class="sound-wave"></div>
-</div>
-</button>
-<div class="music-title">🎵 Professor Layton - More London Streets</div>
-</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-        // Three.js Sun with lighting
-        const canvas = document.getElementById('sunCanvas');
+        // Scene setup
         const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 10000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('canvas'), antialias: true, alpha: true });
+        
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        
-        // Sun
-        const sunGeometry = new THREE.SphereGeometry(2, 64, 64);
-        const sunMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffcc00,
-        });
-        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.position.set(-8, 5, -5);
-        scene.add(sun);
-        
-        // Sun glow layers
-        const glowGeometry = new THREE.SphereGeometry(2.3, 32, 32);
-        const glowMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff9900,
-            transparent: true,
-            opacity: 0.3,
-        });
-        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
-        glow.position.copy(sun.position);
-        scene.add(glow);
-        
-        const glow2Geometry = new THREE.SphereGeometry(2.8, 32, 32);
-        const glow2Material = new THREE.MeshBasicMaterial({
-            color: 0xff6600,
-            transparent: true,
-            opacity: 0.15,
-        });
-        const glow2 = new THREE.Mesh(glow2Geometry, glow2Material);
-        glow2.position.copy(sun.position);
-        scene.add(glow2);
-        
-        const glow3Geometry = new THREE.SphereGeometry(3.5, 32, 32);
-        const glow3Material = new THREE.MeshBasicMaterial({
-            color: 0xff4400,
-            transparent: true,
-            opacity: 0.08,
-        });
-        const glow3 = new THREE.Mesh(glow3Geometry, glow3Material);
-        glow3.position.copy(sun.position);
-        scene.add(glow3);
-        
-        // Corona effect (outer glow)
-        const coronaGeometry = new THREE.SphereGeometry(4.5, 32, 32);
-        const coronaMaterial = new THREE.MeshBasicMaterial({
-            color: 0xffaa00,
-            transparent: true,
-            opacity: 0.04,
-        });
-        const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
-        corona.position.copy(sun.position);
-        scene.add(corona);
-        
-        // Point light from sun
-        const sunLight = new THREE.PointLight(0xffcc66, 2, 100);
-        sunLight.position.copy(sun.position);
-        sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 2048;
-        sunLight.shadow.mapSize.height = 2048;
-        scene.add(sunLight);
-        
-        // Ambient light
-        const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
-        scene.add(ambientLight);
-        
-        // Small orbiting particles around sun
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particleCount = 200;
-        const positions = new Float32Array(particleCount * 3);
-        
-        for (let i = 0; i < particleCount; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const radius = 3 + Math.random() * 2;
-            positions[i * 3] = sun.position.x + Math.cos(angle) * radius;
-            positions[i * 3 + 1] = sun.position.y + (Math.random() - 0.5) * 2;
-            positions[i * 3 + 2] = sun.position.z + Math.sin(angle) * radius;
+        renderer.setClearColor(0x000000, 0);
+        camera.position.z = 5;
+
+        // Create stars
+        const starsGeometry = new THREE.BufferGeometry();
+        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.05 });
+        const starsVertices = [];
+        for (let i = 0; i < 1000; i++) {
+            const x = (Math.random() - 0.5) * 200;
+            const y = (Math.random() - 0.5) * 200;
+            const z = (Math.random() - 0.5) * 200;
+            starsVertices.push(x, y, z);
         }
-        
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        const particlesMaterial = new THREE.PointsMaterial({
-            color: 0xffaa00,
-            size: 0.05,
-            transparent: true,
-            opacity: 0.8,
+        starsGeometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(starsVertices), 3));
+        const stars = new THREE.Points(starsGeometry, starsMaterial);
+        scene.add(stars);
+
+        // Create planet
+        const planetGeometry = new THREE.IcosahedronGeometry(1, 32);
+        const planetMaterial = new THREE.MeshPhongMaterial({
+            map: new THREE.CanvasTexture(createPlanetTexture()),
+            shininess: 10
         });
-        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-        scene.add(particles);
-        
-        camera.position.z = 10;
-        camera.position.y = 2;
-        
-        // Animation
-        let time = 0;
-        function animateThree() {
-            requestAnimationFrame(animateThree);
-            time += 0.01;
+        const planet = new THREE.Mesh(planetGeometry, planetMaterial);
+        scene.add(planet);
+
+        // Add lights
+        const light = new THREE.PointLight(0xffffff, 1.5);
+        light.position.set(5, 3, 5);
+        scene.add(light);
+        const ambientLight = new THREE.AmbientLight(0x404040, 1);
+        scene.add(ambientLight);
+
+        // Create planet texture
+        function createPlanetTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
             
-            // Pulsing glow effect
-            const pulse = 1 + Math.sin(time * 2) * 0.1;
-            glow.scale.setScalar(pulse);
-            glow2.scale.setScalar(pulse * 0.95);
-            glow3.scale.setScalar(pulse * 0.9);
-            corona.scale.setScalar(1 + Math.sin(time * 1.5) * 0.15);
+            // Gradient background
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#1e3a8a');
+            gradient.addColorStop(0.5, '#3b82f6');
+            gradient.addColorStop(1, '#60a5fa');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
             
-            // Rotate particles around sun
-            particles.rotation.y += 0.002;
-            particles.rotation.x = Math.sin(time * 0.5) * 0.1;
+            // Add some continents
+            ctx.fillStyle = '#10b981';
+            ctx.beginPath();
+            ctx.arc(150, 150, 80, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(350, 250, 70, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(250, 100, 60, 0, Math.PI * 2);
+            ctx.fill();
             
-            // Light intensity variation
-            sunLight.intensity = 2 + Math.sin(time * 3) * 0.3;
+            // Add clouds
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            ctx.beginPath();
+            ctx.arc(200, 200, 50, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(400, 150, 40, 0, Math.PI * 2);
+            ctx.fill();
+            
+            return canvas;
+        }
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Rotate planet
+            planet.rotation.x += 0.0005;
+            planet.rotation.y += 0.001;
+            
+            // Orbit animation
+            const time = Date.now() * 0.0003;
+            planet.position.x = Math.cos(time) * 2;
+            planet.position.y = Math.sin(time * 0.7) * 1.5;
             
             renderer.render(scene, camera);
         }
-        animateThree();
-        
-        // Handle resize
+        animate();
+
+        // Handle window resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
-        });
-        
-        // Generate random stars
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.width = Math.random() * 3 + 1 + 'px';
-            star.style.height = star.style.width;
-            star.style.animationDelay = Math.random() * 2 + 's';
-            star.style.animationDuration = (Math.random() * 2 + 1) + 's';
-            starsContainer.appendChild(star);
-        }
-        
-        // ===== CAT AND DOG CHASE SYSTEM =====
-        const kittyOrbit = document.getElementById('kittyOrbit');
-        const dogOrbit = document.getElementById('dogOrbit');
-        const kitty = document.getElementById('kitty');
-        const dog = document.getElementById('dog');
-        const chaseStatus = document.getElementById('chaseStatus');
-        
-        let catAngle = 0;
-        let dogAngle = Math.PI; // Start opposite to cat
-        
-        const CAT_NORMAL_SPEED = 0.02;
-        const CAT_ESCAPE_SPEED = 0.12;
-        const DOG_SPEED = 0.035; // Dog is faster than normal cat
-        const DANGER_DISTANCE = 0.8; // Radians - when dog gets this close, cat panics
-        const SAFE_DISTANCE = 1.5; // Radians - when cat feels safe again
-        
-        let catSpeed = CAT_NORMAL_SPEED;
-        let isEscaping = false;
-        
-        const kittyFaces = ['🐱', '😺', '😸', '😻', '🙀', '😹'];
-        let kittyIndex = 0;
-        
-        function getAngleDifference(angle1, angle2) {
-            let diff = Math.abs(angle1 - angle2) % (Math.PI * 2);
-            if (diff > Math.PI) diff = Math.PI * 2 - diff;
-            return diff;
-        }
-        
-        function updateChase() {
-            // Calculate distance between cat and dog
-            const distance = getAngleDifference(catAngle, dogAngle);
-            
-            // Check if dog is getting close
-            if (distance < DANGER_DISTANCE && !isEscaping) {
-                isEscaping = true;
-                catSpeed = CAT_ESCAPE_SPEED;
-                kitty.classList.add('escaping');
-                kitty.textContent = '🙀';
-                dog.classList.add('chasing');
-                chaseStatus.textContent = '🙀 Cat: ESCAPING! | 🐕 Dog: CHASING!';
-                chaseStatus.classList.add('danger');
-            } else if (distance > SAFE_DISTANCE && isEscaping) {
-                isEscaping = false;
-                catSpeed = CAT_NORMAL_SPEED;
-                kitty.classList.remove('escaping');
-                kitty.textContent = '😺';
-                dog.classList.remove('chasing');
-                chaseStatus.textContent = '😺 Cat: Phew, safe! | 🐕 Dog: Patrolling';
-                chaseStatus.classList.remove('danger');
-                
-                // After a moment, return to normal face
-                setTimeout(() => {
-                    if (!isEscaping) {
-                        kitty.textContent = '🐱';
-                        chaseStatus.textContent = '🐱 Cat: Relaxed | 🐕 Dog: Patrolling';
-                    }
-                }, 2000);
-            }
-            
-            // Update positions
-            catAngle += catSpeed;
-            dogAngle += DOG_SPEED;
-            
-            // Keep angles in bounds
-            if (catAngle > Math.PI * 2) catAngle -= Math.PI * 2;
-            if (dogAngle > Math.PI * 2) dogAngle -= Math.PI * 2;
-            
-            // Apply rotations
-            kittyOrbit.style.transform = `translate(-50%, -50%) rotate(${catAngle}rad)`;
-            dogOrbit.style.transform = `translate(-50%, -50%) rotate(${dogAngle}rad)`;
-            
-            // Counter-rotate the animals so they stay upright
-            kitty.style.transform = `translateX(-50%) rotate(${-catAngle}rad)`;
-            dog.style.transform = `translateX(-50%) rotate(${-dogAngle}rad)`;
-            
-            requestAnimationFrame(updateChase);
-        }
-        
-        updateChase();
-        
-        // Kitty interaction
-        kitty.addEventListener('click', (event) => {
-            event.stopPropagation();
-            kittyIndex = (kittyIndex + 1) % kittyFaces.length;
-            if (!isEscaping) {
-                kitty.textContent = kittyFaces[kittyIndex];
-            }
-            
-            // Create floating hearts
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const heart = document.createElement('span');
-                    heart.textContent = '💕';
-                    heart.style.cssText = `
-                        position: fixed;
-                        left: ${event.clientX + (Math.random() - 0.5) * 40}px;
-                        top: ${event.clientY}px;
-                        font-size: 20px;
-                        pointer-events: none;
-                        animation: floatUp 1s ease-out forwards;
-                        z-index: 1000;
-                    `;
-                    document.body.appendChild(heart);
-                    setTimeout(() => heart.remove(), 1000);
-                }, i * 100);
-            }
-        });
-        
-        // Dog interaction
-        dog.addEventListener('click', (event) => {
-            event.stopPropagation();
-            
-            // Dog barks!
-            const dogFaces = ['🐕', '🐶', '🦮', '🐕‍🦺'];
-            dog.textContent = dogFaces[Math.floor(Math.random() * dogFaces.length)];
-            
-            // Create floating bones
-            for (let i = 0; i < 3; i++) {
-                setTimeout(() => {
-                    const bone = document.createElement('span');
-                    bone.textContent = '🦴';
-                    bone.style.cssText = `
-                        position: fixed;
-                        left: ${event.clientX + (Math.random() - 0.5) * 40}px;
-                        top: ${event.clientY}px;
-                        font-size: 20px;
-                        pointer-events: none;
-                        animation: floatUp 1s ease-out forwards;
-                        z-index: 1000;
-                    `;
-                    document.body.appendChild(bone);
-                    setTimeout(() => bone.remove(), 1000);
-                }, i * 100);
-            }
-            
-            setTimeout(() => {
-                dog.textContent = '🐕';
-            }, 500);
-        });
-        
-        // Add float up animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes floatUp {
-                0% { opacity: 1; transform: translateY(0) scale(1); }
-                100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Music controls
-        const audio = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        const musicIcon = document.getElementById('musicIcon');
-        const musicText = document.getElementById('musicText');
-        const soundWaves = document.getElementById('soundWaves');
-        const clickOverlay = document.getElementById('clickOverlay');
-        let isPlaying = false;
-        
-        function startMusic() {
-            audio.play().then(() => {
-                musicIcon.textContent = '⏸';
-                musicText.textContent = 'Pause Music';
-                musicBtn.classList.add('playing');
-                soundWaves.classList.remove('paused');
-                isPlaying = true;
-            }).catch(e => console.log('Autoplay prevented:', e));
-        }
-        
-        function toggleMusic() {
-            if (isPlaying) {
-                audio.pause();
-                musicIcon.textContent = '▶';
-                musicText.textContent = 'Play Music';
-                musicBtn.classList.remove('playing');
-                soundWaves.classList.add('paused');
-            } else {
-                audio.play();
-                musicIcon.textContent = '⏸';
-                musicText.textContent = 'Pause Music';
-                musicBtn.classList.add('playing');
-                soundWaves.classList.remove('paused');
-            }
-            isPlaying = !isPlaying;
-        }
-        
-        // Click overlay to start music (browsers require user interaction)
-        clickOverlay.addEventListener('click', () => {
-            clickOverlay.classList.add('hidden');
-            startMusic();
-        });
-        
-        // Handle audio ending (even though it loops)
-        audio.addEventListener('ended', () => {
-            musicIcon.textContent = '▶';
-            musicText.textContent = 'Play Music';
-            musicBtn.classList.remove('playing');
-            soundWaves.classList.add('paused');
-            isPlaying = false;
         });
     </script>
 </body>
