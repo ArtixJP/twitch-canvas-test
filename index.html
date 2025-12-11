@@ -108,10 +108,54 @@
             color: rgba(255, 255, 255, 0.8);
             letter-spacing: 1px;
         }
+        .score-display {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(26, 26, 46, 0.9);
+            padding: 20px 35px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+            border: 2px solid rgba(255, 107, 157, 0.4);
+            font-size: 24px;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .score-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+        .score-number {
+            font-size: 48px;
+            color: #ff6b9d;
+            text-shadow: 0 0 20px rgba(255, 107, 157, 0.8);
+            animation: scoreGlow 2s ease-in-out infinite;
+        }
+        @keyframes scoreGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(255, 107, 157, 0.8); }
+            50% { text-shadow: 0 0 40px rgba(255, 107, 157, 1), 0 0 60px rgba(255, 107, 157, 0.6); }
+        }
+        .catch-celebration {
+            animation: celebrate 0.6s ease-out;
+        }
+        @keyframes celebrate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3) rotate(5deg); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
     <canvas id="sun-canvas"></canvas>
+    <div class="score-display" id="scoreDisplay">
+        <div class="score-label">DOG CATCHES</div>
+        <div class="score-number" id="scoreNumber">0</div>
+    </div>
     <div>
         <h1>Hello World</h1>
         <div class="planet-container">
@@ -322,9 +366,15 @@
         // Chase logic for dog and cat
         const kittyOrbit = document.getElementById('kittyOrbit');
         const dogOrbit = document.getElementById('dogOrbit');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const scoreNumber = document.getElementById('scoreNumber');
         const normalCatSpeed = 8; // seconds
         const fastCatSpeed = 2; // seconds
         const catchDistance = 60; // degrees
+        const captureDistance = 15; // degrees for actual catch
+        let dogScore = 0;
+        let lastCatchTime = 0;
+        const catchCooldown = 3000; // 3 seconds cooldown between catches
         
         function updateChase() {
             // Get computed styles to extract rotation angles
@@ -355,6 +405,28 @@
                 kittyOrbit.style.animationDuration = fastCatSpeed + 's';
             } else {
                 kittyOrbit.style.animationDuration = normalCatSpeed + 's';
+            }
+            
+            // Check if dog caught the cat!
+            const currentTime = Date.now();
+            if (angleDiff < captureDistance && (currentTime - lastCatchTime) > catchCooldown) {
+                dogScore++;
+                lastCatchTime = currentTime;
+                scoreNumber.textContent = dogScore;
+                
+                // Celebration animation
+                scoreDisplay.classList.add('catch-celebration');
+                setTimeout(() => {
+                    scoreDisplay.classList.remove('catch-celebration');
+                }, 600);
+                
+                // Flash the dog and cat
+                dogOrbit.style.filter = 'brightness(2)';
+                kittyOrbit.style.filter = 'brightness(0.5)';
+                setTimeout(() => {
+                    dogOrbit.style.filter = 'brightness(1)';
+                    kittyOrbit.style.filter = 'brightness(1)';
+                }, 300);
             }
         }
         
