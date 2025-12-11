@@ -117,6 +117,42 @@
             border-radius: 50%;
         }
         
+        .kitty-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 260px;
+            height: 260px;
+            transform: translate(-50%, -50%);
+            animation: orbitKitty 6s linear infinite;
+            pointer-events: none;
+        }
+        
+        .kitty {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            margin-left: -20px;
+            font-size: 35px;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
+            animation: kittyBounce 0.5s ease-in-out infinite, kittyRotate 6s linear infinite reverse;
+        }
+        
+        @keyframes orbitKitty {
+            from { transform: translate(-50%, -50%) rotateZ(180deg); }
+            to { transform: translate(-50%, -50%) rotateZ(540deg); }
+        }
+        
+        @keyframes kittyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        @keyframes kittyRotate {
+            from { transform: rotateZ(0deg); }
+            to { transform: rotateZ(360deg); }
+        }
+        
         .moon::after {
             content: '';
             position: absolute;
@@ -237,6 +273,9 @@
         <div class="ring"></div>
         <div class="moon-orbit">
             <div class="moon"></div>
+        </div>
+        <div class="kitty-orbit">
+            <div class="kitty">🐱</div>
         </div>
     </div>
     <script>
