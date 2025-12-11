@@ -582,7 +582,194 @@
         @keyframes sunPulse {
           0%, 100% { opacity: 0.8; transform: scale(1); }
           50% { opacity: 1; transform: scale(1.1); }
-        }</style>
+        }
+/* Space Elephant */
+.elephant-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 45;
+  pointer-events: none;
+}
+
+.space-elephant {
+  width: 120px;
+  height: 100px;
+  position: relative;
+  animation: elephant-bounce 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(150, 150, 200, 0.6));
+}
+
+.elephant-body {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  background: linear-gradient(135deg, #9090b0 0%, #7070a0 50%, #505080 100%);
+  border-radius: 50% 50% 45% 45%;
+  top: 30px;
+  left: 20px;
+  box-shadow: inset -8px -8px 20px rgba(0,0,0,0.3), inset 5px 5px 15px rgba(255,255,255,0.2);
+}
+
+.elephant-head {
+  position: absolute;
+  width: 50px;
+  height: 45px;
+  background: linear-gradient(135deg, #a0a0c0 0%, #8080a0 100%);
+  border-radius: 50%;
+  top: 20px;
+  left: 5px;
+  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2);
+}
+
+.elephant-ear {
+  position: absolute;
+  width: 30px;
+  height: 35px;
+  background: linear-gradient(135deg, #b0b0d0 0%, #8080a0 100%);
+  border-radius: 50% 50% 50% 50%;
+  top: 15px;
+  left: -10px;
+  transform: rotate(-20deg);
+}
+
+.elephant-ear-inner {
+  position: absolute;
+  width: 20px;
+  height: 25px;
+  background: linear-gradient(135deg, #d0a0b0 0%, #c08090 100%);
+  border-radius: 50%;
+  top: 5px;
+  left: 5px;
+}
+
+.elephant-trunk {
+  position: absolute;
+  width: 15px;
+  height: 50px;
+  background: linear-gradient(to right, #9090b0 0%, #7070a0 50%, #9090b0 100%);
+  border-radius: 0 0 50% 50%;
+  top: 35px;
+  left: 20px;
+  transform-origin: top center;
+  animation: trunk-spray 3s ease-in-out infinite;
+}
+
+.elephant-trunk-tip {
+  position: absolute;
+  width: 20px;
+  height: 12px;
+  background: #8080a0;
+  border-radius: 50%;
+  bottom: -5px;
+  left: -2px;
+}
+
+.elephant-eye {
+  position: absolute;
+  width: 10px;
+  height: 12px;
+  background: #222;
+  border-radius: 50%;
+  top: 28px;
+  left: 30px;
+  animation: elephant-blink 4s ease-in-out infinite;
+}
+
+.elephant-eye::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+}
+
+.elephant-tusk {
+  position: absolute;
+  width: 6px;
+  height: 15px;
+  background: #fffff0;
+  border-radius: 0 0 50% 50%;
+  top: 45px;
+  left: 40px;
+  transform: rotate(15deg);
+}
+
+.elephant-helmet {
+  position: absolute;
+  width: 55px;
+  height: 50px;
+  border: 3px solid rgba(255,255,255,0.4);
+  border-radius: 50%;
+  top: 17px;
+  left: 2px;
+  background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.25), transparent);
+}
+
+.elephant-leg {
+  position: absolute;
+  width: 18px;
+  height: 25px;
+  background: linear-gradient(135deg, #7070a0 0%, #505080 100%);
+  border-radius: 5px 5px 10px 10px;
+  top: 75px;
+}
+
+.elephant-leg-1 { left: 25px; }
+.elephant-leg-2 { left: 45px; }
+.elephant-leg-3 { left: 65px; }
+.elephant-leg-4 { left: 85px; }
+
+.water-stream {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: radial-gradient(circle, #6af 0%, #39f 50%, #06c 100%);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: water-fly 1s ease-out forwards;
+  box-shadow: 0 0 10px rgba(100, 170, 255, 0.8), 0 0 20px rgba(100, 170, 255, 0.4);
+  z-index: 55;
+}
+
+@keyframes elephant-bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+@keyframes trunk-spray {
+  0%, 70%, 100% { transform: rotate(0deg); }
+  75% { transform: rotate(-30deg); }
+  85% { transform: rotate(30deg); }
+  90% { transform: rotate(-20deg); }
+}
+
+@keyframes elephant-blink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+@keyframes water-fly {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.5); }
+}
+
+.water-splash {
+  position: absolute;
+  font-size: 1.5rem;
+  pointer-events: none;
+  animation: splash-pop 0.5s ease-out forwards;
+  z-index: 56;
+}
+
+@keyframes splash-pop {
+  0% { opacity: 1; transform: scale(0.5); }
+  100% { opacity: 0; transform: scale(1.5); }
+}</style>
 </head>
 <body><div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></div>
 <h1>🌌 Defend the Planet! 🌌</h1>
@@ -591,7 +778,25 @@
 <br/><span style="font-size: 0.9rem; opacity: 0.8;">☄️ Asteroids Destroyed:</span> <span id="asteroidScore" style="font-weight: bold; font-size: 1.3rem; color: #ff6b6b;">0</span>
 <br/><span style="font-size: 0.9rem; opacity: 0.8;">❤️ Planet Health:</span> <span id="planetHealth" style="font-weight: bold; font-size: 1.3rem; color: #4ade80;">100</span>
 </div>
-<div class="planet-container">
+<div class="elephant-container">
+<div class="space-elephant" id="spaceElephant">
+<div class="elephant-ear">
+<div class="elephant-ear-inner"></div>
+</div>
+<div class="elephant-body"></div>
+<div class="elephant-head"></div>
+<div class="elephant-helmet"></div>
+<div class="elephant-eye"></div>
+<div class="elephant-tusk"></div>
+<div class="elephant-trunk" id="elephantTrunk">
+<div class="elephant-trunk-tip"></div>
+</div>
+<div class="elephant-leg elephant-leg-1"></div>
+<div class="elephant-leg elephant-leg-2"></div>
+<div class="elephant-leg elephant-leg-3"></div>
+<div class="elephant-leg elephant-leg-4"></div>
+</div>
+</div><div class="planet-container">
 <div class="planet"></div>
 <div class="ring"></div>
 <div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-ear-inner-left"></div><div class="kitty-ear-inner-right"></div><div class="kitty-head"><div class="kitty-eye kitty-eye-left"></div><div class="kitty-eye kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker kitty-whisker-left-1"></div><div class="kitty-whisker kitty-whisker-left-2"></div><div class="kitty-whisker kitty-whisker-right-1"></div><div class="kitty-whisker kitty-whisker-right-2"></div></div></div></div><div class="dog-orbit" id="dogOrbit"><div class="doggy" id="spaceDog"><div class="doggy-helmet"></div><div class="doggy-ear-left"></div><div class="doggy-ear-right"></div><div class="doggy-head"><div class="doggy-eye doggy-eye-left"></div><div class="doggy-eye doggy-eye-right"></div><div class="doggy-nose"></div><div class="doggy-tongue"></div></div><div class="doggy-tail"></div></div></div></div>
@@ -1491,6 +1696,130 @@ window.addEventListener('load', function() {
   // Start game
   startSpawning();
   gameLoop();
+})();
+</script><script>
+(function() {
+  const elephant = document.getElementById('spaceElephant');
+  const trunk = document.getElementById('elephantTrunk');
+  const gameLayer = document.getElementById('gameLayer');
+  
+  let waterCooldown = false;
+  
+  function getElephantTrunkPosition() {
+    const rect = trunk.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.bottom
+    };
+  }
+  
+  function createWaterStream(targetX, targetY) {
+    const start = getElephantTrunkPosition();
+    const numDroplets = 5;
+    
+    for (let i = 0; i < numDroplets; i++) {
+      setTimeout(() => {
+        const droplet = document.createElement('div');
+        droplet.className = 'water-stream';
+        
+        // Add some randomness
+        const offsetX = (Math.random() - 0.5) * 20;
+        const offsetY = (Math.random() - 0.5) * 20;
+        
+        droplet.style.left = start.x + 'px';
+        droplet.style.top = start.y + 'px';
+        
+        document.body.appendChild(droplet);
+        
+        // Animate to target
+        const duration = 500 + Math.random() * 200;
+        const startTime = performance.now();
+        
+        function animateDroplet(currentTime) {
+          const elapsed = currentTime - startTime;
+          const progress = Math.min(elapsed / duration, 1);
+          
+          // Parabolic arc
+          const x = start.x + (targetX + offsetX - start.x) * progress;
+          const arcHeight = -100 * Math.sin(progress * Math.PI);
+          const y = start.y + (targetY + offsetY - start.y) * progress + arcHeight;
+          
+          droplet.style.left = x + 'px';
+          droplet.style.top = y + 'px';
+          
+          if (progress < 1) {
+            requestAnimationFrame(animateDroplet);
+          } else {
+            // Create splash
+            const splash = document.createElement('div');
+            splash.className = 'water-splash';
+            splash.textContent = '💦';
+            splash.style.left = x + 'px';
+            splash.style.top = y + 'px';
+            document.body.appendChild(splash);
+            setTimeout(() => splash.remove(), 500);
+            
+            droplet.remove();
+          }
+        }
+        
+        requestAnimationFrame(animateDroplet);
+      }, i * 80);
+    }
+  }
+  
+  // Spray water at nearest asteroid periodically
+  function sprayAtAsteroids() {
+    if (waterCooldown) return;
+    
+    const asteroidElements = document.querySelectorAll('.asteroid');
+    if (asteroidElements.length === 0) {
+      setTimeout(sprayAtAsteroids, 500);
+      return;
+    }
+    
+    // Find nearest asteroid
+    const elephantPos = getElephantTrunkPosition();
+    let nearest = null;
+    let nearestDist = Infinity;
+    
+    asteroidElements.forEach(asteroid => {
+      const rect = asteroid.getBoundingClientRect();
+      const ax = rect.left + rect.width / 2;
+      const ay = rect.top + rect.height / 2;
+      const dist = Math.sqrt(Math.pow(ax - elephantPos.x, 2) + Math.pow(ay - elephantPos.y, 2));
+      
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearest = { x: ax, y: ay, element: asteroid };
+      }
+    });
+    
+    if (nearest && nearestDist < 400) {
+      waterCooldown = true;
+      
+      // Spray water!
+      createWaterStream(nearest.x, nearest.y);
+      
+      // Simulate click on asteroid after water reaches it
+      setTimeout(() => {
+        if (nearest.element && nearest.element.parentNode) {
+          nearest.element.click();
+        }
+      }, 600);
+      
+      // Cooldown
+      setTimeout(() => {
+        waterCooldown = false;
+        sprayAtAsteroids();
+      }, 2500);
+    } else {
+      setTimeout(sprayAtAsteroids, 500);
+    }
+  }
+  
+  // Start spraying after a delay
+  setTimeout(sprayAtAsteroids, 2000);
 })();
 </script></body>
 </html>
