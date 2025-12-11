@@ -5,60 +5,107 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; } h1 { font-size: 3rem; text-align: center; } @keyframes orbit { 0% { transform: translate(-50%, -150px); } 100% { transform: translate(250px, -50%); } } @keyframes kitty-orbit { 0% { transform: translate(-50%, -150px) rotate(0deg); } 100% { transform: translate(250px, -50%) rotate(360deg); } }@keyframes dog-chase { 0% { transform: translate(-50%, -100px); } 50% { transform: translate(300px, 0); } 100% { transform: translate(-50%, -100px); } } @keyframes kitty-escape { 0% { transform: translate(-50%, -150px) rotate(0deg); } 25% { transform: translate(300px, -200px) rotate(360deg); } 50% { transform: translate(250px, -50%) rotate(360deg); } 100% { transform: translate(-50%, -150px) rotate(0deg); } }@keyframes spray-water { 0%, 50%, 100% { transform: translate(-50%, -50%) rotate(0deg); } 25% { transform: translate(-50%, -50%) rotate(10deg); } 75% { transform: translate(-50%, -50%) rotate(-10deg); } }</style>
-<style>.planet-catch { filter: hue-rotate(90deg); }</style></head>
-<header style="position: fixed; top: 0; width: 100%; background: rgba(0, 0, 0, 0.8); padding: 10px 0; text-align: center; z-index: 1000;">
-<nav>
-<button class="nav-btn" data-target="#space-section">Space</button>
-<button class="nav-btn" data-target="#animals-section">Animals</button>
-<button class="nav-btn" data-target="#games-section">Games</button>
-</nav>
-</header>
-<main style="margin-top: 60px;">
-<section class="content-section" id="space-section">
+<style>body { 
+            font-family: system-ui, sans-serif; 
+            margin: 0;
+            overflow: hidden;
+            background: #000;
+        }
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        h1 { 
+            position: relative;
+            z-index: 10;
+            font-size: 3rem; 
+            text-align: center;
+            color: white;
+            text-shadow: 0 0 20px rgba(100, 200, 255, 0.8);
+            margin: 50px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(100, 200, 255, 0.8); }
+            to { text-shadow: 0 0 30px rgba(100, 200, 255, 1), 0 0 40px rgba(100, 200, 255, 0.6); }
+        }</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
+<body><div id="canvas-container"></div>
 <h1>Hello World</h1>
-<img alt="A beautiful planet" src="https://example.com/planet.png" style="width: 200px; margin-top: 20px;"/>
-</section>
-<section class="content-section" id="animals-section" style="display: none;">
-<div id="moon-container" style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center;">
-<div id="score" style="position: absolute; top: 10px; right: 10px; color: white; font-size: 1.5rem;">Dog Score: 0</div>
-<div id="moon" style="width: 40px; height: 40px; background-color: #ccc; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: orbit 5s linear infinite; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>
-<div id="kitty" style="width: 60px; height: 60px; background-image: url('https://placekitten.com/60/60'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: kitty-orbit 10s linear infinite;"></div>
-<div id="dog" style="width: 50px; height: 50px; background-image: url('https://place-puppy.com/50x50'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: dog-chase 6s linear infinite;"></div>
-<div id="elephant" style="width: 100px; height: 100px; background-image: url('https://example.com/elephant.png'); background-size: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: spray-water 3s infinite;"></div>
-</div>
-</section>
-<section class="content-section" id="games-section" style="display: none;">
-<audio id="background-music" loop="">
-<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
-      Your browser does not support the audio element.
-    </audio>
-<button id="pause-button" style="margin-top: 20px; padding: 10px; background-color: #e94560; color: #fff; border: none; cursor: pointer;">Play Music</button>
-<div id="canvas-container" style="position: relative; width: 400px; height: 400px; margin-top: 20px;"></div>
-</section>
-</main>
 <script>
-  document.querySelectorAll('.nav-btn').forEach(button => {
-    button.addEventListener('click', function() {
-      document.querySelectorAll('.content-section').forEach(section => section.style.display = 'none');
-      document.querySelector(this.dataset.target).style.display = 'block';
-    });
-  });
-
-  document.getElementById('pause-button').addEventListener('click', function() {
-    var audio = document.getElementById('background-music');
-    if (audio.paused) {
-      audio.play();
-      this.textContent = 'Pause Music';
-    } else {
-      audio.pause();
-      this.textContent = 'Play Music';
-    }
-  });
-
-  window.addEventListener('load', function() {
-    document.getElementById('background-music').play();
-    document.getElementById('pause-button').textContent = 'Pause Music';
-  });
-</script>
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+        
+        // Create planet
+        const geometry = new THREE.SphereGeometry(2, 64, 64);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x4a90e2,
+            emissive: 0x112244,
+            shininess: 30,
+            specular: 0x88ccff
+        });
+        const planet = new THREE.Mesh(geometry, material);
+        scene.add(planet);
+        
+        // Add atmosphere glow
+        const glowGeometry = new THREE.SphereGeometry(2.2, 64, 64);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x6bb6ff,
+            transparent: true,
+            opacity: 0.2,
+            side: THREE.BackSide
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        scene.add(glow);
+        
+        // Add stars
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        for(let i = 0; i < 1000; i++) {
+            const x = (Math.random() - 0.5) * 100;
+            const y = (Math.random() - 0.5) * 100;
+            const z = (Math.random() - 0.5) * 100;
+            starVertices.push(x, y, z);
+        }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+        
+        // Lighting
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 3, 5);
+        scene.add(light);
+        
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+        
+        camera.position.z = 6;
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            planet.rotation.y += 0.003;
+            glow.rotation.y += 0.003;
+            stars.rotation.y += 0.0002;
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script></body>
 </html>
