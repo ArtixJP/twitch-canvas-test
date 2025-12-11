@@ -1136,16 +1136,23 @@
         }
         
         function checkCollisions() {
-            bullets.forEach((bullet, bi) => {
-                asteroids.forEach((asteroid, ai) => {
+            // Iterate backwards to safely remove elements
+            for (let bi = bullets.length - 1; bi >= 0; bi--) {
+                const bullet = bullets[bi];
+                if (!bullet) continue;
+                
+                for (let ai = asteroids.length - 1; ai >= 0; ai--) {
+                    const asteroid = asteroids[ai];
+                    if (!asteroid) continue;
+                    
                     const dx = bullet.x - asteroid.x;
                     const dy = bullet.y - asteroid.y;
                     const dist = Math.sqrt(dx * dx + dy * dy);
                     
                     if (dist < asteroid.size + bullet.size) {
                         asteroid.health--;
-                        bullets.splice(bi, 1);
                         createExplosion(bullet.x, bullet.y, 10, 'rgba(255, 200, 100, 1)');
+                        bullets.splice(bi, 1);
                         
                         if (asteroid.health <= 0) {
                             createExplosion(asteroid.x, asteroid.y, 30, 'rgba(139, 115, 85, 1)');
@@ -1158,9 +1165,10 @@
                                 document.getElementById('waveNumber').textContent = waveNumber;
                             }
                         }
+                        break; // Bullet is destroyed, exit inner loop
                     }
-                });
-            });
+                }
+            }
         }
         
         function updateHealthBar() {
@@ -1200,7 +1208,10 @@
             ctx.fill();
             ctx.shadowBlur = 0;
             
-            asteroids.forEach((asteroid, i) => {
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                const asteroid = asteroids[i];
+                if (!asteroid) continue;
+                
                 asteroid.update();
                 asteroid.draw();
                 
@@ -1216,19 +1227,23 @@
                         document.getElementById('gameOverScreen').style.display = 'flex';
                     }
                 }
-            });
+            }
             
-            bullets.forEach((bullet, i) => {
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                const bullet = bullets[i];
+                if (!bullet) continue;
                 bullet.update();
                 bullet.draw();
                 if (bullet.isOffScreen()) bullets.splice(i, 1);
-            });
+            }
             
-            particles.forEach((particle, i) => {
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const particle = particles[i];
+                if (!particle) continue;
                 particle.update();
                 particle.draw();
                 if (particle.life <= 0) particles.splice(i, 1);
-            });
+            }
             
             checkCollisions();
             
