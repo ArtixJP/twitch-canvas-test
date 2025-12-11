@@ -192,5 +192,27 @@ function toggleMusic() {
     text.textContent = 'Play';
   }
 }
-</script><audio id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio><button class="music-btn" onclick="toggleMusic()"><span id="btnIcon">▶️</span><span id="btnText">Play Music</span></button></body>
+</script><audio autoplay="true" id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio><button class="music-btn" onclick="toggleMusic()"><span id="btnIcon">▶️</span><span id="btnText">Play Music</span></button><script>
+// Auto-play music on page load
+window.addEventListener('load', function() {
+  const audio = document.getElementById('bgMusic');
+  const icon = document.getElementById('btnIcon');
+  const text = document.getElementById('btnText');
+  
+  // Try to play automatically
+  const playPromise = audio.play();
+  
+  if (playPromise !== undefined) {
+    playPromise.then(() => {
+      // Autoplay started successfully
+      icon.textContent = '⏸️';
+      text.textContent = 'Pause';
+    }).catch((error) => {
+      // Autoplay was prevented (browser policy)
+      // Keep the play button ready
+      console.log('Autoplay prevented by browser, click the button to play');
+    });
+  }
+});
+</script></body>
 </html>
