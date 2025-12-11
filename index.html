@@ -176,13 +176,35 @@
 <script>
   const audio = document.getElementById('bgMusic');
   const musicIcon = document.getElementById('musicIcon');
-  let isPlaying = true;
+  let isPlaying = false;
   
-  // Handle autoplay restrictions
-  audio.play().catch(() => {
-    isPlaying = false;
-    musicIcon.textContent = '🎵';
-  });
+  // Try to play on page load
+  function tryAutoplay() {
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise.then(() => {
+        isPlaying = true;
+        musicIcon.textContent = '⏸️';
+      }).catch(() => {
+        isPlaying = false;
+        musicIcon.textContent = '🎵';
+        // Add click listener to document for first interaction
+        document.addEventListener('click', playOnFirstInteraction, { once: true });
+      });
+    }
+  }
+  
+  function playOnFirstInteraction() {
+    if (!isPlaying) {
+      audio.play().then(() => {
+        isPlaying = true;
+        musicIcon.textContent = '⏸️';
+      });
+    }
+  }
+  
+  // Start autoplay attempt when page loads
+  window.addEventListener('load', tryAutoplay);
   
   function toggleMusic() {
     if (isPlaying) {
@@ -194,7 +216,7 @@
     }
     isPlaying = !isPlaying;
   }
-</script><audio autoplay="" id="bgMusic" loop="">
+</script><audio autoplay="autoplay" id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
 <button id="musicToggle" onclick="toggleMusic()">
