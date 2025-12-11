@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>La Mie Dorée - Artisan Bakery</title>
+<title>La Mie Pizzeria - World's First Bakery &amp; Pizzeria Fusion</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
 <style>
     * {
@@ -335,26 +335,30 @@
         .about-content { grid-template-columns: 1fr; }
         .nav-links { display: none; }
     }
-</style>
+
+    .product-card:nth-child(n+5) { animation: pizzaGlow 2s ease-in-out infinite alternate; }
+    @keyframes pizzaGlow { 0% { box-shadow: 0 10px 30px rgba(255,107,53,0.2); } 100% { box-shadow: 0 10px 40px rgba(255,107,53,0.4); } }
+    .fusion-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #f4d03f, #ff6b35); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; color: white; }
+  </style>
 </head>
 <body>
 <nav>
-<a class="logo" href="#">🥐 La Mie Dorée</a>
+<a class="logo" href="#">🥐🍕 La Mie Pizzeria</a>
 <ul class="nav-links">
-<li><a href="#products">Our Breads</a></li>
+<li><a href="#products">Our Creations</a></li>
 <li><a href="#about">Our Story</a></li>
 <li><a href="#contact">Visit Us</a></li>
-<li><a href="#game-section" style="color: #f4d03f;">🎮 Play Game</a></li></ul>
+<li><a href="#game-section" style="color: #f4d03f;">🎮 Play Game</a></li><li><a href="#products" style="color: #ff6b35;">🍕 Pizzas</a></li></ul>
 </nav>
 <header>
 <div class="hero-content">
-<h1>Fresh From The Oven</h1>
-<p>Handcrafted breads &amp; pastries made with love since 1952</p>
+<h1>Fresh From The Oven<br/><span style="font-size: 0.5em; color: #f4d03f;">Bread Meets Pizza 🥐🍕</span></h1>
+<p>The world's first fusion of artisan bakery &amp; authentic pizzeria since 1952</p>
 <a class="btn" href="#products">Discover Our Selection</a>
 </div>
 </header>
 <section id="products">
-<h2 class="section-title">Our Signature Creations</h2>
+<h2 class="section-title">Our Signature Creations 🥐🍕</h2>
 <div class="products-grid">
 <div class="product-card">
 <img alt="Sourdough Bread" src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=600"/>
@@ -388,15 +392,15 @@
 <span class="price">$4.25</span>
 </div>
 </div>
-</div>
+<div class="product-card" style="border: 3px solid #ff6b35;"><img alt="Margherita Pizza" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🍕 Pizza Margherita</h3><p>San Marzano tomatoes, fresh mozzarella, basil on our signature bread dough</p><span class="price" style="color: #ff6b35;">$14.00</span></div></div><div class="product-card" style="border: 3px solid #ff6b35;"><img alt="Pepperoni Pizza" src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🍕 Pepperoni Classico</h3><p>Crispy pepperoni, melted cheese on our 72-hour fermented sourdough base</p><span class="price" style="color: #ff6b35;">$16.50</span></div></div><div class="product-card" style="border: 3px solid #ff6b35;"><img alt="Four Cheese Pizza" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🍕 Quattro Formaggi</h3><p>Mozzarella, gorgonzola, parmesan, ricotta - a cheese lover's dream</p><span class="price" style="color: #ff6b35;">$18.00</span></div></div><div class="product-card" style="background: linear-gradient(135deg, #fdf6e3, #ffe4c4);"><img alt="Croissant Pizza" src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🥐🍕 FUSION SPECIAL</h3><p style="color: #ff6b35; font-weight: bold;">Our signature: Croissant-dough pizza with truffle cream!</p><span class="price" style="color: #c9a227; font-size: 1.5rem;">$22.00</span></div></div></div>
 </section>
 <section class="about" id="about">
 <h2 class="section-title">Our Story</h2>
 <div class="about-content">
 <div class="about-text">
-<p>For over 70 years, La Mie Dorée has been waking up before dawn to bring you the finest artisan breads and pastries. Our journey began with Grand-père Pierre and his legendary sourdough starter, which we still nurture today.</p>
-<p>Every loaf tells a story of patience, passion, and the finest organic ingredients. We believe that great bread takes time - that's why our doughs rest and ferment naturally, developing complex flavors that can't be rushed.</p>
-<p>From our ovens to your table, we promise nothing but authenticity and excellence.</p>
+<p>For over 70 years, La Mie Dorée perfected artisan breads. In 2020, we made history by becoming the world's FIRST bakery-pizzeria fusion! Grand-père Pierre's legendary sourdough starter now forms the base of our revolutionary pizzas.</p>
+<p>Our secret? The same 72-hour fermentation that makes our bread extraordinary now creates pizza dough that's impossibly light, crispy, and flavorful. Italian tradition meets French artistry in every bite! 🇫🇷❤️🇮🇹</p>
+<p>From our wood-fired ovens to your table - croissants at breakfast, pizza at lunch, fresh bread for dinner. We do it all!</p>
 <a class="btn" href="#">Meet Our Bakers</a>
 </div>
 <div class="about-img">
@@ -413,8 +417,8 @@
 <p style="color: #888;">The aroma of fresh bread awaits you...</p>
 </div>
 </section><section id="game-section" style="background: linear-gradient(135deg, #4a3728 0%, #2d1f14 100%); padding: 4rem 10%; min-height: 600px;">
-<h2 class="section-title" style="color: #fff;">🥐 Catch The Pastries! 🥖</h2>
-<p style="text-align: center; color: #f4d03f; margin-bottom: 2rem; font-size: 1.1rem;">Use your mouse or touch to catch the delicious pastries! Avoid the burnt bread! 🔥</p>
+<h2 class="section-title" style="color: #fff;">🥐 Catch The Goodies! 🍕</h2>
+<p style="text-align: center; color: #f4d03f; margin-bottom: 2rem; font-size: 1.1rem;">Use your mouse or touch to catch pastries AND pizzas! Avoid the burnt stuff! 🔥</p>
 <div id="game-container" style="position: relative; width: 100%; max-width: 600px; height: 400px; margin: 0 auto; background: linear-gradient(180deg, #87CEEB 0%, #f4d03f 100%); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); cursor: none;">
 <div id="game-ui" style="position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 10; font-family: 'Playfair Display', serif;">
 <div style="background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 20px; font-weight: bold;">Score: <span id="score">0</span></div>
@@ -424,10 +428,10 @@
 <div style="position: absolute; top: -8px; left: -8px; right: -8px; height: 15px; background: #A0522D; border-radius: 10px 10px 0 0; border: 3px solid #5D3A1A;"></div>
 </div>
 <div id="start-screen" style="position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20;">
-<h3 style="color: #f4d03f; font-size: 2rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif;">🥐 Bakery Catch 🥖</h3>
+<h3 style="color: #f4d03f; font-size: 2rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif;">🥐 Bakery-Pizzeria Catch 🍕</h3>
 <p style="color: #fff; margin-bottom: 0.5rem;">🥐 Croissant = +10 pts</p>
 <p style="color: #fff; margin-bottom: 0.5rem;">🥖 Baguette = +15 pts</p>
-<p style="color: #fff; margin-bottom: 0.5rem;">🍞 Bread = +5 pts</p>
+<p style="color: #fff; margin-bottom: 0.5rem;">🍞 Bread = +5 pts</p><p style="color: #ff6b35; margin-bottom: 0.5rem;">🍕 Pizza = +20 pts</p>
 <p style="color: #ff6b6b; margin-bottom: 1.5rem;">🔥 Burnt = -1 life!</p>
 <button id="start-btn" style="padding: 1rem 3rem; font-size: 1.2rem; background: #f4d03f; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; color: #4a3728; transition: transform 0.2s;">Start Game!</button>
 </div>
@@ -460,13 +464,15 @@
   let spawnInterval;
   let gameLoop;
   let basketX = 260;
-  let highScore = localStorage.getItem('bakeryHighScore') || 0;
+  let highScore = localStorage.getItem('bakeryPizzeriaHighScore') || 0;
   highScoreEl.textContent = highScore;
   
   const items = [
     { emoji: '🥐', points: 10, speed: 2 },
     { emoji: '🥖', points: 15, speed: 2.5 },
     { emoji: '🍞', points: 5, speed: 1.8 },
+    { emoji: '🍕', points: 20, speed: 2.2 },
+    { emoji: '🧀', points: 8, speed: 2 },
     { emoji: '🔥', points: -1, speed: 3, isBurnt: true }
   ];
   
@@ -516,7 +522,6 @@
       
       const itemRect = item.getBoundingClientRect();
       
-      // Check collision with basket
       if (itemRect.bottom >= basketRect.top && 
           itemRect.top <= basketRect.bottom &&
           itemRect.right >= basketRect.left && 
@@ -539,7 +544,6 @@
         continue;
       }
       
-      // Remove if off screen
       if (currentTop > rect.height + 50) {
         item.remove();
         fallingItems.splice(i, 1);
@@ -572,11 +576,10 @@
     startScreen.style.display = 'none';
     gameOverScreen.style.display = 'none';
     
-    // Clear any existing items
     fallingItems.forEach(item => item.remove());
     fallingItems.length = 0;
     
-    spawnInterval = setInterval(spawnItem, 1000);
+    spawnInterval = setInterval(spawnItem, 900);
     gameLoop = requestAnimationFrame(updateGame);
   }
   
@@ -587,7 +590,7 @@
     
     if (score > highScore) {
       highScore = score;
-      localStorage.setItem('bakeryHighScore', highScore);
+      localStorage.setItem('bakeryPizzeriaHighScore', highScore);
       highScoreEl.textContent = highScore;
     }
     
@@ -598,7 +601,6 @@
   startBtn.addEventListener('click', startGame);
   restartBtn.addEventListener('click', startGame);
   
-  // Add floating animation
   const style = document.createElement('style');
   style.textContent = `
     @keyframes floatUp {
@@ -613,11 +615,11 @@
 })();
 </script>
 <footer>
-<p>© 2024 La Mie Dorée - Baked with ❤️ and flour</p>
+<p>© 2024 La Mie Pizzeria - Where Croissants Meet Pizza 🥐❤️🍕</p>
 </footer>
 <div class="floating-bread" style="top: 20%; left: 5%;">🥖</div>
 <div class="floating-bread" style="top: 60%; right: 8%; animation-delay: -2s;">🥐</div>
-<div class="floating-bread" style="top: 40%; right: 3%; animation-delay: -4s;">🍞</div>
+<div class="floating-bread" style="top: 40%; right: 3%; animation-delay: -4s;">🍞</div><div class="floating-bread" style="top: 30%; right: 15%; animation-delay: -5s; font-size: 2.2rem;">🧀</div><div class="floating-bread" style="top: 75%; left: 10%; animation-delay: -3s; font-size: 2.5rem;">🍕</div>
 <div class="floating-planet">
 <div class="planet-ring"></div>
 <div class="planet-body"></div>
