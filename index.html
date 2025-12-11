@@ -6,58 +6,496 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
 <style>
-        body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-        }
-        h1 { font-size: 3rem; text-align: center; }
-        .click-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            cursor: pointer;
-            animation: pulse 2s infinite;
-        }
-        .click-overlay span {
-            font-size: 2rem;
-            color: white;
-            text-align: center;
-            padding: 30px;
-            border: 3px dashed #9b59b6;
-            border-radius: 20px;
-        }
-        @keyframes pulse {
-            0%, 100% { background: rgba(0,0,0,0.8); }
-            50% { background: rgba(26,26,46,0.9); }
-        }
-    </style>
+    body { 
+        font-family: system-ui, sans-serif; 
+        min-height: 100vh; 
+        margin: 0;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        color: white;
+        overflow-x: hidden;
+    }
+    
+    /* Navigation Menu */
+    .nav-menu {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 20px;
+        background: linear-gradient(180deg, rgba(26,26,46,0.95) 0%, rgba(26,26,46,0.8) 100%);
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    
+    .nav-btn {
+        padding: 15px 35px;
+        border: none;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .nav-btn.space {
+        background: linear-gradient(145deg, #3498db, #2980b9);
+        color: white;
+        box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
+    }
+    
+    .nav-btn.animals {
+        background: linear-gradient(145deg, #e67e22, #d35400);
+        color: white;
+        box-shadow: 0 4px 15px rgba(230, 126, 34, 0.4);
+    }
+    
+    .nav-btn.games {
+        background: linear-gradient(145deg, #9b59b6, #8e44ad);
+        color: white;
+        box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4);
+    }
+    
+    .nav-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .nav-btn.active {
+        transform: scale(1.15);
+        box-shadow: 0 6px 25px rgba(255,255,255,0.3);
+    }
+    
+    /* Sections */
+    .section {
+        display: none;
+        min-height: 100vh;
+        padding-top: 100px;
+        position: relative;
+    }
+    
+    .section.active {
+        display: block;
+    }
+    
+    .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 30px;
+        padding-top: 20px;
+    }
+    
+    /* Space Section */
+    .space-section .section-title {
+        color: #3498db;
+        text-shadow: 0 0 20px rgba(52, 152, 219, 0.5);
+    }
+    
+    /* Animals Section */
+    .animals-section .section-title {
+        color: #e67e22;
+        text-shadow: 0 0 20px rgba(230, 126, 34, 0.5);
+    }
+    
+    /* Games Section */
+    .games-section .section-title {
+        color: #9b59b6;
+        text-shadow: 0 0 20px rgba(155, 89, 182, 0.5);
+    }
+    
+    .click-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 2000;
+        cursor: pointer;
+        animation: pulse 2s infinite;
+    }
+    .click-overlay span {
+        font-size: 2rem;
+        color: white;
+        text-align: center;
+        padding: 30px;
+        border: 3px dashed #9b59b6;
+        border-radius: 20px;
+    }
+    @keyframes pulse {
+        0%, 100% { background: rgba(0,0,0,0.8); }
+        50% { background: rgba(26,26,46,0.9); }
+    }
+    
+    /* Solar System Styles */
+    .solar-system {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        margin: 50px auto;
+    }
+    .planet {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 80px;
+        animation: planet-pulse 4s ease-in-out infinite;
+        filter: drop-shadow(0 0 20px rgba(100,149,237,0.6));
+    }
+    .moon-orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 250px;
+        height: 250px;
+        transform: translate(-50%, -50%);
+        animation: orbit 8s linear infinite;
+        transform-origin: center center;
+    }
+    .moon {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 35px;
+        filter: drop-shadow(0 0 10px rgba(255,255,200,0.8));
+        animation: moon-glow 2s ease-in-out infinite;
+    }
+    @keyframes orbit {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes planet-pulse {
+        0%, 100% { transform: translate(-50%, -50%) scale(1); }
+        50% { transform: translate(-50%, -50%) scale(1.05); }
+    }
+    @keyframes moon-glow {
+        0%, 100% { filter: drop-shadow(0 0 10px rgba(255,255,200,0.8)); }
+        50% { filter: drop-shadow(0 0 20px rgba(255,255,150,1)); }
+    }
+    
+    /* Animals Styles */
+    .animals-container {
+        position: relative;
+        width: 400px;
+        height: 400px;
+        margin: 50px auto;
+    }
+    
+    .elephant-container {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .elephant {
+        font-size: 100px;
+        animation: elephant-bounce 2s ease-in-out infinite;
+        filter: drop-shadow(0 10px 20px rgba(0,0,0,0.3));
+    }
+    .water-spray {
+        position: absolute;
+        top: -30px;
+        left: 60%;
+        width: 100px;
+        height: 100px;
+    }
+    @keyframes elephant-bounce {
+        0%, 100% { transform: translateY(0) rotate(-5deg); }
+        50% { transform: translateY(-10px) rotate(5deg); }
+    }
+    .water-drop {
+        position: absolute;
+        font-size: 20px;
+        animation: water-fly 1.5s ease-out forwards;
+        opacity: 0;
+    }
+    @keyframes water-fly {
+        0% { transform: translate(0, 0) scale(0.5); opacity: 1; }
+        50% { opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(1); opacity: 0; }
+    }
+    
+    .kitty-orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 220px;
+        height: 220px;
+        transform: translate(-50%, -50%);
+        animation: kitty-orbit 5s linear infinite reverse;
+        transform-origin: center center;
+    }
+    .kitty {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 28px;
+        filter: drop-shadow(0 0 8px rgba(255,182,193,0.9));
+        animation: kitty-bounce 0.8s ease-in-out infinite;
+        transition: all 0.3s;
+    }
+    .doggy-orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 220px;
+        height: 220px;
+        transform: translate(-50%, -50%);
+        animation: doggy-orbit 3.5s linear infinite reverse;
+        transform-origin: center center;
+    }
+    .doggy {
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 32px;
+        filter: drop-shadow(0 0 10px rgba(139,69,19,0.9));
+        animation: doggy-bounce 0.5s ease-in-out infinite;
+    }
+    .score-display {
+        text-align: center;
+        background: linear-gradient(145deg, #e67e22, #d35400);
+        padding: 15px 30px;
+        border-radius: 50px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        box-shadow: 0 4px 20px rgba(230,126,34,0.5);
+        display: inline-block;
+        margin: 20px auto;
+        animation: score-glow 2s ease-in-out infinite;
+    }
+    .catch-effect {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 3rem;
+        font-weight: bold;
+        color: #f1c40f;
+        text-shadow: 0 0 20px #f39c12, 0 0 40px #e74c3c;
+        opacity: 0;
+        pointer-events: none;
+        z-index: 200;
+        transition: opacity 0.3s;
+    }
+    @keyframes kitty-orbit {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes kitty-bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-5px); }
+    }
+    @keyframes doggy-orbit {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    @keyframes doggy-bounce {
+        0%, 100% { transform: translateX(-50%) translateY(0) scaleX(-1); }
+        50% { transform: translateX(-50%) translateY(-8px) scaleX(-1); }
+    }
+    @keyframes score-glow {
+        0%, 100% { box-shadow: 0 4px 20px rgba(230,126,34,0.5); }
+        50% { box-shadow: 0 4px 30px rgba(230,126,34,0.8); }
+    }
+    
+    /* Puzzle Styles */
+    .puzzle-container {
+        background: linear-gradient(145deg, #2c3e50, #34495e);
+        padding: 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        text-align: center;
+        max-width: 300px;
+        margin: 50px auto;
+    }
+    .puzzle-title {
+        margin: 0 0 5px 0;
+        font-size: 1.5rem;
+        color: #f1c40f;
+        text-shadow: 0 2px 10px rgba(241,196,15,0.3);
+    }
+    .puzzle-subtitle {
+        margin: 0 0 15px 0;
+        color: #bdc3c7;
+        font-size: 0.9rem;
+    }
+    .puzzle-stats {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 15px;
+        color: #ecf0f1;
+        font-size: 0.95rem;
+    }
+    .puzzle-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 60px);
+        grid-template-rows: repeat(4, 60px);
+        gap: 4px;
+        background: #1a252f;
+        padding: 8px;
+        border-radius: 10px;
+        margin: 0 auto;
+    }
+    .puzzle-tile {
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        user-select: none;
+    }
+    .puzzle-tile.number {
+        background: linear-gradient(145deg, #9b59b6, #8e44ad);
+        color: white;
+        box-shadow: 0 3px 10px rgba(155,89,182,0.4);
+    }
+    .puzzle-tile.number:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(155,89,182,0.6);
+    }
+    .puzzle-tile.empty {
+        background: transparent;
+        cursor: default;
+    }
+    .puzzle-btn {
+        margin-top: 15px;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 25px;
+        background: linear-gradient(145deg, #e74c3c, #c0392b);
+        color: white;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        box-shadow: 0 4px 15px rgba(231,76,60,0.4);
+    }
+    .puzzle-btn:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(231,76,60,0.6);
+    }
+    .win-message {
+        margin-top: 15px;
+        background: linear-gradient(145deg, #27ae60, #2ecc71);
+        padding: 20px 40px;
+        border-radius: 15px;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: white;
+        opacity: 0;
+        transition: opacity 0.5s;
+        box-shadow: 0 10px 30px rgba(39,174,96,0.5);
+    }
+    .win-message.show {
+        opacity: 1;
+        animation: win-bounce 0.6s ease;
+    }
+    @keyframes win-bounce {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+</style>
 </head>
 <body>
 <div class="click-overlay" id="clickOverlay">
 <span>🎩 Click anywhere to start the Professor Layton experience! 🎶</span>
 </div>
-<h1>🎩 Professor Layton Vibes 🎩</h1><div class="puzzle-container"><h2 class="puzzle-title">🧩 Layton's Sliding Puzzle 🧩</h2><p class="puzzle-subtitle">Arrange the tiles from 1-15!</p><div class="puzzle-stats"><span>Moves: <strong id="moveCount">0</strong></span><span>Best: <strong id="bestScore">-</strong></span></div><div class="puzzle-grid" id="puzzleGrid"></div><button class="puzzle-btn" id="shuffleBtn">🔀 Shuffle</button><div class="win-message" id="winMessage">🎉 Puzzle Solved! 🎉</div><style>.puzzle-container{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(145deg,#2c3e50,#34495e);padding:25px;border-radius:20px;box-shadow:0 10px 40px rgba(0,0,0,0.5);z-index:50;text-align:center;pointer-events:auto}.puzzle-title{margin:0 0 5px 0;font-size:1.5rem;color:#f1c40f;text-shadow:0 2px 10px rgba(241,196,15,0.3)}.puzzle-subtitle{margin:0 0 15px 0;color:#bdc3c7;font-size:0.9rem}.puzzle-stats{display:flex;justify-content:space-around;margin-bottom:15px;color:#ecf0f1;font-size:0.95rem}.puzzle-grid{display:grid;grid-template-columns:repeat(4,60px);grid-template-rows:repeat(4,60px);gap:4px;background:#1a252f;padding:8px;border-radius:10px;margin:0 auto}.puzzle-tile{width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:bold;border-radius:8px;cursor:pointer;transition:all 0.15s ease;user-select:none}.puzzle-tile.number{background:linear-gradient(145deg,#9b59b6,#8e44ad);color:white;box-shadow:0 3px 10px rgba(155,89,182,0.4)}.puzzle-tile.number:hover{transform:scale(1.05);box-shadow:0 5px 15px rgba(155,89,182,0.6)}.puzzle-tile.empty{background:transparent;cursor:default}.puzzle-btn{margin-top:15px;padding:12px 30px;border:none;border-radius:25px;background:linear-gradient(145deg,#e74c3c,#c0392b);color:white;font-size:1rem;font-weight:bold;cursor:pointer;transition:all 0.3s;box-shadow:0 4px 15px rgba(231,76,60,0.4)}.puzzle-btn:hover{transform:scale(1.05);box-shadow:0 6px 20px rgba(231,76,60,0.6)}.win-message{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(145deg,#27ae60,#2ecc71);padding:20px 40px;border-radius:15px;font-size:1.5rem;font-weight:bold;color:white;opacity:0;pointer-events:none;transition:opacity 0.5s;box-shadow:0 10px 30px rgba(39,174,96,0.5)}.win-message.show{opacity:1;animation:win-bounce 0.6s ease}</style><script>(function(){const grid=document.getElementById('puzzleGrid');const moveCountEl=document.getElementById('moveCount');const bestScoreEl=document.getElementById('bestScore');const winMessage=document.getElementById('winMessage');const shuffleBtn=document.getElementById('shuffleBtn');let tiles=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];let moveCount=0;let bestScore=localStorage.getItem('puzzleBest')||null;if(bestScore)bestScoreEl.textContent=bestScore;function render(){grid.innerHTML='';tiles.forEach((tile,index)=>{const div=document.createElement('div');div.className='puzzle-tile '+(tile===0?'empty':'number');div.textContent=tile===0?'':tile;if(tile!==0){div.addEventListener('click',()=>moveTile(index));}grid.appendChild(div);});}function getEmptyIndex(){return tiles.indexOf(0);}function canMove(index){const empty=getEmptyIndex();const row=Math.floor(index/4);const emptyRow=Math.floor(empty/4);const col=index%4;const emptyCol=empty%4;return(Math.abs(row-emptyRow)+Math.abs(col-emptyCol))===1;}function moveTile(index){if(!canMove(index))return;const empty=getEmptyIndex();[tiles[index],tiles[empty]]=[tiles[empty],tiles[index]];moveCount++;moveCountEl.textContent=moveCount;render();checkWin();}function checkWin(){const solved=[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];if(tiles.every((t,i)=>t===solved[i])){winMessage.classList.add('show');if(!bestScore||moveCount<bestScore){bestScore=moveCount;localStorage.setItem('puzzleBest',bestScore);bestScoreEl.textContent=bestScore;}setTimeout(()=>winMessage.classList.remove('show'),3000);}}function shuffle(){for(let i=0;i<200;i++){const empty=getEmptyIndex();const moves=[];if(empty>=4)moves.push(empty-4);if(empty<12)moves.push(empty+4);if(empty%4!==0)moves.push(empty-1);if(empty%4!==3)moves.push(empty+1);const randomMove=moves[Math.floor(Math.random()*moves.length)];[tiles[empty],tiles[randomMove]]=[tiles[randomMove],tiles[empty]];}moveCount=0;moveCountEl.textContent=0;winMessage.classList.remove('show');render();}shuffleBtn.addEventListener('click',shuffle);render();shuffle();})();</script></div><div class="solar-system"><div id="three-container" style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:400px;height:400px;pointer-events:none;"></div><div class="planet" id="planetEmoji">🌍</div><div class="moon-orbit"><div class="moon">🌙</div></div><div class="kitty-orbit" id="kittyOrbit"><div class="kitty" id="kittyEmoji">🐱</div></div><div class="doggy-orbit" id="doggyOrbit"><div class="doggy" id="doggyEmoji">🐕</div></div><div class="score-display" id="scoreDisplay">🐕 Dog Score: <span id="dogScore">0</span></div><div class="catch-effect" id="catchEffect">CAUGHT! 🎉</div><style>.kitty-orbit{position:absolute;top:50%;left:50%;width:180px;height:180px;transform:translate(-50%,-50%);animation:kitty-orbit 5s linear infinite reverse;transform-origin:center center;pointer-events:none}.kitty{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:28px;filter:drop-shadow(0 0 8px rgba(255,182,193,0.9));animation:kitty-bounce 0.8s ease-in-out infinite;transition:all 0.3s}.doggy-orbit{position:absolute;top:50%;left:50%;width:180px;height:180px;transform:translate(-50%,-50%);animation:doggy-orbit 3.5s linear infinite reverse;transform-origin:center center;pointer-events:none}.doggy{position:absolute;top:-15px;left:50%;transform:translateX(-50%);font-size:32px;filter:drop-shadow(0 0 10px rgba(139,69,19,0.9));animation:doggy-bounce 0.5s ease-in-out infinite}.score-display{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:linear-gradient(145deg,#e67e22,#d35400);padding:15px 30px;border-radius:50px;font-size:1.5rem;font-weight:bold;color:white;box-shadow:0 4px 20px rgba(230,126,34,0.5);z-index:100;animation:score-glow 2s ease-in-out infinite}.catch-effect{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;font-weight:bold;color:#f1c40f;text-shadow:0 0 20px #f39c12,0 0 40px #e74c3c;opacity:0;pointer-events:none;z-index:200;transition:opacity 0.3s}@keyframes kitty-orbit{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes kitty-bounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-5px)}}@keyframes doggy-orbit{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes doggy-bounce{0%,100%{transform:translateX(-50%) translateY(0) scaleX(-1)}50%{transform:translateX(-50%) translateY(-8px) scaleX(-1)}}@keyframes score-glow{0%,100%{box-shadow:0 4px 20px rgba(230,126,34,0.5)}50%{box-shadow:0 4px 30px rgba(230,126,34,0.8)}}</style><script>(function(){let dogScore=0;let lastCatchTime=0;const catchCooldown=1000;function checkCollision(){const kittyOrbit=document.getElementById('kittyOrbit');const doggyOrbit=document.getElementById('doggyOrbit');const kitty=document.getElementById('kittyEmoji');const doggy=document.getElementById('doggyEmoji');if(!kittyOrbit||!doggyOrbit||!kitty||!doggy)return;const kittyRect=kitty.getBoundingClientRect();const doggyRect=doggy.getBoundingClientRect();const kittyX=kittyRect.left+kittyRect.width/2;const kittyY=kittyRect.top+kittyRect.height/2;const doggyX=doggyRect.left+doggyRect.width/2;const doggyY=doggyRect.top+doggyRect.height/2;const distance=Math.sqrt(Math.pow(kittyX-doggyX,2)+Math.pow(kittyY-doggyY,2));const now=Date.now();if(distance<50&&now-lastCatchTime>catchCooldown){lastCatchTime=now;dogScore++;document.getElementById('dogScore').textContent=dogScore;const effect=document.getElementById('catchEffect');effect.style.opacity='1';setTimeout(()=>{effect.style.opacity='0';},800);kitty.style.transform='translateX(-50%) scale(0.5)';setTimeout(()=>{kitty.style.transform='translateX(-50%) scale(1)';},300);}}setInterval(checkCollision,50);})();</script><style>.planet-catch{animation:planet-catch-color 0.8s ease-out!important}@keyframes planet-catch-color{0%{filter:drop-shadow(0 0 30px #ff0000) hue-rotate(0deg)}25%{filter:drop-shadow(0 0 40px #ffff00) hue-rotate(90deg)}50%{filter:drop-shadow(0 0 50px #00ff00) hue-rotate(180deg)}75%{filter:drop-shadow(0 0 40px #00ffff) hue-rotate(270deg)}100%{filter:drop-shadow(0 0 20px rgba(100,149,237,0.6)) hue-rotate(360deg)}}</style><script>(function(){const originalCheckCollision=window.checkCollisionOriginal;let dogScore=0;let lastCatchTime=0;const catchCooldown=1000;function checkCollisionWithPlanet(){const kittyOrbit=document.getElementById('kittyOrbit');const doggyOrbit=document.getElementById('doggyOrbit');const kitty=document.getElementById('kittyEmoji');const doggy=document.getElementById('doggyEmoji');const planet=document.getElementById('planetEmoji');if(!kittyOrbit||!doggyOrbit||!kitty||!doggy)return;const kittyRect=kitty.getBoundingClientRect();const doggyRect=doggy.getBoundingClientRect();const kittyX=kittyRect.left+kittyRect.width/2;const kittyY=kittyRect.top+kittyRect.height/2;const doggyX=doggyRect.left+doggyRect.width/2;const doggyY=doggyRect.top+doggyRect.height/2;const distance=Math.sqrt(Math.pow(kittyX-doggyX,2)+Math.pow(kittyY-doggyY,2));const now=Date.now();if(distance<50&&now-lastCatchTime>catchCooldown){lastCatchTime=now;dogScore++;document.getElementById('dogScore').textContent=dogScore;const effect=document.getElementById('catchEffect');effect.style.opacity='1';setTimeout(()=>{effect.style.opacity='0';},800);kitty.style.transform='translateX(-50%) scale(0.5)';setTimeout(()=>{kitty.style.transform='translateX(-50%) scale(1)';},300);if(planet){planet.classList.remove('planet-catch');void planet.offsetWidth;planet.classList.add('planet-catch');setTimeout(()=>{planet.classList.remove('planet-catch');},800);}}}setInterval(checkCollisionWithPlanet,50);})();</script></div><div class="elephant-container"><div class="elephant" id="elephant">🐘</div><div class="water-spray" id="waterSpray"></div><style>.elephant-container{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:25;pointer-events:none}.elephant{font-size:100px;animation:elephant-bounce 2s ease-in-out infinite;filter:drop-shadow(0 10px 20px rgba(0,0,0,0.3))}.water-spray{position:absolute;top:-30px;left:60%;width:100px;height:100px;pointer-events:none}@keyframes elephant-bounce{0%,100%{transform:translateY(0) rotate(-5deg)}50%{transform:translateY(-10px) rotate(5deg)}}.water-drop{position:absolute;font-size:20px;animation:water-fly 1.5s ease-out forwards;opacity:0}@keyframes water-fly{0%{transform:translate(0,0) scale(0.5);opacity:1}50%{opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(1);opacity:0}}.trunk-spray{position:absolute;top:-20px;left:70px;font-size:30px;animation:trunk-wave 0.5s ease-in-out infinite alternate}@keyframes trunk-wave{0%{transform:rotate(-20deg)}100%{transform:rotate(20deg)}}</style><script>(function(){const spray=document.getElementById('waterSpray');const drops=['💧','💦','🌊'];function createWaterDrop(){const drop=document.createElement('div');drop.className='water-drop';drop.textContent=drops[Math.floor(Math.random()*drops.length)];drop.style.setProperty('--tx',(Math.random()*150-30)+'px');drop.style.setProperty('--ty',(-Math.random()*120-50)+'px');drop.style.left=Math.random()*30+'px';drop.style.top=Math.random()*20+'px';drop.style.animationDuration=(1+Math.random()*0.5)+'s';spray.appendChild(drop);setTimeout(()=>{drop.remove();},1500);}setInterval(createWaterDrop,200);for(let i=0;i<5;i++){setTimeout(createWaterDrop,i*100);}})();</script></div><style>.solar-system{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;pointer-events:none;z-index:10}.planet{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;animation:planet-pulse 4s ease-in-out infinite;filter:drop-shadow(0 0 20px rgba(100,149,237,0.6))}.moon-orbit{position:absolute;top:50%;left:50%;width:250px;height:250px;transform:translate(-50%,-50%);animation:orbit 8s linear infinite;transform-origin:center center}.moon{position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:35px;filter:drop-shadow(0 0 10px rgba(255,255,200,0.8));animation:moon-glow 2s ease-in-out infinite}@keyframes orbit{0%{transform:translate(-50%,-50%) rotate(0deg)}100%{transform:translate(-50%,-50%) rotate(360deg)}}@keyframes planet-pulse{0%,100%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.05)}}@keyframes moon-glow{0%,100%{filter:drop-shadow(0 0 10px rgba(255,255,200,0.8))}50%{filter:drop-shadow(0 0 20px rgba(255,255,150,1))}}</style>
+<!-- Navigation Menu -->
+<nav class="nav-menu">
+<button class="nav-btn space active" data-section="space">🌍 Space</button>
+<button class="nav-btn animals" data-section="animals">🐾 Animals</button>
+<button class="nav-btn games" data-section="games">🎮 Games</button>
+</nav>
+<!-- SPACE SECTION -->
+<section class="section space-section active" id="space-section">
+<h1 class="section-title">🌌 Space Observatory 🌌</h1>
+<div class="solar-system">
+<div class="planet" id="planetEmoji">🌍</div>
+<div class="moon-orbit">
+<div class="moon">🌙</div>
+</div>
+</div>
+</section>
+<!-- ANIMALS SECTION -->
+<section class="section animals-section" id="animals-section">
+<h1 class="section-title">🐾 Animal Kingdom 🐾</h1>
+<div style="text-align: center;">
+<div class="score-display" id="scoreDisplay">🐕 Dog Score: <span id="dogScore">0</span></div>
+</div>
+<div class="animals-container">
+<div class="elephant-container">
+<div class="elephant" id="elephant">🐘</div>
+<div class="water-spray" id="waterSpray"></div>
+</div>
+<div class="kitty-orbit" id="kittyOrbit">
+<div class="kitty" id="kittyEmoji">🐱</div>
+</div>
+<div class="doggy-orbit" id="doggyOrbit">
+<div class="doggy" id="doggyEmoji">🐕</div>
+</div>
+<div class="catch-effect" id="catchEffect">CAUGHT! 🎉</div>
+</div>
+</section>
+<!-- GAMES SECTION -->
+<section class="section games-section" id="games-section">
+<h1 class="section-title">🎮 Puzzle Corner 🎮</h1>
+<div class="puzzle-container">
+<h2 class="puzzle-title">🧩 Layton's Sliding Puzzle 🧩</h2>
+<p class="puzzle-subtitle">Arrange the tiles from 1-15!</p>
+<div class="puzzle-stats">
+<span>Moves: <strong id="moveCount">0</strong></span>
+<span>Best: <strong id="bestScore">-</strong></span>
+</div>
+<div class="puzzle-grid" id="puzzleGrid"></div>
+<button class="puzzle-btn" id="shuffleBtn">🔀 Shuffle</button>
+<div class="win-message" id="winMessage">🎉 Puzzle Solved! 🎉</div>
+</div>
+</section>
 <audio id="bgMusic" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
 </audio>
-<button id="musicToggle" style="position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; border: none; border-radius: 50px; background: linear-gradient(145deg, #9b59b6, #8e44ad); color: white; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4); transition: all 0.3s ease; font-weight: bold;">
+<button id="musicToggle" style="position: fixed; bottom: 30px; right: 30px; padding: 15px 25px; border: none; border-radius: 50px; background: linear-gradient(145deg, #9b59b6, #8e44ad); color: white; font-size: 1.1rem; cursor: pointer; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(155, 89, 182, 0.4); transition: all 0.3s ease; font-weight: bold; z-index: 999;">
 <span id="musicIcon">⏸️</span>
 <span id="musicText">Pause</span>
 </button>
 <script>
+// Navigation System
+const navBtns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.section');
+
+navBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+        const targetSection = btn.dataset.section;
+        
+        // Update buttons
+        navBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        // Update sections
+        sections.forEach(s => s.classList.remove('active'));
+        document.getElementById(targetSection + '-section').classList.add('active');
+    });
+});
+
+// Music Controls
 let isPlaying = false;
 const audio = document.getElementById('bgMusic');
 const icon = document.getElementById('musicIcon');
@@ -70,12 +508,10 @@ function updateButtonState() {
         icon.textContent = '⏸️';
         text.textContent = 'Pause';
         btn.style.background = 'linear-gradient(145deg, #9b59b6, #8e44ad)';
-        btn.style.boxShadow = '0 4px 15px rgba(155, 89, 182, 0.4)';
     } else {
         icon.textContent = '▶️';
         text.textContent = 'Play';
         btn.style.background = 'linear-gradient(145deg, #27ae60, #2ecc71)';
-        btn.style.boxShadow = '0 4px 15px rgba(39, 174, 96, 0.4)';
     }
 }
 
@@ -84,9 +520,7 @@ function startMusic() {
         isPlaying = true;
         updateButtonState();
         overlay.style.display = 'none';
-    }).catch(() => {
-        // Autoplay blocked, need user interaction
-    });
+    }).catch(() => {});
 }
 
 function toggleMusic() {
@@ -100,30 +534,151 @@ function toggleMusic() {
     updateButtonState();
 }
 
-overlay.addEventListener('click', () => {
-    startMusic();
-});
-
+overlay.addEventListener('click', startMusic);
 btn.addEventListener('click', toggleMusic);
+btn.addEventListener('mouseenter', () => btn.style.transform = 'scale(1.05)');
+btn.addEventListener('mouseleave', () => btn.style.transform = 'scale(1)');
 
-btn.addEventListener('mouseenter', () => {
-    btn.style.transform = 'scale(1.05)';
-});
-
-btn.addEventListener('mouseleave', () => {
-    btn.style.transform = 'scale(1)';
-});
-
-// Try autoplay on load
 audio.play().then(() => {
     isPlaying = true;
     updateButtonState();
     overlay.style.display = 'none';
 }).catch(() => {
-    // Autoplay blocked - show overlay for user to click
     isPlaying = false;
     updateButtonState();
 });
+
+// Elephant Water Spray
+(function(){
+    const spray = document.getElementById('waterSpray');
+    const drops = ['💧','💦','🌊'];
+    function createWaterDrop(){
+        const drop = document.createElement('div');
+        drop.className = 'water-drop';
+        drop.textContent = drops[Math.floor(Math.random()*drops.length)];
+        drop.style.setProperty('--tx', (Math.random()*150-30)+'px');
+        drop.style.setProperty('--ty', (-Math.random()*120-50)+'px');
+        drop.style.left = Math.random()*30+'px';
+        drop.style.top = Math.random()*20+'px';
+        drop.style.animationDuration = (1+Math.random()*0.5)+'s';
+        spray.appendChild(drop);
+        setTimeout(() => drop.remove(), 1500);
+    }
+    setInterval(createWaterDrop, 200);
+})();
+
+// Dog Catches Cat Game
+(function(){
+    let dogScore = 0;
+    let lastCatchTime = 0;
+    const catchCooldown = 1000;
+    
+    function checkCollision(){
+        const kitty = document.getElementById('kittyEmoji');
+        const doggy = document.getElementById('doggyEmoji');
+        if(!kitty || !doggy) return;
+        
+        const kittyRect = kitty.getBoundingClientRect();
+        const doggyRect = doggy.getBoundingClientRect();
+        const kittyX = kittyRect.left + kittyRect.width/2;
+        const kittyY = kittyRect.top + kittyRect.height/2;
+        const doggyX = doggyRect.left + doggyRect.width/2;
+        const doggyY = doggyRect.top + doggyRect.height/2;
+        const distance = Math.sqrt(Math.pow(kittyX-doggyX,2) + Math.pow(kittyY-doggyY,2));
+        const now = Date.now();
+        
+        if(distance < 50 && now - lastCatchTime > catchCooldown){
+            lastCatchTime = now;
+            dogScore++;
+            document.getElementById('dogScore').textContent = dogScore;
+            const effect = document.getElementById('catchEffect');
+            effect.style.opacity = '1';
+            setTimeout(() => effect.style.opacity = '0', 800);
+            kitty.style.transform = 'translateX(-50%) scale(0.5)';
+            setTimeout(() => kitty.style.transform = 'translateX(-50%) scale(1)', 300);
+        }
+    }
+    setInterval(checkCollision, 50);
+})();
+
+// Sliding Puzzle
+(function(){
+    const grid = document.getElementById('puzzleGrid');
+    const moveCountEl = document.getElementById('moveCount');
+    const bestScoreEl = document.getElementById('bestScore');
+    const winMessage = document.getElementById('winMessage');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    let tiles = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+    let moveCount = 0;
+    let bestScore = localStorage.getItem('puzzleBest') || null;
+    if(bestScore) bestScoreEl.textContent = bestScore;
+    
+    function render(){
+        grid.innerHTML = '';
+        tiles.forEach((tile, index) => {
+            const div = document.createElement('div');
+            div.className = 'puzzle-tile ' + (tile === 0 ? 'empty' : 'number');
+            div.textContent = tile === 0 ? '' : tile;
+            if(tile !== 0) div.addEventListener('click', () => moveTile(index));
+            grid.appendChild(div);
+        });
+    }
+    
+    function getEmptyIndex(){ return tiles.indexOf(0); }
+    
+    function canMove(index){
+        const empty = getEmptyIndex();
+        const row = Math.floor(index/4);
+        const emptyRow = Math.floor(empty/4);
+        const col = index % 4;
+        const emptyCol = empty % 4;
+        return (Math.abs(row-emptyRow) + Math.abs(col-emptyCol)) === 1;
+    }
+    
+    function moveTile(index){
+        if(!canMove(index)) return;
+        const empty = getEmptyIndex();
+        [tiles[index], tiles[empty]] = [tiles[empty], tiles[index]];
+        moveCount++;
+        moveCountEl.textContent = moveCount;
+        render();
+        checkWin();
+    }
+    
+    function checkWin(){
+        const solved = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0];
+        if(tiles.every((t,i) => t === solved[i])){
+            winMessage.classList.add('show');
+            if(!bestScore || moveCount < bestScore){
+                bestScore = moveCount;
+                localStorage.setItem('puzzleBest', bestScore);
+                bestScoreEl.textContent = bestScore;
+            }
+            setTimeout(() => winMessage.classList.remove('show'), 3000);
+        }
+    }
+    
+    function shuffle(){
+        for(let i = 0; i < 200; i++){
+            const empty = getEmptyIndex();
+            const moves = [];
+            if(empty >= 4) moves.push(empty-4);
+            if(empty < 12) moves.push(empty+4);
+            if(empty % 4 !== 0) moves.push(empty-1);
+            if(empty % 4 !== 3) moves.push(empty+1);
+            const randomMove = moves[Math.floor(Math.random()*moves.length)];
+            [tiles[empty], tiles[randomMove]] = [tiles[randomMove], tiles[empty]];
+        }
+        moveCount = 0;
+        moveCountEl.textContent = 0;
+        winMessage.classList.remove('show');
+        render();
+    }
+    
+    shuffleBtn.addEventListener('click', shuffle);
+    render();
+    shuffle();
+})();
 </script>
 </body>
 </html>
