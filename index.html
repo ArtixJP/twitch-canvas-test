@@ -24,9 +24,76 @@
         .detail-item { text-align: center; }
         .detail-label { font-size: 0.8rem; color: #aaa; }
         .detail-value { font-size: 1.2rem; margin-top: 0.3rem; }
+        
+        /* Rain effect */
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .rain-drop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(174, 194, 224, 0.6));
+            animation: rain-fall linear infinite;
+        }
+        @keyframes rain-fall {
+            0% { transform: translateY(-100px); opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0.3; }
+        }
+        
+        /* Lightning effect */
+        .lightning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 10;
+            animation: lightning-flash 8s infinite;
+        }
+        @keyframes lightning-flash {
+            0%, 89%, 91%, 93%, 100% { opacity: 0; }
+            90%, 92% { opacity: 0.8; }
+        }
+        .lightning-bolt {
+            position: fixed;
+            top: 0;
+            font-size: 8rem;
+            opacity: 0;
+            z-index: 11;
+            pointer-events: none;
+            animation: bolt-flash 8s infinite;
+            filter: drop-shadow(0 0 20px #fff) drop-shadow(0 0 40px #87ceeb);
+        }
+        .lightning-bolt:nth-child(2) { left: 20%; animation-delay: 3s; }
+        .lightning-bolt:nth-child(3) { left: 70%; animation-delay: 5.5s; }
+        @keyframes bolt-flash {
+            0%, 89%, 93%, 100% { opacity: 0; transform: translateY(-20px); }
+            90%, 92% { opacity: 1; transform: translateY(0); }
+        }
+        
+        .weather-card { position: relative; z-index: 5; }
     </style>
 </head>
 <body>
+    <!-- Lightning flashes -->
+    <div class="lightning"></div>
+    <div class="lightning-bolt" style="left: 30%;">⚡</div>
+    <div class="lightning-bolt" style="left: 60%;">⚡</div>
+    <div class="lightning-bolt" style="left: 15%;">⚡</div>
+    
+    <!-- Rain container -->
+    <div class="rain-container" id="rain-container"></div>
     <div class="weather-card">
         <div class="city">🗼 Paris, France</div>
         <div class="weather-icon" id="weather-icon">⏳</div>
@@ -76,6 +143,23 @@
         }
         getWeather();
         setInterval(getWeather, 300000);
+        
+        // Create rain drops
+        function createRain() {
+            const rainContainer = document.getElementById('rain-container');
+            const numberOfDrops = 150;
+            
+            for (let i = 0; i < numberOfDrops; i++) {
+                const drop = document.createElement('div');
+                drop.className = 'rain-drop';
+                drop.style.left = Math.random() * 100 + '%';
+                drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+                drop.style.animationDelay = Math.random() * 2 + 's';
+                drop.style.height = (Math.random() * 20 + 10) + 'px';
+                rainContainer.appendChild(drop);
+            }
+        }
+        createRain();
     </script>
 </body>
 </html>
