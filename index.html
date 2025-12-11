@@ -127,6 +127,10 @@
 <div style="position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 10px;">
 <span style="font-size: 0.9rem;">🎵 Space Ambience</span>
 <button onclick="toggleAudio()" style="background: rgba(74, 88, 153, 0.8); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">Pause</button>
+</div><div style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px); text-align: center; min-width: 150px;">
+<div style="font-size: 0.8rem; opacity: 0.8; margin-bottom: 5px;">CHASE SCORE</div>
+<div style="font-size: 2.5rem; font-weight: bold; color: #fdb813;">🐕 <span id="dogScore">0</span></div>
+<div style="font-size: 0.7rem; opacity: 0.6; margin-top: 5px;">catches</div>
 </div>
 <script>
 function toggleAudio() {
@@ -287,7 +291,104 @@ window.addEventListener('resize', () => {
 <div class="kitty" style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%); font-size: 3rem; filter: drop-shadow(0 0 10px rgba(255, 200, 150, 0.6));" title="Space Kitty!">🐱</div>
 </div><div class="dog-orbit" style="position: absolute; width: 100%; height: 100%; animation: orbitDog 10s linear infinite;">
 <div class="dog" style="position: absolute; top: -30px; left: 50%; transform: translateX(-50%) scaleX(-1); font-size: 2.5rem; filter: drop-shadow(0 0 10px rgba(255, 150, 100, 0.6));" title="Space Dog Chaser!">🐕</div>
-</div>
+</div><script>
+// Enhanced chase logic with scoring
+const kittyOrbitEl = document.querySelector('[data-llm-id="e12"]');
+const dogOrbitEl = document.querySelector('[data-llm-id="e14"]');
+const kittyEl = document.querySelector('[data-llm-id="e13"]');
+const dogEl = document.querySelector('[data-llm-id="e15"]');
+const scoreDisplay = document.getElementById('dogScore');
+
+let kittySpeedVal = 15;
+let dogSpeedVal = 10;
+let isEscapingNow = false;
+let dogScore = 0;
+let lastCatchTime = 0;
+
+function updateOrbitAnimations() {
+  kittyOrbitEl.style.animation = `orbitKitty ${kittySpeedVal}s linear infinite`;
+  dogOrbitEl.style.animation = `orbitDog ${dogSpeedVal}s linear infinite`;
+}
+
+function getAngle(element) {
+  const style = window.getComputedStyle(element);
+  const matrix = style.transform;
+  if (matrix === 'none') return 0;
+  const values = matrix.split('(')[1].split(')')[0].split(',');
+  const a = values[0];
+  const b = values[1];
+  return Math.atan2(b, a) * (180 / Math.PI);
+}
+
+function celebrateCatch() {
+  // Visual celebration
+  const scoreEl = document.getElementById('dogScore');
+  scoreEl.style.transform = 'scale(1.5)';
+  scoreEl.style.color = '#ff6b6b';
+  setTimeout(() => {
+    scoreEl.style.transform = 'scale(1)';
+    scoreEl.style.color = '#fdb813';
+  }, 300);
+  
+  // Dog celebrates
+  dogEl.textContent = '🎉';
+  setTimeout(() => {
+    dogEl.textContent = '🐕';
+  }, 1000);
+}
+
+function checkProximity() {
+  const now = Date.now();
+  
+  // Prevent multiple catches within 5 seconds
+  if (now - lastCatchTime < 5000) return;
+  
+  const kittyAngleVal = getAngle(kittyOrbitEl);
+  const dogAngleVal = getAngle(dogOrbitEl);
+  
+  const normKitty = ((kittyAngleVal % 360) + 360) % 360;
+  const normDog = ((dogAngleVal % 360) + 360) % 360;
+  
+  let dist = Math.abs(normDog - normKitty);
+  if (dist > 180) dist = 360 - dist;
+  
+  const dogIsBehind = (normDog < normKitty && normKitty - normDog < 180) || 
+                      (normDog > normKitty && normDog - normKitty > 180);
+  
+  // CATCH! Dog is very close (within 25 degrees)
+  if (dist < 25 && dogIsBehind && !isEscapingNow) {
+    dogScore++;
+    scoreDisplay.textContent = dogScore;
+    lastCatchTime = now;
+    celebrateCatch();
+    
+    // Cat escapes in panic
+    isEscapingNow = true;
+    kittySpeedVal = 4;
+    updateOrbitAnimations();
+    kittyEl.style.filter = 'drop-shadow(0 0 20px rgba(255, 100, 100, 0.9))';
+    kittyEl.textContent = '😾';
+    
+    setTimeout(() => {
+      isEscapingNow = false;
+      kittySpeedVal = 15;
+      updateOrbitAnimations();
+      kittyEl.style.filter = 'drop-shadow(0 0 10px rgba(255, 200, 150, 0.6))';
+      kittyEl.textContent = '🐱';
+    }, 3000);
+  }
+  // Near miss - cat gets nervous
+  else if (dist < 40 && dogIsBehind && !isEscapingNow) {
+    kittyEl.textContent = '😿';
+    setTimeout(() => {
+      if (!isEscapingNow) kittyEl.textContent = '🐱';
+    }, 500);
+  }
+}
+
+setInterval(checkProximity, 100);
+updateOrbitAnimations();
+</script>
 <script>
 // Chase logic
 const kittyOrbit = document.querySelector('[data-llm-id="e12"]');
