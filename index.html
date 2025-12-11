@@ -342,7 +342,42 @@
     const audio = document.getElementById('backgroundMusic');
     const button = document.getElementById('musicToggle');
     
-    button.addEventListener('click', () => {
+    // Attempt to autoplay on page load
+    window.addEventListener('load', () => {
+        const playPromise = audio.play();
+        
+        if (playPromise !== undefined) {
+            playPromise
+                .then(() => {
+                    // Autoplay successful
+                    button.classList.add('playing');
+                })
+                .catch(error => {
+                    // Autoplay was prevented (browser policy)
+                    // User will need to click the button
+                    console.log('Autoplay prevented. User interaction required.');
+                });
+        }
+    });
+    
+    // Also try to play on any user interaction with the page
+    const startMusicOnInteraction = () => {
+        if (audio.paused) {
+            audio.play().then(() => {
+                button.classList.add('playing');
+                // Remove listeners after first successful play
+                document.removeEventListener('click', startMusicOnInteraction);
+                document.removeEventListener('keydown', startMusicOnInteraction);
+            }).catch(() => {});
+        }
+    };
+    
+    document.addEventListener('click', startMusicOnInteraction, { once: true });
+    document.addEventListener('keydown', startMusicOnInteraction, { once: true });
+    
+    // Toggle button functionality
+    button.addEventListener('click', (e) => {
+        e.stopPropagation(); // Prevent triggering the document click listener
         if (audio.paused) {
             audio.play();
             button.classList.add('playing');
