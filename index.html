@@ -21,6 +21,10 @@
         .planet { width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 50%, #1a3a6e 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(74, 144, 226, 0.6); animation: rotate 20s linear infinite; position: relative; overflow: hidden; }
         .planet::before { content: ''; position: absolute; top: 20%; left: 30%; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; box-shadow: 60px 40px 0 10px rgba(255,255,255,0.08), -20px 60px 0 5px rgba(255,255,255,0.06); }
         .ring { position: absolute; top: 50%; left: 50%; width: 300px; height: 80px; border: 15px solid rgba(200, 180, 140, 0.4); border-radius: 50%; transform: translate(-50%, -50%) rotateX(75deg); box-shadow: 0 0 20px rgba(200, 180, 140, 0.3); }
+        .moon-orbit { position: absolute; top: 50%; left: 50%; width: 280px; height: 280px; transform: translate(-50%, -50%); animation: orbit 12s linear infinite; }
+        .moon { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #e8e8e8 0%, #b0b0b0 50%, #808080 100%); box-shadow: inset -8px -8px 15px rgba(0,0,0,0.5), 0 0 25px rgba(232, 232, 232, 0.6); }
+        .moon::before { content: ''; position: absolute; top: 8px; left: 10px; width: 10px; height: 10px; background: rgba(100,100,100,0.3); border-radius: 50%; box-shadow: 15px 5px 0 3px rgba(100,100,100,0.2); }
+        @keyframes orbit { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
         .audio-controls {
@@ -69,6 +73,9 @@
         <div class="planet-container">
             <div class="planet"></div>
             <div class="ring"></div>
+            <div class="moon-orbit">
+                <div class="moon"></div>
+            </div>
         </div>
     </div>
 
