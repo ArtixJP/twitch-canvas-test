@@ -28,6 +28,86 @@
             box-shadow: 0 0 20px #ff0000, 0 0 40px #ff000080;
         }
         
+        .tree-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+        }
+        
+        .tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .trunk {
+            width: 30px;
+            height: 100px;
+            background: linear-gradient(90deg, #5D4037 0%, #8B4513 50%, #5D4037 100%);
+            border-radius: 5px;
+        }
+        
+        .foliage {
+            position: relative;
+            margin-bottom: -20px;
+        }
+        
+        .leaves {
+            background: linear-gradient(180deg, #228B22 0%, #006400 100%);
+            border-radius: 50%;
+            position: absolute;
+        }
+        
+        .leaf1 {
+            width: 120px;
+            height: 100px;
+            top: -80px;
+            left: -60px;
+        }
+        
+        .leaf2 {
+            width: 100px;
+            height: 80px;
+            top: -120px;
+            left: -50px;
+        }
+        
+        .leaf3 {
+            width: 80px;
+            height: 60px;
+            top: -140px;
+            left: -40px;
+        }
+        
+        .apple {
+            position: absolute;
+            font-size: 2rem;
+            animation: swing 2s ease-in-out infinite;
+        }
+        
+        .apple:nth-child(4) {
+            top: -60px;
+            left: -30px;
+        }
+        
+        .apple2 {
+            top: -50px;
+            left: 10px;
+            animation-delay: 0.5s;
+        }
+        
+        .apple3 {
+            top: -90px;
+            left: -10px;
+            animation-delay: 1s;
+        }
+        
+        @keyframes swing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.2; }
@@ -36,6 +116,19 @@
 </head>
 <body>
     <div class="red-cube"></div>
-    <h1>✨</h1>
+    <div class="tree-container">
+            <div class="tree">
+                <div class="trunk"></div>
+                <div class="foliage">
+                    <div class="leaves leaf1"></div>
+                    <div class="leaves leaf2"></div>
+                    <div class="leaves leaf3"></div>
+                    <div class="apple">🍎</div>
+                    <div class="apple apple2">🍎</div>
+                    <div class="apple apple3">🍎</div>
+                </div>
+            </div>
+        </div>
+        <h1>✨</h1>
 </body>
 </html>
