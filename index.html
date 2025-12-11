@@ -449,6 +449,11 @@
     </style>
 </head>
 <body>
+    <!-- Background Music -->
+    <audio id="bgMusic" autoplay loop>
+        <source src="https://audiocdn.epidemicsound.com/lqmp3/01HSGPBQGATGZBHV13N0PDEW0M.mp3" type="audio/mpeg">
+    </audio>
+    
     <!-- Floating pixels background -->
     <div class="pixel-bg" id="pixelBg"></div>
     
@@ -459,9 +464,9 @@
     </div>
     
     <!-- Vinyl Player -->
-    <div class="vinyl-player">
-        <div class="vinyl"></div>
-        <div class="vinyl-label">♪ TRIP-HOP ♪<br>VIBES</div>
+    <div class="vinyl-player" onclick="toggleMusic()" style="cursor: pointer;" title="Click to play/pause">
+        <div class="vinyl" id="vinylDisc"></div>
+        <div class="vinyl-label">♪ TRIP-HOP ♪<br>VIBES<br><span id="musicStatus" style="color: #27ae60;">▶ PLAYING</span></div>
     </div>
     
     <!-- Main Content -->
@@ -531,6 +536,32 @@
                 board.appendChild(square);
             }
         }
+        
+        // Music control
+        const bgMusic = document.getElementById('bgMusic');
+        const vinylDisc = document.getElementById('vinylDisc');
+        const musicStatus = document.getElementById('musicStatus');
+        
+        function toggleMusic() {
+            if (bgMusic.paused) {
+                bgMusic.play();
+                vinylDisc.style.animationPlayState = 'running';
+                musicStatus.textContent = '▶ PLAYING';
+                musicStatus.style.color = '#27ae60';
+            } else {
+                bgMusic.pause();
+                vinylDisc.style.animationPlayState = 'paused';
+                musicStatus.textContent = '⏸ PAUSED';
+                musicStatus.style.color = '#e74c3c';
+            }
+        }
+        
+        // Auto-play might be blocked, handle it
+        bgMusic.play().catch(() => {
+            vinylDisc.style.animationPlayState = 'paused';
+            musicStatus.textContent = '⏸ CLICK TO PLAY';
+            musicStatus.style.color = '#f39c12';
+        });
         
         // Floating pixels
         const pixelBg = document.getElementById('pixelBg');
