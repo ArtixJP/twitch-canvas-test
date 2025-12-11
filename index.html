@@ -108,6 +108,61 @@ const moon = new THREE.Mesh(moonGeometry, moonMaterial);
 moon.position.x = 2;
 scene.add(moon);
 
+// Create cute kitty
+const kittyGroup = new THREE.Group();
+const kittyBody = new THREE.Mesh(
+  new THREE.BoxGeometry(0.3, 0.25, 0.25),
+  new THREE.MeshPhongMaterial({ color: 0xffa500 })
+);
+kittyBody.position.z = 0.1;
+kittyGroup.add(kittyBody);
+
+// Kitty head
+const kittyHead = new THREE.Mesh(
+  new THREE.SphereGeometry(0.15, 32, 32),
+  new THREE.MeshPhongMaterial({ color: 0xffa500 })
+);
+kittyHead.position.set(0.15, 0.05, 0.1);
+kittyGroup.add(kittyHead);
+
+// Kitty ears
+const earGeometry = new THREE.ConeGeometry(0.08, 0.2, 8);
+const earMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 });
+const leftEar = new THREE.Mesh(earGeometry, earMaterial);
+leftEar.position.set(0.05, 0.25, 0.1);
+leftEar.rotation.z = 0.3;
+kittyGroup.add(leftEar);
+
+const rightEar = new THREE.Mesh(earGeometry, earMaterial);
+rightEar.position.set(0.25, 0.25, 0.1);
+rightEar.rotation.z = -0.3;
+kittyGroup.add(rightEar);
+
+// Kitty eyes
+const eyeGeometry = new THREE.SphereGeometry(0.04, 16, 16);
+const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+leftEye.position.set(0.08, 0.12, 0.25);
+kittyGroup.add(leftEye);
+
+const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+rightEye.position.set(0.22, 0.12, 0.25);
+kittyGroup.add(rightEye);
+
+// Kitty tail
+const tailCurve = new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-0.15, -0.1, 0.1),
+  new THREE.Vector3(-0.3, 0.1, 0.2),
+  new THREE.Vector3(-0.35, 0.3, 0.15)
+]);
+const tailGeometry = new THREE.TubeGeometry(tailCurve, 10, 0.05, 4);
+const tailMaterial = new THREE.MeshPhongMaterial({ color: 0xff8c00 });
+const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+kittyGroup.add(tail);
+
+kittyGroup.position.x = 2.5;
+scene.add(kittyGroup);
+
 const light = new THREE.PointLight(0xffffff, 1.5);
 light.position.set(5, 3, 5);
 scene.add(light);
@@ -167,6 +222,19 @@ function animate() {
   // Moon rotates on its own axis
   moon.rotation.x += 0.0002;
   moon.rotation.y += 0.0003;
+  
+  // Kitty orbits around planet at a wider radius
+  const kittyOrbitRadius = 2.8;
+  const kittyOrbitSpeed = 0.0003;
+  kittyGroup.position.x = Math.cos(Date.now() * kittyOrbitSpeed) * kittyOrbitRadius;
+  kittyGroup.position.z = Math.sin(Date.now() * kittyOrbitSpeed) * kittyOrbitRadius;
+  kittyGroup.position.y = Math.sin(Date.now() * 0.0002) * 0.3;
+  
+  // Kitty looks toward the planet
+  kittyGroup.lookAt(planet.position);
+  
+  // Cute tail wag
+  tail.rotation.z = Math.sin(Date.now() * 0.005) * 0.3;
   
   renderer.render(scene, camera);
 }
