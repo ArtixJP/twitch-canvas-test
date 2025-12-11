@@ -441,6 +441,7 @@
             background: #0a0612;
             box-shadow: 8px 8px 0 rgba(0,0,0,0.3), inset 0 0 50px rgba(155, 89, 182, 0.2);
             touch-action: none;
+            isolation: isolate;
         }
         
         .minimap-world {
@@ -458,6 +459,7 @@
             transition: none;
             cursor: grab;
             user-select: none;
+            z-index: 1;
         }
         
         .minimap-world:active {
@@ -467,13 +469,15 @@
         .secret-message {
             position: absolute;
             font-family: 'Press Start 2P', cursive;
-            font-size: 6px;
-            padding: 4px 6px;
-            border-radius: 2px;
+            font-size: 8px;
+            padding: 6px 8px;
+            border-radius: 4px;
             white-space: nowrap;
-            opacity: 0.7;
+            opacity: 1;
             transition: all 0.3s;
             text-shadow: 0 0 5px currentColor;
+            z-index: 10;
+            pointer-events: auto;
         }
         
         .secret-message:hover {
@@ -493,9 +497,11 @@
         
         .pixel-landmark {
             position: absolute;
-            width: 8px;
-            height: 8px;
-            border-radius: 2px;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            z-index: 5;
+            box-shadow: 0 0 8px currentColor;
         }
         
         .minimap-controls {
