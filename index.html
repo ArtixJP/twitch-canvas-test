@@ -20,6 +20,6 @@
     </style>
 </head>
 <body>
-<h1>Hello World</h1><div style="text-align: center; margin-top: 20px;"><img alt="Planet" src="https://example.com/planet.png" style="width: 100px; height: auto;"/><button id="pause-button" style="margin-top: 10px; padding: 10px 20px; font-size: 1rem;">Pause Music</button></div>
-<script>document.getElementById('pause-button').addEventListener('click', function() { var audio = document.getElementById('background-music'); if (audio.paused) { audio.play(); this.textContent = 'Pause Music'; } else { audio.pause(); this.textContent = 'Play Music'; } });</script></body>
+<h1>Hello World</h1><div style="text-align: center; margin-top: 20px;"><img alt="Planet" src="https://example.com/planet.png" style="width: 100px; height: auto;"/><button id="pause-button" style="margin-top: 10px; padding: 10px 20px; font-size: 1rem;">Play Music</button></div>
+<script>document.getElementById('pause-button').addEventListener('click', function() { var audio = document.getElementById('background-music'); if (audio.paused) { audio.play(); this.textContent = 'Pause Music'; } else { audio.pause(); this.textContent = 'Play Music'; } });</script><audio id="background-music" preload="auto" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio></body>
 </html>
