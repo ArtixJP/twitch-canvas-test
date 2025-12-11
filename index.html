@@ -28,11 +28,59 @@
             box-shadow: 0 0 20px #ff0000, 0 0 40px #ff000080;
         }
         
+        .chess-container {
+            position: absolute;
+            top: 380px;
+            top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            border: 4px solid #5D4037;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .chess-square {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .chess-square:hover {
+            filter: brightness(1.2);
+        }
+        
+        .white-square {
+            background: #F0D9B5;
+        }
+        
+        .black-square {
+            background: #B58863;
+        }
+        
+        .chess-title {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            text-shadow: 0 0 10px cyan;
+        }
+        
         .tree-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             position: absolute;
+            top: 380px;
         }
         
         .tree {
@@ -57,6 +105,7 @@
             background: linear-gradient(180deg, #228B22 0%, #006400 100%);
             border-radius: 50%;
             position: absolute;
+            top: 380px;
         }
         
         .leaf1 {
@@ -82,6 +131,7 @@
         
         .apple {
             position: absolute;
+            top: 380px;
             font-size: 2rem;
             animation: swing 2s ease-in-out infinite;
         }
@@ -146,6 +196,54 @@
 </head>
 <body>
     <div class="red-cube"></div>
+    
+    <div class="chess-container">
+        <div class="chess-title">♔ Échecs Twitch ♚</div>
+        <div class="chessboard" id="chessboard"></div>
+    </div>
+    
+    <script>
+        const initialBoard = [
+            ['♜','♞','♝','♛','♚','♝','♞','♜'],
+            ['♟','♟','♟','♟','♟','♟','♟','♟'],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['','','','','','','',''],
+            ['♙','♙','♙','♙','♙','♙','♙','♙'],
+            ['♖','♘','♗','♕','♔','♗','♘','♖']
+        ];
+        
+        const chessboard = document.getElementById('chessboard');
+        
+        for(let row = 0; row < 8; row++) {
+            for(let col = 0; col < 8; col++) {
+                const square = document.createElement('div');
+                square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'white-square' : 'black-square');
+                square.textContent = initialBoard[row][col];
+                square.dataset.row = row;
+                square.dataset.col = col;
+                chessboard.appendChild(square);
+            }
+        }
+        
+        let selectedSquare = null;
+        chessboard.addEventListener('click', (e) => {
+            const square = e.target.closest('.chess-square');
+            if(!square) return;
+            
+            if(selectedSquare) {
+                const piece = selectedSquare.textContent;
+                selectedSquare.textContent = '';
+                square.textContent = piece;
+                selectedSquare.style.outline = '';
+                selectedSquare = null;
+            } else if(square.textContent) {
+                selectedSquare = square;
+                square.style.outline = '3px solid cyan';
+            }
+        });
+    </script>
     <div class="tree-container">
             <div class="tree">
                 <div class="trunk"></div>
