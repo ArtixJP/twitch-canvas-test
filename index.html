@@ -144,6 +144,26 @@
             border-radius: 50%;
         }
         
+        .dog-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 320px;
+            height: 320px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .dog {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            margin-left: -20px;
+            font-size: 35px;
+            filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.6));
+            transition: transform 0.1s;
+        }
+        
         .kitty-orbit {
             position: absolute;
             top: 50%;
@@ -151,7 +171,7 @@
             width: 260px;
             height: 260px;
             transform: translate(-50%, -50%);
-            animation: orbitKitty 6s linear infinite;
+            /* animation controlled by JS */
             pointer-events: none;
         }
         
@@ -162,7 +182,8 @@
             margin-left: -20px;
             font-size: 35px;
             filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
-            animation: kittyBounce 0.5s ease-in-out infinite, kittyRotate 6s linear infinite reverse;
+            animation: kittyBounce 0.5s ease-in-out infinite;
+            transition: filter 0.3s ease;
         }
         
         @keyframes orbitKitty {
@@ -302,8 +323,11 @@
         <div class="moon-orbit">
             <div class="moon"></div>
         </div>
-        <div class="kitty-orbit">
-            <div class="kitty">🐱</div>
+        <div class="kitty-orbit" id="kittyOrbit">
+            <div class="kitty" id="kitty">🐱</div>
+        </div>
+        <div class="dog-orbit" id="dogOrbit">
+            <div class="dog" id="dog">🐕</div>
         </div>
     </div>
     <script>
@@ -440,6 +464,59 @@
             renderer.render(scene, camera);
         }
         animateSun();
+    </script>
+    <script>
+        // Dog chases cat with dynamic speed!
+        let catAngle = 180;
+        let dogAngle = 0;
+        let catSpeed = 1.2; // degrees per frame
+        let dogSpeed = 1.8; // dog is faster base speed
+        const catNormalSpeed = 1.2;
+        const catEscapeSpeed = 4.5;
+        const dangerDistance = 60; // degrees
+        
+        const kittyOrbit = document.getElementById('kittyOrbit');
+        const dogOrbit = document.getElementById('dogOrbit');
+        const kitty = document.getElementById('kitty');
+        const dog = document.getElementById('dog');
+        
+        function getAngleDifference(a1, a2) {
+            let diff = Math.abs(a1 - a2) % 360;
+            return diff > 180 ? 360 - diff : diff;
+        }
+        
+        function animateChase() {
+            // Calculate distance between cat and dog
+            const distance = getAngleDifference(catAngle, dogAngle);
+            
+            // Cat speeds up when dog is close!
+            if (distance < dangerDistance) {
+                catSpeed = catEscapeSpeed;
+                kitty.style.filter = 'drop-shadow(0 0 20px rgba(255, 50, 50, 0.9))';
+                kitty.textContent = '🙀';
+                dog.textContent = '🐕‍🦺';
+            } else {
+                catSpeed = catNormalSpeed;
+                kitty.style.filter = 'drop-shadow(0 0 10px rgba(255, 182, 193, 0.6))';
+                kitty.textContent = '🐱';
+                dog.textContent = '🐕';
+            }
+            
+            // Update positions
+            catAngle = (catAngle + catSpeed) % 360;
+            dogAngle = (dogAngle + dogSpeed) % 360;
+            
+            // Apply rotations
+            kittyOrbit.style.transform = `translate(-50%, -50%) rotateZ(${catAngle}deg)`;
+            kitty.style.transform = `rotateZ(${-catAngle}deg)`;
+            
+            dogOrbit.style.transform = `translate(-50%, -50%) rotateZ(${dogAngle}deg)`;
+            dog.style.transform = `rotateZ(${-dogAngle}deg) ${distance < dangerDistance ? 'scale(1.2)' : 'scale(1)'}`;
+            
+            requestAnimationFrame(animateChase);
+        }
+        
+        animateChase();
     </script>
 </body>
 </html>
