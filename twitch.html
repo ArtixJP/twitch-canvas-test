@@ -768,9 +768,9 @@
 <div class="minimap-info">ZOOM: <span id="zoomLevel">1.0</span>x | FOUND: <span class="found-counter" id="foundCounter">0</span>/<span id="totalSecrets">12</span></div>
 <div class="minimap-world" id="minimapWorld"></div>
 <div class="minimap-controls">
-<button class="zoom-btn" onclick="zoomMap(0.5)">+</button>
-<button class="zoom-btn" onclick="zoomMap(-0.5)">-</button>
-<button class="zoom-btn" onclick="resetMap()" style="font-size: 0.5rem;">⟲</button>
+<button class="zoom-btn" id="zoomInBtn">+</button>
+<button class="zoom-btn" id="zoomOutBtn">-</button>
+<button class="zoom-btn" id="resetMapBtn" style="font-size: 0.5rem;">⟲</button>
 </div>
 </div>
 </div>
@@ -1085,6 +1085,11 @@
         });
         
         updateMapTransform();
+        
+        // Add event listeners for zoom buttons
+        document.getElementById('zoomInBtn').addEventListener('click', () => zoomMap(0.5));
+        document.getElementById('zoomOutBtn').addEventListener('click', () => zoomMap(-0.5));
+        document.getElementById('resetMapBtn').addEventListener('click', () => resetMap());
         
         // Floating pixels
         const pixelBg = document.getElementById('pixelBg');
