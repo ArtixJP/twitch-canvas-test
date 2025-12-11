@@ -1771,5 +1771,47 @@ function initAnimalsScene() {
         }
     });
 }
+</script><script>
+// Automatic section rotation every 30 seconds
+const sectionOrder = ['space', 'animals', 'games'];
+let autoRotateInterval;
+let currentAutoIndex = 0;
+
+function startAutoRotation() {
+    // Clear any existing interval
+    if (autoRotateInterval) {
+        clearInterval(autoRotateInterval);
+    }
+    
+    // Set up new interval for 30 seconds
+    autoRotateInterval = setInterval(() => {
+        // Move to next section
+        currentAutoIndex = (currentAutoIndex + 1) % sectionOrder.length;
+        const nextSection = sectionOrder[currentAutoIndex];
+        
+        // Find and click the corresponding nav button
+        const targetButton = document.querySelector(`[data-section="${nextSection}"]`);
+        if (targetButton) {
+            targetButton.click();
+        }
+    }, 30000); // 30 seconds
+}
+
+// Start auto-rotation when page loads
+window.addEventListener('load', () => {
+    // Set initial index based on current section
+    currentAutoIndex = sectionOrder.indexOf(currentSection);
+    startAutoRotation();
+});
+
+// Optional: Reset timer when user manually clicks navigation
+navButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+        // Update auto index to match manual selection
+        currentAutoIndex = sectionOrder.indexOf(btn.dataset.section);
+        // Restart the timer
+        startAutoRotation();
+    });
+});
 </script></body>
 </html>
