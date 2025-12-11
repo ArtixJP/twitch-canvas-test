@@ -181,18 +181,23 @@
   // Handle autoplay restrictions
   audio.play().catch(() => {
     isPlaying = false;
-    musicIcon.textContent = '▶️';
+    musicIcon.textContent = '🎵';
   });
   
   function toggleMusic() {
     if (isPlaying) {
       audio.pause();
-      musicIcon.textContent = '▶️';
+      musicIcon.textContent = '🎵';
     } else {
       audio.play();
       musicIcon.textContent = '⏸️';
     }
     isPlaying = !isPlaying;
   }
-</script></body>
+</script><audio autoplay="" id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+</audio>
+<button id="musicToggle" onclick="toggleMusic()">
+<span id="musicIcon">⏸️</span>
+</button></body>
 </html>
