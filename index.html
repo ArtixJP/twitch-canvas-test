@@ -243,6 +243,72 @@
         }
         
         /* Encouragement section */
+        .chess-section {
+            text-align: center;
+            padding: 20px;
+            background: rgba(0,0,0,0.4);
+            border: 4px solid #f39c12;
+            margin: 20px 0;
+        }
+        
+        .chess-title {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: #f39c12;
+            margin-bottom: 15px;
+        }
+        
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            gap: 0;
+            margin: 0 auto;
+            border: 4px solid #8b5a2b;
+            width: fit-content;
+            box-shadow: 0 0 20px rgba(243, 156, 18, 0.5);
+        }
+        
+        .chess-square {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chess-square:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        
+        .chess-square.light {
+            background: #f4e4bc;
+        }
+        
+        .chess-square.dark {
+            background: #8b5a2b;
+        }
+        
+        .chess-square.highlight {
+            box-shadow: inset 0 0 15px #2ecc71;
+        }
+        
+        .chess-status {
+            font-size: 1.3rem;
+            color: #2ecc71;
+            margin-top: 15px;
+            animation: pulse-text 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-text {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
         .encouragement {
             text-align: center;
             padding: 20px;
@@ -410,6 +476,12 @@
                 <div class="bar"></div>
             </div>
             
+            <div class="chess-section">
+                <h3 class="chess-title">♟️ COMMUNITY CHESS ♟️</h3>
+                <div class="chessboard" id="chessboard"></div>
+                <p class="chess-status">White plays: e2 → e4 (King's Pawn Opening)</p>
+            </div>
+            
             <div class="encouragement">
                 <h3>✦ YOU GOT THIS! ✦</h3>
                 <p>Every pixel you add makes this world more beautiful. Don't be shy - drop your wildest ideas in chat!</p>
@@ -464,6 +536,41 @@
             }
         `;
         document.head.appendChild(style);
+        
+        // Chess board initialization
+        function initChessBoard() {
+            const board = document.getElementById('chessboard');
+            const pieces = {
+                'a8': '♜', 'b8': '♞', 'c8': '♝', 'd8': '♛', 'e8': '♚', 'f8': '♝', 'g8': '♞', 'h8': '♜',
+                'a7': '♟', 'b7': '♟', 'c7': '♟', 'd7': '♟', 'e7': '♟', 'f7': '♟', 'g7': '♟', 'h7': '♟',
+                'a2': '♙', 'b2': '♙', 'c2': '♙', 'd2': '♙', 'f2': '♙', 'g2': '♙', 'h2': '♙',
+                'a1': '♖', 'b1': '♘', 'c1': '♗', 'd1': '♕', 'e1': '♔', 'f1': '♗', 'g1': '♘', 'h1': '♖',
+                'e4': '♙' // e2-e4 move!
+            };
+            
+            const files = ['a','b','c','d','e','f','g','h'];
+            
+            for(let rank = 8; rank >= 1; rank--) {
+                for(let f = 0; f < 8; f++) {
+                    const square = document.createElement('div');
+                    const pos = files[f] + rank;
+                    const isLight = (f + rank) % 2 === 1;
+                    square.className = 'chess-square ' + (isLight ? 'light' : 'dark');
+                    
+                    if(pos === 'e4' || pos === 'e2') {
+                        square.classList.add('highlight');
+                    }
+                    
+                    if(pieces[pos]) {
+                        square.textContent = pieces[pos];
+                    }
+                    
+                    board.appendChild(square);
+                }
+            }
+        }
+        
+        initChessBoard();
         
         // Keyboard magic
         document.addEventListener('keydown', () => {
