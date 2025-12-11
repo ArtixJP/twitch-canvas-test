@@ -85,27 +85,97 @@ window.addEventListener('resize', () => {
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
 </script><script>
-const audio = document.getElementById('background-music');
-const toggleBtn = document.getElementById('music-toggle');
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.setClearColor(0x000000, 0);
+document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-toggleBtn.addEventListener('click', () => {
-  if (audio.paused) {
-    audio.play();
-    toggleBtn.textContent = '⏸ Pause Music';
-  } else {
-    audio.pause();
-    toggleBtn.textContent = '▶ Play Music';
+camera.position.z = 5;
+
+const geometry = new THREE.SphereGeometry(1, 64, 64);
+const texture = new THREE.CanvasTexture(createPlanetTexture());
+const material = new THREE.MeshPhongMaterial({ map: texture });
+const planet = new THREE.Mesh(geometry, material);
+scene.add(planet);
+
+// Create moon
+const moonGeometry = new THREE.SphereGeometry(0.27, 32, 32);
+const moonTexture = new THREE.CanvasTexture(createMoonTexture());
+const moonMaterial = new THREE.MeshPhongMaterial({ map: moonTexture });
+const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+moon.position.x = 2;
+scene.add(moon);
+
+const light = new THREE.PointLight(0xffffff, 1.5);
+light.position.set(5, 3, 5);
+scene.add(light);
+
+function createPlanetTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 512;
+  canvas.height = 512;
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+  gradient.addColorStop(0, '#4a90e2');
+  gradient.addColorStop(0.5, '#357abd');
+  gradient.addColorStop(1, '#1e3a5f');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 512, 512);
+  for (let i = 0; i < 200; i++) {
+    ctx.fillStyle = `rgba(255, 255, 255, ${Math.random() * 0.5})`;
+    ctx.beginPath();
+    ctx.arc(Math.random() * 512, Math.random() * 512, Math.random() * 3, 0, Math.PI * 2);
+    ctx.fill();
   }
-});
+  return canvas;
+}
 
-toggleBtn.addEventListener('mouseover', () => {
-  toggleBtn.style.background = 'rgba(255, 255, 255, 0.3)';
-  toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.8)';
-});
+function createMoonTexture() {
+  const canvas = document.createElement('canvas');
+  canvas.width = 256;
+  canvas.height = 256;
+  const ctx = canvas.getContext('2d');
+  const gradient = ctx.createLinearGradient(0, 0, 256, 256);
+  gradient.addColorStop(0, '#e8e8e8');
+  gradient.addColorStop(0.5, '#d0d0d0');
+  gradient.addColorStop(1, '#a8a8a8');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, 256, 256);
+  for (let i = 0; i < 80; i++) {
+    ctx.fillStyle = `rgba(100, 100, 100, ${Math.random() * 0.6})`;
+    ctx.beginPath();
+    const x = Math.random() * 256;
+    const y = Math.random() * 256;
+    const radius = Math.random() * 4 + 1;
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  return canvas;
+}
 
-toggleBtn.addEventListener('mouseout', () => {
-  toggleBtn.style.background = 'rgba(255, 255, 255, 0.2)';
-  toggleBtn.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+function animate() {
+  requestAnimationFrame(animate);
+  planet.rotation.x += 0.0003;
+  planet.rotation.y += 0.0005;
+  
+  // Moon orbits around planet
+  moon.position.x = Math.cos(Date.now() * 0.0005) * 2;
+  moon.position.z = Math.sin(Date.now() * 0.0005) * 2;
+  
+  // Moon rotates on its own axis
+  moon.rotation.x += 0.0002;
+  moon.rotation.y += 0.0003;
+  
+  renderer.render(scene, camera);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
 });
 </script></body>
 </html>
