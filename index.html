@@ -878,7 +878,55 @@ h1 {
   0% { opacity: 1; transform: translate(0, 0) scale(1); }
   100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
 }
-</style>
+
+/* SECTION SYSTEM */
+.section {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.5s ease;
+}
+.section.active {
+  display: block;
+}
+.section-space #three-container,
+.section-space h1 {
+  opacity: 1;
+}
+.section-animals .planet-container,
+.section-animals #spaceElephant,
+.section-animals #scoreBoard {
+  opacity: 1;
+}
+.section-planet .planet-container {
+  opacity: 1;
+}
+.section-game #gameCanvas,
+.section-game #gameUI,
+.section-game #gameInstructions,
+.section-game #gameOver {
+  opacity: 1;
+}
+
+/* Hide elements by default when not in their section */
+#three-container.hidden,
+#spaceElephant.hidden,
+.planet-container.hidden,
+#gameCanvas.hidden,
+#gameUI.hidden,
+#gameInstructions.hidden,
+#scoreBoard.hidden,
+h1.hidden {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#gameCanvas.hidden {
+  z-index: -1 !important;
+}</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body><nav id="autoNav" style="position: fixed; top: 50%; left: 20px; transform: translateY(-50%); z-index: 150; display: flex; flex-direction: column; gap: 15px;">
 <button class="nav-btn active" data-section="space" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(100, 200, 255, 0.6); background: linear-gradient(135deg, rgba(74, 144, 164, 0.9), rgba(45, 90, 107, 0.9)); cursor: pointer; font-size: 20px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(74, 144, 164, 0.5);">🌌</button>
@@ -1882,5 +1930,125 @@ goToSection(0);
 startAutoRotate();
 
 console.log('🔄 Auto-rotating menu activated! Changes every 30 seconds.');
+</script><script>
+// FIXED SECTION NAVIGATION SYSTEM
+(function() {
+  const sectionConfig = {
+    space: {
+      name: '🌌 SPACE',
+      elements: ['#three-container', 'h1'],
+      hideElements: ['#spaceElephant', '.planet-container', '#gameCanvas', '#gameUI', '#gameInstructions', '#scoreBoard']
+    },
+    animals: {
+      name: '🐾 ANIMALS', 
+      elements: ['#spaceElephant', '.planet-container', '#scoreBoard'],
+      hideElements: ['#three-container', 'h1', '#gameCanvas', '#gameUI', '#gameInstructions']
+    },
+    planet: {
+      name: '🪐 PLANET',
+      elements: ['.planet-container', '#three-container'],
+      hideElements: ['#spaceElephant', '#scoreBoard', '#gameCanvas', '#gameUI', '#gameInstructions', 'h1']
+    },
+    game: {
+      name: '🎮 GAME',
+      elements: ['#gameCanvas', '#gameUI', '#gameInstructions'],
+      hideElements: ['#three-container', '#spaceElephant', '.planet-container', '#scoreBoard', 'h1']
+    }
+  };
+
+  const sectionOrder = ['space', 'animals', 'planet', 'game'];
+  let currentIndex = 0;
+  let countdownValue = 30;
+  let autoRotateTimer;
+  let countdownTimer;
+
+  function showSection(sectionId) {
+    const config = sectionConfig[sectionId];
+    if (!config) return;
+
+    // Hide all elements first
+    Object.values(sectionConfig).forEach(sec => {
+      sec.elements.forEach(sel => {
+        const el = document.querySelector(sel);
+        if (el) el.classList.add('hidden');
+      });
+    });
+
+    // Show elements for current section
+    config.elements.forEach(sel => {
+      const el = document.querySelector(sel);
+      if (el) el.classList.remove('hidden');
+    });
+
+    // Update indicator
+    document.getElementById('currentSection').textContent = config.name;
+
+    // Update nav buttons
+    document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+      if (sectionOrder[i] === sectionId) {
+        btn.style.border = '2px solid rgba(100, 200, 255, 0.6)';
+        btn.style.background = 'linear-gradient(135deg, rgba(74, 144, 164, 0.9), rgba(45, 90, 107, 0.9))';
+        btn.style.boxShadow = '0 0 20px rgba(74, 144, 164, 0.5)';
+        btn.style.transform = 'scale(1.2)';
+        btn.classList.add('active');
+      } else {
+        btn.style.border = '2px solid rgba(100, 200, 255, 0.3)';
+        btn.style.background = 'linear-gradient(135deg, rgba(74, 144, 164, 0.5), rgba(45, 90, 107, 0.5))';
+        btn.style.boxShadow = 'none';
+        btn.style.transform = 'scale(1)';
+        btn.classList.remove('active');
+      }
+    });
+
+    // Special handling for game section
+    const gameCanvas = document.getElementById('gameCanvas');
+    if (sectionId === 'game') {
+      gameCanvas.style.pointerEvents = 'auto';
+      gameCanvas.style.zIndex = '50';
+    } else {
+      gameCanvas.style.pointerEvents = 'none';
+      gameCanvas.style.zIndex = '-1';
+    }
+  }
+
+  function goToSection(index) {
+    currentIndex = index;
+    countdownValue = 30;
+    showSection(sectionOrder[currentIndex]);
+    resetTimers();
+  }
+
+  function nextSection() {
+    currentIndex = (currentIndex + 1) % sectionOrder.length;
+    goToSection(currentIndex);
+  }
+
+  function resetTimers() {
+    clearInterval(autoRotateTimer);
+    clearInterval(countdownTimer);
+    
+    countdownTimer = setInterval(() => {
+      countdownValue--;
+      document.getElementById('countdown').textContent = countdownValue;
+      if (countdownValue <= 5) {
+        document.getElementById('countdown').style.color = '#ff6b6b';
+      } else {
+        document.getElementById('countdown').style.color = 'inherit';
+      }
+    }, 1000);
+
+    autoRotateTimer = setInterval(nextSection, 30000);
+  }
+
+  // Setup nav button clicks
+  document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+    btn.addEventListener('click', () => goToSection(index));
+  });
+
+  // Initialize
+  goToSection(0);
+  
+  console.log('✅ Section navigation system initialized!');
+})();
 </script></body>
 </html>
