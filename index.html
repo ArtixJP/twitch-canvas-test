@@ -592,7 +592,23 @@ h1 {
   0%, 100% { transform: translateX(-50%) rotate(0deg); }
   25% { transform: translateX(-50%) rotate(-15deg); }
   75% { transform: translateX(-50%) rotate(15deg); }
-}</style>
+}
+/* Planet color change on catch */
+.planet.catch-flash {
+  animation: planetColorChange 1s ease-out !important;
+}
+@keyframes planetColorChange {
+  0% { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 30%, #d63031 70%, #c0392b 100%); }
+  25% { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 30%, #5f27cd 70%, #341f97 100%); }
+  50% { background: linear-gradient(135deg, #55efc4 0%, #00b894 30%, #00cec9 70%, #0984e3 100%); }
+  75% { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 30%, #f39c12 70%, #e17055 100%); }
+  100% { background: linear-gradient(135deg, #4a90a4 0%, #2d5a6b 30%, #1a3a4a 70%, #0d1f2d 100%); }
+}
+.planet.caught-red { background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 30%, #d63031 70%, #c0392b 100%) !important; }
+.planet.caught-purple { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 30%, #5f27cd 70%, #341f97 100%) !important; }
+.planet.caught-teal { background: linear-gradient(135deg, #55efc4 0%, #00b894 30%, #00cec9 70%, #0984e3 100%) !important; }
+.planet.caught-gold { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 30%, #f39c12 70%, #e17055 100%) !important; }
+.planet.caught-pink { background: linear-gradient(135deg, #fd79a8 0%, #e84393 30%, #d63384 70%, #c2185b 100%) !important; }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
 <h1>Welcome to the Cosmos</h1><div id="scoreBoard" style="position: fixed; top: 20px; right: 30px; z-index: 100; background: linear-gradient(135deg, rgba(74, 144, 164, 0.8), rgba(45, 90, 107, 0.9)); border: 2px solid rgba(200, 180, 150, 0.6); border-radius: 15px; padding: 15px 25px; box-shadow: 0 0 20px rgba(74, 144, 164, 0.5), 0 0 40px rgba(74, 144, 164, 0.3); font-family: system-ui, sans-serif;"><div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">🐕 DOG SCORE</div><div id="dogScore" style="font-size: 36px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);">0</div></div>
@@ -1003,5 +1019,62 @@ window.stopOriginalChase = true;
 
 // Start the new chase with scoring!
 updateChaseWithScore();
+</script><script>
+// Planet color change on catch
+const planet = document.querySelector('.planet');
+const planetColors = ['caught-red', 'caught-purple', 'caught-teal', 'caught-gold', 'caught-pink'];
+let currentColorIndex = 0;
+
+// Override the dogCatchesCat function to include planet color change
+const originalDogCatchesCat = dogCatchesCat;
+dogCatchesCat = function() {
+  if (!canCatch) return;
+  
+  canCatch = false;
+  dogPoints++;
+  
+  // Update score display
+  const scoreDisplay = document.getElementById('dogScore');
+  scoreDisplay.textContent = dogPoints;
+  
+  // Animate score board
+  const scoreBoard = document.getElementById('scoreBoard');
+  scoreBoard.classList.add('point-scored');
+  setTimeout(() => scoreBoard.classList.remove('point-scored'), 500);
+  
+  // Add catch celebration
+  spaceDoggy.classList.add('catching');
+  spaceKitty.classList.add('caught');
+  setTimeout(() => {
+    spaceDoggy.classList.remove('catching');
+    spaceKitty.classList.remove('caught');
+  }, 500);
+  
+  // PLANET COLOR CHANGE!
+  planet.classList.add('catch-flash');
+  // Remove all previous color classes
+  planetColors.forEach(c => planet.classList.remove(c));
+  // Add new color
+  planet.classList.add(planetColors[currentColorIndex]);
+  currentColorIndex = (currentColorIndex + 1) % planetColors.length;
+  
+  setTimeout(() => {
+    planet.classList.remove('catch-flash');
+  }, 1000);
+  
+  // Show catch text
+  const catchText = document.createElement('div');
+  catchText.className = 'catch-text';
+  catchText.textContent = '+1 CAUGHT!';
+  catchText.style.left = '50%';
+  catchText.style.top = '50%';
+  document.body.appendChild(catchText);
+  setTimeout(() => catchText.remove(), 1000);
+  
+  // Cooldown before next catch
+  setTimeout(() => {
+    canCatch = true;
+  }, catchCooldown);
+};
 </script></body>
 </html>
