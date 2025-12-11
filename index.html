@@ -148,9 +148,30 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
+            font-size: 28px;
             cursor: pointer;
             transition: all 0.2s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .white-piece {
+            color: #ffffff;
+            text-shadow: 0 0 3px #000, 1px 1px 2px #000, -1px -1px 2px #000;
+        }
+        
+        .black-piece {
+            color: #1a1025;
+            text-shadow: 0 0 2px rgba(255,255,255,0.3);
+        }
+        
+        .highlight-move {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%) !important;
+            animation: pulse-square 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-square {
+            0%, 100% { box-shadow: inset 0 0 10px rgba(241, 196, 15, 0.5); }
+            50% { box-shadow: inset 0 0 20px rgba(241, 196, 15, 0.8); }
         }
         
         .chess-square:hover {
@@ -514,24 +535,52 @@
             <div class="message"><span class="user">@Viewer:</span> Let's create together! 🎨</div>
             <div class="message"><span class="user">@Coder:</span> Pixel perfect vibes ✨</div>
             <div class="message"><span class="user">@Artist:</span> Love the retro feel! 💜</div>
+            <div class="message"><span class="user">@Chess:</span> 1. e4 played! ♙➔e4 🎯</div>
         </div>
     </div>
     
     <script>
-        // Chess board
-        const pieces = {
-            0: ['♜','♞','♝','♛','♚','♝','♞','♜'],
-            1: ['♟','♟','♟','♟','♟','♟','♟','♟'],
-            6: ['♙','♙','♙','♙','♙','♙','♙','♙'],
-            7: ['♖','♘','♗','♕','♔','♗','♘','♖']
-        };
+        // Chess board with e4 opening move played!
+        // Black pieces (top)
+        const blackPieces = ['♜','♞','♝','♛','♚','♝','♞','♜'];
+        const blackPawns = ['♟','♟','♟','♟','♟','♟','♟','♟'];
+        // White pieces (bottom)
+        const whitePawns = ['♙','♙','♙','♙','♙','♙','♙','♙'];
+        const whitePieces = ['♖','♘','♗','♕','♔','♗','♘','♖'];
+        
+        // Board state after 1. e4
+        const boardState = [
+            blackPieces,                                    // Row 0
+            blackPawns,                                     // Row 1
+            ['','','','','','','',''],                      // Row 2
+            ['','','','','','','',''],                      // Row 3
+            ['','','','','♙','','',''],                     // Row 4 - White pawn on e4!
+            ['','','','','','','',''],                      // Row 5
+            ['♙','♙','♙','♙','','♙','♙','♙'],              // Row 6 - e2 pawn moved
+            whitePieces                                     // Row 7
+        ];
+        
         const board = document.getElementById('chess');
         for(let row = 0; row < 8; row++) {
             for(let col = 0; col < 8; col++) {
                 const square = document.createElement('div');
-                square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'white-square' : 'black-square');
-                if(pieces[row]) {
-                    square.textContent = pieces[row][col];
+                const isWhiteSquare = (row + col) % 2 === 0;
+                square.className = 'chess-square ' + (isWhiteSquare ? 'white-square' : 'black-square');
+                
+                // Highlight e4 and e2 squares (the move that was played)
+                if ((row === 4 && col === 4) || (row === 6 && col === 4)) {
+                    square.classList.add('highlight-move');
+                }
+                
+                const piece = boardState[row][col];
+                if(piece) {
+                    square.textContent = piece;
+                    // White pieces are on rows 4, 6, 7
+                    if(row >= 4) {
+                        square.classList.add('white-piece');
+                    } else {
+                        square.classList.add('black-piece');
+                    }
                 }
                 board.appendChild(square);
             }
