@@ -484,6 +484,11 @@
                 Math.pow(kittyGroup.position.z - dogGroup.position.z, 2)
             );
             
+            // Check if dog caught the cat (call scoring function)
+            if (typeof window.checkCatch === 'function') {
+                window.checkCatch(distance);
+            }
+            
             // Kitty escape logic
             if (distance < dangerDistance && !kittyIsEscaping) {
                 kittyIsEscaping = true;
@@ -572,7 +577,7 @@
         });
     </script></head>
 <body><div id="canvas-container"></div>
-<h1>Hello World</h1>
+<h1>Hello World</h1><div id="score-display" style="position: fixed; top: 30px; right: 30px; z-index: 100; background: rgba(0, 0, 0, 0.7); padding: 20px 30px; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid rgba(210, 105, 30, 0.5); box-shadow: 0 0 20px rgba(210, 105, 30, 0.4);"><div style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">Dog Score</div><div id="dog-score" style="color: #d2691e; font-size: 3rem; font-weight: bold; text-shadow: 0 0 15px rgba(210, 105, 30, 0.8);">0</div></div>
 <script>
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -725,8 +730,13 @@
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playIcon = document.getElementById('play-icon');
         const pauseIcon = document.getElementById('pause-icon');
+        const dogScoreElement = document.getElementById('dog-score');
         
         window.isPlaying = false;
+        window.dogScore = 0;
+        window.hasCaught = false;
+        const catchDistance = 0.8;
+        const releaseDistance = 1.2;
         
         playPauseBtn.addEventListener('click', () => {
             if (window.isPlaying) {
@@ -751,5 +761,62 @@
                 }).catch(() => {});
             }
         }, { once: true });
+        
+        // Function to check if dog caught the cat
+        window.checkCatch = function(distance) {
+            if (distance < catchDistance && !window.hasCaught) {
+                window.hasCaught = true;
+                window.dogScore++;
+                dogScoreElement.textContent = window.dogScore;
+                
+                // Celebration animation
+                dogScoreElement.style.transform = 'scale(1.5)';
+                dogScoreElement.style.transition = 'transform 0.3s ease';
+                setTimeout(() => {
+                    dogScoreElement.style.transform = 'scale(1)';
+                }, 300);
+                
+                // Add a fun particle effect
+                const scoreDisplay = document.getElementById('score-display');
+                const particles = [];
+                for(let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.width = '8px';
+                    particle.style.height = '8px';
+                    particle.style.borderRadius = '50%';
+                    particle.style.background = '#d2691e';
+                    particle.style.boxShadow = '0 0 10px #d2691e';
+                    particle.style.top = scoreDisplay.offsetTop + 50 + 'px';
+                    particle.style.left = scoreDisplay.offsetLeft + 60 + 'px';
+                    particle.style.zIndex = '999';
+                    particle.style.pointerEvents = 'none';
+                    document.body.appendChild(particle);
+                    particles.push(particle);
+                    
+                    const angle = (Math.PI * 2 * i) / 20;
+                    const velocity = 3;
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    
+                    let x = 0, y = 0;
+                    const animate = () => {
+                        x += vx;
+                        y += vy;
+                        particle.style.transform = `translate(${x}px, ${y}px)`;
+                        particle.style.opacity = 1 - (Math.abs(x) + Math.abs(y)) / 200;
+                        
+                        if (Math.abs(x) < 100 && Math.abs(y) < 100) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            particle.remove();
+                        }
+                    };
+                    animate();
+                }
+            } else if (distance > releaseDistance && window.hasCaught) {
+                window.hasCaught = false;
+            }
+        };
     </script></body>
 </html>
