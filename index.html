@@ -447,6 +447,60 @@
             z-index: 2;
             opacity: 0.6;
         }
+        
+        /* Floating planet */
+        .planet {
+            position: fixed;
+            top: 15%;
+            right: 8%;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #c44569 30%, #6c5ce7 70%, #a29bfe 100%);
+            box-shadow: 
+                inset -20px -20px 40px rgba(0,0,0,0.4),
+                inset 10px 10px 30px rgba(255,255,255,0.2),
+                0 0 60px rgba(108, 92, 231, 0.5),
+                0 0 100px rgba(196, 69, 105, 0.3);
+            z-index: 2;
+            animation: planet-float 8s ease-in-out infinite, planet-rotate 20s linear infinite;
+        }
+        .planet::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: -30%;
+            width: 160%;
+            height: 30px;
+            background: linear-gradient(90deg, transparent 10%, rgba(255,255,255,0.3) 50%, transparent 90%);
+            border-radius: 50%;
+            transform: translateY(-50%) rotateX(70deg);
+            animation: ring-wobble 6s ease-in-out infinite;
+        }
+        .planet::after {
+            content: '🌙';
+            position: absolute;
+            top: -20px;
+            right: -30px;
+            font-size: 1.5rem;
+            animation: moon-orbit 10s linear infinite;
+        }
+        @keyframes planet-float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-20px) scale(1.02); }
+        }
+        @keyframes planet-rotate {
+            from { filter: hue-rotate(0deg); }
+            to { filter: hue-rotate(360deg); }
+        }
+        @keyframes ring-wobble {
+            0%, 100% { transform: translateY(-50%) rotateX(70deg) rotateZ(-5deg); }
+            50% { transform: translateY(-50%) rotateX(70deg) rotateZ(5deg); }
+        }
+        @keyframes moon-orbit {
+            from { transform: rotate(0deg) translateX(80px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+        }
     </style>
 </head>
 <body>
@@ -497,6 +551,9 @@
     <div class="celtic-knot">☘️</div>
     <div class="menhir" style="left: 5%;">🪨</div>
     <div class="menhir" style="right: 15%;">🪨</div>
+    
+    <!-- Floating Planet -->
+    <div class="planet" title="Planet Bretagne-X7 🌍"></div>
     
     <!-- Rain container (it's Brittany, always raining!) -->
     <div class="rain-container" id="rain-container"></div>
