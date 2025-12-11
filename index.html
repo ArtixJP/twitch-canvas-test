@@ -453,6 +453,239 @@ function checkDistance() {
 // Check distance every 100ms
 setInterval(checkDistance, 100);
 updateAnimations();
-</script></div>
+</script></div><div id="game-container" style="position: relative; z-index: 10; margin-top: 50px; width: 600px; height: 400px; border: 3px solid rgba(255, 255, 255, 0.3); border-radius: 20px; overflow: hidden; box-shadow: 0 0 40px rgba(138, 153, 230, 0.5);"></div><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script>
+let ship;
+let asteroids = [];
+let stars = [];
+let score = 0;
+let gameState = 'start';
+let gameSpeed = 2;
+let starPowerUp = null;
+let invincible = false;
+let invincibleTimer = 0;
+
+function setup() {
+  let canvas = createCanvas(600, 400);
+  canvas.parent('game-container');
+  ship = new Ship();
+}
+
+function draw() {
+  background(10, 15, 35);
+  
+  // Draw starfield background
+  if (frameCount % 3 === 0) {
+    stars.push({x: width, y: random(height), speed: random(1, 3), size: random(1, 3)});
+  }
+  for (let i = stars.length - 1; i >= 0; i--) {
+    fill(255, 255, 255, 200);
+    noStroke();
+    circle(stars[i].x, stars[i].y, stars[i].size);
+    stars[i].x -= stars[i].speed;
+    if (stars[i].x < 0) stars.splice(i, 1);
+  }
+  
+  if (gameState === 'start') {
+    textAlign(CENTER, CENTER);
+    fill(255);
+    textSize(48);
+    text('🚀 ASTEROID DODGER', width/2, height/2 - 60);
+    textSize(20);
+    text('Use ARROW KEYS to move', width/2, height/2);
+    text('Collect ⭐ for invincibility!', width/2, height/2 + 30);
+    textSize(24);
+    fill(253, 184, 19);
+    text('Press SPACE to start', width/2, height/2 + 80);
+    
+  } else if (gameState === 'playing') {
+    // Spawn asteroids
+    if (frameCount % 40 === 0) {
+      asteroids.push(new Asteroid());
+    }
+    
+    // Spawn star power-up occasionally
+    if (frameCount % 300 === 0 && !starPowerUp) {
+      starPowerUp = {x: width, y: random(50, height - 50), size: 25};
+    }
+    
+    // Update and draw ship
+    ship.update();
+    ship.display();
+    
+    // Update and draw asteroids
+    for (let i = asteroids.length - 1; i >= 0; i--) {
+      asteroids[i].update();
+      asteroids[i].display();
+      
+      if (!invincible && asteroids[i].hits(ship)) {
+        gameState = 'gameover';
+      }
+      
+      if (asteroids[i].offscreen()) {
+        asteroids.splice(i, 1);
+        score += 10;
+        gameSpeed += 0.01;
+      }
+    }
+    
+    // Star power-up
+    if (starPowerUp) {
+      starPowerUp.x -= gameSpeed + 1;
+      
+      // Animated star
+      push();
+      translate(starPowerUp.x, starPowerUp.y);
+      rotate(frameCount * 0.05);
+      textSize(starPowerUp.size);
+      text('⭐', 0, 0);
+      pop();
+      
+      // Check collection
+      if (dist(ship.x, ship.y, starPowerUp.x, starPowerUp.y) < 30) {
+        invincible = true;
+        invincibleTimer = 180; // 3 seconds at 60fps
+        starPowerUp = null;
+        score += 50;
+      }
+      
+      if (starPowerUp && starPowerUp.x < -50) {
+        starPowerUp = null;
+      }
+    }
+    
+    // Handle invincibility
+    if (invincible) {
+      invincibleTimer--;
+      if (invincibleTimer <= 0) {
+        invincible = false;
+      }
+    }
+    
+    // Score display
+    fill(255);
+    textSize(24);
+    textAlign(LEFT);
+    text('Score: ' + score, 20, 30);
+    
+    // Invincibility indicator
+    if (invincible) {
+      fill(253, 184, 19);
+      textSize(18);
+      text('⭐ INVINCIBLE! ' + Math.ceil(invincibleTimer/60) + 's', 20, 60);
+    }
+    
+  } else if (gameState === 'gameover') {
+    textAlign(CENTER, CENTER);
+    fill(255, 100, 100);
+    textSize(48);
+    text('GAME OVER!', width/2, height/2 - 40);
+    fill(255);
+    textSize(32);
+    text('Final Score: ' + score, width/2, height/2 + 20);
+    textSize(20);
+    fill(253, 184, 19);
+    text('Press SPACE to restart', width/2, height/2 + 70);
+  }
+}
+
+function keyPressed() {
+  if (key === ' ') {
+    if (gameState === 'start' || gameState === 'gameover') {
+      gameState = 'playing';
+      asteroids = [];
+      stars = [];
+      score = 0;
+      gameSpeed = 2;
+      ship = new Ship();
+      starPowerUp = null;
+      invincible = false;
+      invincibleTimer = 0;
+    }
+  }
+}
+
+class Ship {
+  constructor() {
+    this.x = 100;
+    this.y = height / 2;
+    this.size = 30;
+    this.speed = 5;
+  }
+  
+  update() {
+    if (keyIsDown(UP_ARROW) && this.y > this.size) {
+      this.y -= this.speed;
+    }
+    if (keyIsDown(DOWN_ARROW) && this.y < height - this.size) {
+      this.y += this.speed;
+    }
+    if (keyIsDown(LEFT_ARROW) && this.x > this.size) {
+      this.x -= this.speed;
+    }
+    if (keyIsDown(RIGHT_ARROW) && this.x < 200) {
+      this.x += this.speed;
+    }
+  }
+  
+  display() {
+    push();
+    translate(this.x, this.y);
+    
+    if (invincible) {
+      // Rainbow glow when invincible
+      let hue = (frameCount * 5) % 360;
+      drawingContext.shadowBlur = 20;
+      drawingContext.shadowColor = `hsl(${hue}, 100%, 50%)`;
+    }
+    
+    textSize(this.size);
+    textAlign(CENTER, CENTER);
+    text('🚀', 0, 0);
+    
+    // Engine flame
+    if (frameCount % 2 === 0) {
+      textSize(15);
+      text('💨', -20, 0);
+    }
+    
+    pop();
+  }
+}
+
+class Asteroid {
+  constructor() {
+    this.x = width;
+    this.y = random(30, height - 30);
+    this.size = random(30, 60);
+    this.rotation = random(TWO_PI);
+    this.rotSpeed = random(-0.05, 0.05);
+    this.emoji = random(['☄️', '🌑', '🪨']);
+  }
+  
+  update() {
+    this.x -= gameSpeed;
+    this.rotation += this.rotSpeed;
+  }
+  
+  display() {
+    push();
+    translate(this.x, this.y);
+    rotate(this.rotation);
+    textSize(this.size);
+    textAlign(CENTER, CENTER);
+    text(this.emoji, 0, 0);
+    pop();
+  }
+  
+  hits(ship) {
+    let d = dist(this.x, this.y, ship.x, ship.y);
+    return d < (this.size/2 + ship.size/2 - 10);
+  }
+  
+  offscreen() {
+    return this.x < -this.size;
+  }
+}
+</script>
 </body>
 </html>
