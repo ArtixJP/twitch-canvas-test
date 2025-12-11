@@ -110,6 +110,29 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
+        .music-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid rgba(200, 180, 150, 0.6);
+            background: rgba(26, 26, 46, 0.8);
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(74, 144, 164, 0.4);
+            z-index: 100;
+        }
+        
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(74, 144, 164, 0.6);
+            background: rgba(45, 90, 107, 0.8);
+        }
+        
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -128,6 +151,8 @@
 </head>
 <body>
     <div class="stars" id="stars"></div>
+    <audio id="bgMusic" src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" loop></audio>
+    <button class="music-btn" id="musicBtn" title="Play/Pause Music">🔊</button>
     <h1>Hello World</h1>
     <div class="planet-container">
         <div class="planet"></div>
@@ -145,6 +170,41 @@
             star.style.height = star.style.width;
             starsContainer.appendChild(star);
         }
+        
+        // Music controls
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        let isPlaying = false;
+        
+        // Auto-play on first user interaction (browser policy)
+        function startMusic() {
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicBtn.textContent = '🔊';
+            }).catch(() => {});
+            document.removeEventListener('click', startMusic);
+        }
+        
+        // Try to autoplay
+        bgMusic.play().then(() => {
+            isPlaying = true;
+            musicBtn.textContent = '🔊';
+        }).catch(() => {
+            // Autoplay blocked, wait for user interaction
+            document.addEventListener('click', startMusic);
+        });
+        
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.textContent = '🔇';
+            } else {
+                bgMusic.play();
+                musicBtn.textContent = '🔊';
+            }
+            isPlaying = !isPlaying;
+        });
     </script>
 </body>
 </html>
