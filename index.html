@@ -7,20 +7,58 @@
 <title>Twitch Versus Code</title>
 <style>body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; } h1 { font-size: 3rem; text-align: center; } @keyframes orbit { 0% { transform: translate(-50%, -150px); } 100% { transform: translate(250px, -50%); } } @keyframes kitty-orbit { 0% { transform: translate(-50%, -150px) rotate(0deg); } 100% { transform: translate(250px, -50%) rotate(360deg); } }@keyframes dog-chase { 0% { transform: translate(-50%, -100px); } 50% { transform: translate(300px, 0); } 100% { transform: translate(-50%, -100px); } } @keyframes kitty-escape { 0% { transform: translate(-50%, -150px) rotate(0deg); } 25% { transform: translate(300px, -200px) rotate(360deg); } 50% { transform: translate(250px, -50%) rotate(360deg); } 100% { transform: translate(-50%, -150px) rotate(0deg); } }@keyframes spray-water { 0%, 50%, 100% { transform: translate(-50%, -50%) rotate(0deg); } 25% { transform: translate(-50%, -50%) rotate(10deg); } 75% { transform: translate(-50%, -50%) rotate(-10deg); } }</style>
 <style>.planet-catch { filter: hue-rotate(90deg); }</style></head>
-<body>
+<header style="position: fixed; top: 0; width: 100%; background: rgba(0, 0, 0, 0.8); padding: 10px 0; text-align: center; z-index: 1000;">
+<nav>
+<button class="nav-btn" data-target="#space-section">Space</button>
+<button class="nav-btn" data-target="#animals-section">Animals</button>
+<button class="nav-btn" data-target="#games-section">Games</button>
+</nav>
+</header>
+<main style="margin-top: 60px;">
+<section class="content-section" id="space-section">
 <h1>Hello World</h1>
-<img alt="A beautiful planet" src="https://example.com/planet.png" style="width: 200px; margin-top: 20px;"/><div id="moon-container" style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center;"><div id="score" style="position: absolute; top: 10px; right: 10px; color: white; font-size: 1.5rem;">Dog Score: 0</div><div id="moon" style="width: 40px; height: 40px; background-color: #ccc; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: orbit 5s linear infinite; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div><div id="kitty" style="width: 60px; height: 60px; background-image: url('https://placekitten.com/60/60'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: kitty-orbit 10s linear infinite;"></div><div id="dog" style="width: 50px; height: 50px; background-image: url('https://place-puppy.com/50x50'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: dog-chase 6s linear infinite;"></div><script>let dogScore = 0; document.getElementById('dog').addEventListener('animationiteration', function() { var kitty = document.getElementById('kitty'); var planet = document.querySelector('img[data-llm-id="e2"]'); kitty.style.animationName = 'kitty-escape'; planet.classList.add('planet-catch'); setTimeout(function() { kitty.style.animationName = 'kitty-orbit'; planet.classList.remove('planet-catch'); }, 1500); dogScore++; document.getElementById('score').textContent = 'Dog Score: ' + dogScore; });</script><div id="elephant" style="width: 100px; height: 100px; background-image: url('https://example.com/elephant.png'); background-size: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: spray-water 3s infinite;"></div></div><script>document.getElementById('pause-button').addEventListener('click', function() {
-  var audio = document.getElementById('background-music');
-  if (audio.paused) {
-    audio.play();
-    this.textContent = 'Pause Music';
-  } else {
-    audio.pause();
-    this.textContent = 'Play Music';
-  }
-});<script>document.getElementById('dog').addEventListener('animationiteration', function() { var kitty = document.getElementById('kitty'); kitty.style.animationName = 'kitty-escape'; setTimeout(function() { kitty.style.animationName = 'kitty-orbit'; }, 1500); });</script><audio id="background-music" loop="">
+<img alt="A beautiful planet" src="https://example.com/planet.png" style="width: 200px; margin-top: 20px;"/>
+</section>
+<section class="content-section" id="animals-section" style="display: none;">
+<div id="moon-container" style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center;">
+<div id="score" style="position: absolute; top: 10px; right: 10px; color: white; font-size: 1.5rem;">Dog Score: 0</div>
+<div id="moon" style="width: 40px; height: 40px; background-color: #ccc; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: orbit 5s linear infinite; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div>
+<div id="kitty" style="width: 60px; height: 60px; background-image: url('https://placekitten.com/60/60'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: kitty-orbit 10s linear infinite;"></div>
+<div id="dog" style="width: 50px; height: 50px; background-image: url('https://place-puppy.com/50x50'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: dog-chase 6s linear infinite;"></div>
+<div id="elephant" style="width: 100px; height: 100px; background-image: url('https://example.com/elephant.png'); background-size: cover; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: spray-water 3s infinite;"></div>
+</div>
+</section>
+<section class="content-section" id="games-section" style="display: none;">
+<audio id="background-music" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
-  Your browser does not support the audio element.
-</audio>
-<button id="pause-button" style="margin-top: 20px; padding: 10px; background-color: #e94560; color: #fff; border: none; cursor: pointer;">Play Music</button><script>window.addEventListener('load', function() { document.getElementById('background-music').play(); document.getElementById('pause-button').textContent = 'Pause Music'; });</script><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>function initSun() { const scene = new THREE.Scene(); const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000); const renderer = new THREE.WebGLRenderer(); renderer.setSize(200, 200); document.getElementById('moon-container').appendChild(renderer.domElement); const geometry = new THREE.SphereGeometry(5, 32, 32); const material = new THREE.MeshBasicMaterial({ color: 0xffdf00 }); const sun = new THREE.Mesh(geometry, material); scene.add(sun); const pointLight = new THREE.PointLight(0xffffff, 1, 100); pointLight.position.set(10, 10, 10); scene.add(pointLight); camera.position.z = 15; function animate() { requestAnimationFrame(animate); sun.rotation.y += 0.01; renderer.render(scene, camera); } animate(); } window.addEventListener('DOMContentLoaded', initSun);</script><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script><script>let ballX, ballY, ballSpeedX, ballSpeedY, paddleY, paddleHeight, paddleWidth, score; function setup() { let canvas = createCanvas(400, 400); canvas.parent('moon-container'); ballX = width / 2; ballY = height / 2; ballSpeedX = 5; ballSpeedY = 3; paddleY = height - 40; paddleHeight = 10; paddleWidth = 80; score = 0; } function draw() { background(0, 0, 0, 0); fill(255); ellipse(ballX, ballY, 20, 20); rect(mouseX, paddleY, paddleWidth, paddleHeight); ballX += ballSpeedX; ballY += ballSpeedY; if (ballX < 0 || ballX > width) { ballSpeedX *= -1; } if (ballY < 0) { ballSpeedY *= -1; } if (ballY > height - paddleHeight && ballX > mouseX && ballX < mouseX + paddleWidth) { ballSpeedY *= -1; score++; } if (ballY > height) { ballX = width / 2; ballY = height / 2; score = 0; } fill(255); textSize(16); text('Score: ' + score, 10, 30); }</script></body>
+      Your browser does not support the audio element.
+    </audio>
+<button id="pause-button" style="margin-top: 20px; padding: 10px; background-color: #e94560; color: #fff; border: none; cursor: pointer;">Play Music</button>
+<div id="canvas-container" style="position: relative; width: 400px; height: 400px; margin-top: 20px;"></div>
+</section>
+</main>
+<script>
+  document.querySelectorAll('.nav-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      document.querySelectorAll('.content-section').forEach(section => section.style.display = 'none');
+      document.querySelector(this.dataset.target).style.display = 'block';
+    });
+  });
+
+  document.getElementById('pause-button').addEventListener('click', function() {
+    var audio = document.getElementById('background-music');
+    if (audio.paused) {
+      audio.play();
+      this.textContent = 'Pause Music';
+    } else {
+      audio.pause();
+      this.textContent = 'Play Music';
+    }
+  });
+
+  window.addEventListener('load', function() {
+    document.getElementById('background-music').play();
+    document.getElementById('pause-button').textContent = 'Pause Music';
+  });
+</script>
 </html>
