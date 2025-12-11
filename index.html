@@ -89,7 +89,251 @@
                 white-space: nowrap;
             }
         }</style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
+<script>
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        container.appendChild(renderer.domElement);
+        
+        // Create planet
+        const geometry = new THREE.SphereGeometry(2, 64, 64);
+        const material = new THREE.MeshPhongMaterial({
+            color: 0x4a90e2,
+            emissive: 0x112244,
+            shininess: 30,
+            specular: 0x88ccff
+        });
+        const planet = new THREE.Mesh(geometry, material);
+        scene.add(planet);
+        
+        // Add atmosphere glow
+        const glowGeometry = new THREE.SphereGeometry(2.2, 64, 64);
+        const glowMaterial = new THREE.MeshBasicMaterial({
+            color: 0x6bb6ff,
+            transparent: true,
+            opacity: 0.2,
+            side: THREE.BackSide
+        });
+        const glow = new THREE.Mesh(glowGeometry, glowMaterial);
+        scene.add(glow);
+        
+        // Create moon
+        const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const moonMaterial = new THREE.MeshPhongMaterial({
+            color: 0xcccccc,
+            emissive: 0x222222,
+            shininess: 10
+        });
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        
+        // Create moon glow
+        const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
+        const moonGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+        
+        // Group moon and its glow together
+        const moonGroup = new THREE.Group();
+        moonGroup.add(moon);
+        moonGroup.add(moonGlow);
+        scene.add(moonGroup);
+        
+        // Create adorable space kitty!
+        const kittyGroup = new THREE.Group();
+        
+        // Kitty body (sphere)
+        const kittyBodyGeo = new THREE.SphereGeometry(0.3, 32, 32);
+        const kittyMaterial = new THREE.MeshPhongMaterial({
+            color: 0xffb6c1,
+            emissive: 0x332211,
+            shininess: 50
+        });
+        const kittyBody = new THREE.Mesh(kittyBodyGeo, kittyMaterial);
+        kittyGroup.add(kittyBody);
+        
+        // Kitty head (smaller sphere)
+        const kittyHeadGeo = new THREE.SphereGeometry(0.25, 32, 32);
+        const kittyHead = new THREE.Mesh(kittyHeadGeo, kittyMaterial);
+        kittyHead.position.y = 0.4;
+        kittyGroup.add(kittyHead);
+        
+        // Kitty ears (triangular cones)
+        const earGeo = new THREE.ConeGeometry(0.12, 0.2, 4);
+        const earMaterial = new THREE.MeshPhongMaterial({ color: 0xffb6c1 });
+        
+        const leftEar = new THREE.Mesh(earGeo, earMaterial);
+        leftEar.position.set(-0.15, 0.6, 0);
+        leftEar.rotation.z = 0.3;
+        kittyGroup.add(leftEar);
+        
+        const rightEar = new THREE.Mesh(earGeo, earMaterial);
+        rightEar.position.set(0.15, 0.6, 0);
+        rightEar.rotation.z = -0.3;
+        kittyGroup.add(rightEar);
+        
+        // Kitty eyes (white spheres with black pupils)
+        const eyeWhiteGeo = new THREE.SphereGeometry(0.08, 16, 16);
+        const eyeWhiteMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+        
+        const leftEyeWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
+        leftEyeWhite.position.set(-0.1, 0.45, 0.2);
+        kittyGroup.add(leftEyeWhite);
+        
+        const rightEyeWhite = new THREE.Mesh(eyeWhiteGeo, eyeWhiteMat);
+        rightEyeWhite.position.set(0.1, 0.45, 0.2);
+        kittyGroup.add(rightEyeWhite);
+        
+        // Pupils
+        const pupilGeo = new THREE.SphereGeometry(0.04, 16, 16);
+        const pupilMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
+        
+        const leftPupil = new THREE.Mesh(pupilGeo, pupilMat);
+        leftPupil.position.set(-0.1, 0.45, 0.26);
+        kittyGroup.add(leftPupil);
+        
+        const rightPupil = new THREE.Mesh(pupilGeo, pupilMat);
+        rightPupil.position.set(0.1, 0.45, 0.26);
+        kittyGroup.add(rightPupil);
+        
+        // Kitty nose (tiny pink sphere)
+        const noseGeo = new THREE.SphereGeometry(0.03, 16, 16);
+        const noseMat = new THREE.MeshPhongMaterial({ color: 0xff69b4 });
+        const nose = new THREE.Mesh(noseGeo, noseMat);
+        nose.position.set(0, 0.35, 0.24);
+        kittyGroup.add(nose);
+        
+        // Whiskers (thin cylinders)
+        const whiskerGeo = new THREE.CylinderGeometry(0.005, 0.005, 0.3, 8);
+        const whiskerMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+        
+        for(let i = 0; i < 3; i++) {
+            const leftWhisker = new THREE.Mesh(whiskerGeo, whiskerMat);
+            leftWhisker.position.set(-0.15, 0.35 + (i * 0.04), 0.2);
+            leftWhisker.rotation.z = Math.PI / 2;
+            leftWhisker.rotation.y = -0.3;
+            kittyGroup.add(leftWhisker);
+            
+            const rightWhisker = new THREE.Mesh(whiskerGeo, whiskerMat);
+            rightWhisker.position.set(0.15, 0.35 + (i * 0.04), 0.2);
+            rightWhisker.rotation.z = Math.PI / 2;
+            rightWhisker.rotation.y = 0.3;
+            kittyGroup.add(rightWhisker);
+        }
+        
+        // Kitty tail (curved cylinders)
+        const tailSegmentGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.2, 8);
+        for(let i = 0; i < 3; i++) {
+            const tailSegment = new THREE.Mesh(tailSegmentGeo, kittyMaterial);
+            tailSegment.position.set(0, -0.2 - (i * 0.15), -0.15 - (i * 0.1));
+            tailSegment.rotation.x = 0.5 + (i * 0.3);
+            kittyGroup.add(tailSegment);
+        }
+        
+        // Add cute glow around kitty
+        const kittyGlowGeo = new THREE.SphereGeometry(0.5, 32, 32);
+        const kittyGlowMat = new THREE.MeshBasicMaterial({
+            color: 0xffb6c1,
+            transparent: true,
+            opacity: 0.15,
+            side: THREE.BackSide
+        });
+        const kittyGlow = new THREE.Mesh(kittyGlowGeo, kittyGlowMat);
+        kittyGroup.add(kittyGlow);
+        
+        scene.add(kittyGroup);
+        
+        // Add stars
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        for(let i = 0; i < 1000; i++) {
+            const x = (Math.random() - 0.5) * 100;
+            const y = (Math.random() - 0.5) * 100;
+            const z = (Math.random() - 0.5) * 100;
+            starVertices.push(x, y, z);
+        }
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.1 });
+        const starsMesh = new THREE.Points(starGeometry, starMaterial);
+        scene.add(starsMesh);
+        
+        // Lighting
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 3, 5);
+        scene.add(light);
+        
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+        
+        camera.position.z = 6;
+        
+        // Animation variables
+        let moonAngle = 0;
+        const moonOrbitRadius = 4;
+        const moonOrbitSpeed = 0.01;
+        
+        let kittyAngle = Math.PI; // Start opposite to moon
+        const kittyOrbitRadius = 3.5;
+        const kittyOrbitSpeed = 0.015; // Slightly faster than moon
+        
+        // Animation
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            // Rotate planet
+            planet.rotation.y += 0.003;
+            glow.rotation.y += 0.003;
+            
+            // Orbit moon around planet
+            moonAngle += moonOrbitSpeed;
+            moonGroup.position.x = Math.cos(moonAngle) * moonOrbitRadius;
+            moonGroup.position.z = Math.sin(moonAngle) * moonOrbitRadius;
+            moonGroup.position.y = Math.sin(moonAngle * 0.5) * 0.5;
+            
+            // Rotate moon on its own axis
+            moon.rotation.y += 0.005;
+            moonGlow.rotation.y += 0.005;
+            
+            // Orbit kitty around planet
+            kittyAngle += kittyOrbitSpeed;
+            kittyGroup.position.x = Math.cos(kittyAngle) * kittyOrbitRadius;
+            kittyGroup.position.z = Math.sin(kittyAngle) * kittyOrbitRadius;
+            kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8; // More vertical movement
+            
+            // Make kitty look at planet
+            kittyGroup.lookAt(planet.position);
+            
+            // Add playful bobbing to kitty
+            kittyBody.position.y = Math.sin(Date.now() * 0.003) * 0.05;
+            kittyHead.position.y = 0.4 + Math.sin(Date.now() * 0.003) * 0.05;
+            
+            // Animate tail
+            kittyGroup.children.forEach((child, index) => {
+                if(index >= 14 && index <= 16) { // Tail segments
+                    child.rotation.z = Math.sin(Date.now() * 0.005 + index) * 0.3;
+                }
+            });
+            
+            // Rotate stars
+            starsMesh.rotation.y += 0.0002;
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+        
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script></head>
 <body><div id="canvas-container"></div>
 <h1>Hello World</h1>
 <script>
