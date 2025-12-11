@@ -4,625 +4,468 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>La Mie Pizzeria - World's First Bakery &amp; Pizzeria Fusion</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<title>Stellar Bakes - Cosmic Artisan Bakery</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&amp;family=Cormorant+Garamond:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
 <style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-    body { 
-        font-family: 'Lato', sans-serif; 
-        background: #fdf6e3;
-        color: #4a3728;
-        overflow-x: hidden;
-    }
-    
-    /* Header */
-    header {
-        background: linear-gradient(rgba(74, 55, 40, 0.85), rgba(74, 55, 40, 0.85)), 
-                    url('https://images.unsplash.com/photo-1509440159596-0249088772ff?w=1920') center/cover;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        text-align: center;
-        color: #fff;
-        position: relative;
-    }
-    
-    nav {
-        position: fixed;
-        top: 0;
-        width: 100%;
-        padding: 1.5rem 5%;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        background: rgba(74, 55, 40, 0.95);
-        z-index: 1000;
-        backdrop-filter: blur(10px);
-    }
-    
-    .logo {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.8rem;
-        color: #f4d03f;
-        text-decoration: none;
-    }
-    
-    .nav-links {
-        display: flex;
-        gap: 2rem;
-        list-style: none;
-    }
-    
-    .nav-links a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: 300;
-        letter-spacing: 1px;
-        transition: color 0.3s;
-    }
-    
-    .nav-links a:hover {
-        color: #f4d03f;
-    }
-    
-    .hero-content h1 {
-        font-family: 'Playfair Display', serif;
-        font-size: 5rem;
-        margin-bottom: 1rem;
-        animation: fadeInUp 1s ease;
-    }
-    
-    .hero-content p {
-        font-size: 1.4rem;
-        font-weight: 300;
-        margin-bottom: 2rem;
-        animation: fadeInUp 1s ease 0.3s backwards;
-    }
-    
-    .btn {
-        display: inline-block;
-        padding: 1rem 2.5rem;
-        background: #f4d03f;
-        color: #4a3728;
-        text-decoration: none;
-        font-weight: 700;
-        border-radius: 50px;
-        transition: all 0.3s;
-        animation: fadeInUp 1s ease 0.6s backwards;
-    }
-    
-    .btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 10px 30px rgba(244, 208, 63, 0.4);
-    }
-    
-    /* Sections */
-    section {
-        padding: 5rem 10%;
-    }
-    
-    .section-title {
-        font-family: 'Playfair Display', serif;
-        font-size: 3rem;
-        text-align: center;
-        margin-bottom: 3rem;
-        position: relative;
-    }
-    
-    .section-title::after {
-        content: '';
-        display: block;
-        width: 80px;
-        height: 3px;
-        background: #f4d03f;
-        margin: 1rem auto;
-    }
-    
-    /* Products */
-    .products-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-    
-    .product-card {
-        background: #fff;
-        border-radius: 15px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        transition: transform 0.3s;
-    }
-    
-    .product-card:hover {
-        transform: translateY(-10px);
-    }
-    
-    .product-card img {
-        width: 100%;
-        height: 250px;
-        object-fit: cover;
-    }
-    
-    .product-info {
-        padding: 1.5rem;
-    }
-    
-    .product-info h3 {
-        font-family: 'Playfair Display', serif;
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
-    
-    .product-info p {
-        color: #888;
-        font-size: 0.95rem;
-        margin-bottom: 1rem;
-    }
-    
-    .price {
-        font-size: 1.3rem;
-        color: #c9a227;
-        font-weight: 700;
-    }
-    
-    /* About */
-    .about {
-        background: #4a3728;
-        color: #fff;
-    }
-    
-    .about-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 4rem;
-        align-items: center;
-    }
-    
-    .about-text p {
-        line-height: 1.8;
-        margin-bottom: 1.5rem;
-    }
-    
-    .about-img {
-        border-radius: 15px;
-        overflow: hidden;
-    }
-    
-    .about-img img {
-        width: 100%;
-        height: 400px;
-        object-fit: cover;
-    }
-    
-    /* Floating bread animation */
-    .floating-bread {
-        position: fixed;
-        font-size: 2rem;
-        animation: float 6s ease-in-out infinite;
-        opacity: 0.3;
-        pointer-events: none;
-    }
-    
-    /* Planet */
-    .floating-planet {
-        position: fixed;
-        width: 80px;
-        height: 80px;
-        pointer-events: none;
-        z-index: 100;
-        animation: planetOrbit 20s linear infinite;
-    }
-    
-    .planet-body {
-        width: 60px;
-        height: 60px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #f4d03f 0%, #c9a227 30%, #8b6914 70%, #4a3728 100%);
-        box-shadow: 
-            inset -15px -10px 20px rgba(0,0,0,0.4),
-            inset 5px 5px 15px rgba(255,255,255,0.3),
-            0 0 30px rgba(244, 208, 63, 0.4);
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        animation: planetRotate 8s linear infinite;
-    }
-    
-    .planet-ring {
-        position: absolute;
-        width: 100px;
-        height: 30px;
-        border: 4px solid rgba(244, 208, 63, 0.6);
-        border-radius: 50%;
-        top: 25px;
-        left: -10px;
-        transform: rotateX(70deg);
-        box-shadow: 0 0 10px rgba(244, 208, 63, 0.3);
-    }
-    
-    .planet-ring::before {
-        content: '';
-        position: absolute;
-        width: 90px;
-        height: 24px;
-        border: 2px solid rgba(201, 162, 39, 0.4);
-        border-radius: 50%;
-        top: 1px;
-        left: 1px;
-    }
-    
-    .planet-spots {
-        position: absolute;
-        width: 60px;
-        height: 60px;
-        top: 10px;
-        left: 10px;
-        border-radius: 50%;
-        overflow: hidden;
-    }
-    
-    .planet-spots::before {
-        content: '';
-        position: absolute;
-        width: 15px;
-        height: 12px;
-        background: rgba(139, 105, 20, 0.5);
-        border-radius: 50%;
-        top: 15px;
-        left: 20px;
-    }
-    
-    .planet-spots::after {
-        content: '';
-        position: absolute;
-        width: 10px;
-        height: 8px;
-        background: rgba(139, 105, 20, 0.4);
-        border-radius: 50%;
-        top: 35px;
-        left: 35px;
-    }
-    
-    /* Footer */
-    footer {
-        background: #2d1f14;
-        color: #fff;
-        text-align: center;
-        padding: 3rem;
-    }
-    
-    footer p {
-        opacity: 0.7;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0) rotate(0deg); }
-        50% { transform: translateY(-20px) rotate(10deg); }
-    }
-    
-    @keyframes planetOrbit {
-        0% { top: 30%; left: -100px; }
-        25% { top: 15%; left: 50%; }
-        50% { top: 50%; left: calc(100% + 100px); }
-        75% { top: 70%; left: 50%; }
-        100% { top: 30%; left: -100px; }
-    }
-    
-    @keyframes planetRotate {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    @media (max-width: 768px) {
-        .hero-content h1 { font-size: 3rem; }
-        .about-content { grid-template-columns: 1fr; }
-        .nav-links { display: none; }
-    }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-    .product-card:nth-child(n+5) { animation: pizzaGlow 2s ease-in-out infinite alternate; }
-    @keyframes pizzaGlow { 0% { box-shadow: 0 10px 30px rgba(255,107,53,0.2); } 100% { box-shadow: 0 10px 40px rgba(255,107,53,0.4); } }
-    .fusion-badge { position: absolute; top: 10px; right: 10px; background: linear-gradient(135deg, #f4d03f, #ff6b35); padding: 5px 15px; border-radius: 20px; font-weight: bold; font-size: 0.8rem; color: white; }
-  </style>
+:root {
+    --cosmic-dark: #0a0a1a;
+    --nebula-purple: #6b4c9a;
+    --star-gold: #ffd700;
+    --cosmic-blue: #1a1a3e;
+    --soft-glow: #e8d5ff;
+}
+
+body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--cosmic-dark);
+    color: #fff;
+    overflow-x: hidden;
+    min-height: 100vh;
+}
+
+/* Starfield Background */
+.starfield {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.star {
+    position: absolute;
+    background: white;
+    border-radius: 50%;
+    animation: twinkle var(--duration) ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: var(--opacity); transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Navigation */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1.5rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(180deg, rgba(10,10,26,0.95) 0%, transparent 100%);
+    z-index: 1000;
+}
+
+.logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--star-gold), #fff, var(--star-gold));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+}
+
+.nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+}
+
+.nav-links a {
+    color: var(--soft-glow);
+    text-decoration: none;
+    font-weight: 300;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+    position: relative;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 1px;
+    background: var(--star-gold);
+    transition: width 0.3s;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* Hero Section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+}
+
+.hero-content {
+    z-index: 10;
+    max-width: 900px;
+}
+
+.hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3rem, 10vw, 7rem);
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    background: linear-gradient(135deg, #fff 0%, var(--soft-glow) 50%, var(--star-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: heroGlow 3s ease-in-out infinite alternate;
+}
+
+@keyframes heroGlow {
+    0% { filter: drop-shadow(0 0 20px rgba(255,215,0,0.3)); }
+    100% { filter: drop-shadow(0 0 40px rgba(255,215,0,0.6)); }
+}
+
+.hero p {
+    font-size: 1.3rem;
+    font-weight: 300;
+    color: var(--soft-glow);
+    margin-bottom: 2.5rem;
+    letter-spacing: 1px;
+}
+
+.cta-btn {
+    display: inline-block;
+    padding: 1rem 3rem;
+    background: transparent;
+    border: 2px solid var(--star-gold);
+    color: var(--star-gold);
+    text-decoration: none;
+    font-weight: 500;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    transition: all 0.4s;
+    position: relative;
+    overflow: hidden;
+}
+
+.cta-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,215,0,0.3), transparent);
+    transition: left 0.5s;
+}
+
+.cta-btn:hover::before {
+    left: 100%;
+}
+
+.cta-btn:hover {
+    background: var(--star-gold);
+    color: var(--cosmic-dark);
+    box-shadow: 0 0 30px rgba(255,215,0,0.5);
+}
+
+/* Floating Bread Planets */
+.bread-planet {
+    position: absolute;
+    font-size: 4rem;
+    animation: orbit linear infinite;
+    filter: drop-shadow(0 0 20px rgba(255,215,0,0.4));
+}
+
+@keyframes orbit {
+    0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+}
+
+/* Sections */
+section {
+    padding: 6rem 10%;
+    position: relative;
+    z-index: 10;
+}
+
+.section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 3rem;
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--star-gold);
+}
+
+.section-subtitle {
+    text-align: center;
+    color: var(--soft-glow);
+    font-weight: 300;
+    margin-bottom: 4rem;
+    letter-spacing: 2px;
+}
+
+/* Product Grid */
+.products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2.5rem;
+}
+
+.product-card {
+    background: linear-gradient(145deg, rgba(107,76,154,0.2), rgba(26,26,62,0.8));
+    border: 1px solid rgba(255,215,0,0.2);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.4s;
+    position: relative;
+}
+
+.product-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, transparent 0%, rgba(255,215,0,0.1) 100%);
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.product-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(107,76,154,0.4);
+    border-color: var(--star-gold);
+}
+
+.product-card:hover::before {
+    opacity: 1;
+}
+
+.product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.product-info {
+    padding: 1.5rem;
+}
+
+.product-info h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #fff;
+}
+
+.product-info p {
+    color: var(--soft-glow);
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.price {
+    font-size: 1.4rem;
+    color: var(--star-gold);
+    font-weight: 500;
+}
+
+/* About Section */
+.about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.about-text p {
+    color: var(--soft-glow);
+    line-height: 1.9;
+    margin-bottom: 1.5rem;
+    font-weight: 300;
+}
+
+.about-image {
+    position: relative;
+}
+
+.about-image img {
+    width: 100%;
+    border-radius: 20px;
+    border: 2px solid rgba(255,215,0,0.3);
+}
+
+.about-image::after {
+    content: '✨';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    font-size: 3rem;
+    animation: sparkle 2s ease-in-out infinite;
+}
+
+@keyframes sparkle {
+    0%, 100% { opacity: 1; transform: scale(1) rotate(0deg); }
+    50% { opacity: 0.5; transform: scale(1.2) rotate(180deg); }
+}
+
+/* Footer */
+footer {
+    background: linear-gradient(180deg, transparent, rgba(107,76,154,0.3));
+    padding: 3rem;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+
+footer p {
+    color: var(--soft-glow);
+    font-weight: 300;
+    letter-spacing: 1px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .nav-links { display: none; }
+    .about-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 3rem; }
+}
+</style>
 </head>
 <body>
+<div class="starfield" id="starfield"></div>
 <nav>
-<a class="logo" href="#">🥐🍕 La Mie Pizzeria</a>
+<a class="logo" href="#">✦ Stellar Bakes</a>
 <ul class="nav-links">
-<li><a href="#products">Our Creations</a></li>
-<li><a href="#about">Our Story</a></li>
-<li><a href="#contact">Visit Us</a></li>
-<li><a href="#game-section" style="color: #f4d03f;">🎮 Play Game</a></li><li><a href="#products" style="color: #ff6b35;">🍕 Pizzas</a></li></ul>
+<li><a href="#menu">Menu</a></li>
+<li><a href="#story">Our Story</a></li>
+<li><a href="#visit">Visit</a></li>
+</ul>
 </nav>
-<header>
+<section class="hero">
 <div class="hero-content">
-<h1>Fresh From The Oven<br/><span style="font-size: 0.5em; color: #f4d03f;">Bread Meets Pizza 🥐🍕</span></h1>
-<p>The world's first fusion of artisan bakery &amp; authentic pizzeria since 1952</p>
-<a class="btn" href="#products">Discover Our Selection</a>
+<h1>Baked Among<br/>The Stars</h1>
+<p>Where ancient grain meets cosmic inspiration. Artisan breads crafted with stardust and passion.</p>
+<a class="cta-btn" href="#menu">Explore Menu</a>
 </div>
-</header>
-<section id="products">
-<h2 class="section-title">Our Signature Creations 🥐🍕</h2>
+<div class="bread-planet" style="top: 20%; left: 10%; animation-duration: 20s;">🥐</div>
+<div class="bread-planet" style="top: 60%; right: 15%; animation-duration: 25s; animation-delay: -5s;">🍞</div>
+<div class="bread-planet" style="bottom: 20%; left: 20%; animation-duration: 18s; animation-delay: -10s;">🥖</div>
+</section>
+<section id="menu">
+<h2 class="section-title">Celestial Creations</h2>
+<p class="section-subtitle">Each loaf, a universe of flavor</p>
 <div class="products-grid">
 <div class="product-card">
-<img alt="Sourdough Bread" src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=600"/>
+<img alt="Nebula Sourdough" src="https://images.unsplash.com/photo-1549931319-a545dcf3bc73?w=600"/>
 <div class="product-info">
-<h3>Artisan Sourdough</h3>
-<p>72-hour fermented, crusty perfection with a soft, tangy interior</p>
-<span class="price">$6.50</span>
+<h3>Nebula Sourdough</h3>
+<p>96-hour fermentation creates swirling patterns reminiscent of distant galaxies</p>
+<span class="price">$8.50</span>
 </div>
 </div>
 <div class="product-card">
-<img alt="Croissants" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600"/>
+<img alt="Golden Crescents" src="https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=600"/>
 <div class="product-info">
-<h3>Butter Croissants</h3>
-<p>36 layers of flaky, buttery goodness baked fresh every morning</p>
-<span class="price">$3.50</span>
+<h3>Golden Crescents</h3>
+<p>Moon-shaped croissants with 48 layers of European butter</p>
+<span class="price">$4.75</span>
 </div>
 </div>
 <div class="product-card">
-<img alt="Baguette" src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600"/>
+<img alt="Comet Baguette" src="https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=600"/>
 <div class="product-info">
-<h3>Traditional Baguette</h3>
-<p>Crispy golden crust, airy crumb - the French classic done right</p>
-<span class="price">$4.00</span>
+<h3>Comet Baguette</h3>
+<p>Elongated perfection with a tail of crispy crust</p>
+<span class="price">$5.00</span>
 </div>
 </div>
 <div class="product-card">
-<img alt="Pain au Chocolat" src="https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=600"/>
+<img alt="Dark Matter Chocolate" src="https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=600"/>
 <div class="product-info">
-<h3>Pain au Chocolat</h3>
-<p>Velvety dark chocolate wrapped in layers of buttery pastry</p>
-<span class="price">$4.25</span>
+<h3>Dark Matter Chocolate</h3>
+<p>Pain au chocolat with 85% cacao from the void</p>
+<span class="price">$5.25</span>
 </div>
 </div>
-<div class="product-card" style="border: 3px solid #ff6b35;"><img alt="Margherita Pizza" src="https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🍕 Pizza Margherita</h3><p>San Marzano tomatoes, fresh mozzarella, basil on our signature bread dough</p><span class="price" style="color: #ff6b35;">$14.00</span></div></div><div class="product-card" style="border: 3px solid #ff6b35;"><img alt="Pepperoni Pizza" src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🍕 Pepperoni Classico</h3><p>Crispy pepperoni, melted cheese on our 72-hour fermented sourdough base</p><span class="price" style="color: #ff6b35;">$16.50</span></div></div><div class="product-card" style="border: 3px solid #ff6b35;"><img alt="Four Cheese Pizza" src="https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🍕 Quattro Formaggi</h3><p>Mozzarella, gorgonzola, parmesan, ricotta - a cheese lover's dream</p><span class="price" style="color: #ff6b35;">$18.00</span></div></div><div class="product-card" style="background: linear-gradient(135deg, #fdf6e3, #ffe4c4);"><img alt="Croissant Pizza" src="https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=600" style="width: 100%; height: 250px; object-fit: cover;"/><div class="product-info"><h3>🥐🍕 FUSION SPECIAL</h3><p style="color: #ff6b35; font-weight: bold;">Our signature: Croissant-dough pizza with truffle cream!</p><span class="price" style="color: #c9a227; font-size: 1.5rem;">$22.00</span></div></div></div>
+</div>
 </section>
-<section class="about" id="about">
-<h2 class="section-title">Our Story</h2>
-<div class="about-content">
+<section id="story" style="background: linear-gradient(180deg, transparent, rgba(107,76,154,0.2), transparent);">
+<h2 class="section-title">Our Cosmic Journey</h2>
+<p class="section-subtitle">From stardust to your table</p>
+<div class="about-grid">
 <div class="about-text">
-<p>For over 70 years, La Mie Dorée perfected artisan breads. In 2020, we made history by becoming the world's FIRST bakery-pizzeria fusion! Grand-père Pierre's legendary sourdough starter now forms the base of our revolutionary pizzas.</p>
-<p>Our secret? The same 72-hour fermentation that makes our bread extraordinary now creates pizza dough that's impossibly light, crispy, and flavorful. Italian tradition meets French artistry in every bite! 🇫🇷❤️🇮🇹</p>
-<p>From our wood-fired ovens to your table - croissants at breakfast, pizza at lunch, fresh bread for dinner. We do it all!</p>
-<a class="btn" href="#">Meet Our Bakers</a>
+<p>In 1987, astronomer-turned-baker Elena Vega had a revelation while observing the Orion Nebula: the swirling gases reminded her of rising dough. That night, Stellar Bakes was born.</p>
+<p>We source ancient grains from heritage farms, use water filtered through volcanic rock, and ferment our starters under the phases of the moon. It's not magic—it's science, patience, and a touch of cosmic wonder.</p>
+<p>Every loaf tells the story of the universe: transformation, time, and the beautiful chaos that creates something extraordinary.</p>
 </div>
-<div class="about-img">
+<div class="about-image">
 <img alt="Baker at work" src="https://images.unsplash.com/photo-1517433367423-c7e5b0f35086?w=600"/>
 </div>
 </div>
 </section>
-<section id="contact">
-<h2 class="section-title">Visit Our Bakery</h2>
-<div style="text-align: center; max-width: 600px; margin: 0 auto;">
-<p style="font-size: 1.2rem; margin-bottom: 1rem;">📍 42 Rue du Pain, Paris 75004</p>
-<p style="font-size: 1.2rem; margin-bottom: 1rem;">🕐 Open Daily: 6:00 AM - 7:00 PM</p>
-<p style="font-size: 1.2rem; margin-bottom: 2rem;">📞 +33 1 42 00 00 00</p>
-<p style="color: #888;">The aroma of fresh bread awaits you...</p>
-</div>
-</section><section id="game-section" style="background: linear-gradient(135deg, #4a3728 0%, #2d1f14 100%); padding: 4rem 10%; min-height: 600px;">
-<h2 class="section-title" style="color: #fff;">🥐 Catch The Goodies! 🍕</h2>
-<p style="text-align: center; color: #f4d03f; margin-bottom: 2rem; font-size: 1.1rem;">Use your mouse or touch to catch pastries AND pizzas! Avoid the burnt stuff! 🔥</p>
-<div id="game-container" style="position: relative; width: 100%; max-width: 600px; height: 400px; margin: 0 auto; background: linear-gradient(180deg, #87CEEB 0%, #f4d03f 100%); border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.4); cursor: none;">
-<div id="game-ui" style="position: absolute; top: 10px; left: 10px; right: 10px; display: flex; justify-content: space-between; z-index: 10; font-family: 'Playfair Display', serif;">
-<div style="background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 20px; font-weight: bold;">Score: <span id="score">0</span></div>
-<div style="background: rgba(255,255,255,0.9); padding: 8px 16px; border-radius: 20px; font-weight: bold;">Lives: <span id="lives">❤️❤️❤️</span></div>
-</div>
-<div id="basket" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: 80px; height: 50px; background: #8B4513; border-radius: 0 0 40px 40px; border: 4px solid #5D3A1A; transition: left 0.05s ease-out;">
-<div style="position: absolute; top: -8px; left: -8px; right: -8px; height: 15px; background: #A0522D; border-radius: 10px 10px 0 0; border: 3px solid #5D3A1A;"></div>
-</div>
-<div id="start-screen" style="position: absolute; inset: 0; background: rgba(0,0,0,0.7); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 20;">
-<h3 style="color: #f4d03f; font-size: 2rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif;">🥐 Bakery-Pizzeria Catch 🍕</h3>
-<p style="color: #fff; margin-bottom: 0.5rem;">🥐 Croissant = +10 pts</p>
-<p style="color: #fff; margin-bottom: 0.5rem;">🥖 Baguette = +15 pts</p>
-<p style="color: #fff; margin-bottom: 0.5rem;">🍞 Bread = +5 pts</p><p style="color: #ff6b35; margin-bottom: 0.5rem;">🍕 Pizza = +20 pts</p>
-<p style="color: #ff6b6b; margin-bottom: 1.5rem;">🔥 Burnt = -1 life!</p>
-<button id="start-btn" style="padding: 1rem 3rem; font-size: 1.2rem; background: #f4d03f; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; color: #4a3728; transition: transform 0.2s;">Start Game!</button>
-</div>
-<div id="game-over" style="position: absolute; inset: 0; background: rgba(0,0,0,0.8); display: none; flex-direction: column; justify-content: center; align-items: center; z-index: 20;">
-<h3 style="color: #ff6b6b; font-size: 2rem; margin-bottom: 1rem; font-family: 'Playfair Display', serif;">Game Over!</h3>
-<p style="color: #fff; font-size: 1.5rem; margin-bottom: 1.5rem;">Final Score: <span id="final-score">0</span></p>
-<button id="restart-btn" style="padding: 1rem 3rem; font-size: 1.2rem; background: #f4d03f; border: none; border-radius: 50px; cursor: pointer; font-weight: bold; color: #4a3728;">Play Again!</button>
-</div>
-</div>
-<div style="text-align: center; margin-top: 1.5rem;">
-<p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">High Score: <span id="high-score">0</span> 🏆</p>
+<section id="visit">
+<h2 class="section-title">Find Us in the Galaxy</h2>
+<p class="section-subtitle">Your coordinates to fresh bread</p>
+<div style="text-align: center; max-width: 500px; margin: 0 auto;">
+<p style="color: var(--soft-glow); margin-bottom: 1rem; font-size: 1.2rem;">🌟 742 Constellation Ave, Portland OR</p>
+<p style="color: var(--soft-glow); margin-bottom: 1rem; font-size: 1.2rem;">🌙 Open 5:00 AM - 6:00 PM Daily</p>
+<p style="color: var(--soft-glow); margin-bottom: 2rem; font-size: 1.2rem;">📡 (503) 555-STAR</p>
+<p style="color: rgba(232,213,255,0.6); font-style: italic;">"The best bread this side of the Milky Way"</p>
 </div>
 </section>
-<script>
-(function() {
-  const container = document.getElementById('game-container');
-  const basket = document.getElementById('basket');
-  const scoreEl = document.getElementById('score');
-  const livesEl = document.getElementById('lives');
-  const startScreen = document.getElementById('start-screen');
-  const gameOverScreen = document.getElementById('game-over');
-  const finalScoreEl = document.getElementById('final-score');
-  const highScoreEl = document.getElementById('high-score');
-  const startBtn = document.getElementById('start-btn');
-  const restartBtn = document.getElementById('restart-btn');
-  
-  let score = 0;
-  let lives = 3;
-  let gameRunning = false;
-  let spawnInterval;
-  let gameLoop;
-  let basketX = 260;
-  let highScore = localStorage.getItem('bakeryPizzeriaHighScore') || 0;
-  highScoreEl.textContent = highScore;
-  
-  const items = [
-    { emoji: '🥐', points: 10, speed: 2 },
-    { emoji: '🥖', points: 15, speed: 2.5 },
-    { emoji: '🍞', points: 5, speed: 1.8 },
-    { emoji: '🍕', points: 20, speed: 2.2 },
-    { emoji: '🧀', points: 8, speed: 2 },
-    { emoji: '🔥', points: -1, speed: 3, isBurnt: true }
-  ];
-  
-  const fallingItems = [];
-  
-  function updateBasketPosition(x) {
-    const rect = container.getBoundingClientRect();
-    const relX = x - rect.left;
-    basketX = Math.max(40, Math.min(rect.width - 40, relX));
-    basket.style.left = basketX + 'px';
-    basket.style.transform = 'translateX(-50%)';
-  }
-  
-  container.addEventListener('mousemove', (e) => {
-    if (gameRunning) updateBasketPosition(e.clientX);
-  });
-  
-  container.addEventListener('touchmove', (e) => {
-    if (gameRunning) {
-      e.preventDefault();
-      updateBasketPosition(e.touches[0].clientX);
-    }
-  }, { passive: false });
-  
-  function spawnItem() {
-    const rect = container.getBoundingClientRect();
-    const itemData = items[Math.floor(Math.random() * items.length)];
-    const item = document.createElement('div');
-    item.style.cssText = `position: absolute; font-size: 2.5rem; top: -50px; left: ${Math.random() * (rect.width - 60) + 30}px; transition: none; z-index: 5;`;
-    item.textContent = itemData.emoji;
-    item.dataset.points = itemData.points;
-    item.dataset.speed = itemData.speed + (score / 500);
-    item.dataset.isBurnt = itemData.isBurnt || false;
-    container.appendChild(item);
-    fallingItems.push(item);
-  }
-  
-  function updateGame() {
-    const rect = container.getBoundingClientRect();
-    const basketRect = basket.getBoundingClientRect();
-    
-    for (let i = fallingItems.length - 1; i >= 0; i--) {
-      const item = fallingItems[i];
-      const currentTop = parseFloat(item.style.top) || 0;
-      const speed = parseFloat(item.dataset.speed);
-      item.style.top = (currentTop + speed) + 'px';
-      
-      const itemRect = item.getBoundingClientRect();
-      
-      if (itemRect.bottom >= basketRect.top && 
-          itemRect.top <= basketRect.bottom &&
-          itemRect.right >= basketRect.left && 
-          itemRect.left <= basketRect.right) {
-        
-        const points = parseInt(item.dataset.points);
-        if (item.dataset.isBurnt === 'true') {
-          lives--;
-          updateLives();
-          showFloatingText(itemRect.left - rect.left, itemRect.top - rect.top, '-💔', '#ff6b6b');
-          if (lives <= 0) endGame();
-        } else {
-          score += points;
-          scoreEl.textContent = score;
-          showFloatingText(itemRect.left - rect.left, itemRect.top - rect.top, '+' + points, '#4CAF50');
-        }
-        
-        item.remove();
-        fallingItems.splice(i, 1);
-        continue;
-      }
-      
-      if (currentTop > rect.height + 50) {
-        item.remove();
-        fallingItems.splice(i, 1);
-      }
-    }
-    
-    if (gameRunning) {
-      gameLoop = requestAnimationFrame(updateGame);
-    }
-  }
-  
-  function showFloatingText(x, y, text, color) {
-    const floater = document.createElement('div');
-    floater.style.cssText = `position: absolute; left: ${x}px; top: ${y}px; color: ${color}; font-weight: bold; font-size: 1.5rem; pointer-events: none; z-index: 15; animation: floatUp 1s ease-out forwards;`;
-    floater.textContent = text;
-    container.appendChild(floater);
-    setTimeout(() => floater.remove(), 1000);
-  }
-  
-  function updateLives() {
-    livesEl.textContent = '❤️'.repeat(Math.max(0, lives));
-  }
-  
-  function startGame() {
-    score = 0;
-    lives = 3;
-    gameRunning = true;
-    scoreEl.textContent = '0';
-    updateLives();
-    startScreen.style.display = 'none';
-    gameOverScreen.style.display = 'none';
-    
-    fallingItems.forEach(item => item.remove());
-    fallingItems.length = 0;
-    
-    spawnInterval = setInterval(spawnItem, 900);
-    gameLoop = requestAnimationFrame(updateGame);
-  }
-  
-  function endGame() {
-    gameRunning = false;
-    clearInterval(spawnInterval);
-    cancelAnimationFrame(gameLoop);
-    
-    if (score > highScore) {
-      highScore = score;
-      localStorage.setItem('bakeryPizzeriaHighScore', highScore);
-      highScoreEl.textContent = highScore;
-    }
-    
-    finalScoreEl.textContent = score;
-    gameOverScreen.style.display = 'flex';
-  }
-  
-  startBtn.addEventListener('click', startGame);
-  restartBtn.addEventListener('click', startGame);
-  
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes floatUp {
-      0% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-50px); }
-    }
-    #start-btn:hover, #restart-btn:hover {
-      transform: scale(1.1);
-    }
-  `;
-  document.head.appendChild(style);
-})();
-</script>
 <footer>
-<p>© 2024 La Mie Pizzeria - Where Croissants Meet Pizza 🥐❤️🍕</p>
+<p>© 2024 Stellar Bakes — Crafted with cosmic love ✦</p>
 </footer>
-<div class="floating-bread" style="top: 20%; left: 5%;">🥖</div>
-<div class="floating-bread" style="top: 60%; right: 8%; animation-delay: -2s;">🥐</div>
-<div class="floating-bread" style="top: 40%; right: 3%; animation-delay: -4s;">🍞</div><div class="floating-bread" style="top: 30%; right: 15%; animation-delay: -5s; font-size: 2.2rem;">🧀</div><div class="floating-bread" style="top: 75%; left: 10%; animation-delay: -3s; font-size: 2.5rem;">🍕</div>
-<div class="floating-planet">
-<div class="planet-ring"></div>
-<div class="planet-body"></div>
-<div class="planet-spots"></div>
-</div></body>
+<script>
+// Generate starfield
+const starfield = document.getElementById('starfield');
+for (let i = 0; i < 150; i++) {
+    const star = document.createElement('div');
+    star.className = 'star';
+    star.style.cssText = `
+        left: ${Math.random() * 100}%;
+        top: ${Math.random() * 100}%;
+        width: ${Math.random() * 3 + 1}px;
+        height: ${Math.random() * 3 + 1}px;
+        --duration: ${Math.random() * 3 + 2}s;
+        --opacity: ${Math.random() * 0.5 + 0.3};
+        animation-delay: ${Math.random() * 3}s;
+    `;
+    starfield.appendChild(star);
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+
+// Parallax effect on scroll
+window.addEventListener('scroll', () => {
+    const scrolled = window.pageYOffset;
+    starfield.style.transform = `translateY(${scrolled * 0.3}px)`;
+});
+</script>
+</body>
 </html>
