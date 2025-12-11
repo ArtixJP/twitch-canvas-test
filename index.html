@@ -90,6 +90,8 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setClearColor(0x000000, 0);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFShadowShadowMap;
 document.getElementById('canvas-container').appendChild(renderer.domElement);
 
 camera.position.z = 5;
@@ -98,6 +100,8 @@ const geometry = new THREE.SphereGeometry(1, 64, 64);
 const texture = new THREE.CanvasTexture(createPlanetTexture());
 const material = new THREE.MeshPhongMaterial({ map: texture });
 const planet = new THREE.Mesh(geometry, material);
+planet.castShadow = true;
+planet.receiveShadow = true;
 scene.add(planet);
 
 // Create moon
@@ -106,6 +110,8 @@ const moonTexture = new THREE.CanvasTexture(createMoonTexture());
 const moonMaterial = new THREE.MeshPhongMaterial({ map: moonTexture });
 const moon = new THREE.Mesh(moonGeometry, moonMaterial);
 moon.position.x = 2;
+moon.castShadow = true;
+moon.receiveShadow = true;
 scene.add(moon);
 
 // Create cute kitty
@@ -115,6 +121,8 @@ const kittyBody = new THREE.Mesh(
   new THREE.MeshPhongMaterial({ color: 0xffa500 })
 );
 kittyBody.position.z = 0.1;
+kittyBody.castShadow = true;
+kittyBody.receiveShadow = true;
 kittyGroup.add(kittyBody);
 
 // Kitty head
@@ -123,6 +131,8 @@ const kittyHead = new THREE.Mesh(
   new THREE.MeshPhongMaterial({ color: 0xffa500 })
 );
 kittyHead.position.set(0.15, 0.05, 0.1);
+kittyHead.castShadow = true;
+kittyHead.receiveShadow = true;
 kittyGroup.add(kittyHead);
 
 // Kitty ears
@@ -131,11 +141,15 @@ const earMaterial = new THREE.MeshPhongMaterial({ color: 0xffa500 });
 const leftEar = new THREE.Mesh(earGeometry, earMaterial);
 leftEar.position.set(0.05, 0.25, 0.1);
 leftEar.rotation.z = 0.3;
+leftEar.castShadow = true;
+leftEar.receiveShadow = true;
 kittyGroup.add(leftEar);
 
 const rightEar = new THREE.Mesh(earGeometry, earMaterial);
 rightEar.position.set(0.25, 0.25, 0.1);
 rightEar.rotation.z = -0.3;
+rightEar.castShadow = true;
+rightEar.receiveShadow = true;
 kittyGroup.add(rightEar);
 
 // Kitty eyes
@@ -158,14 +172,48 @@ const tailCurve = new THREE.CatmullRomCurve3([
 const tailGeometry = new THREE.TubeGeometry(tailCurve, 10, 0.05, 4);
 const tailMaterial = new THREE.MeshPhongMaterial({ color: 0xff8c00 });
 const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+tail.castShadow = true;
+tail.receiveShadow = true;
 kittyGroup.add(tail);
 
 kittyGroup.position.x = 2.5;
 scene.add(kittyGroup);
 
-const light = new THREE.PointLight(0xffffff, 1.5);
-light.position.set(5, 3, 5);
-scene.add(light);
+// Create SUN with glow effect
+const sunGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFDB813 });
+const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+sun.position.set(6, 4, 3);
+scene.add(sun);
+
+// Sun glow halo (using larger transparent sphere)
+const haloGeometry = new THREE.SphereGeometry(0.7, 32, 32);
+const haloMaterial = new THREE.MeshBasicMaterial({
+  color: 0xFDB813,
+  transparent: true,
+  opacity: 0.2,
+  depthWrite: false
+});
+const halo = new THREE.Mesh(haloGeometry, haloMaterial);
+halo.position.copy(sun.position);
+scene.add(halo);
+
+// Directional light from sun position for shadow casting
+const sunLight = new THREE.DirectionalLight(0xFFDB58, 1.2);
+sunLight.position.copy(sun.position);
+sunLight.castShadow = true;
+sunLight.shadow.mapSize.width = 2048;
+sunLight.shadow.mapSize.height = 2048;
+sunLight.shadow.camera.far = 20;
+sunLight.shadow.camera.left = -10;
+sunLight.shadow.camera.right = 10;
+sunLight.shadow.camera.top = 10;
+sunLight.shadow.camera.bottom = -10;
+scene.add(sunLight);
+
+// Add ambient light for softer shadows
+const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+scene.add(ambientLight);
 
 function createPlanetTexture() {
   const canvas = document.createElement('canvas');
@@ -235,6 +283,11 @@ function animate() {
   
   // Cute tail wag
   tail.rotation.z = Math.sin(Date.now() * 0.005) * 0.3;
+  
+  // Sun pulses gently
+  const pulseScale = 1 + Math.sin(Date.now() * 0.003) * 0.1;
+  sun.scale.set(pulseScale, pulseScale, pulseScale);
+  halo.scale.set(pulseScale * 1.4, pulseScale * 1.4, pulseScale * 1.4);
   
   renderer.render(scene, camera);
 }
