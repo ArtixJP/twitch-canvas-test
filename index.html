@@ -108,6 +108,36 @@
             50% { transform: rotate(5deg); }
         }
         
+        .greeting {
+            position: fixed;
+            bottom: 40px;
+            text-align: center;
+            font-size: 2rem;
+            animation: fadeInUp 1s ease-out;
+            background: rgba(255,255,255,0.1);
+            padding: 20px 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .greeting .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-top: 10px;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
         @keyframes blink {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.2; }
@@ -130,5 +160,9 @@
             </div>
         </div>
         <h1>✨</h1>
+        <div class="greeting">
+            <p>Bonjour Madame Michu ! 👋</p>
+            <p class="subtitle">Comment allez-vous aujourd'hui ?</p>
+        </div>
 </body>
 </html>
