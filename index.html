@@ -314,6 +314,53 @@
         const planet = new THREE.Mesh(planetGeometry, planetMaterial);
         scene.add(planet);
         
+        // Create moon
+        const moonGeometry = new THREE.SphereGeometry(0.27, 32, 32);
+        const moonCanvas = document.createElement('canvas');
+        moonCanvas.width = 512;
+        moonCanvas.height = 512;
+        const moonCtx = moonCanvas.getContext('2d');
+        
+        // Draw moon texture (gray/rocky)
+        const moonGradient = moonCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
+        moonGradient.addColorStop(0, '#e8e8e8');
+        moonGradient.addColorStop(0.5, '#b0b0b0');
+        moonGradient.addColorStop(1, '#808080');
+        moonCtx.fillStyle = moonGradient;
+        moonCtx.fillRect(0, 0, moonCanvas.width, moonCanvas.height);
+        
+        // Add craters to moon
+        moonCtx.fillStyle = 'rgba(80, 80, 80, 0.5)';
+        for (let i = 0; i < 40; i++) {
+            const x = Math.random() * moonCanvas.width;
+            const y = Math.random() * moonCanvas.height;
+            const radius = Math.random() * 30 + 10;
+            moonCtx.beginPath();
+            moonCtx.arc(x, y, radius, 0, Math.PI * 2);
+            moonCtx.fill();
+        }
+        
+        const moonTexture = new THREE.CanvasTexture(moonCanvas);
+        const moonMaterial = new THREE.MeshPhongMaterial({ map: moonTexture });
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        
+        // Create a group to hold the moon and its orbital path
+        const moonOrbit = new THREE.Group();
+        moonOrbit.add(moon);
+        moon.position.x = 2.5; // Orbital distance
+        scene.add(moonOrbit);
+        
+        // Add moon glow
+        const moonGlowGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+        const moonGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xcccccc,
+            transparent: true,
+            opacity: 0.08
+        });
+        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+        moonOrbit.add(moonGlow);
+        moonGlow.position.copy(moon.position);
+        
         // Add lighting
         const light = new THREE.PointLight(0xffffff, 1.5);
         light.position.set(5, 3, 5);
@@ -322,7 +369,7 @@
         const ambientLight = new THREE.AmbientLight(0x404040);
         scene.add(ambientLight);
         
-        // Add glow effect
+        // Add glow effect to planet
         const glowGeometry = new THREE.SphereGeometry(1.1, 32, 32);
         const glowMaterial = new THREE.MeshBasicMaterial({
             color: 0x64c8ff,
@@ -340,10 +387,17 @@
             planet.rotation.y += 0.0005;
             glow.rotation.y -= 0.0003;
             
+            // Rotate moon on its axis
+            moon.rotation.y += 0.01;
+            
+            // Orbit moon around planet
+            const time = Date.now() * 0.0003;
+            moonOrbit.rotation.z = time;
+            
             // Orbit camera around planet
-            const time = Date.now() * 0.0001;
-            camera.position.x = Math.cos(time) * 4;
-            camera.position.z = Math.sin(time) * 4 + 2;
+            const cameraTime = Date.now() * 0.0001;
+            camera.position.x = Math.cos(cameraTime) * 4;
+            camera.position.z = Math.sin(cameraTime) * 4 + 2;
             camera.lookAt(planet.position);
             
             renderer.render(scene, camera);
