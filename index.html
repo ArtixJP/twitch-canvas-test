@@ -78,7 +78,14 @@ window.updateDogLogic = function() {
   checkCatch();
 };
 </script><script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script></head>
-<body><div id="score-display" style="position: fixed; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; padding: 15px 25px; border-radius: 10px; font-size: 24px; font-weight: bold; z-index: 99; font-family: system-ui, sans-serif;">🐕 Dog: <span id="dog-score">0</span> | 🐱 Cat: <span id="cat-score">0</span></div><audio id="background-music" style="display: none;"><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><div id="canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
+<body><div id="score-display" style="position: fixed; top: 30px; right: 30px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; padding: 15px 25px; border-radius: 10px; font-size: 24px; font-weight: bold; z-index: 99; font-family: system-ui, sans-serif;">🐕 Dog: <span id="dog-score">0</span> | 🐱 Cat: <span id="cat-score">0</span></div><audio id="background-music" style="display: none;"><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/><script>
+// Hook updateElephant into the animation loop
+const originalUpdateDogLogic = window.updateDogLogic;
+window.updateDogLogic = function() {
+  if (originalUpdateDogLogic) originalUpdateDogLogic();
+  if (window.updateElephant) window.updateElephant();
+};
+</script></audio><div id="canvas-container" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;"></div>
 <h1 id="game-title" style="position: relative; z-index: 2; cursor: pointer; transition: all 0.3s ease;">🎮 Tap to Play</h1><button id="music-toggle" style="position: fixed; bottom: 30px; right: 30px; padding: 12px 20px; background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.5); color: white; border-radius: 25px; cursor: pointer; font-size: 14px; font-weight: bold; z-index: 100; transition: all 0.3s ease;">▶ Play Music</button>
 <script>
 const scene = new THREE.Scene();
@@ -824,5 +831,212 @@ document.getElementById('game-title').addEventListener('mouseout', function() {
   this.style.color = 'white';
   this.style.transform = 'scale(1)';
 });
+</script><script>
+// Elephant with water shooting animation
+function createElephant() {
+  const elephant = new THREE.Group();
+  
+  // Elephant body
+  const bodyGeometry = new THREE.BoxGeometry(0.6, 0.5, 0.4);
+  const bodyMaterial = new THREE.MeshPhongMaterial({ color: 0x8B8B7A });
+  const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+  body.position.y = 0.2;
+  body.castShadow = true;
+  body.receiveShadow = true;
+  elephant.add(body);
+  
+  // Elephant head
+  const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
+  const headMaterial = new THREE.MeshPhongMaterial({ color: 0x9A9A89 });
+  const head = new THREE.Mesh(headGeometry, headMaterial);
+  head.position.set(0.25, 0.55, 0);
+  head.castShadow = true;
+  head.receiveShadow = true;
+  elephant.add(head);
+  
+  // Elephant trunk (curved)
+  const trunkCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0.35, 0.45, 0),
+    new THREE.Vector3(0.5, 0.3, 0),
+    new THREE.Vector3(0.65, 0.15, 0),
+    new THREE.Vector3(0.75, -0.1, 0)
+  ]);
+  const trunkGeometry = new THREE.TubeGeometry(trunkCurve, 12, 0.08, 6);
+  const trunkMaterial = new THREE.MeshPhongMaterial({ color: 0x8B8B7A });
+  const trunk = new THREE.Mesh(trunkGeometry, trunkMaterial);
+  trunk.castShadow = true;
+  trunk.receiveShadow = true;
+  elephant.add(trunk);
+  elephant.trunk = trunk;
+  
+  // Elephant ears
+  const earGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+  earGeometry.scale(1, 1.5, 0.3);
+  const earMaterial = new THREE.MeshPhongMaterial({ color: 0x7A7A69 });
+  
+  const leftEar = new THREE.Mesh(earGeometry, earMaterial);
+  leftEar.position.set(0.1, 0.65, -0.25);
+  leftEar.castShadow = true;
+  leftEar.receiveShadow = true;
+  elephant.add(leftEar);
+  
+  const rightEar = new THREE.Mesh(earGeometry, earMaterial);
+  rightEar.position.set(0.1, 0.65, 0.25);
+  rightEar.castShadow = true;
+  rightEar.receiveShadow = true;
+  elephant.add(rightEar);
+  
+  // Elephant eyes
+  const eyeGeometry = new THREE.SphereGeometry(0.05, 16, 16);
+  const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+  
+  const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+  leftEye.position.set(0.35, 0.65, -0.08);
+  elephant.add(leftEye);
+  
+  const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+  rightEye.position.set(0.35, 0.65, 0.08);
+  elephant.add(rightEye);
+  
+  // Elephant tusks
+  const tuskGeometry = new THREE.ConeGeometry(0.04, 0.3, 8);
+  const tuskMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFDD0 });
+  
+  const leftTusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
+  leftTusk.position.set(0.5, 0.3, -0.12);
+  leftTusk.rotation.z = 0.3;
+  leftTusk.castShadow = true;
+  leftTusk.receiveShadow = true;
+  elephant.add(leftTusk);
+  
+  const rightTusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
+  rightTusk.position.set(0.5, 0.3, 0.12);
+  rightTusk.rotation.z = -0.3;
+  rightTusk.castShadow = true;
+  rightTusk.receiveShadow = true;
+  elephant.add(rightTusk);
+  
+  // Elephant legs
+  const legGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.3, 8);
+  const legMaterial = new THREE.MeshPhongMaterial({ color: 0x8B8B7A });
+  
+  const legPositions = [
+    { x: -0.15, z: -0.1 },
+    { x: -0.15, z: 0.1 },
+    { x: 0.15, z: -0.1 },
+    { x: 0.15, z: 0.1 }
+  ];
+  
+  legPositions.forEach(pos => {
+    const leg = new THREE.Mesh(legGeometry, legMaterial);
+    leg.position.set(pos.x, -0.05, pos.z);
+    leg.castShadow = true;
+    leg.receiveShadow = true;
+    elephant.add(leg);
+  });
+  
+  // Elephant tail
+  const tailGeometry = new THREE.ConeGeometry(0.05, 0.4, 6);
+  const tailMaterial = new THREE.MeshPhongMaterial({ color: 0x6B6B5A });
+  const tail = new THREE.Mesh(tailGeometry, tailMaterial);
+  tail.position.set(-0.35, 0.2, 0);
+  tail.rotation.z = 1.2;
+  tail.castShadow = true;
+  tail.receiveShadow = true;
+  elephant.add(tail);
+  elephant.tail = tail;
+  
+  return elephant;
+}
+
+// Create water particles
+function createWaterParticles(scene, startPos) {
+  const particleCount = 15;
+  const particles = [];
+  
+  for (let i = 0; i < particleCount; i++) {
+    const geometry = new THREE.SphereGeometry(0.05, 8, 8);
+    const material = new THREE.MeshPhongMaterial({ 
+      color: 0x4ECDC4,
+      transparent: true,
+      opacity: 0.8
+    });
+    const particle = new THREE.Mesh(geometry, material);
+    
+    particle.position.copy(startPos);
+    particle.velocity = new THREE.Vector3(
+      (Math.random() - 0.5) * 0.15,
+      (Math.random() - 0.3) * 0.1,
+      (Math.random() - 0.5) * 0.15
+    );
+    particle.life = 1;
+    particle.maxLife = 2;
+    
+    scene.add(particle);
+    particles.push(particle);
+  }
+  
+  return particles;
+}
+
+// Initialize elephant when scene is ready
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    if (typeof scene !== 'undefined' && !window.elephantGroup) {
+      window.elephantGroup = createElephant();
+      window.elephantGroup.position.set(0, 0, 0);
+      scene.add(window.elephantGroup);
+      window.waterParticles = [];
+      window.shootWaterTimer = 0;
+    }
+  }, 500);
+});
+
+// Update function for elephant and water animation
+window.updateElephant = function() {
+  if (!window.elephantGroup) return;
+  
+  const now = Date.now();
+  
+  // Trunk swinging animation
+  if (window.elephantGroup.trunk) {
+    window.elephantGroup.trunk.rotation.x = Math.sin(now * 0.003) * 0.3;
+    window.elephantGroup.trunk.rotation.z = Math.cos(now * 0.004) * 0.2;
+  }
+  
+  // Tail wagging
+  if (window.elephantGroup.tail) {
+    window.elephantGroup.tail.rotation.z = 1.2 + Math.sin(now * 0.005) * 0.4;
+  }
+  
+  // Shoot water periodically
+  window.shootWaterTimer++;
+  if (window.shootWaterTimer > 30) {
+    window.shootWaterTimer = 0;
+    
+    // Get trunk tip position
+    const trunkTip = new THREE.Vector3(0.75, -0.1, 0);
+    window.elephantGroup.localToWorld(trunkTip);
+    
+    const newParticles = createWaterParticles(scene, trunkTip);
+    window.waterParticles.push(...newParticles);
+  }
+  
+  // Update water particles
+  for (let i = window.waterParticles.length - 1; i >= 0; i--) {
+    const particle = window.waterParticles[i];
+    
+    particle.position.add(particle.velocity);
+    particle.velocity.y -= 0.003; // Gravity
+    
+    particle.life -= 0.016;
+    particle.material.opacity = (particle.life / particle.maxLife) * 0.8;
+    
+    if (particle.life <= 0) {
+      scene.remove(particle);
+      window.waterParticles.splice(i, 1);
+    }
+  }
+};
 </script></body>
 </html>
