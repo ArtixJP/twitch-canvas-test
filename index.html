@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Twitch Versus Code</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -79,6 +80,15 @@
         .audio-btn:active {
             transform: scale(0.95);
         }
+        #sun-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
         .music-label {
             font-size: 14px;
             color: rgba(255, 255, 255, 0.8);
@@ -87,6 +97,7 @@
     </style>
 </head>
 <body>
+    <canvas id="sun-canvas"></canvas>
     <div>
         <h1>Hello World</h1>
         <div class="planet-container">
@@ -168,6 +179,116 @@
             isPlaying = true;
             btn.textContent = '⏸';
         }).catch(() => {});
+
+        // Three.js Sun Scene
+        const canvas = document.getElementById('sun-canvas');
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+        // Create Sun
+        const sunGeometry = new THREE.SphereGeometry(3, 64, 64);
+        const sunMaterial = new THREE.MeshBasicMaterial({
+            color: 0xffd700,
+            emissive: 0xffaa00,
+            emissiveIntensity: 1
+        });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sun.position.set(-12, 8, -5);
+        scene.add(sun);
+
+        // Sun glow effect
+        const glowGeometry = new THREE.SphereGeometry(3.5, 32, 32);
+        const glowMaterial = new THREE.ShaderMaterial({
+            uniforms: {
+                glowColor: { value: new THREE.Color(0xffaa00) },
+                viewVector: { value: camera.position }
+            },
+            vertexShader: `
+                uniform vec3 viewVector;
+                varying float intensity;
+                void main() {
+                    vec3 vNormal = normalize(normalMatrix * normal);
+                    vec3 vNormel = normalize(normalMatrix * viewVector);
+                    intensity = pow(0.7 - dot(vNormal, vNormel), 3.0);
+                    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+                }
+            `,
+            fragmentShader: `
+                uniform vec3 glowColor;
+                varying float intensity;
+                void main() {
+                    vec3 glow = glowColor * intensity;
+                    gl_FragColor = vec4(glow, 1.0);
+                }
+            `,
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+        });
+        const sunGlow = new THREE.Mesh(glowGeometry, glowMaterial);
+        sunGlow.position.copy(sun.position);
+        scene.add(sunGlow);
+
+        // Add point light from sun
+        const sunLight = new THREE.PointLight(0xffd700, 2, 100);
+        sunLight.position.copy(sun.position);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        scene.add(sunLight);
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
+        scene.add(ambientLight);
+
+        // Create planet sphere to receive shadows
+        const planetGeometry = new THREE.SphereGeometry(2, 32, 32);
+        const planetMaterial = new THREE.MeshStandardMaterial({
+            color: 0x4a90e2,
+            roughness: 0.7,
+            metalness: 0.3
+        });
+        const planet3D = new THREE.Mesh(planetGeometry, planetMaterial);
+        planet3D.position.set(0, 0, 0);
+        planet3D.receiveShadow = true;
+        planet3D.castShadow = true;
+        scene.add(planet3D);
+
+        camera.position.z = 15;
+        camera.position.y = 2;
+
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.01;
+            
+            // Rotate sun
+            sun.rotation.y += 0.005;
+            sunGlow.rotation.y += 0.005;
+            
+            // Pulse sun glow
+            const pulse = Math.sin(time * 2) * 0.1 + 1;
+            sunGlow.scale.set(pulse, pulse, pulse);
+            sunLight.intensity = 1.8 + Math.sin(time * 2) * 0.3;
+            
+            // Rotate planet
+            planet3D.rotation.y += 0.01;
+            
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
     </script>
 
 </body>
