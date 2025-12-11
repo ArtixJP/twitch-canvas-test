@@ -722,6 +722,162 @@ h1 {
   transform: scale(1.1);
   box-shadow: 0 0 30px rgba(85, 239, 196, 0.7);
 }
+
+/* Space Elephant Styles */
+.space-elephant {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
+  width: 120px;
+  height: 100px;
+  animation: elephantBob 2s ease-in-out infinite;
+}
+.elephant-body {
+  position: absolute;
+  width: 80px;
+  height: 60px;
+  background: linear-gradient(135deg, #a0a0c0 0%, #8080a0 50%, #606080 100%);
+  border-radius: 50% 50% 45% 45%;
+  top: 30px;
+  left: 20px;
+  box-shadow: 0 0 30px rgba(160, 160, 192, 0.5), inset -10px -5px 20px rgba(0,0,0,0.3);
+}
+.elephant-head {
+  position: absolute;
+  width: 50px;
+  height: 45px;
+  background: linear-gradient(135deg, #b0b0d0 0%, #9090b0 50%, #7070a0 100%);
+  border-radius: 50%;
+  top: 15px;
+  left: 5px;
+  box-shadow: 0 0 20px rgba(176, 176, 208, 0.4);
+}
+.elephant-ear-left, .elephant-ear-right {
+  position: absolute;
+  width: 30px;
+  height: 40px;
+  background: linear-gradient(135deg, #c0c0e0 0%, #a0a0c0 100%);
+  border-radius: 50% 50% 50% 50%;
+  top: 10px;
+}
+.elephant-ear-left {
+  left: -15px;
+  transform: rotate(-20deg);
+}
+.elephant-ear-right {
+  left: 35px;
+  transform: rotate(20deg);
+}
+.elephant-eye-left, .elephant-eye-right {
+  position: absolute;
+  width: 8px;
+  height: 10px;
+  background: #1a1a2e;
+  border-radius: 50%;
+  top: 15px;
+}
+.elephant-eye-left { left: 10px; }
+.elephant-eye-right { left: 30px; }
+.elephant-eye-left::after, .elephant-eye-right::after {
+  content: '';
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+}
+.elephant-trunk {
+  position: absolute;
+  width: 15px;
+  height: 50px;
+  background: linear-gradient(to right, #b0b0d0 0%, #9090b0 50%, #8080a0 100%);
+  border-radius: 0 0 50% 50%;
+  top: 30px;
+  left: 17px;
+  transform-origin: top center;
+  animation: trunkSpray 3s ease-in-out infinite;
+}
+.elephant-trunk::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 12px;
+  background: #b0b0d0;
+  border-radius: 50%;
+  bottom: -5px;
+  left: -2px;
+}
+.elephant-leg {
+  position: absolute;
+  width: 15px;
+  height: 25px;
+  background: linear-gradient(to bottom, #8080a0, #606080);
+  border-radius: 0 0 40% 40%;
+  bottom: -15px;
+}
+.elephant-leg.fl { left: 25px; }
+.elephant-leg.fr { left: 45px; }
+.elephant-leg.bl { left: 55px; }
+.elephant-leg.br { left: 75px; }
+.elephant-tail {
+  position: absolute;
+  width: 5px;
+  height: 20px;
+  background: #7070a0;
+  border-radius: 50%;
+  top: 50px;
+  right: 15px;
+  transform: rotate(30deg);
+  animation: tailSwing 1s ease-in-out infinite;
+}
+.elephant-helmet {
+  position: absolute;
+  width: 60px;
+  height: 55px;
+  border: 3px solid rgba(100, 200, 255, 0.6);
+  border-radius: 50%;
+  top: 5px;
+  left: 0px;
+  box-shadow: 0 0 15px rgba(100, 200, 255, 0.4), inset 0 0 25px rgba(100, 200, 255, 0.1);
+}
+.elephant-helmet::before {
+  content: '🌊';
+  position: absolute;
+  font-size: 10px;
+  top: 5px;
+  right: 8px;
+}
+.water-drop {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: linear-gradient(to bottom, #87ceeb, #00bfff);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  opacity: 0;
+  pointer-events: none;
+  animation: waterSpray 1.5s ease-out infinite;
+  box-shadow: 0 0 10px rgba(0, 191, 255, 0.6);
+}
+@keyframes elephantBob {
+  0%, 100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-10px); }
+}
+@keyframes trunkSpray {
+  0%, 60%, 100% { transform: rotate(0deg); }
+  70%, 90% { transform: rotate(-30deg); }
+}
+@keyframes tailSwing {
+  0%, 100% { transform: rotate(30deg); }
+  50% { transform: rotate(45deg); }
+}
+@keyframes waterSpray {
+  0% { opacity: 1; transform: translate(0, 0) scale(1); }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body><canvas id="gameCanvas"></canvas>
@@ -738,7 +894,24 @@ h1 {
 <button id="restartBtn" onclick="restartGame()">🚀 PLAY AGAIN</button>
 </div>
 <h1>Welcome to the Cosmos</h1><div id="scoreBoard" style="position: fixed; top: 20px; right: 30px; z-index: 100; background: linear-gradient(135deg, rgba(74, 144, 164, 0.8), rgba(45, 90, 107, 0.9)); border: 2px solid rgba(200, 180, 150, 0.6); border-radius: 15px; padding: 15px 25px; box-shadow: 0 0 20px rgba(74, 144, 164, 0.5), 0 0 40px rgba(74, 144, 164, 0.3); font-family: system-ui, sans-serif;"><div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 5px;">🐕 DOG SCORE</div><div id="dogScore" style="font-size: 36px; font-weight: bold; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);">0</div></div>
-<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></div><div class="planet-container">
+<div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></div><div class="space-elephant" id="spaceElephant">
+<div class="elephant-helmet"></div>
+<div class="elephant-ear-left"></div>
+<div class="elephant-ear-right"></div>
+<div class="elephant-head">
+<div class="elephant-eye-left"></div>
+<div class="elephant-eye-right"></div>
+<div class="elephant-trunk" id="elephantTrunk"></div>
+</div>
+<div class="elephant-body">
+<div class="elephant-leg fl"></div>
+<div class="elephant-leg fr"></div>
+<div class="elephant-leg bl"></div>
+<div class="elephant-leg br"></div>
+</div>
+<div class="elephant-tail"></div>
+<div id="waterContainer"></div>
+</div><div class="planet-container">
 <div class="ring"></div>
 <div class="planet"></div>
 <div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="space-kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-head"><div class="kitty-eye-left"></div><div class="kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker left1"></div><div class="kitty-whisker left2"></div><div class="kitty-whisker right1"></div><div class="kitty-whisker right2"></div></div></div></div><div class="doggy-orbit"><div class="space-doggy"><div class="doggy-helmet"></div><div class="doggy-ear-left"></div><div class="doggy-ear-right"></div><div class="doggy-head"><div class="doggy-eye-left"></div><div class="doggy-eye-right"></div><div class="doggy-nose"></div><div class="doggy-tongue"></div><div class="doggy-snout"></div></div><div class="doggy-tail"></div></div></div></div>
@@ -1506,5 +1679,48 @@ canvas.addEventListener('click', () => {
 
 // Start game
 requestAnimationFrame(gameLoop);
+</script><script>
+// Space Elephant Water Spray System!
+const waterContainer = document.getElementById('waterContainer');
+const elephantTrunk = document.getElementById('elephantTrunk');
+
+function createWaterDrop() {
+  const drop = document.createElement('div');
+  drop.className = 'water-drop';
+  
+  // Random trajectory
+  const angle = (Math.random() * 60 - 30) * (Math.PI / 180); // -30 to 30 degrees
+  const distance = 80 + Math.random() * 60;
+  const tx = Math.sin(angle) * distance - 50;
+  const ty = -Math.cos(angle) * distance - 30;
+  
+  drop.style.setProperty('--tx', tx + 'px');
+  drop.style.setProperty('--ty', ty + 'px');
+  drop.style.left = '25px';
+  drop.style.top = '75px';
+  drop.style.animationDelay = (Math.random() * 0.3) + 's';
+  drop.style.animationDuration = (1 + Math.random() * 0.5) + 's';
+  
+  waterContainer.appendChild(drop);
+  
+  // Remove after animation
+  setTimeout(() => drop.remove(), 1500);
+}
+
+// Spray water periodically
+function sprayWater() {
+  // Create burst of water drops
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => createWaterDrop(), i * 50);
+  }
+}
+
+// Spray every 3 seconds (matching trunk animation)
+setInterval(sprayWater, 3000);
+
+// Initial spray
+setTimeout(sprayWater, 1000);
+
+console.log('🐘 Space Elephant is ready to spray water! 🌊');
 </script></body>
 </html>
