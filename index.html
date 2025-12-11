@@ -585,8 +585,11 @@
         }</style>
 </head>
 <body><div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></div>
-<h1>🌌 Hello World 🌌</h1><div id="scoreBoard" style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, rgba(210, 180, 140, 0.3), rgba(139, 105, 20, 0.5)); border: 2px solid rgba(210, 180, 140, 0.6); border-radius: 15px; padding: 15px 25px; font-size: 1.2rem; z-index: 100; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(210, 180, 140, 0.3);">
+<h1>🌌 Defend the Planet! 🌌</h1>
+<p style="text-align: center; color: rgba(255,255,255,0.7); margin-top: -1rem; margin-bottom: 1rem; font-size: 1.1rem;">Click asteroids before they hit! 💥</p><div id="scoreBoard" style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, rgba(210, 180, 140, 0.3), rgba(139, 105, 20, 0.5)); border: 2px solid rgba(210, 180, 140, 0.6); border-radius: 15px; padding: 15px 25px; font-size: 1.2rem; z-index: 100; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(210, 180, 140, 0.3);">
   🐕 Dog Score: <span id="dogScore" style="font-weight: bold; font-size: 1.5rem; color: #ffd700;">0</span>
+<br/><span style="font-size: 0.9rem; opacity: 0.8;">☄️ Asteroids Destroyed:</span> <span id="asteroidScore" style="font-weight: bold; font-size: 1.3rem; color: #ff6b6b;">0</span>
+<br/><span style="font-size: 0.9rem; opacity: 0.8;">❤️ Planet Health:</span> <span id="planetHealth" style="font-weight: bold; font-size: 1.3rem; color: #4ade80;">100</span>
 </div>
 <div class="planet-container">
 <div class="planet"></div>
@@ -1167,6 +1170,327 @@ window.addEventListener('load', function() {
   
   // Start the new animation (override the old one)
   animateWithScore();
+})();
+</script><div id="gameLayer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50;"></div>
+<div id="gameOverScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; flex-direction: column;">
+<h2 style="font-size: 4rem; color: #ff6b6b; text-shadow: 0 0 30px rgba(255,107,107,0.8); margin-bottom: 1rem;">💥 GAME OVER 💥</h2>
+<p style="font-size: 1.5rem; color: white; margin-bottom: 2rem;">Final Score: <span id="finalScore" style="color: #ffd700; font-weight: bold;">0</span></p>
+<button id="restartBtn" style="padding: 15px 40px; font-size: 1.3rem; background: linear-gradient(135deg, #4ade80, #22c55e); border: none; border-radius: 30px; color: white; cursor: pointer; box-shadow: 0 0 20px rgba(74,222,128,0.5); transition: all 0.3s;">🚀 Play Again</button>
+</div>
+<style>
+  .asteroid {
+    position: absolute;
+    pointer-events: auto;
+    cursor: crosshair;
+    transition: transform 0.1s;
+    filter: drop-shadow(0 0 10px rgba(255, 100, 50, 0.6));
+    z-index: 51;
+  }
+  .asteroid:hover {
+    transform: scale(1.2);
+    filter: drop-shadow(0 0 20px rgba(255, 200, 50, 0.9));
+  }
+  .explosion {
+    position: absolute;
+    pointer-events: none;
+    animation: explode 0.5s ease-out forwards;
+    z-index: 52;
+  }
+  .particle {
+    position: absolute;
+    pointer-events: none;
+    border-radius: 50%;
+    z-index: 52;
+  }
+  @keyframes explode {
+    0% { transform: scale(0.5); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+  }
+  @keyframes particleFly {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+  }
+  .damage-flash {
+    animation: damageFlash 0.3s ease-out;
+  }
+  @keyframes damageFlash {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(2) hue-rotate(30deg); }
+  }
+  #restartBtn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(74,222,128,0.8);
+  }
+  .score-popup {
+    position: absolute;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    text-shadow: 0 0 10px rgba(255,215,0,0.8);
+    pointer-events: none;
+    animation: scoreFloat 1s ease-out forwards;
+    z-index: 60;
+  }
+  @keyframes scoreFloat {
+    0% { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+  }
+</style>
+<script>
+(function() {
+  const gameLayer = document.getElementById('gameLayer');
+  const gameOverScreen = document.getElementById('gameOverScreen');
+  const restartBtn = document.getElementById('restartBtn');
+  const asteroidScoreEl = document.getElementById('asteroidScore');
+  const planetHealthEl = document.getElementById('planetHealth');
+  const finalScoreEl = document.getElementById('finalScore');
+  const planet = document.querySelector('.planet');
+  
+  let asteroidScore = 0;
+  let planetHealth = 100;
+  let gameRunning = true;
+  let spawnInterval;
+  let difficultyLevel = 1;
+  let asteroids = [];
+  
+  // Get planet center position
+  function getPlanetCenter() {
+    const planetContainer = document.querySelector('.planet-container');
+    const rect = planetContainer.getBoundingClientRect();
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    };
+  }
+  
+  // Create asteroid
+  function createAsteroid() {
+    if (!gameRunning) return;
+    
+    const asteroid = document.createElement('div');
+    asteroid.className = 'asteroid';
+    
+    // Random size based on difficulty
+    const size = 30 + Math.random() * 30 - difficultyLevel * 2;
+    const clampedSize = Math.max(20, Math.min(50, size));
+    
+    // Random spawn position from edges
+    const side = Math.floor(Math.random() * 4);
+    let startX, startY;
+    
+    switch(side) {
+      case 0: startX = Math.random() * window.innerWidth; startY = -50; break;
+      case 1: startX = window.innerWidth + 50; startY = Math.random() * window.innerHeight; break;
+      case 2: startX = Math.random() * window.innerWidth; startY = window.innerHeight + 50; break;
+      case 3: startX = -50; startY = Math.random() * window.innerHeight; break;
+    }
+    
+    // Asteroid appearance
+    const hue = 20 + Math.random() * 30;
+    asteroid.innerHTML = `<svg width="${clampedSize}" height="${clampedSize}" viewBox="0 0 100 100">
+      <polygon points="50,5 75,20 95,45 85,75 60,95 30,90 10,65 15,35 35,15" 
+        fill="hsl(${hue}, 50%, 35%)" 
+        stroke="hsl(${hue}, 40%, 25%)" 
+        stroke-width="3"/>
+      <circle cx="35" cy="40" r="8" fill="hsl(${hue}, 40%, 25%)"/>
+      <circle cx="60" cy="55" r="6" fill="hsl(${hue}, 40%, 25%)"/>
+      <circle cx="45" cy="70" r="5" fill="hsl(${hue}, 40%, 25%)"/>
+    </svg>`;
+    
+    asteroid.style.left = startX + 'px';
+    asteroid.style.top = startY + 'px';
+    asteroid.style.transform = `rotate(${Math.random() * 360}deg)`;
+    
+    // Speed increases with difficulty
+    const speed = 1 + difficultyLevel * 0.3 + Math.random() * 0.5;
+    
+    // Store asteroid data
+    const asteroidData = {
+      element: asteroid,
+      x: startX,
+      y: startY,
+      speed: speed,
+      size: clampedSize,
+      rotation: Math.random() * 360,
+      rotationSpeed: (Math.random() - 0.5) * 5
+    };
+    
+    asteroid.addEventListener('click', (e) => {
+      e.stopPropagation();
+      destroyAsteroid(asteroidData, e.clientX, e.clientY);
+    });
+    
+    gameLayer.appendChild(asteroid);
+    asteroids.push(asteroidData);
+  }
+  
+  // Destroy asteroid with effects
+  function destroyAsteroid(asteroidData, clickX, clickY) {
+    if (!asteroidData.element.parentNode) return;
+    
+    const x = asteroidData.x;
+    const y = asteroidData.y;
+    
+    // Create explosion
+    const explosion = document.createElement('div');
+    explosion.className = 'explosion';
+    explosion.innerHTML = '💥';
+    explosion.style.left = x + 'px';
+    explosion.style.top = y + 'px';
+    explosion.style.fontSize = asteroidData.size + 'px';
+    gameLayer.appendChild(explosion);
+    setTimeout(() => explosion.remove(), 500);
+    
+    // Create particles
+    for (let i = 0; i < 8; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      const angle = (i / 8) * Math.PI * 2;
+      const distance = 50 + Math.random() * 50;
+      particle.style.cssText = `
+        left: ${x + asteroidData.size/2}px;
+        top: ${y + asteroidData.size/2}px;
+        width: 8px;
+        height: 8px;
+        background: hsl(${30 + Math.random() * 30}, 80%, 50%);
+        --dx: ${Math.cos(angle) * distance}px;
+        --dy: ${Math.sin(angle) * distance}px;
+        animation: particleFly 0.6s ease-out forwards;
+      `;
+      gameLayer.appendChild(particle);
+      setTimeout(() => particle.remove(), 600);
+    }
+    
+    // Score popup
+    const points = Math.floor(10 + (50 - asteroidData.size));
+    const popup = document.createElement('div');
+    popup.className = 'score-popup';
+    popup.textContent = '+' + points;
+    popup.style.left = clickX + 'px';
+    popup.style.top = clickY + 'px';
+    document.body.appendChild(popup);
+    setTimeout(() => popup.remove(), 1000);
+    
+    // Update score
+    asteroidScore += points;
+    asteroidScoreEl.textContent = asteroidScore;
+    
+    // Remove asteroid
+    asteroidData.element.remove();
+    asteroids = asteroids.filter(a => a !== asteroidData);
+  }
+  
+  // Game loop
+  function gameLoop() {
+    if (!gameRunning) return;
+    
+    const planetCenter = getPlanetCenter();
+    const planetRadius = 100;
+    
+    asteroids.forEach(asteroidData => {
+      // Move toward planet
+      const dx = planetCenter.x - asteroidData.x;
+      const dy = planetCenter.y - asteroidData.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      
+      if (distance > 0) {
+        asteroidData.x += (dx / distance) * asteroidData.speed;
+        asteroidData.y += (dy / distance) * asteroidData.speed;
+      }
+      
+      // Rotate
+      asteroidData.rotation += asteroidData.rotationSpeed;
+      
+      // Update position
+      asteroidData.element.style.left = asteroidData.x + 'px';
+      asteroidData.element.style.top = asteroidData.y + 'px';
+      asteroidData.element.style.transform = `rotate(${asteroidData.rotation}deg)`;
+      
+      // Check collision with planet
+      if (distance < planetRadius) {
+        // Damage planet
+        const damage = Math.floor(asteroidData.size / 3);
+        planetHealth -= damage;
+        planetHealthEl.textContent = Math.max(0, planetHealth);
+        
+        // Visual feedback
+        planet.classList.add('damage-flash');
+        setTimeout(() => planet.classList.remove('damage-flash'), 300);
+        
+        // Update health color
+        if (planetHealth > 60) {
+          planetHealthEl.style.color = '#4ade80';
+        } else if (planetHealth > 30) {
+          planetHealthEl.style.color = '#fbbf24';
+        } else {
+          planetHealthEl.style.color = '#ef4444';
+        }
+        
+        // Remove asteroid
+        asteroidData.element.remove();
+        asteroids = asteroids.filter(a => a !== asteroidData);
+        
+        // Check game over
+        if (planetHealth <= 0) {
+          endGame();
+        }
+      }
+    });
+    
+    requestAnimationFrame(gameLoop);
+  }
+  
+  // Spawn asteroids
+  function startSpawning() {
+    const baseInterval = 2000;
+    
+    function spawn() {
+      if (!gameRunning) return;
+      createAsteroid();
+      
+      // Increase difficulty over time
+      difficultyLevel = 1 + asteroidScore / 100;
+      const interval = Math.max(500, baseInterval - difficultyLevel * 100);
+      
+      spawnInterval = setTimeout(spawn, interval);
+    }
+    
+    spawn();
+  }
+  
+  // End game
+  function endGame() {
+    gameRunning = false;
+    clearTimeout(spawnInterval);
+    finalScoreEl.textContent = asteroidScore;
+    gameOverScreen.style.display = 'flex';
+    
+    // Clear remaining asteroids
+    asteroids.forEach(a => a.element.remove());
+    asteroids = [];
+  }
+  
+  // Restart game
+  function restartGame() {
+    gameRunning = true;
+    asteroidScore = 0;
+    planetHealth = 100;
+    difficultyLevel = 1;
+    
+    asteroidScoreEl.textContent = '0';
+    planetHealthEl.textContent = '100';
+    planetHealthEl.style.color = '#4ade80';
+    gameOverScreen.style.display = 'none';
+    
+    startSpawning();
+    gameLoop();
+  }
+  
+  restartBtn.addEventListener('click', restartGame);
+  
+  // Start game
+  startSpawning();
+  gameLoop();
 })();
 </script></body>
 </html>
