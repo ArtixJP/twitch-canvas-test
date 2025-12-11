@@ -88,7 +88,13 @@
                 text-overflow: ellipsis;
                 white-space: nowrap;
             }
-        }</style>
+        }
+#toggle-game-btn:hover { transform: scale(1.05); box-shadow: 0 6px 25px rgba(155, 89, 182, 0.7); }
+#toggle-game-btn:active { transform: scale(0.95); }
+#start-game-btn:hover { transform: scale(1.05); box-shadow: 0 6px 20px rgba(74, 144, 226, 0.6); }
+#start-game-btn:active { transform: scale(0.95); }
+#close-game-btn:hover { background: rgba(255, 255, 255, 0.2); border-color: rgba(255, 255, 255, 0.5); }
+#close-game-btn:active { transform: scale(0.95); }</style>
 <script>
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -575,7 +581,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-    </script></head>
+    </script><script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script></head>
 <body><div id="canvas-container"></div>
 <h1>Hello World</h1><div id="score-display" style="position: fixed; top: 30px; right: 30px; z-index: 100; background: rgba(0, 0, 0, 0.7); padding: 20px 30px; border-radius: 15px; backdrop-filter: blur(10px); border: 2px solid rgba(210, 105, 30, 0.5); box-shadow: 0 0 20px rgba(210, 105, 30, 0.4);"><div style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">Dog Score</div><div id="dog-score" style="color: #d2691e; font-size: 3rem; font-weight: bold; text-shadow: 0 0 15px rgba(210, 105, 30, 0.8);">0</div></div>
 <script>
@@ -694,7 +700,7 @@
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
-    </script><audio id="background-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><div id="audio-controls"><button id="play-pause-btn" title="Play/Pause Music"><span id="play-icon">▶</span><span id="pause-icon" style="display:none;">⏸</span></button><span id="music-title">Professor Layton - More London Streets</span></div><script>
+    </script><audio id="background-music" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/></audio><button id="toggle-game-btn" style="position: fixed; bottom: 30px; left: 30px; z-index: 100; background: linear-gradient(135deg, #9b59b6, #e74c3c); border: none; padding: 15px 30px; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 20px rgba(155, 89, 182, 0.5); transition: all 0.3s ease; backdrop-filter: blur(10px);">🎮 Play Mini-Game</button><div id="audio-controls"><button id="play-pause-btn" title="Play/Pause Music"><span id="play-icon">▶</span><span id="pause-icon" style="display:none;">⏸</span></button><span id="music-title">Professor Layton - More London Streets</span></div><script>
         const audio = document.getElementById('background-music');
         const playPauseBtn = document.getElementById('play-pause-btn');
         const playIcon = document.getElementById('play-icon');
@@ -947,5 +953,431 @@
             
             return (r << 16) | (g << 8) | b;
         }
-    </script></body>
+    </script><div id="game-panel" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 200; background: rgba(0, 0, 0, 0.9); padding: 20px; border-radius: 20px; border: 3px solid rgba(100, 200, 255, 0.5); box-shadow: 0 0 40px rgba(100, 200, 255, 0.6); display: none;"><div style="text-align: center; margin-bottom: 15px;"><h2 style="color: #6bb6ff; margin: 0 0 10px 0; font-size: 1.8rem; text-shadow: 0 0 10px rgba(100, 200, 255, 0.8);">Cosmic Dodger</h2><p style="color: rgba(255, 255, 255, 0.8); margin: 0 0 10px 0; font-size: 0.9rem;">Arrow keys to move • Dodge asteroids • Collect stars!</p><div style="display: flex; gap: 10px; justify-content: center; align-items: center;"><button id="start-game-btn" style="background: linear-gradient(135deg, #4a90e2, #6bb6ff); border: none; padding: 10px 25px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; box-shadow: 0 4px 15px rgba(74, 144, 226, 0.4); transition: all 0.3s ease;">Start Game</button><button id="close-game-btn" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); padding: 10px 25px; border-radius: 25px; color: white; font-weight: bold; cursor: pointer; font-size: 1rem; transition: all 0.3s ease;">Close</button></div></div><div id="game-canvas-container" style="border-radius: 10px; overflow: hidden; box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);"></div><div id="game-stats" style="margin-top: 15px; text-align: center; color: white; font-size: 1.2rem;"><span style="color: #ffd700;">Score: </span><span id="game-score">0</span><span style="margin-left: 20px; color: #ff6b6b;">Lives: </span><span id="game-lives">3</span></div></div><script>
+// Game variables
+let gameSketch;
+let gameActive = false;
+let gamePaused = false;
+let gameScore = 0;
+let gameLives = 3;
+let ship;
+let asteroids = [];
+let stars = [];
+let particles = [];
+
+// UI Elements
+const toggleGameBtn = document.getElementById('toggle-game-btn');
+const gamePanel = document.getElementById('game-panel');
+const startGameBtn = document.getElementById('start-game-btn');
+const closeGameBtn = document.getElementById('close-game-btn');
+const gameScoreEl = document.getElementById('game-score');
+const gameLivesEl = document.getElementById('game-lives');
+
+// Toggle game panel
+toggleGameBtn.addEventListener('click', () => {
+    gamePanel.style.display = 'block';
+    if (!gameSketch) {
+        initGame();
+    }
+});
+
+closeGameBtn.addEventListener('click', () => {
+    gamePanel.style.display = 'none';
+    gamePaused = true;
+});
+
+startGameBtn.addEventListener('click', () => {
+    if (!gameActive) {
+        startGame();
+        startGameBtn.textContent = 'Restart';
+    } else {
+        resetGame();
+    }
+});
+
+function initGame() {
+    gameSketch = new p5((p) => {
+        const W = 600;
+        const H = 400;
+        
+        p.setup = () => {
+            const canvas = p.createCanvas(W, H);
+            canvas.parent('game-canvas-container');
+            p.frameRate(60);
+        };
+        
+        p.draw = () => {
+            // Cosmic background
+            p.background(10, 10, 30);
+            
+            // Starfield effect
+            p.fill(255, 255, 255, 50);
+            p.noStroke();
+            for (let i = 0; i < 50; i++) {
+                const x = (p.frameCount * 0.5 + i * 123) % W;
+                const y = (i * 87) % H;
+                p.circle(x, y, 2);
+            }
+            
+            if (!gameActive) {
+                p.fill(255);
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(24);
+                p.text('Press START to begin!', W/2, H/2);
+                return;
+            }
+            
+            if (gamePaused) {
+                p.fill(255, 255, 0);
+                p.textAlign(p.CENTER, p.CENTER);
+                p.textSize(32);
+                p.text('PAUSED', W/2, H/2);
+                return;
+            }
+            
+            // Update and draw ship
+            if (ship) {
+                ship.update();
+                ship.draw();
+            }
+            
+            // Update and draw asteroids
+            for (let i = asteroids.length - 1; i >= 0; i--) {
+                asteroids[i].update();
+                asteroids[i].draw();
+                
+                // Check collision with ship
+                if (ship && asteroids[i].hits(ship)) {
+                    asteroids.splice(i, 1);
+                    loseLife();
+                    continue;
+                }
+                
+                // Remove off-screen asteroids
+                if (asteroids[i].y > H + 50) {
+                    asteroids.splice(i, 1);
+                }
+            }
+            
+            // Update and draw stars (collectibles)
+            for (let i = stars.length - 1; i >= 0; i--) {
+                stars[i].update();
+                stars[i].draw();
+                
+                // Check collection
+                if (ship && stars[i].hits(ship)) {
+                    stars.splice(i, 1);
+                    addScore(10);
+                    createParticles(stars[i].x, stars[i].y);
+                }
+                
+                // Remove off-screen stars
+                if (stars[i].y > H + 50) {
+                    stars.splice(i, 1);
+                }
+            }
+            
+            // Update and draw particles
+            for (let i = particles.length - 1; i >= 0; i--) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].isDead()) {
+                    particles.splice(i, 1);
+                }
+            }
+            
+            // Spawn asteroids
+            if (p.frameCount % 60 === 0) {
+                asteroids.push(new Asteroid(p.random(W), -30, p));
+            }
+            
+            // Spawn stars
+            if (p.frameCount % 120 === 0) {
+                stars.push(new Star(p.random(W), -30, p));
+            }
+        };
+        
+        p.keyPressed = () => {
+            if (p.key === 'p' || p.key === 'P') {
+                gamePaused = !gamePaused;
+            }
+        };
+        
+        // Ship class
+        class Ship {
+            constructor() {
+                this.x = W / 2;
+                this.y = H - 60;
+                this.size = 20;
+                this.speed = 5;
+            }
+            
+            update() {
+                if (p.keyIsDown(p.LEFT_ARROW) && this.x > this.size) {
+                    this.x -= this.speed;
+                }
+                if (p.keyIsDown(p.RIGHT_ARROW) && this.x < W - this.size) {
+                    this.x += this.speed;
+                }
+                if (p.keyIsDown(p.UP_ARROW) && this.y > this.size) {
+                    this.y -= this.speed;
+                }
+                if (p.keyIsDown(p.DOWN_ARROW) && this.y < H - this.size) {
+                    this.y += this.speed;
+                }
+            }
+            
+            draw() {
+                p.push();
+                p.translate(this.x, this.y);
+                
+                // Ship glow
+                p.fill(100, 200, 255, 50);
+                p.noStroke();
+                p.circle(0, 0, this.size * 2.5);
+                
+                // Ship body
+                p.fill(100, 200, 255);
+                p.stroke(255);
+                p.strokeWeight(2);
+                p.triangle(-this.size/2, this.size/2, this.size/2, this.size/2, 0, -this.size/2);
+                
+                // Engine glow
+                p.noStroke();
+                p.fill(255, 150, 0, 150);
+                p.circle(0, this.size/2 + 5, 8);
+                
+                p.pop();
+            }
+        }
+        
+        // Asteroid class
+        class Asteroid {
+            constructor(x, y, p5Instance) {
+                this.p = p5Instance;
+                this.x = x;
+                this.y = y;
+                this.size = this.p.random(20, 40);
+                this.speed = this.p.random(2, 5);
+                this.rotation = 0;
+                this.rotSpeed = this.p.random(-0.05, 0.05);
+            }
+            
+            update() {
+                this.y += this.speed;
+                this.rotation += this.rotSpeed;
+            }
+            
+            draw() {
+                this.p.push();
+                this.p.translate(this.x, this.y);
+                this.p.rotate(this.rotation);
+                
+                // Asteroid glow
+                this.p.fill(139, 69, 19, 30);
+                this.p.noStroke();
+                this.p.circle(0, 0, this.size * 1.5);
+                
+                // Asteroid body
+                this.p.fill(139, 69, 19);
+                this.p.stroke(101, 67, 33);
+                this.p.strokeWeight(2);
+                
+                this.p.beginShape();
+                for (let i = 0; i < 8; i++) {
+                    const angle = (this.p.TWO_PI / 8) * i;
+                    const r = this.size * this.p.random(0.8, 1.2);
+                    const x = r * this.p.cos(angle);
+                    const y = r * this.p.sin(angle);
+                    this.p.vertex(x, y);
+                }
+                this.p.endShape(this.p.CLOSE);
+                
+                this.p.pop();
+            }
+            
+            hits(ship) {
+                const d = this.p.dist(this.x, this.y, ship.x, ship.y);
+                return d < (this.size + ship.size) / 2;
+            }
+        }
+        
+        // Star class (collectible)
+        class Star {
+            constructor(x, y, p5Instance) {
+                this.p = p5Instance;
+                this.x = x;
+                this.y = y;
+                this.size = 15;
+                this.speed = 2;
+                this.rotation = 0;
+            }
+            
+            update() {
+                this.y += this.speed;
+                this.rotation += 0.05;
+            }
+            
+            draw() {
+                this.p.push();
+                this.p.translate(this.x, this.y);
+                this.p.rotate(this.rotation);
+                
+                // Star glow
+                this.p.fill(255, 215, 0, 100);
+                this.p.noStroke();
+                this.p.circle(0, 0, this.size * 2);
+                
+                // Star shape
+                this.p.fill(255, 215, 0);
+                this.p.stroke(255, 255, 255);
+                this.p.strokeWeight(1);
+                this.p.star(0, 0, this.size/2, this.size, 5);
+                
+                this.p.pop();
+            }
+            
+            hits(ship) {
+                const d = this.p.dist(this.x, this.y, ship.x, ship.y);
+                return d < (this.size + ship.size) / 2;
+            }
+        }
+        
+        // Particle class
+        class Particle {
+            constructor(x, y, p5Instance) {
+                this.p = p5Instance;
+                this.x = x;
+                this.y = y;
+                this.vx = this.p.random(-2, 2);
+                this.vy = this.p.random(-2, 2);
+                this.life = 255;
+            }
+            
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= 5;
+            }
+            
+            draw() {
+                this.p.noStroke();
+                this.p.fill(255, 215, 0, this.life);
+                this.p.circle(this.x, this.y, 5);
+            }
+            
+            isDead() {
+                return this.life <= 0;
+            }
+        }
+        
+        // Helper to draw star shape
+        p.star = function(x, y, radius1, radius2, npoints) {
+            const angle = p.TWO_PI / npoints;
+            const halfAngle = angle / 2.0;
+            p.beginShape();
+            for (let a = 0; a < p.TWO_PI; a += angle) {
+                let sx = x + p.cos(a) * radius2;
+                let sy = y + p.sin(a) * radius2;
+                p.vertex(sx, sy);
+                sx = x + p.cos(a + halfAngle) * radius1;
+                sy = y + p.sin(a + halfAngle) * radius1;
+                p.vertex(sx, sy);
+            }
+            p.endShape(p.CLOSE);
+        };
+    });
+}
+
+function startGame() {
+    gameActive = true;
+    gamePaused = false;
+    gameScore = 0;
+    gameLives = 3;
+    asteroids = [];
+    stars = [];
+    particles = [];
+    ship = new Ship();
+    updateUI();
+}
+
+function resetGame() {
+    startGame();
+}
+
+function addScore(points) {
+    gameScore += points;
+    updateUI();
+}
+
+function loseLife() {
+    gameLives--;
+    updateUI();
+    
+    if (gameLives <= 0) {
+        gameOver();
+    }
+}
+
+function gameOver() {
+    gameActive = false;
+    alert(`Game Over! Final Score: ${gameScore}`);
+    startGameBtn.textContent = 'Start Game';
+}
+
+function updateUI() {
+    gameScoreEl.textContent = gameScore;
+    gameLivesEl.textContent = gameLives;
+}
+
+function createParticles(x, y) {
+    for (let i = 0; i < 10; i++) {
+        particles.push(new Particle(x, y, gameSketch));
+    }
+}
+
+// Ship class needs to be accessible
+class Ship {
+    constructor() {
+        this.x = 300;
+        this.y = 340;
+        this.size = 20;
+        this.speed = 5;
+    }
+}
+
+class Asteroid {
+    constructor(x, y, p5Instance) {
+        this.p = p5Instance;
+        this.x = x;
+        this.y = y;
+        this.size = this.p.random(20, 40);
+        this.speed = this.p.random(2, 5);
+        this.rotation = 0;
+        this.rotSpeed = this.p.random(-0.05, 0.05);
+    }
+}
+
+class Star {
+    constructor(x, y, p5Instance) {
+        this.p = p5Instance;
+        this.x = x;
+        this.y = y;
+        this.size = 15;
+        this.speed = 2;
+        this.rotation = 0;
+    }
+}
+
+class Particle {
+    constructor(x, y, p5Instance) {
+        this.p = p5Instance;
+        this.x = x;
+        this.y = y;
+        this.vx = this.p.random(-2, 2);
+        this.vy = this.p.random(-2, 2);
+        this.life = 255;
+    }
+}
+</script></body>
 </html>
