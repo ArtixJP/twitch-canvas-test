@@ -429,6 +429,115 @@
             text-align: center;
         }
         
+        /* Minimap Explorer */
+        .minimap-container {
+            position: relative;
+            width: 350px;
+            height: 250px;
+            border: 4px solid #9b59b6;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #0a0612;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.3), inset 0 0 50px rgba(155, 89, 182, 0.2);
+        }
+        
+        .minimap-world {
+            position: absolute;
+            width: 1000px;
+            height: 800px;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(155, 89, 182, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(230, 126, 34, 0.3) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(46, 204, 113, 0.2) 0%, transparent 40%),
+                linear-gradient(135deg, #0a0612 0%, #1a1025 50%, #0a0612 100%);
+            transform-origin: center;
+            transition: transform 0.3s ease-out;
+            cursor: grab;
+        }
+        
+        .minimap-world:active {
+            cursor: grabbing;
+        }
+        
+        .secret-message {
+            position: absolute;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 6px;
+            padding: 4px 6px;
+            border-radius: 2px;
+            white-space: nowrap;
+            opacity: 0.7;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px currentColor;
+        }
+        
+        .secret-message:hover {
+            opacity: 1;
+            transform: scale(1.5);
+            z-index: 100;
+        }
+        
+        .secret-message.rare {
+            animation: sparkle 1s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 3px currentColor); }
+            50% { filter: brightness(1.5) drop-shadow(0 0 8px currentColor); }
+        }
+        
+        .pixel-landmark {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+        }
+        
+        .minimap-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 50;
+        }
+        
+        .zoom-btn {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            border: 2px solid #f39c12;
+            border-radius: 4px;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .zoom-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+        }
+        
+        .minimap-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #bf94ff;
+            background: rgba(10, 6, 18, 0.8);
+            padding: 5px 8px;
+            border-radius: 4px;
+            z-index: 50;
+        }
+        
+        .found-counter {
+            color: #f39c12;
+        }
+        
         /* Retro gaming icons */
         .retro-icons {
             display: flex;
@@ -530,6 +639,19 @@
             </div>
         </div>
         
+        <div class="pixel-card">
+            <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #f39c12; margin: 0 0 10px 0; text-align: center;">🗺️ SECRET MAP</h3>
+            <div class="minimap-container" id="minimapContainer">
+                <div class="minimap-info">ZOOM: <span id="zoomLevel">1.0</span>x | FOUND: <span class="found-counter" id="foundCounter">0</span>/<span id="totalSecrets">12</span></div>
+                <div class="minimap-world" id="minimapWorld"></div>
+                <div class="minimap-controls">
+                    <button class="zoom-btn" onclick="zoomMap(0.5)">+</button>
+                    <button class="zoom-btn" onclick="zoomMap(-0.5)">-</button>
+                    <button class="zoom-btn" onclick="resetMap()" style="font-size: 0.5rem;">⟲</button>
+                </div>
+            </div>
+        </div>
+        
         <div class="pixel-card message-board">
             <h3>💬 COMMUNITY</h3>
             <div class="message"><span class="user">@Viewer:</span> Let's create together! 🎨</div>
@@ -611,6 +733,107 @@
             musicStatus.textContent = '⏸ CLICK TO PLAY';
             musicStatus.style.color = '#f39c12';
         });
+        
+        // Minimap Explorer
+        const minimapWorld = document.getElementById('minimapWorld');
+        const minimapContainer = document.getElementById('minimapContainer');
+        let currentZoom = 1;
+        let panX = -325;
+        let panY = -275;
+        let isDragging = false;
+        let startX, startY;
+        let foundSecrets = new Set();
+        
+        const secretMessages = [
+            { x: 50, y: 100, text: '🎮 GG WP!', color: '#e74c3c', rare: false },
+            { x: 200, y: 50, text: '✨ PIXEL MAGIC', color: '#f39c12', rare: true },
+            { x: 450, y: 200, text: '💜 TWITCH LOVE', color: '#9b59b6', rare: false },
+            { x: 700, y: 100, text: '🌟 YOU FOUND ME!', color: '#f1c40f', rare: true },
+            { x: 150, y: 400, text: '👾 RETRO 4EVER', color: '#27ae60', rare: false },
+            { x: 800, y: 350, text: '🔮 SECRET ZONE', color: '#9b59b6', rare: true },
+            { x: 350, y: 600, text: '☕ COZY VIBES', color: '#e67e22', rare: false },
+            { x: 600, y: 500, text: '🎵 TRIP-HOP!', color: '#3498db', rare: false },
+            { x: 100, y: 700, text: '🏆 EXPLORER PRO', color: '#f1c40f', rare: true },
+            { x: 900, y: 600, text: '🚀 TO THE MOON', color: '#e74c3c', rare: false },
+            { x: 500, y: 750, text: '💎 RARE FIND!', color: '#00ffff', rare: true },
+            { x: 750, y: 700, text: '🎪 CIRCUS MODE', color: '#ff69b4', rare: false }
+        ];
+        
+        // Create secret messages
+        secretMessages.forEach((msg, index) => {
+            const el = document.createElement('div');
+            el.className = 'secret-message' + (msg.rare ? ' rare' : '');
+            el.style.left = msg.x + 'px';
+            el.style.top = msg.y + 'px';
+            el.style.color = msg.color;
+            el.style.background = 'rgba(0,0,0,0.7)';
+            el.textContent = msg.text;
+            el.dataset.index = index;
+            el.onclick = () => discoverSecret(index);
+            minimapWorld.appendChild(el);
+        });
+        
+        // Add pixel landmarks
+        for(let i = 0; i < 50; i++) {
+            const landmark = document.createElement('div');
+            landmark.className = 'pixel-landmark';
+            landmark.style.left = Math.random() * 980 + 'px';
+            landmark.style.top = Math.random() * 780 + 'px';
+            landmark.style.background = colors[Math.floor(Math.random() * colors.length)];
+            landmark.style.opacity = 0.3 + Math.random() * 0.4;
+            minimapWorld.appendChild(landmark);
+        }
+        
+        function discoverSecret(index) {
+            if (!foundSecrets.has(index)) {
+                foundSecrets.add(index);
+                document.getElementById('foundCounter').textContent = foundSecrets.size;
+                const el = minimapWorld.querySelector(`[data-index="${index}"]`);
+                el.style.border = '2px solid #f1c40f';
+                el.style.boxShadow = '0 0 10px #f1c40f';
+            }
+        }
+        
+        function updateMapTransform() {
+            minimapWorld.style.transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
+            document.getElementById('zoomLevel').textContent = currentZoom.toFixed(1);
+        }
+        
+        function zoomMap(delta) {
+            currentZoom = Math.max(0.5, Math.min(4, currentZoom + delta));
+            updateMapTransform();
+        }
+        
+        function resetMap() {
+            currentZoom = 1;
+            panX = -325;
+            panY = -275;
+            updateMapTransform();
+        }
+        
+        minimapContainer.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            startX = e.clientX - panX;
+            startY = e.clientY - panY;
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            panX = e.clientX - startX;
+            panY = e.clientY - startY;
+            updateMapTransform();
+        });
+        
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+        });
+        
+        minimapContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            zoomMap(e.deltaY > 0 ? -0.2 : 0.2);
+        });
+        
+        updateMapTransform();
         
         // Floating pixels
         const pixelBg = document.getElementById('pixelBg');
