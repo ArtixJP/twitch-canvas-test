@@ -309,7 +309,17 @@ body::before {
 .bar:nth-child(6) { animation-delay: 0.5s; }
 .bar:nth-child(7) { animation-delay: 0.6s; }
 .bar:nth-child(8) { animation-delay: 0.7s; }
-</style>
+
+.chess-zone { margin-top: 30px; text-align: center; }
+.chess-title { font-family: 'Press Start 2P', cursive; font-size: 0.8rem; color: #f39c12; margin-bottom: 15px; text-shadow: 2px 2px 0 #2c3e50; }
+.chess-board { display: grid; grid-template-columns: repeat(8, 40px); grid-template-rows: repeat(8, 40px); gap: 0; margin: 0 auto; border: 4px solid #f39c12; box-shadow: 0 0 20px rgba(243, 156, 18, 0.5); width: fit-content; }
+.chess-square { width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; transition: all 0.3s; }
+.chess-square.light { background: #f0d9b5; }
+.chess-square.dark { background: #b58863; }
+.chess-square.highlight { background: #7cb342 !important; box-shadow: inset 0 0 10px #4caf50; animation: pulseSquare 1s ease-in-out infinite; }
+.chess-square.from-highlight { background: #aed581 !important; }
+.move-display { font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #1abc9c; margin-top: 15px; padding: 10px; border: 2px dashed #1abc9c; animation: textGlow 2s ease-in-out infinite; }
+@keyframes pulseSquare { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }</style>
 </head>
 <body>
 <div class="floating-pixels">
@@ -341,7 +351,7 @@ body::before {
 <div class="bar"></div>
 <div class="bar"></div>
 </div>
-</div>
+<div class="chess-zone"><h3 class="chess-title">♟️ CHESS ARENA ♟️</h3><div class="chess-board" id="chessBoard"></div><div class="move-display">1. e4 - King's Pawn Opening!</div></div></div>
 <div class="pixel-art-decoration">
 <div class="pixel-heart"></div>
 <div class="pixel-star"></div>
@@ -416,5 +426,28 @@ setInterval(() => {
   }
 }, 3000);
 </script>
-</body>
+<script>
+const initialBoard = [
+  ['♜','♞','♝','♛','♚','♝','♞','♜'],
+  ['♟','♟','♟','♟','♟','♟','♟','♟'],
+  ['','','','','','','',''],
+  ['','','','','','','',''],
+  ['','','','','♙','','',''],
+  ['','','','','','','',''],
+  ['♙','♙','♙','♙','','♙','♙','♙'],
+  ['♖','♘','♗','♕','♔','♗','♘','♖']
+];
+
+const board = document.getElementById('chessBoard');
+for(let row = 0; row < 8; row++) {
+  for(let col = 0; col < 8; col++) {
+    const square = document.createElement('div');
+    square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+    if(row === 4 && col === 4) square.classList.add('highlight');
+    if(row === 6 && col === 4) square.classList.add('from-highlight');
+    square.textContent = initialBoard[row][col];
+    board.appendChild(square);
+  }
+}
+</script></body>
 </html>
