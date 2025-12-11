@@ -351,6 +351,7 @@
                 scoreDisplay.style.animation = 'glow 0.6s ease-out';
             }, 10);
             showCatchNotification();
+            triggerPlanetColorChange();
         }
         
         // Scene setup
@@ -389,34 +390,41 @@
         planetCanvas.height = 1024;
         const ctx = planetCanvas.getContext('2d');
         
-        // Draw planet texture
-        const gradient = ctx.createLinearGradient(0, 0, planetCanvas.width, planetCanvas.height);
-        gradient.addColorStop(0, '#1a5f7a');
-        gradient.addColorStop(0.5, '#2d8a9e');
-        gradient.addColorStop(1, '#0d3d52');
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, planetCanvas.width, planetCanvas.height);
-        
-        // Add clouds and features
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
-        for (let i = 0; i < 50; i++) {
-            const x = Math.random() * planetCanvas.width;
-            const y = Math.random() * planetCanvas.height;
-            const size = Math.random() * 100 + 50;
-            ctx.beginPath();
-            ctx.arc(x, y, size, 0, Math.PI * 2);
-            ctx.fill();
+        // Function to draw planet texture with custom colors
+        function drawPlanetTexture(baseColor1, baseColor2, baseColor3, landColor) {
+            ctx.clearRect(0, 0, planetCanvas.width, planetCanvas.height);
+            
+            const gradient = ctx.createLinearGradient(0, 0, planetCanvas.width, planetCanvas.height);
+            gradient.addColorStop(0, baseColor1);
+            gradient.addColorStop(0.5, baseColor2);
+            gradient.addColorStop(1, baseColor3);
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, planetCanvas.width, planetCanvas.height);
+            
+            // Add clouds and features
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.3)';
+            for (let i = 0; i < 50; i++) {
+                const x = Math.random() * planetCanvas.width;
+                const y = Math.random() * planetCanvas.height;
+                const size = Math.random() * 100 + 50;
+                ctx.beginPath();
+                ctx.arc(x, y, size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Add landmasses
+            ctx.fillStyle = landColor;
+            for (let i = 0; i < 30; i++) {
+                const x = Math.random() * planetCanvas.width;
+                const y = Math.random() * planetCanvas.height;
+                const width = Math.random() * 150 + 50;
+                const height = Math.random() * 150 + 50;
+                ctx.fillRect(x, y, width, height);
+            }
         }
         
-        // Add landmasses
-        ctx.fillStyle = 'rgba(34, 139, 34, 0.6)';
-        for (let i = 0; i < 30; i++) {
-            const x = Math.random() * planetCanvas.width;
-            const y = Math.random() * planetCanvas.height;
-            const width = Math.random() * 150 + 50;
-            const height = Math.random() * 150 + 50;
-            ctx.fillRect(x, y, width, height);
-        }
+        // Initial planet texture
+        drawPlanetTexture('#1a5f7a', '#2d8a9e', '#0d3d52', 'rgba(34, 139, 34, 0.6)');
         
         const texture = new THREE.CanvasTexture(planetCanvas);
         const planetMaterial = new THREE.MeshPhongMaterial({ map: texture });
@@ -424,6 +432,25 @@
         planet.castShadow = true;
         planet.receiveShadow = true;
         scene.add(planet);
+        
+        // Planet color change on catch
+        const planetColors = [
+            { c1: '#FF1493', c2: '#FF69B4', c3: '#FF6B9D', land: 'rgba(255, 192, 203, 0.6)' }, // Hot Pink
+            { c1: '#9370DB', c2: '#BA55D3', c3: '#8A2BE2', land: 'rgba(186, 85, 211, 0.6)' }, // Purple
+            { c1: '#00CED1', c2: '#40E0D0', c3: '#20B2AA', land: 'rgba(64, 224, 208, 0.6)' }, // Turquoise
+            { c1: '#FFD700', c2: '#FFA500', c3: '#FF8C00', land: 'rgba(255, 215, 0, 0.6)' }, // Gold
+            { c1: '#32CD32', c2: '#00FF00', c3: '#228B22', land: 'rgba(50, 205, 50, 0.6)' }  // Lime Green
+        ];
+        
+        let colorIndex = 0;
+        let colorChangeProgress = 0;
+        let isColorChanging = false;
+        
+        function triggerPlanetColorChange() {
+            isColorChanging = true;
+            colorChangeProgress = 0;
+            colorIndex = (colorIndex + 1) % planetColors.length;
+        }
         
         // Create moon
         const moonGeometry = new THREE.SphereGeometry(0.27, 32, 32);
@@ -837,6 +864,33 @@
                     isCaught = false;
                     timeSinceCatch = 0;
                 }
+            }
+            
+            // Update planet color if changing
+            if (isColorChanging) {
+                colorChangeProgress += 0.02;
+                if (colorChangeProgress >= 1) {
+                    colorChangeProgress = 1;
+                    isColorChanging = false;
+                }
+                
+                // Get current and next color
+                const prevIndex = (colorIndex - 1 + planetColors.length) % planetColors.length;
+                const currColor = planetColors[colorIndex];
+                const prevColor = planetColors[prevIndex];
+                
+                // Interpolate between colors
+                const progress = Math.sin(colorChangeProgress * Math.PI) * 0.5 + 0.5; // Smooth easing
+                
+                // Draw planet with transitioning colors
+                drawPlanetTexture(
+                    currColor.c1,
+                    currColor.c2,
+                    currColor.c3,
+                    currColor.land
+                );
+                
+                texture.needsUpdate = true;
             }
             
             // Rotate planet
