@@ -1379,5 +1379,300 @@ class Particle {
         this.life = 255;
     }
 }
+</script><script>
+// Create adorable space elephant!
+const elephantGroup = new THREE.Group();
+
+// Elephant body (large sphere)
+const elephantBodyGeo = new THREE.SphereGeometry(0.6, 32, 32);
+const elephantMaterial = new THREE.MeshPhongMaterial({
+    color: 0x808080,
+    emissive: 0x202020,
+    shininess: 30
+});
+const elephantBody = new THREE.Mesh(elephantBodyGeo, elephantMaterial);
+elephantBody.castShadow = true;
+elephantGroup.add(elephantBody);
+
+// Elephant head (smaller sphere)
+const elephantHeadGeo = new THREE.SphereGeometry(0.45, 32, 32);
+const elephantHead = new THREE.Mesh(elephantHeadGeo, elephantMaterial);
+elephantHead.position.set(0.7, 0.2, 0);
+elephantHead.castShadow = true;
+elephantGroup.add(elephantHead);
+
+// Elephant trunk (curved cylinders)
+const trunkSegments = [];
+for(let i = 0; i < 5; i++) {
+    const trunkGeo = new THREE.CylinderGeometry(0.08 - i * 0.01, 0.08 - i * 0.01, 0.25, 16);
+    const trunkSegment = new THREE.Mesh(trunkGeo, elephantMaterial);
+    trunkSegment.position.set(
+        1.0 + i * 0.15,
+        0.1 - i * 0.15,
+        0
+    );
+    trunkSegment.rotation.z = 0.3 + i * 0.2;
+    trunkSegment.castShadow = true;
+    elephantGroup.add(trunkSegment);
+    trunkSegments.push(trunkSegment);
+}
+
+// Elephant ears (flat discs)
+const earGeo = new THREE.CircleGeometry(0.35, 32);
+const leftEar = new THREE.Mesh(earGeo, elephantMaterial);
+leftEar.position.set(0.5, 0.4, -0.4);
+leftEar.rotation.y = Math.PI / 4;
+leftEar.castShadow = true;
+elephantGroup.add(leftEar);
+
+const rightEar = new THREE.Mesh(earGeo, elephantMaterial);
+rightEar.position.set(0.5, 0.4, 0.4);
+rightEar.rotation.y = -Math.PI / 4;
+rightEar.castShadow = true;
+elephantGroup.add(rightEar);
+
+// Elephant eyes
+const eyeGeo = new THREE.SphereGeometry(0.08, 16, 16);
+const eyeMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
+
+const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+leftEye.position.set(0.85, 0.35, -0.15);
+elephantGroup.add(leftEye);
+
+const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+rightEye.position.set(0.85, 0.35, 0.15);
+elephantGroup.add(rightEye);
+
+// Elephant tusks
+const tuskGeo = new THREE.CylinderGeometry(0.04, 0.02, 0.3, 8);
+const tuskMat = new THREE.MeshPhongMaterial({ color: 0xfffff0, shininess: 80 });
+
+const leftTusk = new THREE.Mesh(tuskGeo, tuskMat);
+leftTusk.position.set(0.9, 0.05, -0.15);
+leftTusk.rotation.z = 0.5;
+leftTusk.rotation.x = 0.3;
+leftTusk.castShadow = true;
+elephantGroup.add(leftTusk);
+
+const rightTusk = new THREE.Mesh(tuskGeo, tuskMat);
+rightTusk.position.set(0.9, 0.05, 0.15);
+rightTusk.rotation.z = 0.5;
+rightTusk.rotation.x = -0.3;
+rightTusk.castShadow = true;
+elephantGroup.add(rightTusk);
+
+// Elephant legs
+const legGeo = new THREE.CylinderGeometry(0.12, 0.12, 0.5, 16);
+const legPositions = [
+    {x: 0.3, z: -0.3},
+    {x: 0.3, z: 0.3},
+    {x: -0.3, z: -0.3},
+    {x: -0.3, z: 0.3}
+];
+legPositions.forEach(pos => {
+    const leg = new THREE.Mesh(legGeo, elephantMaterial);
+    leg.position.set(pos.x, -0.5, pos.z);
+    leg.castShadow = true;
+    elephantGroup.add(leg);
+});
+
+// Elephant tail
+const tailGeo = new THREE.CylinderGeometry(0.05, 0.03, 0.4, 8);
+const tail = new THREE.Mesh(tailGeo, elephantMaterial);
+tail.position.set(-0.6, -0.1, 0);
+tail.rotation.z = -0.5;
+tail.castShadow = true;
+elephantGroup.add(tail);
+
+// Elephant glow
+const elephantGlowGeo = new THREE.SphereGeometry(0.9, 32, 32);
+const elephantGlowMat = new THREE.MeshBasicMaterial({
+    color: 0x808080,
+    transparent: true,
+    opacity: 0.1,
+    side: THREE.BackSide
+});
+const elephantGlow = new THREE.Mesh(elephantGlowGeo, elephantGlowMat);
+elephantGroup.add(elephantGlow);
+
+// Position elephant in center of scene
+elephantGroup.position.set(0, 0, 0);
+scene.add(elephantGroup);
+
+// Water particles system
+const waterParticles = [];
+const maxWaterParticles = 100;
+
+class WaterParticle {
+    constructor() {
+        const geo = new THREE.SphereGeometry(0.05, 8, 8);
+        const mat = new THREE.MeshPhongMaterial({
+            color: 0x4dd0e1,
+            transparent: true,
+            opacity: 0.8,
+            emissive: 0x1a5f7a
+        });
+        this.mesh = new THREE.Mesh(geo, mat);
+        this.reset();
+        scene.add(this.mesh);
+    }
+    
+    reset() {
+        // Start from trunk tip
+        const trunkTip = trunkSegments[trunkSegments.length - 1];
+        this.mesh.position.set(
+            1.6 + Math.random() * 0.1,
+            -0.5 + Math.random() * 0.1,
+            Math.random() * 0.1 - 0.05
+        );
+        
+        // Spray direction
+        this.velocity = new THREE.Vector3(
+            0.03 + Math.random() * 0.02,
+            0.01 + Math.random() * 0.02,
+            (Math.random() - 0.5) * 0.02
+        );
+        
+        this.gravity = -0.001;
+        this.life = 1.0;
+    }
+    
+    update() {
+        this.mesh.position.add(this.velocity);
+        this.velocity.y += this.gravity;
+        this.life -= 0.01;
+        this.mesh.material.opacity = this.life * 0.8;
+        
+        if (this.life <= 0) {
+            this.reset();
+        }
+    }
+}
+
+// Create water particles
+for(let i = 0; i < maxWaterParticles; i++) {
+    waterParticles.push(new WaterParticle());
+}
+
+// Store original animate function
+const originalAnimate = window.animate || animate;
+
+// Enhanced animate function
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Original animations
+    const sunScale = 1 + Math.sin(Date.now() * 0.001) * 0.05;
+    sun.scale.set(sunScale, sunScale, sunScale);
+    corona1.scale.set(sunScale * 1.1, sunScale * 1.1, sunScale * 1.1);
+    corona2.scale.set(sunScale * 1.2, sunScale * 1.2, sunScale * 1.2);
+    sun.rotation.y += 0.002;
+    corona1.rotation.y -= 0.003;
+    corona2.rotation.y += 0.001;
+    planet.rotation.y += 0.003;
+    glow.rotation.y += 0.003;
+    
+    moonAngle += moonOrbitSpeed;
+    moonGroup.position.x = Math.cos(moonAngle) * moonOrbitRadius;
+    moonGroup.position.z = Math.sin(moonAngle) * moonOrbitRadius;
+    moonGroup.position.y = Math.sin(moonAngle * 0.5) * 0.5;
+    moon.rotation.y += 0.005;
+    moonGlow.rotation.y += 0.005;
+    
+    const distance = Math.sqrt(
+        Math.pow(kittyGroup.position.x - dogGroup.position.x, 2) +
+        Math.pow(kittyGroup.position.y - dogGroup.position.y, 2) +
+        Math.pow(kittyGroup.position.z - dogGroup.position.z, 2)
+    );
+    
+    if (typeof window.checkCatch === 'function') {
+        window.checkCatch(distance);
+    }
+    
+    if (distance < dangerDistance && !kittyIsEscaping) {
+        kittyIsEscaping = true;
+        kittyOrbitSpeed = kittyEscapeSpeed;
+        kittyGlow.material.opacity = 0.35;
+        kittyGlow.material.color.setHex(0xff6b9d);
+    } else if (distance > safeDistance && kittyIsEscaping) {
+        kittyIsEscaping = false;
+        kittyOrbitSpeed = kittyNormalSpeed;
+        kittyGlow.material.opacity = 0.15;
+        kittyGlow.material.color.setHex(0xffb6c1);
+    }
+    
+    kittyAngle += kittyOrbitSpeed;
+    kittyGroup.position.x = Math.cos(kittyAngle) * kittyOrbitRadius;
+    kittyGroup.position.z = Math.sin(kittyAngle) * kittyOrbitRadius;
+    kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8;
+    
+    if (kittyIsEscaping) {
+        const escapeDirection = new THREE.Vector3(
+            kittyGroup.position.x - dogGroup.position.x,
+            kittyGroup.position.y - dogGroup.position.y,
+            kittyGroup.position.z - dogGroup.position.z
+        ).normalize();
+        const lookAtPoint = new THREE.Vector3(
+            kittyGroup.position.x + escapeDirection.x,
+            kittyGroup.position.y + escapeDirection.y,
+            kittyGroup.position.z + escapeDirection.z
+        );
+        kittyGroup.lookAt(lookAtPoint);
+    } else {
+        kittyGroup.lookAt(planet.position);
+    }
+    
+    kittyBody.position.y = Math.sin(Date.now() * 0.003) * 0.05;
+    kittyHead.position.y = 0.4 + Math.sin(Date.now() * 0.003) * 0.05;
+    
+    const tailSpeed = kittyIsEscaping ? 0.015 : 0.005;
+    kittyGroup.children.forEach((child, index) => {
+        if(index >= 14 && index <= 16) {
+            child.rotation.z = Math.sin(Date.now() * tailSpeed + index) * 0.3;
+        }
+    });
+    
+    const angleToKitty = Math.atan2(
+        kittyGroup.position.z - dogGroup.position.z,
+        kittyGroup.position.x - dogGroup.position.x
+    );
+    dogAngle += (angleToKitty - dogAngle) * 0.05 + dogSpeed * 0.3;
+    
+    dogGroup.position.x = Math.cos(dogAngle) * dogOrbitRadius;
+    dogGroup.position.z = Math.sin(dogAngle) * dogOrbitRadius;
+    dogGroup.position.y = Math.cos(dogAngle * 0.5) * 0.6;
+    dogGroup.lookAt(kittyGroup.position);
+    
+    dogBody.position.y = Math.sin(Date.now() * 0.01) * 0.08;
+    dogHead.position.y = 0.1 + Math.sin(Date.now() * 0.01) * 0.08;
+    dogTail.rotation.y = Math.sin(Date.now() * 0.01) * 0.5;
+    leftDogEar.rotation.x = Math.sin(Date.now() * 0.008) * 0.3;
+    rightDogEar.rotation.x = Math.sin(Date.now() * 0.008 + Math.PI) * 0.3;
+    
+    starsMesh.rotation.y += 0.0002;
+    
+    // Elephant animations
+    elephantBody.position.y = Math.sin(Date.now() * 0.002) * 0.05;
+    elephantHead.position.y = 0.2 + Math.sin(Date.now() * 0.002) * 0.05;
+    
+    // Animate trunk (wave motion)
+    trunkSegments.forEach((segment, i) => {
+        segment.rotation.z = 0.3 + i * 0.2 + Math.sin(Date.now() * 0.003 + i * 0.5) * 0.15;
+    });
+    
+    // Animate ears (gentle flapping)
+    leftEar.rotation.x = Math.sin(Date.now() * 0.002) * 0.1;
+    rightEar.rotation.x = Math.sin(Date.now() * 0.002 + Math.PI) * 0.1;
+    
+    // Animate tail
+    tail.rotation.y = Math.sin(Date.now() * 0.004) * 0.3;
+    
+    // Update water particles
+    waterParticles.forEach(particle => particle.update());
+    
+    renderer.render(scene, camera);
+}
+
+animate();
 </script></body>
 </html>
