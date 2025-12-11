@@ -28,6 +28,40 @@
             box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
             animation: blink 0.8s ease-in-out infinite;
         }
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(8, 40px);
+            border: 4px solid #8B4513;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 30px;
+            border-radius: 4px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .chess-square {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .chess-square:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        .white-square {
+            background: linear-gradient(135deg, #f0d9b5 0%, #e8c99b 100%);
+        }
+        .black-square {
+            background: linear-gradient(135deg, #b58863 0%, #9c7a54 100%);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
         .scene {
             position: relative;
             width: 300px;
@@ -160,6 +194,26 @@
 </head>
 <body>
     <div class="red-cube"></div>
+    <div class="chessboard" id="chess"></div>
+    <script>
+        const pieces = {
+            0: ['♜','♞','♝','♛','♚','♝','♞','♜'],
+            1: ['♟','♟','♟','♟','♟','♟','♟','♟'],
+            6: ['♙','♙','♙','♙','♙','♙','♙','♙'],
+            7: ['♖','♘','♗','♕','♔','♗','♘','♖']
+        };
+        const board = document.getElementById('chess');
+        for(let row = 0; row < 8; row++) {
+            for(let col = 0; col < 8; col++) {
+                const square = document.createElement('div');
+                square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'white-square' : 'black-square');
+                if(pieces[row]) {
+                    square.textContent = pieces[row][col];
+                }
+                board.appendChild(square);
+            }
+        }
+    </script>
     <div class="scene">
         <div class="tree">
             <div class="trunk"></div>
