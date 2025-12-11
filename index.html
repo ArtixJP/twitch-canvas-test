@@ -422,7 +422,44 @@
 <nav class="nav-menu">
 <button class="nav-btn space active" data-section="space">🌍 Space</button>
 <button class="nav-btn animals" data-section="animals">🐾 Animals</button>
-<button class="nav-btn games" data-section="games">🎮 Games</button>
+<button class="nav-btn games" data-section="games">🎮 Games</button><script>
+// Auto-rotate sections every 30 seconds
+(function() {
+    const sectionOrder = ['space', 'animals', 'games'];
+    let currentIndex = 0;
+    
+    function rotateSection() {
+        currentIndex = (currentIndex + 1) % sectionOrder.length;
+        const targetSection = sectionOrder[currentIndex];
+        
+        // Update navigation buttons
+        const navBtns = document.querySelectorAll('.nav-btn');
+        navBtns.forEach(btn => {
+            btn.classList.remove('active');
+            if(btn.dataset.section === targetSection) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Update sections visibility
+        const sections = document.querySelectorAll('.section');
+        sections.forEach(s => s.classList.remove('active'));
+        document.getElementById(targetSection + '-section').classList.add('active');
+        
+        console.log('🔄 Auto-rotated to: ' + targetSection.toUpperCase());
+    }
+    
+    // Start auto-rotation every 30 seconds
+    setInterval(rotateSection, 30000);
+    
+    // Sync currentIndex when user manually clicks
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            currentIndex = sectionOrder.indexOf(btn.dataset.section);
+        });
+    });
+})();
+</script>
 </nav>
 <!-- SPACE SECTION -->
 <section class="section space-section active" id="space-section">
