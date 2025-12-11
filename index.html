@@ -16,6 +16,69 @@
             color: white;
         }
         h1 { font-size: 3rem; text-align: center; }
+        .scene {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        .tree {
+            position: relative;
+            margin-top: 20px;
+        }
+        .trunk {
+            width: 40px;
+            height: 120px;
+            background: linear-gradient(90deg, #5D4037 0%, #8B5A2B 50%, #5D4037 100%);
+            border-radius: 5px;
+            margin: 0 auto;
+        }
+        .foliage {
+            width: 200px;
+            height: 180px;
+            background: radial-gradient(ellipse at center, #4CAF50 0%, #2E7D32 60%, #1B5E20 100%);
+            border-radius: 50% 50% 45% 45%;
+            position: relative;
+            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .apple {
+            width: 35px;
+            height: 38px;
+            background: radial-gradient(circle at 30% 30%, #ff6b6b, #e53935, #b71c1c);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3), 2px 2px 8px rgba(0,0,0,0.4);
+            animation: sway 2s ease-in-out infinite;
+        }
+        .apple::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 10px;
+            background: #5D4037;
+            border-radius: 2px;
+        }
+        .apple::after {
+            content: '';
+            position: absolute;
+            top: -12px;
+            left: 55%;
+            width: 12px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50% 50% 0 50%;
+            transform: rotate(45deg);
+        }
+        .apple-1 { top: 40px; left: 30px; animation-delay: 0s; }
+        .apple-2 { top: 60px; right: 40px; animation-delay: 0.5s; }
+        .apple-3 { top: 100px; left: 80px; animation-delay: 1s; }
+        @keyframes sway {
+            0%, 100% { transform: rotate(-2deg); }
+            50% { transform: rotate(2deg); }
+        }
         .red-cube {
             position: fixed;
             top: 20px;
@@ -34,6 +97,16 @@
 </head>
 <body>
     <div class="red-cube"></div>
-    <h1>✨ Welcome to the Void ✨</h1>
+    <div class="scene">
+        <h1>✨ Welcome to the Void ✨</h1>
+        <div class="tree">
+            <div class="foliage">
+                <div class="apple apple-1"></div>
+                <div class="apple apple-2"></div>
+                <div class="apple apple-3"></div>
+            </div>
+            <div class="trunk"></div>
+        </div>
+    </div>
 </body>
 </html>
