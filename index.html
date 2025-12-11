@@ -30,15 +30,26 @@
             width: 200px;
             height: 200px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4a9eff 0%, #1e5aa8 30%, #0d2847 70%, #051525 100%);
+            background: linear-gradient(135deg, var(--planet-color-1, #4a9eff) 0%, var(--planet-color-2, #1e5aa8) 30%, var(--planet-color-3, #0d2847) 70%, var(--planet-color-4, #051525) 100%);
             box-shadow: 
                 inset -30px -30px 60px rgba(0,0,0,0.8),
                 inset 10px 10px 40px rgba(100, 180, 255, 0.3),
-                0 0 60px rgba(74, 158, 255, 0.4),
-                0 0 100px rgba(74, 158, 255, 0.2);
+                0 0 60px var(--planet-glow, rgba(74, 158, 255, 0.4)),
+                0 0 100px var(--planet-glow, rgba(74, 158, 255, 0.2));
             animation: rotate 20s linear infinite;
             position: relative;
             overflow: hidden;
+            transition: all 0.5s ease-out;
+        }
+        
+        .planet.caught {
+            animation: rotate 20s linear infinite, planetPulse 0.5s ease-out;
+        }
+        
+        @keyframes planetPulse {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(1.15); filter: brightness(1.8); }
+            100% { transform: scale(1); filter: brightness(1); }
         }
         
         .planet::before {
@@ -72,12 +83,13 @@
             width: 300px;
             height: 80px;
             border: 8px solid transparent;
-            border-top-color: rgba(200, 180, 150, 0.6);
-            border-bottom-color: rgba(200, 180, 150, 0.3);
+            border-top-color: var(--ring-color, rgba(200, 180, 150, 0.6));
+            border-bottom-color: var(--ring-color-2, rgba(200, 180, 150, 0.3));
             border-radius: 50%;
             transform: translate(-50%, -50%) rotateX(75deg);
             animation: ring-rotate 20s linear infinite;
-            box-shadow: 0 0 20px rgba(200, 180, 150, 0.3);
+            box-shadow: 0 0 20px var(--ring-glow, rgba(200, 180, 150, 0.3));
+            transition: all 0.5s ease-out;
         }
         
         .ring::before {
@@ -937,6 +949,146 @@ window.addEventListener('load', function() {
     document.body.appendChild(effect);
     
     setTimeout(() => effect.remove(), 1000);
+  }
+  
+  // Add catch animation style
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes catchPop {
+      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+      50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
+      100% { transform: translate(-50%, -80%) scale(1); opacity: 0; }
+    }
+    @keyframes scoreFlash {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.5); color: #ff0; }
+    }
+  `;
+  document.head.appendChild(style);
+  
+  function animateWithScore() {
+    kittyAngle -= currentKittySpeed;
+    dogAngle -= dogSpeed;
+    
+    const kittyPos = getPosition(kittyAngle, orbitRadius);
+    const dogPos = getPosition(dogAngle, orbitRadius);
+    const distance = getDistance(kittyPos, dogPos);
+    
+    // Check for catch!
+    if (distance < catchDistance && !catchCooldown) {
+      catchCooldown = true;
+      dogScore++;
+      scoreDisplay.textContent = dogScore;
+      scoreDisplay.style.animation = 'scoreFlash 0.5s ease-out';
+      setTimeout(() => scoreDisplay.style.animation = '', 500);
+      
+      showCatchEffect();
+      
+      // Teleport cat to opposite side
+      kittyAngle = dogAngle + Math.PI;
+      
+      // Cooldown before next catch
+      setTimeout(() => {
+        catchCooldown = false;
+      }, 2000);
+    }
+    
+    // Escape behavior
+    if (distance < dangerDistance && !isEscaping && !catchCooldown) {
+      isEscaping = true;
+      currentKittySpeed = escapingKittySpeed;
+      kitty.classList.add('escaping');
+      dog.classList.add('chasing-fast');
+      
+      if (escapeTimer) clearTimeout(escapeTimer);
+      
+      escapeTimer = setTimeout(() => {
+        if (getDistance(getPosition(kittyAngle, orbitRadius), getPosition(dogAngle, orbitRadius)) > dangerDistance * 2) {
+          isEscaping = false;
+          currentKittySpeed = normalKittySpeed;
+          kitty.classList.remove('escaping');
+          dog.classList.remove('chasing-fast');
+        }
+      }, 800);
+    } else if (isEscaping && distance > dangerDistance * 2.5) {
+      isEscaping = false;
+      currentKittySpeed = normalKittySpeed;
+      kitty.classList.remove('escaping');
+      dog.classList.remove('chasing-fast');
+    }
+    
+    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
+    dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
+    kitty.style.transform = `rotate(${-kittyAngle}rad)`;
+    dog.style.transform = `rotate(${-dogAngle}rad)`;
+    
+    requestAnimationFrame(animateWithScore);
+  }
+  
+  // Start the new animation (override the old one)
+  animateWithScore();
+})();
+</script><script>
+(function() {
+  // Remove old animation script and replace with scoring version
+  const kittyOrbit = document.querySelector('.kitty-orbit');
+  const dogOrbit = document.getElementById('dogOrbit');
+  const kitty = document.querySelector('.kitty');
+  const dog = document.getElementById('spaceDog');
+  const scoreDisplay = document.getElementById('dogScore');
+  
+  let kittyAngle = 0;
+  let dogAngle = Math.PI;
+  let dogScore = 0;
+  
+  const normalKittySpeed = 0.008;
+  const escapingKittySpeed = 0.04;
+  const dogSpeed = 0.015;
+  
+  let currentKittySpeed = normalKittySpeed;
+  let isEscaping = false;
+  let escapeTimer = null;
+  let catchCooldown = false;
+  
+  const orbitRadius = 140;
+  const dangerDistance = 60;
+  const catchDistance = 30; // Distance to catch the cat
+  
+  function getPosition(angle, radius) {
+    return {
+      x: Math.cos(angle) * radius,
+      y: Math.sin(angle) * radius
+    };
+  }
+  
+  function getDistance(pos1, pos2) {
+    return Math.sqrt(Math.pow(pos2.x - pos1.x, 2) + Math.pow(pos2.y - pos1.y, 2));
+  }
+  
+  function showCatchEffect() {
+    // Create catch celebration effect
+    const effect = document.createElement('div');
+    effect.innerHTML = '🎉 CAUGHT! +1 🐕';
+    effect.style.cssText = `
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 2.5rem;
+      color: #ffd700;
+      text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5);
+      z-index: 1000;
+      animation: catchPop 1s ease-out forwards;
+      pointer-events: none;
+    `;
+    document.body.appendChild(effect);
+    
+    setTimeout(() => effect.remove(), 1000);
+    
+    // Change planet color!
+    if (window.changePlanetColor) {
+      window.changePlanetColor();
+    }
   }
   
   // Add catch animation style
