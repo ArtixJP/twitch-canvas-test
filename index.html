@@ -772,6 +772,187 @@
         dog.position.x = -2.5;
         scene.add(dogOrbit);
         
+        // Create ELEPHANT in the center!
+        function createElephant() {
+            const elephantGroup = new THREE.Group();
+            const elephantMaterial = new THREE.MeshPhongMaterial({ color: 0x8B7D6B }); // Gray-brown
+            
+            // Body (main trunk)
+            const bodyGeometry = new THREE.SphereGeometry(0.35, 32, 32);
+            const body = new THREE.Mesh(bodyGeometry, elephantMaterial);
+            body.scale.set(1, 0.8, 1);
+            body.castShadow = true;
+            body.receiveShadow = true;
+            elephantGroup.add(body);
+            
+            // Head
+            const headGeometry = new THREE.SphereGeometry(0.25, 32, 32);
+            const head = new THREE.Mesh(headGeometry, elephantMaterial);
+            head.position.set(0, 0.35, 0);
+            head.castShadow = true;
+            head.receiveShadow = true;
+            elephantGroup.add(head);
+            
+            // Trunk - curved and flexible
+            const trunkGeometry = new THREE.ConeGeometry(0.08, 0.6, 16);
+            const trunk = new THREE.Mesh(trunkGeometry, elephantMaterial);
+            trunk.position.set(0, 0.15, 0.25);
+            trunk.rotation.x = -0.4;
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            elephantGroup.add(trunk);
+            
+            // Trunk tip (spray point)
+            const trunkTipGeometry = new THREE.SphereGeometry(0.06, 16, 16);
+            const trunkTip = new THREE.Mesh(trunkTipGeometry, elephantMaterial);
+            trunkTip.position.set(0, -0.2, 0.6);
+            trunkTip.name = 'trunkTip';
+            elephantGroup.add(trunkTip);
+            
+            // Left ear
+            const earGeometry = new THREE.SphereGeometry(0.3, 16, 16);
+            const leftEar = new THREE.Mesh(earGeometry, elephantMaterial);
+            leftEar.position.set(-0.3, 0.3, -0.1);
+            leftEar.scale.set(0.8, 1.2, 0.3);
+            leftEar.castShadow = true;
+            leftEar.receiveShadow = true;
+            elephantGroup.add(leftEar);
+            
+            // Right ear
+            const rightEar = new THREE.Mesh(earGeometry, elephantMaterial);
+            rightEar.position.set(0.3, 0.3, -0.1);
+            rightEar.scale.set(0.8, 1.2, 0.3);
+            rightEar.castShadow = true;
+            rightEar.receiveShadow = true;
+            elephantGroup.add(rightEar);
+            
+            // Left eye
+            const eyeGeometry = new THREE.SphereGeometry(0.04, 16, 16);
+            const eyeMaterial = new THREE.MeshPhongMaterial({ color: 0x000000 });
+            const leftEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            leftEye.position.set(-0.1, 0.45, 0.2);
+            elephantGroup.add(leftEye);
+            
+            // Right eye
+            const rightEye = new THREE.Mesh(eyeGeometry, eyeMaterial);
+            rightEye.position.set(0.1, 0.45, 0.2);
+            elephantGroup.add(rightEye);
+            
+            // Front left leg
+            const legGeometry = new THREE.CylinderGeometry(0.08, 0.08, 0.4, 16);
+            const leg1 = new THREE.Mesh(legGeometry, elephantMaterial);
+            leg1.position.set(-0.2, -0.35, 0.15);
+            leg1.castShadow = true;
+            leg1.receiveShadow = true;
+            elephantGroup.add(leg1);
+            
+            // Front right leg
+            const leg2 = new THREE.Mesh(legGeometry, elephantMaterial);
+            leg2.position.set(0.2, -0.35, 0.15);
+            leg2.castShadow = true;
+            leg2.receiveShadow = true;
+            elephantGroup.add(leg2);
+            
+            // Back left leg
+            const leg3 = new THREE.Mesh(legGeometry, elephantMaterial);
+            leg3.position.set(-0.2, -0.35, -0.15);
+            leg3.castShadow = true;
+            leg3.receiveShadow = true;
+            elephantGroup.add(leg3);
+            
+            // Back right leg
+            const leg4 = new THREE.Mesh(legGeometry, elephantMaterial);
+            leg4.position.set(0.2, -0.35, -0.15);
+            leg4.castShadow = true;
+            leg4.receiveShadow = true;
+            elephantGroup.add(leg4);
+            
+            // Tusks
+            const tuskGeometry = new THREE.ConeGeometry(0.05, 0.3, 8);
+            const tuskMaterial = new THREE.MeshPhongMaterial({ color: 0xFFFDD0 });
+            
+            const leftTusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
+            leftTusk.position.set(-0.15, 0.1, 0.3);
+            leftTusk.rotation.z = 0.5;
+            leftTusk.castShadow = true;
+            elephantGroup.add(leftTusk);
+            
+            const rightTusk = new THREE.Mesh(tuskGeometry, tuskMaterial);
+            rightTusk.position.set(0.15, 0.1, 0.3);
+            rightTusk.rotation.z = -0.5;
+            rightTusk.castShadow = true;
+            elephantGroup.add(rightTusk);
+            
+            return elephantGroup;
+        }
+        
+        const elephant = createElephant();
+        elephant.position.set(0, 0, 0);
+        scene.add(elephant);
+        
+        // Water particle system
+        class WaterParticle {
+            constructor() {
+                this.reset();
+            }
+            
+            reset() {
+                // Start from trunk tip position
+                const angle = Math.random() * Math.PI * 2;
+                const elevation = Math.random() * 1.2 - 0.3;
+                const speed = 0.03 + Math.random() * 0.02;
+                
+                this.position = new THREE.Vector3(0, -0.2, 0.6);
+                this.velocity = new THREE.Vector3(
+                    Math.cos(angle) * speed,
+                    elevation * 0.02,
+                    Math.sin(angle) * speed
+                );
+                this.life = 1.0;
+                this.maxLife = 1.0;
+                this.gravity = 0.0015;
+            }
+            
+            update() {
+                this.position.add(this.velocity);
+                this.velocity.y -= this.gravity;
+                this.life -= 0.015;
+                
+                if (this.life <= 0) {
+                    this.reset();
+                }
+            }
+        }
+        
+        // Create water particles
+        const waterParticles = [];
+        for (let i = 0; i < 150; i++) {
+            waterParticles.push(new WaterParticle());
+        }
+        
+        // Create water particle geometry and mesh
+        const waterGeometry = new THREE.BufferGeometry();
+        const waterPositions = new Float32Array(waterParticles.length * 3);
+        
+        waterParticles.forEach((particle, i) => {
+            waterPositions[i * 3] = particle.position.x;
+            waterPositions[i * 3 + 1] = particle.position.y;
+            waterPositions[i * 3 + 2] = particle.position.z;
+        });
+        
+        waterGeometry.setAttribute('position', new THREE.BufferAttribute(waterPositions, 3));
+        
+        const waterMaterial = new THREE.PointsMaterial({
+            color: 0x64c8ff,
+            size: 0.05,
+            transparent: true,
+            opacity: 0.8,
+            sizeAttenuation: true
+        });
+        
+        const waterMesh = new THREE.Points(waterGeometry, waterMaterial);
+        scene.add(waterMesh);
+        
         // Create SUN with corona effect
         const sunGroup = new THREE.Group();
         
@@ -892,6 +1073,25 @@
                 
                 texture.needsUpdate = true;
             }
+            
+            // Update water particles
+            const positions = waterGeometry.attributes.position.array;
+            waterParticles.forEach((particle, i) => {
+                particle.update();
+                positions[i * 3] = particle.position.x;
+                positions[i * 3 + 1] = particle.position.y;
+                positions[i * 3 + 2] = particle.position.z;
+            });
+            waterGeometry.attributes.position.needsUpdate = true;
+            
+            // Animate elephant trunk
+            const trunkWave = Math.sin(Date.now() * 0.003) * 0.15;
+            elephant.children.forEach(child => {
+                if (child.name === 'trunkTip') {
+                    child.position.z = 0.6 + trunkWave * 0.2;
+                    child.position.y = -0.2 + Math.sin(Date.now() * 0.004) * 0.1;
+                }
+            });
             
             // Rotate planet
             planet.rotation.y += 0.0005;
