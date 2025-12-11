@@ -5,11 +5,11 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; } h1 { font-size: 3rem; text-align: center; } @keyframes orbit { 0% { transform: translate(-50%, -150px); } 100% { transform: translate(250px, -50%); } } @keyframes kitty-orbit { 0% { transform: translate(-50%, -150px) rotate(0deg); } 100% { transform: translate(250px, -50%) rotate(360deg); } }</style>
+<style>body { font-family: system-ui, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; } h1 { font-size: 3rem; text-align: center; } @keyframes orbit { 0% { transform: translate(-50%, -150px); } 100% { transform: translate(250px, -50%); } } @keyframes kitty-orbit { 0% { transform: translate(-50%, -150px) rotate(0deg); } 100% { transform: translate(250px, -50%) rotate(360deg); } }@keyframes dog-chase { 0% { transform: translate(-50%, -100px); } 50% { transform: translate(300px, 0); } 100% { transform: translate(-50%, -100px); } } @keyframes kitty-escape { 0% { transform: translate(-50%, -150px) rotate(0deg); } 25% { transform: translate(300px, -200px) rotate(360deg); } 50% { transform: translate(250px, -50%) rotate(360deg); } 100% { transform: translate(-50%, -150px) rotate(0deg); } }</style>
 </head>
 <body>
 <h1>Hello World</h1>
-<img alt="A beautiful planet" src="https://example.com/planet.png" style="width: 200px; margin-top: 20px;"/><div id="moon-container" style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center;"><div id="moon" style="width: 40px; height: 40px; background-color: #ccc; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: orbit 5s linear infinite; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div><div id="kitty" style="width: 60px; height: 60px; background-image: url('https://placekitten.com/60/60'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: kitty-orbit 10s linear infinite;"></div></div><script>document.getElementById('pause-button').addEventListener('click', function() {
+<img alt="A beautiful planet" src="https://example.com/planet.png" style="width: 200px; margin-top: 20px;"/><div id="moon-container" style="position: relative; width: 300px; height: 300px; display: flex; align-items: center; justify-content: center;"><div id="moon" style="width: 40px; height: 40px; background-color: #ccc; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); animation: orbit 5s linear infinite; box-shadow: 0 0 10px rgba(0,0,0,0.5);"></div><div id="kitty" style="width: 60px; height: 60px; background-image: url('https://placekitten.com/60/60'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: kitty-orbit 10s linear infinite;"></div><div id="dog" style="width: 50px; height: 50px; background-image: url('https://place-puppy.com/50x50'); border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -150px); animation: dog-chase 6s linear infinite;"></div></div><script>document.getElementById('pause-button').addEventListener('click', function() {
   var audio = document.getElementById('background-music');
   if (audio.paused) {
     audio.play();
@@ -18,7 +18,7 @@
     audio.pause();
     this.textContent = 'Play Music';
   }
-});</script><audio id="background-music" loop="">
+});<script>document.getElementById('dog').addEventListener('animationiteration', function() { var kitty = document.getElementById('kitty'); kitty.style.animationName = 'kitty-escape'; setTimeout(function() { kitty.style.animationName = 'kitty-orbit'; }, 1500); });</script><audio id="background-music" loop="">
 <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
   Your browser does not support the audio element.
 </audio>
