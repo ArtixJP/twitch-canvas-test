@@ -5,8 +5,7 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
-<style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+<style>@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
         
         body { 
             font-family: 'Poppins', sans-serif; 
@@ -15,22 +14,117 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #0a0a15 0%, #0d1520 50%, #081225 100%);
             color: white;
             overflow: hidden;
         }
         
+        .rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+            overflow: hidden;
+        }
+        
+        .raindrop {
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(transparent, rgba(174, 194, 224, 0.6));
+            animation: rain-fall linear infinite;
+        }
+        
+        @keyframes rain-fall {
+            0% {
+                transform: translateY(-100px);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh);
+                opacity: 0.3;
+            }
+        }
+        
+        .lightning {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 99;
+            background: transparent;
+            animation: lightning-flash 4s infinite;
+        }
+        
+        @keyframes lightning-flash {
+            0%, 89%, 91%, 93%, 95%, 100% {
+                background: transparent;
+            }
+            90%, 92%, 94% {
+                background: rgba(255, 255, 255, 0.3);
+            }
+        }
+        
+        .lightning-bolt {
+            position: fixed;
+            font-size: 8rem;
+            color: #fff;
+            text-shadow: 0 0 30px #fff, 0 0 60px #87ceeb, 0 0 90px #87ceeb;
+            opacity: 0;
+            z-index: 101;
+            animation: bolt-flash 4s infinite;
+        }
+        
+        .lightning-bolt:nth-child(1) {
+            top: 5%;
+            left: 20%;
+            animation-delay: 0s;
+        }
+        
+        .lightning-bolt:nth-child(2) {
+            top: 10%;
+            right: 25%;
+            animation-delay: 2s;
+        }
+        
+        .lightning-bolt:nth-child(3) {
+            top: 0%;
+            left: 60%;
+            animation-delay: 3.5s;
+        }
+        
+        @keyframes bolt-flash {
+            0%, 89%, 95%, 100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            90%, 92% {
+                opacity: 1;
+                transform: scale(1.1);
+            }
+            91%, 93%, 94% {
+                opacity: 0.5;
+                transform: scale(1);
+            }
+        }
+        
         .weather-card {
-            background: rgba(255,255,255,0.1);
+            background: rgba(20, 30, 50, 0.8);
             backdrop-filter: blur(20px);
             border-radius: 30px;
             padding: 40px;
             text-align: center;
-            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5), 0 0 100px rgba(100, 149, 237, 0.1);
             border: 1px solid rgba(255,255,255,0.1);
             position: relative;
             overflow: hidden;
             min-width: 350px;
+            z-index: 50;
         }
         
         .weather-card::before {
@@ -40,7 +134,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(100, 149, 237, 0.1) 0%, transparent 70%);
             animation: shimmer 8s infinite linear;
         }
         
@@ -67,12 +161,13 @@
             margin: 20px 0;
             position: relative;
             z-index: 1;
-            animation: float 3s ease-in-out infinite;
+            animation: storm-shake 0.5s ease-in-out infinite;
         }
         
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        @keyframes storm-shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(-3px) rotate(-2deg); }
+            75% { transform: translateX(3px) rotate(2deg); }
         }
         
         .temperature {
@@ -80,7 +175,7 @@
             font-weight: 600;
             position: relative;
             z-index: 1;
-            background: linear-gradient(135deg, #fff 0%, #a8d8ff 100%);
+            background: linear-gradient(135deg, #b8c6db 0%, #6b7b8c 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -131,15 +226,16 @@
             bottom: -20px;
             right: 5%;
             font-size: 15rem;
-            opacity: 0.05;
+            opacity: 0.03;
             z-index: 0;
         }
         
         .cloud {
             position: fixed;
             font-size: 4rem;
-            opacity: 0.1;
+            opacity: 0.15;
             animation: drift 20s linear infinite;
+            filter: brightness(0.5);
         }
         
         .cloud:nth-child(1) { top: 10%; left: -10%; animation-duration: 25s; }
@@ -157,19 +253,18 @@
             margin-top: 20px;
             position: relative;
             z-index: 1;
-        }
-    </style>
+        }</style>
 </head>
-<body>
+<body><div class="rain-container" id="rain"></div><div class="lightning" id="lightning"></div>
 <div class="cloud">☁️</div>
 <div class="cloud">☁️</div>
 <div class="cloud">☁️</div>
 <div class="eiffel">🗼</div>
 <div class="weather-card">
 <div class="location">Paris, France <span>🇫🇷</span></div>
-<div class="weather-icon">⛅</div>
+<div class="weather-icon">⛈️</div>
 <div class="temperature">18°C</div>
-<div class="description">Partly Cloudy</div>
+<div class="description">Thunderstorm</div>
 <div class="details">
 <div class="detail-item">
 <div class="detail-icon">💧</div>
@@ -187,7 +282,30 @@
 <div class="detail-label">Feels Like</div>
 </div>
 </div>
-<div class="update-time">Updated just now • Typical spring weather in Paris</div>
+<div class="update-time">Updated just now • Severe thunderstorm warning in effect ⚠️</div>
 </div>
-</body>
+<div class="lightning-bolt">⚡</div><div class="lightning-bolt">⚡</div><div class="lightning-bolt">⚡</div><script>
+(function() {
+    const rainContainer = document.getElementById('rain');
+    const numDrops = 150;
+    
+    for (let i = 0; i < numDrops; i++) {
+        const drop = document.createElement('div');
+        drop.className = 'raindrop';
+        drop.style.left = Math.random() * 100 + '%';
+        drop.style.animationDuration = (Math.random() * 0.5 + 0.5) + 's';
+        drop.style.animationDelay = Math.random() * 2 + 's';
+        drop.style.height = (Math.random() * 20 + 10) + 'px';
+        drop.style.opacity = Math.random() * 0.5 + 0.3;
+        rainContainer.appendChild(drop);
+    }
+    
+    // Thunder sound simulation with random flashes
+    setInterval(() => {
+        const bolts = document.querySelectorAll('.lightning-bolt');
+        const randomBolt = bolts[Math.floor(Math.random() * bolts.length)];
+        randomBolt.style.left = Math.random() * 80 + 10 + '%';
+    }, 4000);
+})();
+</script></body>
 </html>
