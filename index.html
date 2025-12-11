@@ -4,601 +4,388 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code</title>
-<style>body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #16213e 100%);
-            color: white;
-            overflow: hidden;
-        }
-        h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; text-shadow: 0 0 20px rgba(100, 200, 255, 0.5); }
-        
-        .planet-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            perspective: 1000px;
-        }
-        
-        .planet {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--planet-color-1, #4a9eff) 0%, var(--planet-color-2, #1e5aa8) 30%, var(--planet-color-3, #0d2847) 70%, var(--planet-color-4, #051525) 100%);
-            box-shadow: 
-                inset -30px -30px 60px rgba(0,0,0,0.8),
-                inset 10px 10px 40px rgba(100, 180, 255, 0.3),
-                0 0 60px var(--planet-glow, rgba(74, 158, 255, 0.4)),
-                0 0 100px var(--planet-glow, rgba(74, 158, 255, 0.2));
-            animation: rotate 20s linear infinite;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.5s ease-out;
-        }
-        
-        .planet.caught {
-            animation: rotate 20s linear infinite, planetPulse 0.5s ease-out;
-        }
-        
-        @keyframes planetPulse {
-            0% { transform: scale(1); filter: brightness(1); }
-            50% { transform: scale(1.15); filter: brightness(1.8); }
-            100% { transform: scale(1); filter: brightness(1); }
-        }
-        
-        .planet::before {
-            content: '';
-            position: absolute;
-            top: 20%;
-            left: 10%;
-            width: 60%;
-            height: 15%;
-            background: rgba(255,255,255,0.1);
-            border-radius: 50%;
-            filter: blur(10px);
-        }
-        
-        .planet::after {
-            content: '';
-            position: absolute;
-            top: 45%;
-            left: 5%;
-            width: 80%;
-            height: 8%;
-            background: rgba(30, 90, 168, 0.5);
-            border-radius: 50%;
-            filter: blur(5px);
-        }
-        
-        .ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 300px;
-            height: 80px;
-            border: 8px solid transparent;
-            border-top-color: var(--ring-color, rgba(200, 180, 150, 0.6));
-            border-bottom-color: var(--ring-color-2, rgba(200, 180, 150, 0.3));
-            border-radius: 50%;
-            transform: translate(-50%, -50%) rotateX(75deg);
-            animation: ring-rotate 20s linear infinite;
-            box-shadow: 0 0 20px var(--ring-glow, rgba(200, 180, 150, 0.3));
-            transition: all 0.5s ease-out;
-        }
-        
-        .ring::before {
-            content: '';
-            position: absolute;
-            top: -15px;
-            left: -15px;
-            right: -15px;
-            bottom: -15px;
-            border: 4px solid transparent;
-            border-top-color: rgba(180, 160, 130, 0.4);
-            border-radius: 50%;
-        }
-        
-        .moon-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 350px;
-            height: 350px;
-            margin-left: -175px;
-            margin-top: -175px;
-            animation: orbit 8s linear infinite;
-            pointer-events: none;
-        }
-        
-        .moon {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 35px;
-            height: 35px;
-            margin-left: -17.5px;
-            margin-top: -17.5px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 30%, #808080 70%, #505050 100%);
-            box-shadow: 
-                inset -8px -8px 20px rgba(0,0,0,0.6),
-                inset 3px 3px 10px rgba(255, 255, 255, 0.3),
-                0 0 20px rgba(200, 200, 200, 0.4),
-                0 0 40px rgba(200, 200, 200, 0.2);
-        }
-        
-        .moon::before {
-            content: '';
-            position: absolute;
-            top: 25%;
-            left: 20%;
-            width: 8px;
-            height: 8px;
-            background: rgba(100, 100, 100, 0.5);
-            border-radius: 50%;
-        }
-        
-        .moon::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 55%;
-            width: 6px;
-            height: 6px;
-            background: rgba(80, 80, 80, 0.4);
-            border-radius: 50%;
-        }
-        
-        /* Cute Space Kitty */
-        .kitty-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 280px;
-            height: 280px;
-            margin-left: -140px;
-            margin-top: -140px;
-            pointer-events: none;
-        }
-        
-        .kitty {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 50px;
-            height: 45px;
-            margin-left: -25px;
-            margin-top: -22px;
-            animation: kitty-float 2s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.6));
-        }
-        
-        .kitty-head {
-            position: absolute;
-            width: 40px;
-            height: 35px;
-            background: linear-gradient(135deg, #ffb6c1 0%, #ff91a4 50%, #ff69b4 100%);
-            border-radius: 50% 50% 45% 45%;
-            top: 5px;
-            left: 5px;
-            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), inset 3px 3px 10px rgba(255,255,255,0.3);
-        }
-        
-        .kitty-ear-left, .kitty-ear-right {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 8px solid transparent;
-            border-right: 8px solid transparent;
-            border-bottom: 14px solid #ff91a4;
-            top: 0;
-        }
-        
-        .kitty-ear-left {
-            left: 5px;
-            transform: rotate(-15deg);
-        }
-        
-        .kitty-ear-right {
-            right: 5px;
-            transform: rotate(15deg);
-        }
-        
-        .kitty-ear-inner-left, .kitty-ear-inner-right {
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 4px solid transparent;
-            border-right: 4px solid transparent;
-            border-bottom: 8px solid #ffcdd2;
-            top: 3px;
-        }
-        
-        .kitty-ear-inner-left {
-            left: 9px;
-            transform: rotate(-15deg);
-        }
-        
-        .kitty-ear-inner-right {
-            right: 9px;
-            transform: rotate(15deg);
-        }
-        
-        .kitty-eye {
-            position: absolute;
-            width: 10px;
-            height: 12px;
-            background: #333;
-            border-radius: 50%;
-            top: 18px;
-            animation: blink 4s ease-in-out infinite;
-        }
-        
-        .kitty-eye::after {
-            content: '';
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-        }
-        
-        .kitty-eye-left {
-            left: 12px;
-        }
-        
-        .kitty-eye-right {
-            right: 12px;
-        }
-        
-        .kitty-nose {
-            position: absolute;
-            width: 6px;
-            height: 5px;
-            background: #ff69b4;
-            border-radius: 50% 50% 40% 40%;
-            top: 26px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .kitty-mouth {
-            position: absolute;
-            width: 12px;
-            height: 6px;
-            border: 2px solid #ff69b4;
-            border-top: none;
-            border-radius: 0 0 50% 50%;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: transparent;
-        }
-        
-        .kitty-whisker {
-            position: absolute;
-            width: 15px;
-            height: 1px;
-            background: #ff69b4;
-            top: 28px;
-        }
-        
-        .kitty-whisker-left-1 { left: -8px; transform: rotate(-10deg); }
-        .kitty-whisker-left-2 { left: -10px; top: 31px; transform: rotate(0deg); }
-        .kitty-whisker-right-1 { right: -8px; transform: rotate(10deg); }
-        .kitty-whisker-right-2 { right: -10px; top: 31px; transform: rotate(0deg); }
-        
-        .kitty-helmet {
-            position: absolute;
-            width: 48px;
-            height: 43px;
-            border: 3px solid rgba(255,255,255,0.5);
-            border-radius: 50%;
-            top: 1px;
-            left: 1px;
-            background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.3), transparent);
-        }
-        
-        /* Space Dog */
-        .dog-orbit {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 280px;
-            height: 280px;
-            margin-left: -140px;
-            margin-top: -140px;
-            pointer-events: none;
-        }
-        
-        .doggy {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 55px;
-            height: 50px;
-            margin-left: -27px;
-            margin-top: -25px;
-            animation: doggy-float 1.5s ease-in-out infinite;
-            filter: drop-shadow(0 0 10px rgba(210, 180, 140, 0.6));
-        }
-        
-        .doggy-head {
-            position: absolute;
-            width: 42px;
-            height: 38px;
-            background: linear-gradient(135deg, #d2b48c 0%, #c4a574 50%, #a67c52 100%);
-            border-radius: 50% 50% 45% 45%;
-            top: 8px;
-            left: 6px;
-            box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), inset 3px 3px 10px rgba(255,255,255,0.3);
-        }
-        
-        .doggy-ear-left, .doggy-ear-right {
-            position: absolute;
-            width: 14px;
-            height: 22px;
-            background: linear-gradient(135deg, #c4a574 0%, #8b6914 100%);
-            border-radius: 50% 50% 60% 60%;
-            top: 2px;
-        }
-        
-        .doggy-ear-left {
-            left: 0;
-            transform: rotate(-20deg);
-        }
-        
-        .doggy-ear-right {
-            right: 0;
-            transform: rotate(20deg);
-        }
-        
-        .doggy-eye {
-            position: absolute;
-            width: 11px;
-            height: 13px;
-            background: #222;
-            border-radius: 50%;
-            top: 18px;
-            animation: dog-blink 3s ease-in-out infinite;
-        }
-        
-        .doggy-eye::after {
-            content: '';
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            background: white;
-            border-radius: 50%;
-            top: 2px;
-            left: 2px;
-        }
-        
-        .doggy-eye-left {
-            left: 12px;
-        }
-        
-        .doggy-eye-right {
-            right: 12px;
-        }
-        
-        .doggy-nose {
-            position: absolute;
-            width: 10px;
-            height: 8px;
-            background: #333;
-            border-radius: 50%;
-            top: 28px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        
-        .doggy-tongue {
-            position: absolute;
-            width: 8px;
-            height: 12px;
-            background: #ff6b8a;
-            border-radius: 0 0 50% 50%;
-            top: 34px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: tongue-wag 0.3s ease-in-out infinite;
-        }
-        
-        .doggy-helmet {
-            position: absolute;
-            width: 52px;
-            height: 46px;
-            border: 3px solid rgba(255,255,255,0.5);
-            border-radius: 50%;
-            top: 4px;
-            left: 1px;
-            background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.3), transparent);
-        }
-        
-        .doggy-tail {
-            position: absolute;
-            width: 6px;
-            height: 18px;
-            background: #c4a574;
-            border-radius: 50%;
-            top: 30px;
-            right: -8px;
-            transform-origin: top center;
-            animation: tail-wag 0.2s ease-in-out infinite;
-        }
-        
-        .kitty.escaping {
-            animation: kitty-float 0.5s ease-in-out infinite !important;
-        }
-        
-        .kitty.escaping .kitty-eye {
-            transform: scaleY(0.5);
-        }
-        
-        .doggy.chasing-fast {
-            animation: doggy-float 0.3s ease-in-out infinite !important;
-        }
-        
-        .stars {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .star {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 2s ease-in-out infinite;
-        }
-        
-        .music-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            padding: 12px 24px;
-            background: linear-gradient(135deg, rgba(74, 158, 255, 0.3), rgba(30, 90, 168, 0.5));
-            border: 2px solid rgba(100, 180, 255, 0.4);
-            border-radius: 50px;
-            color: white;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
-            transition: all 0.3s ease;
-            z-index: 100;
-        }
-        
-        .music-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 30px rgba(74, 158, 255, 0.5);
-            background: linear-gradient(135deg, rgba(74, 158, 255, 0.5), rgba(30, 90, 168, 0.7));
-        }
-        
-        .music-btn:active {
-            transform: scale(0.98);
-        }
-        
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes ring-rotate {
-            from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
-            to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
-        }
-        
-        @keyframes orbit {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        
-        @keyframes orbit-reverse {
-            from { transform: rotate(360deg); }
-            to { transform: rotate(0deg); }
-        }
-        
-        @keyframes kitty-float {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-5px) rotate(5deg); }
-        }
-        
-        @keyframes doggy-float {
-            0%, 100% { transform: translateY(0) rotate(5deg); }
-            50% { transform: translateY(-4px) rotate(-5deg); }
-        }
-        
-        @keyframes blink {
-            0%, 45%, 55%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.1); }
-        }
-        
-        @keyframes dog-blink {
-            0%, 40%, 50%, 100% { transform: scaleY(1); }
-            45% { transform: scaleY(0.1); }
-        }
-        
-        @keyframes tongue-wag {
-            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
-            50% { transform: translateX(-50%) rotate(5deg); }
-        }
-        
-        @keyframes tail-wag {
-            0%, 100% { transform: rotate(-15deg); }
-            50% { transform: rotate(15deg); }
-        }
-        
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-        #three-container {
-          mix-blend-mode: screen;
-        }
-        
-        .planet-container {
-          z-index: 10;
-          position: relative;
-        }
-        
-        h1 {
-          z-index: 10;
-          position: relative;
-        }
-        
-        /* Sun light effect on page */
-        body::before {
-          content: '';
-          position: fixed;
-          top: -20%;
-          left: -20%;
-          width: 50%;
-          height: 50%;
-          background: radial-gradient(ellipse at center, rgba(255, 200, 100, 0.15) 0%, transparent 70%);
-          pointer-events: none;
-          z-index: 1;
-          animation: sunPulse 4s ease-in-out infinite;
-        }
-        
-        @keyframes sunPulse {
-          0%, 100% { opacity: 0.8; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.1); }
-        }
-/* Space Elephant */
-.elephant-container {
+<title>Space Adventure Hub</title>
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body { 
+  font-family: system-ui, sans-serif; 
+  display: flex; 
+  flex-direction: column;
+  min-height: 100vh; 
+  margin: 0;
+  background: linear-gradient(135deg, #0a0a15 0%, #1a1a2e 50%, #16213e 100%);
+  color: white;
+  overflow-x: hidden;
+}
+
+/* Navigation Menu */
+.nav-menu {
   position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: linear-gradient(135deg, rgba(20, 20, 40, 0.95), rgba(30, 30, 60, 0.95));
+  backdrop-filter: blur(10px);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  border-bottom: 2px solid rgba(100, 180, 255, 0.3);
+  box-shadow: 0 5px 30px rgba(0, 0, 0, 0.5);
+}
+
+.nav-btn {
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.2), rgba(30, 90, 168, 0.3));
+  border: 2px solid rgba(100, 180, 255, 0.4);
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  transform: scale(1.05);
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.4), rgba(30, 90, 168, 0.5));
+  box-shadow: 0 0 20px rgba(74, 158, 255, 0.4);
+}
+
+.nav-btn.active {
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.6), rgba(30, 90, 168, 0.7));
+  box-shadow: 0 0 25px rgba(74, 158, 255, 0.6);
+  border-color: rgba(100, 180, 255, 0.8);
+}
+
+/* Sections */
+.section {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding-top: 80px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.section.active {
+  display: flex;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title {
+  font-size: 3rem;
+  text-align: center;
+  margin-bottom: 2rem;
+  text-shadow: 0 0 20px rgba(100, 200, 255, 0.5);
+}
+
+/* Space Section */
+#space-section {
+  position: relative;
+}
+
+#three-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.planet-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  perspective: 1000px;
+  z-index: 10;
+}
+
+.planet {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4a9eff 0%, #1e5aa8 30%, #0d2847 70%, #051525 100%);
+  box-shadow: 
+    inset -30px -30px 60px rgba(0,0,0,0.8),
+    inset 10px 10px 40px rgba(100, 180, 255, 0.3),
+    0 0 60px rgba(74, 158, 255, 0.4),
+    0 0 100px rgba(74, 158, 255, 0.2);
+  animation: rotate 20s linear infinite;
+  position: relative;
+  overflow: hidden;
+}
+
+.ring {
+  position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 45;
+  width: 300px;
+  height: 80px;
+  border: 8px solid transparent;
+  border-top-color: rgba(200, 180, 150, 0.6);
+  border-bottom-color: rgba(200, 180, 150, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) rotateX(75deg);
+  animation: ring-rotate 20s linear infinite;
+}
+
+.moon-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 350px;
+  height: 350px;
+  margin-left: -175px;
+  margin-top: -175px;
+  animation: orbit 8s linear infinite;
   pointer-events: none;
 }
 
-.space-elephant {
+.moon {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 35px;
+  height: 35px;
+  margin-left: -17.5px;
+  margin-top: -17.5px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 30%, #808080 70%, #505050 100%);
+  box-shadow: 
+    inset -8px -8px 20px rgba(0,0,0,0.6),
+    inset 3px 3px 10px rgba(255, 255, 255, 0.3),
+    0 0 20px rgba(200, 200, 200, 0.4);
+}
+
+/* Animals Section */
+#animals-section .animals-container {
+  display: flex;
+  gap: 100px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.animal-card {
+  background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+  border: 2px solid rgba(255,255,255,0.2);
+  border-radius: 20px;
+  padding: 30px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+}
+
+.animal-card h3 {
+  margin-top: 15px;
+  font-size: 1.5rem;
+}
+
+/* Kitty */
+.kitty-display {
+  width: 80px;
+  height: 75px;
+  position: relative;
+  animation: kitty-float 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(255, 182, 193, 0.6));
+  margin: 0 auto;
+}
+
+.kitty-head {
+  position: absolute;
+  width: 60px;
+  height: 55px;
+  background: linear-gradient(135deg, #ffb6c1 0%, #ff91a4 50%, #ff69b4 100%);
+  border-radius: 50% 50% 45% 45%;
+  top: 10px;
+  left: 10px;
+  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), inset 3px 3px 10px rgba(255,255,255,0.3);
+}
+
+.kitty-ear-left, .kitty-ear-right {
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 20px solid #ff91a4;
+  top: 0;
+}
+
+.kitty-ear-left { left: 8px; transform: rotate(-15deg); }
+.kitty-ear-right { right: 8px; transform: rotate(15deg); }
+
+.kitty-eye {
+  position: absolute;
+  width: 12px;
+  height: 14px;
+  background: #333;
+  border-radius: 50%;
+  top: 25px;
+  animation: blink 4s ease-in-out infinite;
+}
+
+.kitty-eye::after {
+  content: '';
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+}
+
+.kitty-eye-left { left: 18px; }
+.kitty-eye-right { right: 18px; }
+
+.kitty-nose {
+  position: absolute;
+  width: 8px;
+  height: 6px;
+  background: #ff69b4;
+  border-radius: 50% 50% 40% 40%;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.kitty-helmet {
+  position: absolute;
+  width: 75px;
+  height: 68px;
+  border: 3px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  top: 3px;
+  left: 3px;
+  background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.3), transparent);
+}
+
+/* Doggy */
+.doggy-display {
+  width: 85px;
+  height: 80px;
+  position: relative;
+  animation: doggy-float 1.5s ease-in-out infinite;
+  filter: drop-shadow(0 0 15px rgba(210, 180, 140, 0.6));
+  margin: 0 auto;
+}
+
+.doggy-head {
+  position: absolute;
+  width: 62px;
+  height: 55px;
+  background: linear-gradient(135deg, #d2b48c 0%, #c4a574 50%, #a67c52 100%);
+  border-radius: 50% 50% 45% 45%;
+  top: 15px;
+  left: 12px;
+  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2), inset 3px 3px 10px rgba(255,255,255,0.3);
+}
+
+.doggy-ear-left, .doggy-ear-right {
+  position: absolute;
+  width: 20px;
+  height: 30px;
+  background: linear-gradient(135deg, #c4a574 0%, #8b6914 100%);
+  border-radius: 50% 50% 60% 60%;
+  top: 5px;
+}
+
+.doggy-ear-left { left: 5px; transform: rotate(-20deg); }
+.doggy-ear-right { right: 5px; transform: rotate(20deg); }
+
+.doggy-eye {
+  position: absolute;
+  width: 13px;
+  height: 15px;
+  background: #222;
+  border-radius: 50%;
+  top: 25px;
+  animation: dog-blink 3s ease-in-out infinite;
+}
+
+.doggy-eye::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+}
+
+.doggy-eye-left { left: 18px; }
+.doggy-eye-right { right: 18px; }
+
+.doggy-nose {
+  position: absolute;
+  width: 12px;
+  height: 10px;
+  background: #333;
+  border-radius: 50%;
+  top: 38px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.doggy-tongue {
+  position: absolute;
+  width: 10px;
+  height: 15px;
+  background: #ff6b8a;
+  border-radius: 0 0 50% 50%;
+  top: 46px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: tongue-wag 0.3s ease-in-out infinite;
+}
+
+.doggy-helmet {
+  position: absolute;
+  width: 78px;
+  height: 70px;
+  border: 3px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+  top: 8px;
+  left: 3px;
+  background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.3), transparent);
+}
+
+.doggy-tail {
+  position: absolute;
+  width: 8px;
+  height: 22px;
+  background: #c4a574;
+  border-radius: 50%;
+  top: 45px;
+  right: -5px;
+  transform-origin: top center;
+  animation: tail-wag 0.2s ease-in-out infinite;
+}
+
+/* Elephant */
+.elephant-display {
   width: 120px;
   height: 100px;
   position: relative;
   animation: elephant-bounce 2s ease-in-out infinite;
   filter: drop-shadow(0 0 15px rgba(150, 150, 200, 0.6));
+  margin: 0 auto;
 }
 
 .elephant-body {
@@ -620,7 +407,6 @@
   border-radius: 50%;
   top: 20px;
   left: 5px;
-  box-shadow: inset -5px -5px 15px rgba(0,0,0,0.2);
 }
 
 .elephant-ear {
@@ -628,7 +414,7 @@
   width: 30px;
   height: 35px;
   background: linear-gradient(135deg, #b0b0d0 0%, #8080a0 100%);
-  border-radius: 50% 50% 50% 50%;
+  border-radius: 50%;
   top: 15px;
   left: -10px;
   transform: rotate(-20deg);
@@ -724,16 +510,156 @@
 .elephant-leg-3 { left: 65px; }
 .elephant-leg-4 { left: 85px; }
 
-.water-stream {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  background: radial-gradient(circle, #6af 0%, #39f 50%, #06c 100%);
-  border-radius: 50%;
+/* Games Section */
+#games-section {
+  position: relative;
+}
+
+#games-section .game-container {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+}
+
+#scoreBoard {
+  position: relative;
+  background: linear-gradient(135deg, rgba(210, 180, 140, 0.3), rgba(139, 105, 20, 0.5));
+  border: 2px solid rgba(210, 180, 140, 0.6);
+  border-radius: 15px;
+  padding: 15px 25px;
+  font-size: 1.2rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(210, 180, 140, 0.3);
+  margin-bottom: 20px;
+}
+
+#gameLayer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  animation: water-fly 1s ease-out forwards;
-  box-shadow: 0 0 10px rgba(100, 170, 255, 0.8), 0 0 20px rgba(100, 170, 255, 0.4);
-  z-index: 55;
+  z-index: 50;
+}
+
+#gameOverScreen {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  z-index: 200;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+/* Stars background */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: white;
+  border-radius: 50%;
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+/* Music Button */
+.music-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, rgba(74, 158, 255, 0.3), rgba(30, 90, 168, 0.5));
+  border: 2px solid rgba(100, 180, 255, 0.4);
+  border-radius: 50px;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 20px rgba(74, 158, 255, 0.3);
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.music-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(74, 158, 255, 0.5);
+}
+
+/* Game styles */
+.asteroid {
+  position: absolute;
+  pointer-events: auto;
+  cursor: crosshair;
+  transition: transform 0.1s;
+  filter: drop-shadow(0 0 10px rgba(255, 100, 50, 0.6));
+  z-index: 51;
+}
+
+.asteroid:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0 0 20px rgba(255, 200, 50, 0.9));
+}
+
+.explosion {
+  position: absolute;
+  pointer-events: none;
+  animation: explode 0.5s ease-out forwards;
+  z-index: 52;
+}
+
+.score-popup {
+  position: absolute;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #ffd700;
+  text-shadow: 0 0 10px rgba(255,215,0,0.8);
+  pointer-events: none;
+  animation: scoreFloat 1s ease-out forwards;
+  z-index: 60;
+}
+
+/* Animations */
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes ring-rotate {
+  from { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(0deg); }
+  to { transform: translate(-50%, -50%) rotateX(75deg) rotateZ(360deg); }
+}
+
+@keyframes orbit {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes kitty-float {
+  0%, 100% { transform: translateY(0) rotate(-5deg); }
+  50% { transform: translateY(-5px) rotate(5deg); }
+}
+
+@keyframes doggy-float {
+  0%, 100% { transform: translateY(0) rotate(5deg); }
+  50% { transform: translateY(-4px) rotate(-5deg); }
 }
 
 @keyframes elephant-bounce {
@@ -748,38 +674,136 @@
   90% { transform: rotate(-20deg); }
 }
 
+@keyframes blink {
+  0%, 45%, 55%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+@keyframes dog-blink {
+  0%, 40%, 50%, 100% { transform: scaleY(1); }
+  45% { transform: scaleY(0.1); }
+}
+
 @keyframes elephant-blink {
   0%, 45%, 55%, 100% { transform: scaleY(1); }
   50% { transform: scaleY(0.1); }
 }
 
-@keyframes water-fly {
-  0% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(0.5); }
+@keyframes tongue-wag {
+  0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+  50% { transform: translateX(-50%) rotate(5deg); }
 }
 
-.water-splash {
-  position: absolute;
-  font-size: 1.5rem;
-  pointer-events: none;
-  animation: splash-pop 0.5s ease-out forwards;
-  z-index: 56;
+@keyframes tail-wag {
+  0%, 100% { transform: rotate(-15deg); }
+  50% { transform: rotate(15deg); }
 }
 
-@keyframes splash-pop {
-  0% { opacity: 1; transform: scale(0.5); }
-  100% { opacity: 0; transform: scale(1.5); }
-}</style>
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+@keyframes explode {
+  0% { transform: scale(0.5); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes scoreFloat {
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
+}
+
+@keyframes damageFlash {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(2) hue-rotate(30deg); }
+}
+
+.damage-flash {
+  animation: damageFlash 0.3s ease-out;
+}
+
+#restartBtn {
+  padding: 15px 40px;
+  font-size: 1.3rem;
+  background: linear-gradient(135deg, #4ade80, #22c55e);
+  border: none;
+  border-radius: 30px;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(74,222,128,0.5);
+  transition: all 0.3s;
+}
+
+#restartBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(74,222,128,0.8);
+}
+</style>
 </head>
-<body><div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;"></div>
-<h1>🌌 Defend the Planet! 🌌</h1>
-<p style="text-align: center; color: rgba(255,255,255,0.7); margin-top: -1rem; margin-bottom: 1rem; font-size: 1.1rem;">Click asteroids before they hit! 💥</p><div id="scoreBoard" style="position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, rgba(210, 180, 140, 0.3), rgba(139, 105, 20, 0.5)); border: 2px solid rgba(210, 180, 140, 0.6); border-radius: 15px; padding: 15px 25px; font-size: 1.2rem; z-index: 100; backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(210, 180, 140, 0.3);">
-  🐕 Dog Score: <span id="dogScore" style="font-weight: bold; font-size: 1.5rem; color: #ffd700;">0</span>
-<br/><span style="font-size: 0.9rem; opacity: 0.8;">☄️ Asteroids Destroyed:</span> <span id="asteroidScore" style="font-weight: bold; font-size: 1.3rem; color: #ff6b6b;">0</span>
-<br/><span style="font-size: 0.9rem; opacity: 0.8;">❤️ Planet Health:</span> <span id="planetHealth" style="font-weight: bold; font-size: 1.3rem; color: #4ade80;">100</span>
+<body>
+<!-- Navigation Menu -->
+<nav class="nav-menu">
+<button class="nav-btn active" data-section="space">🌌 Space</button>
+<button class="nav-btn" data-section="animals">🐾 Animals</button>
+<button class="nav-btn" data-section="games">🎮 Games</button>
+</nav>
+<!-- Stars Background -->
+<div class="stars" id="stars"></div>
+<!-- Three.js Container -->
+<div id="three-container"></div>
+<!-- SPACE SECTION -->
+<section class="section active" id="space-section">
+<h1 class="section-title">🌌 Explore the Cosmos 🌌</h1>
+<p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 2rem; font-size: 1.2rem;">Watch the beautiful planet and its celestial companions</p>
+<div class="planet-container">
+<div class="planet" id="mainPlanet"></div>
+<div class="ring"></div>
+<div class="moon-orbit">
+<div class="moon"></div>
 </div>
-<div class="elephant-container">
-<div class="space-elephant" id="spaceElephant">
+</div>
+</section>
+<!-- ANIMALS SECTION -->
+<section class="section" id="animals-section">
+<h1 class="section-title">🐾 Space Animals 🐾</h1>
+<p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 2rem; font-size: 1.2rem;">Meet our adorable space explorers!</p>
+<div class="animals-container">
+<!-- Kitty Card -->
+<div class="animal-card">
+<div class="kitty-display">
+<div class="kitty-helmet"></div>
+<div class="kitty-ear-left"></div>
+<div class="kitty-ear-right"></div>
+<div class="kitty-head">
+<div class="kitty-eye kitty-eye-left"></div>
+<div class="kitty-eye kitty-eye-right"></div>
+<div class="kitty-nose"></div>
+</div>
+</div>
+<h3>🐱 Space Kitty</h3>
+<p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Quick and curious explorer</p>
+</div>
+<!-- Doggy Card -->
+<div class="animal-card">
+<div class="doggy-display">
+<div class="doggy-helmet"></div>
+<div class="doggy-ear-left"></div>
+<div class="doggy-ear-right"></div>
+<div class="doggy-head">
+<div class="doggy-eye doggy-eye-left"></div>
+<div class="doggy-eye doggy-eye-right"></div>
+<div class="doggy-nose"></div>
+<div class="doggy-tongue"></div>
+</div>
+<div class="doggy-tail"></div>
+</div>
+<h3>🐕 Space Doggy</h3>
+<p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Loyal and playful companion</p>
+</div>
+<!-- Elephant Card -->
+<div class="animal-card">
+<div class="elephant-display">
 <div class="elephant-ear">
 <div class="elephant-ear-inner"></div>
 </div>
@@ -788,7 +812,7 @@
 <div class="elephant-helmet"></div>
 <div class="elephant-eye"></div>
 <div class="elephant-tusk"></div>
-<div class="elephant-trunk" id="elephantTrunk">
+<div class="elephant-trunk">
 <div class="elephant-trunk-tip"></div>
 </div>
 <div class="elephant-leg elephant-leg-1"></div>
@@ -796,26 +820,73 @@
 <div class="elephant-leg elephant-leg-3"></div>
 <div class="elephant-leg elephant-leg-4"></div>
 </div>
-</div><div class="planet-container">
-<div class="planet"></div>
+<h3>🐘 Space Elephant</h3>
+<p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Gentle giant defender</p>
+</div>
+</div>
+</section>
+<!-- GAMES SECTION -->
+<section class="section" id="games-section">
+<h1 class="section-title">🎮 Defend the Planet! 🎮</h1>
+<p style="text-align: center; color: rgba(255,255,255,0.7); margin-bottom: 1rem; font-size: 1.2rem;">Click asteroids before they hit! 💥</p>
+<div id="scoreBoard">
+    ☄️ Asteroids Destroyed: <span id="asteroidScore" style="font-weight: bold; font-size: 1.5rem; color: #ff6b6b;">0</span>
+<br/>
+    ❤️ Planet Health: <span id="planetHealth" style="font-weight: bold; font-size: 1.5rem; color: #4ade80;">100</span>
+</div>
+<div class="planet-container" id="gamePlanetContainer">
+<div class="planet" id="gamePlanet"></div>
 <div class="ring"></div>
-<div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-ear-inner-left"></div><div class="kitty-ear-inner-right"></div><div class="kitty-head"><div class="kitty-eye kitty-eye-left"></div><div class="kitty-eye kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker kitty-whisker-left-1"></div><div class="kitty-whisker kitty-whisker-left-2"></div><div class="kitty-whisker kitty-whisker-right-1"></div><div class="kitty-whisker kitty-whisker-right-2"></div></div></div></div><div class="dog-orbit" id="dogOrbit"><div class="doggy" id="spaceDog"><div class="doggy-helmet"></div><div class="doggy-ear-left"></div><div class="doggy-ear-right"></div><div class="doggy-head"><div class="doggy-eye doggy-eye-left"></div><div class="doggy-eye doggy-eye-right"></div><div class="doggy-nose"></div><div class="doggy-tongue"></div></div><div class="doggy-tail"></div></div></div></div>
-<div class="stars" id="stars"></div>
+</div>
+</section>
+<!-- Game Layer -->
+<div id="gameLayer"></div>
+<!-- Game Over Screen -->
+<div id="gameOverScreen">
+<h2 style="font-size: 4rem; color: #ff6b6b; text-shadow: 0 0 30px rgba(255,107,107,0.8); margin-bottom: 1rem;">💥 GAME OVER 💥</h2>
+<p style="font-size: 1.5rem; color: white; margin-bottom: 2rem;">Final Score: <span id="finalScore" style="color: #ffd700; font-weight: bold;">0</span></p>
+<button id="restartBtn">🚀 Play Again</button>
+</div>
+<!-- Audio -->
+<audio id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio>
+<!-- Music Button -->
+<button class="music-btn" onclick="toggleMusic()">
+<span id="btnIcon">▶️</span>
+<span id="btnText">Play Music</span>
+</button>
 <script>
-        // Generate random stars
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 2 + 's';
-            star.style.width = (Math.random() * 2 + 1) + 'px';
-            star.style.height = star.style.width;
-            starsContainer.appendChild(star);
-        }
-    </script>
-<script>
+// Navigation
+const navBtns = document.querySelectorAll('.nav-btn');
+const sections = document.querySelectorAll('.section');
+
+navBtns.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const sectionId = btn.dataset.section + '-section';
+    
+    // Update active button
+    navBtns.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Show corresponding section
+    sections.forEach(s => s.classList.remove('active'));
+    document.getElementById(sectionId).classList.add('active');
+  });
+});
+
+// Generate stars
+const starsContainer = document.getElementById('stars');
+for (let i = 0; i < 100; i++) {
+  const star = document.createElement('div');
+  star.className = 'star';
+  star.style.left = Math.random() * 100 + '%';
+  star.style.top = Math.random() * 100 + '%';
+  star.style.animationDelay = Math.random() * 2 + 's';
+  star.style.width = (Math.random() * 2 + 1) + 'px';
+  star.style.height = star.style.width;
+  starsContainer.appendChild(star);
+}
+
+// Music toggle
 function toggleMusic() {
   const audio = document.getElementById('bgMusic');
   const icon = document.getElementById('btnIcon');
@@ -830,58 +901,33 @@ function toggleMusic() {
     text.textContent = 'Play';
   }
 }
-</script><audio autoplay="true" id="bgMusic" loop="" src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3"></audio><button class="music-btn" onclick="toggleMusic()"><span id="btnIcon">▶️</span><span id="btnText">Play Music</span></button><script>
-// Auto-play music on page load
-window.addEventListener('load', function() {
-  const audio = document.getElementById('bgMusic');
-  const icon = document.getElementById('btnIcon');
-  const text = document.getElementById('btnText');
-  
-  // Try to play automatically
-  const playPromise = audio.play();
-  
-  if (playPromise !== undefined) {
-    playPromise.then(() => {
-      // Autoplay started successfully
-      icon.textContent = '⏸️';
-      text.textContent = 'Pause';
-    }).catch((error) => {
-      // Autoplay was prevented (browser policy)
-      // Keep the play button ready
-      console.log('Autoplay prevented by browser, click the button to play');
-    });
-  }
-});
-</script><script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script><script>
+</script>
+<!-- Three.js Sun -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
 (function() {
   const container = document.getElementById('three-container');
+  container.style.cssText = 'position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none;';
   
-  // Scene setup
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.position.z = 5;
   
   const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.shadowMap.enabled = true;
-  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
   container.appendChild(renderer.domElement);
   
-  // Sun geometry
+  // Sun
   const sunGeometry = new THREE.SphereGeometry(0.8, 64, 64);
-  const sunMaterial = new THREE.MeshBasicMaterial({
-    color: 0xffdd00,
-  });
+  const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
   const sun = new THREE.Mesh(sunGeometry, sunMaterial);
   sun.position.set(-3, 2, -2);
   scene.add(sun);
   
-  // Sun glow (corona effect)
+  // Sun glow
   const glowGeometry = new THREE.SphereGeometry(1.2, 32, 32);
   const glowMaterial = new THREE.ShaderMaterial({
     uniforms: {
-      c: { type: 'f', value: 0.3 },
-      p: { type: 'f', value: 4.0 },
       glowColor: { type: 'c', value: new THREE.Color(0xffaa00) },
       viewVector: { type: 'v3', value: camera.position }
     },
@@ -897,11 +943,9 @@ window.addEventListener('load', function() {
     `,
     fragmentShader: `
       uniform vec3 glowColor;
-      uniform float c;
-      uniform float p;
       varying float intensity;
       void main() {
-        vec3 glow = glowColor * c * pow(intensity, p);
+        vec3 glow = glowColor * 0.3 * pow(intensity, 4.0);
         gl_FragColor = vec4(glow, intensity * 0.8);
       }
     `,
@@ -913,534 +957,31 @@ window.addEventListener('load', function() {
   sunGlow.position.copy(sun.position);
   scene.add(sunGlow);
   
-  // Outer corona
-  const coronaGeometry = new THREE.SphereGeometry(1.8, 32, 32);
-  const coronaMaterial = new THREE.ShaderMaterial({
-    uniforms: {
-      glowColor: { type: 'c', value: new THREE.Color(0xff6600) },
-      viewVector: { type: 'v3', value: camera.position }
-    },
-    vertexShader: `
-      uniform vec3 viewVector;
-      varying float intensity;
-      void main() {
-        vec3 vNormal = normalize(normalMatrix * normal);
-        vec3 vNormel = normalize(normalMatrix * viewVector);
-        intensity = pow(0.5 - dot(vNormal, vNormel), 2.0);
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-      }
-    `,
-    fragmentShader: `
-      uniform vec3 glowColor;
-      varying float intensity;
-      void main() {
-        vec3 glow = glowColor * 0.2 * pow(intensity, 3.0);
-        gl_FragColor = vec4(glow, intensity * 0.4);
-      }
-    `,
-    side: THREE.BackSide,
-    blending: THREE.AdditiveBlending,
-    transparent: true
-  });
-  const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
-  corona.position.copy(sun.position);
-  scene.add(corona);
-  
-  // Point light from sun
+  // Point light
   const sunLight = new THREE.PointLight(0xffdd88, 2, 100);
   sunLight.position.copy(sun.position);
-  sunLight.castShadow = true;
-  sunLight.shadow.mapSize.width = 1024;
-  sunLight.shadow.mapSize.height = 1024;
   scene.add(sunLight);
   
-  // Ambient light
-  const ambientLight = new THREE.AmbientLight(0x222244, 0.3);
-  scene.add(ambientLight);
-  
-  // Sun rays (volumetric light effect)
-  const rayCount = 12;
-  const rays = [];
-  for (let i = 0; i < rayCount; i++) {
-    const rayGeometry = new THREE.ConeGeometry(0.05, 3, 8);
-    const rayMaterial = new THREE.MeshBasicMaterial({
-      color: 0xffdd44,
-      transparent: true,
-      opacity: 0.15,
-      blending: THREE.AdditiveBlending
-    });
-    const ray = new THREE.Mesh(rayGeometry, rayMaterial);
-    ray.position.copy(sun.position);
-    const angle = (i / rayCount) * Math.PI * 2;
-    ray.rotation.z = angle;
-    ray.rotation.x = Math.PI / 2;
-    rays.push({ mesh: ray, baseAngle: angle });
-    scene.add(ray);
-  }
-  
-  // Animation
   let time = 0;
   function animate() {
     requestAnimationFrame(animate);
     time += 0.01;
-    
-    // Pulsating sun
     const scale = 1 + Math.sin(time * 2) * 0.05;
     sun.scale.set(scale, scale, scale);
-    
-    // Rotating corona
     sunGlow.rotation.y += 0.002;
-    corona.rotation.y -= 0.001;
-    corona.rotation.x += 0.0005;
-    
-    // Animate rays
-    rays.forEach((rayObj, i) => {
-      rayObj.mesh.rotation.z = rayObj.baseAngle + time * 0.5;
-      rayObj.mesh.material.opacity = 0.1 + Math.sin(time * 3 + i) * 0.05;
-      const rayScale = 1 + Math.sin(time * 2 + i * 0.5) * 0.2;
-      rayObj.mesh.scale.y = rayScale;
-    });
-    
-    // Flicker light intensity
     sunLight.intensity = 2 + Math.sin(time * 5) * 0.3;
-    
     renderer.render(scene, camera);
   }
   animate();
   
-  // Handle resize
   window.addEventListener('resize', () => {
     camera.aspect = window.innerWidth / window.innerHeight;
     camera.updateProjectionMatrix();
     renderer.setSize(window.innerWidth, window.innerHeight);
   });
 })();
-</script><script>
-(function() {
-  const kittyOrbit = document.querySelector('.kitty-orbit');
-  const dogOrbit = document.getElementById('dogOrbit');
-  const kitty = document.querySelector('.kitty');
-  const dog = document.getElementById('spaceDog');
-  
-  let kittyAngle = 0;
-  let dogAngle = Math.PI; // Start on opposite side
-  
-  const normalKittySpeed = 0.008;
-  const escapingKittySpeed = 0.04;
-  const dogSpeed = 0.015;
-  
-  let currentKittySpeed = normalKittySpeed;
-  let isEscaping = false;
-  let escapeTimer = null;
-  
-  const orbitRadius = 140;
-  const dangerDistance = 60; // When dog gets this close, cat escapes
-  
-  function getPosition(angle, radius) {
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius
-    };
-  }
-  
-  function getDistance(pos1, pos2) {
-    return Math.sqrt(Math.pow(pos2.x - pos1.x, 2) + Math.pow(pos2.y - pos1.y, 2));
-  }
-  
-  function animate() {
-    // Move kitty (counter-clockwise)
-    kittyAngle -= currentKittySpeed;
-    
-    // Move dog (counter-clockwise, faster to chase)
-    dogAngle -= dogSpeed;
-    
-    // Get positions
-    const kittyPos = getPosition(kittyAngle, orbitRadius);
-    const dogPos = getPosition(dogAngle, orbitRadius);
-    
-    // Calculate distance between them
-    const distance = getDistance(kittyPos, dogPos);
-    
-    // Check if dog is too close
-    if (distance < dangerDistance && !isEscaping) {
-      isEscaping = true;
-      currentKittySpeed = escapingKittySpeed;
-      kitty.classList.add('escaping');
-      dog.classList.add('chasing-fast');
-      
-      // Clear any existing timer
-      if (escapeTimer) clearTimeout(escapeTimer);
-      
-      // Return to normal after escaping
-      escapeTimer = setTimeout(() => {
-        if (getDistance(getPosition(kittyAngle, orbitRadius), getPosition(dogAngle, orbitRadius)) > dangerDistance * 2) {
-          isEscaping = false;
-          currentKittySpeed = normalKittySpeed;
-          kitty.classList.remove('escaping');
-          dog.classList.remove('chasing-fast');
-        }
-      }, 800);
-    } else if (isEscaping && distance > dangerDistance * 2.5) {
-      // Safe distance reached, slow down
-      isEscaping = false;
-      currentKittySpeed = normalKittySpeed;
-      kitty.classList.remove('escaping');
-      dog.classList.remove('chasing-fast');
-    }
-    
-    // Apply transforms
-    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
-    dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
-    
-    // Keep the animals upright
-    kitty.style.transform = `rotate(${-kittyAngle}rad)`;
-    dog.style.transform = `rotate(${-dogAngle}rad)`;
-    
-    requestAnimationFrame(animate);
-  }
-  
-  animate();
-})();
-</script><script>
-(function() {
-  // Remove old animation script and replace with scoring version
-  const kittyOrbit = document.querySelector('.kitty-orbit');
-  const dogOrbit = document.getElementById('dogOrbit');
-  const kitty = document.querySelector('.kitty');
-  const dog = document.getElementById('spaceDog');
-  const scoreDisplay = document.getElementById('dogScore');
-  
-  let kittyAngle = 0;
-  let dogAngle = Math.PI;
-  let dogScore = 0;
-  
-  const normalKittySpeed = 0.008;
-  const escapingKittySpeed = 0.04;
-  const dogSpeed = 0.015;
-  
-  let currentKittySpeed = normalKittySpeed;
-  let isEscaping = false;
-  let escapeTimer = null;
-  let catchCooldown = false;
-  
-  const orbitRadius = 140;
-  const dangerDistance = 60;
-  const catchDistance = 30; // Distance to catch the cat
-  
-  function getPosition(angle, radius) {
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius
-    };
-  }
-  
-  function getDistance(pos1, pos2) {
-    return Math.sqrt(Math.pow(pos2.x - pos1.x, 2) + Math.pow(pos2.y - pos1.y, 2));
-  }
-  
-  function showCatchEffect() {
-    // Create catch celebration effect
-    const effect = document.createElement('div');
-    effect.innerHTML = '🎉 CAUGHT! +1 🐕';
-    effect.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2.5rem;
-      color: #ffd700;
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5);
-      z-index: 1000;
-      animation: catchPop 1s ease-out forwards;
-      pointer-events: none;
-    `;
-    document.body.appendChild(effect);
-    
-    setTimeout(() => effect.remove(), 1000);
-  }
-  
-  // Add catch animation style
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes catchPop {
-      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-      50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
-      100% { transform: translate(-50%, -80%) scale(1); opacity: 0; }
-    }
-    @keyframes scoreFlash {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.5); color: #ff0; }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  function animateWithScore() {
-    kittyAngle -= currentKittySpeed;
-    dogAngle -= dogSpeed;
-    
-    const kittyPos = getPosition(kittyAngle, orbitRadius);
-    const dogPos = getPosition(dogAngle, orbitRadius);
-    const distance = getDistance(kittyPos, dogPos);
-    
-    // Check for catch!
-    if (distance < catchDistance && !catchCooldown) {
-      catchCooldown = true;
-      dogScore++;
-      scoreDisplay.textContent = dogScore;
-      scoreDisplay.style.animation = 'scoreFlash 0.5s ease-out';
-      setTimeout(() => scoreDisplay.style.animation = '', 500);
-      
-      showCatchEffect();
-      
-      // Teleport cat to opposite side
-      kittyAngle = dogAngle + Math.PI;
-      
-      // Cooldown before next catch
-      setTimeout(() => {
-        catchCooldown = false;
-      }, 2000);
-    }
-    
-    // Escape behavior
-    if (distance < dangerDistance && !isEscaping && !catchCooldown) {
-      isEscaping = true;
-      currentKittySpeed = escapingKittySpeed;
-      kitty.classList.add('escaping');
-      dog.classList.add('chasing-fast');
-      
-      if (escapeTimer) clearTimeout(escapeTimer);
-      
-      escapeTimer = setTimeout(() => {
-        if (getDistance(getPosition(kittyAngle, orbitRadius), getPosition(dogAngle, orbitRadius)) > dangerDistance * 2) {
-          isEscaping = false;
-          currentKittySpeed = normalKittySpeed;
-          kitty.classList.remove('escaping');
-          dog.classList.remove('chasing-fast');
-        }
-      }, 800);
-    } else if (isEscaping && distance > dangerDistance * 2.5) {
-      isEscaping = false;
-      currentKittySpeed = normalKittySpeed;
-      kitty.classList.remove('escaping');
-      dog.classList.remove('chasing-fast');
-    }
-    
-    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
-    dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
-    kitty.style.transform = `rotate(${-kittyAngle}rad)`;
-    dog.style.transform = `rotate(${-dogAngle}rad)`;
-    
-    requestAnimationFrame(animateWithScore);
-  }
-  
-  // Start the new animation (override the old one)
-  animateWithScore();
-})();
-</script><script>
-(function() {
-  // Remove old animation script and replace with scoring version
-  const kittyOrbit = document.querySelector('.kitty-orbit');
-  const dogOrbit = document.getElementById('dogOrbit');
-  const kitty = document.querySelector('.kitty');
-  const dog = document.getElementById('spaceDog');
-  const scoreDisplay = document.getElementById('dogScore');
-  
-  let kittyAngle = 0;
-  let dogAngle = Math.PI;
-  let dogScore = 0;
-  
-  const normalKittySpeed = 0.008;
-  const escapingKittySpeed = 0.04;
-  const dogSpeed = 0.015;
-  
-  let currentKittySpeed = normalKittySpeed;
-  let isEscaping = false;
-  let escapeTimer = null;
-  let catchCooldown = false;
-  
-  const orbitRadius = 140;
-  const dangerDistance = 60;
-  const catchDistance = 30; // Distance to catch the cat
-  
-  function getPosition(angle, radius) {
-    return {
-      x: Math.cos(angle) * radius,
-      y: Math.sin(angle) * radius
-    };
-  }
-  
-  function getDistance(pos1, pos2) {
-    return Math.sqrt(Math.pow(pos2.x - pos1.x, 2) + Math.pow(pos2.y - pos1.y, 2));
-  }
-  
-  function showCatchEffect() {
-    // Create catch celebration effect
-    const effect = document.createElement('div');
-    effect.innerHTML = '🎉 CAUGHT! +1 🐕';
-    effect.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 2.5rem;
-      color: #ffd700;
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5);
-      z-index: 1000;
-      animation: catchPop 1s ease-out forwards;
-      pointer-events: none;
-    `;
-    document.body.appendChild(effect);
-    
-    setTimeout(() => effect.remove(), 1000);
-    
-    // Change planet color!
-    if (window.changePlanetColor) {
-      window.changePlanetColor();
-    }
-  }
-  
-  // Add catch animation style
-  const style = document.createElement('style');
-  style.textContent = `
-    @keyframes catchPop {
-      0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
-      50% { transform: translate(-50%, -50%) scale(1.3); opacity: 1; }
-      100% { transform: translate(-50%, -80%) scale(1); opacity: 0; }
-    }
-    @keyframes scoreFlash {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.5); color: #ff0; }
-    }
-  `;
-  document.head.appendChild(style);
-  
-  function animateWithScore() {
-    kittyAngle -= currentKittySpeed;
-    dogAngle -= dogSpeed;
-    
-    const kittyPos = getPosition(kittyAngle, orbitRadius);
-    const dogPos = getPosition(dogAngle, orbitRadius);
-    const distance = getDistance(kittyPos, dogPos);
-    
-    // Check for catch!
-    if (distance < catchDistance && !catchCooldown) {
-      catchCooldown = true;
-      dogScore++;
-      scoreDisplay.textContent = dogScore;
-      scoreDisplay.style.animation = 'scoreFlash 0.5s ease-out';
-      setTimeout(() => scoreDisplay.style.animation = '', 500);
-      
-      showCatchEffect();
-      
-      // Teleport cat to opposite side
-      kittyAngle = dogAngle + Math.PI;
-      
-      // Cooldown before next catch
-      setTimeout(() => {
-        catchCooldown = false;
-      }, 2000);
-    }
-    
-    // Escape behavior
-    if (distance < dangerDistance && !isEscaping && !catchCooldown) {
-      isEscaping = true;
-      currentKittySpeed = escapingKittySpeed;
-      kitty.classList.add('escaping');
-      dog.classList.add('chasing-fast');
-      
-      if (escapeTimer) clearTimeout(escapeTimer);
-      
-      escapeTimer = setTimeout(() => {
-        if (getDistance(getPosition(kittyAngle, orbitRadius), getPosition(dogAngle, orbitRadius)) > dangerDistance * 2) {
-          isEscaping = false;
-          currentKittySpeed = normalKittySpeed;
-          kitty.classList.remove('escaping');
-          dog.classList.remove('chasing-fast');
-        }
-      }, 800);
-    } else if (isEscaping && distance > dangerDistance * 2.5) {
-      isEscaping = false;
-      currentKittySpeed = normalKittySpeed;
-      kitty.classList.remove('escaping');
-      dog.classList.remove('chasing-fast');
-    }
-    
-    kittyOrbit.style.transform = `rotate(${kittyAngle}rad)`;
-    dogOrbit.style.transform = `rotate(${dogAngle}rad)`;
-    kitty.style.transform = `rotate(${-kittyAngle}rad)`;
-    dog.style.transform = `rotate(${-dogAngle}rad)`;
-    
-    requestAnimationFrame(animateWithScore);
-  }
-  
-  // Start the new animation (override the old one)
-  animateWithScore();
-})();
-</script><div id="gameLayer" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50;"></div>
-<div id="gameOverScreen" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 200; justify-content: center; align-items: center; flex-direction: column;">
-<h2 style="font-size: 4rem; color: #ff6b6b; text-shadow: 0 0 30px rgba(255,107,107,0.8); margin-bottom: 1rem;">💥 GAME OVER 💥</h2>
-<p style="font-size: 1.5rem; color: white; margin-bottom: 2rem;">Final Score: <span id="finalScore" style="color: #ffd700; font-weight: bold;">0</span></p>
-<button id="restartBtn" style="padding: 15px 40px; font-size: 1.3rem; background: linear-gradient(135deg, #4ade80, #22c55e); border: none; border-radius: 30px; color: white; cursor: pointer; box-shadow: 0 0 20px rgba(74,222,128,0.5); transition: all 0.3s;">🚀 Play Again</button>
-</div>
-<style>
-  .asteroid {
-    position: absolute;
-    pointer-events: auto;
-    cursor: crosshair;
-    transition: transform 0.1s;
-    filter: drop-shadow(0 0 10px rgba(255, 100, 50, 0.6));
-    z-index: 51;
-  }
-  .asteroid:hover {
-    transform: scale(1.2);
-    filter: drop-shadow(0 0 20px rgba(255, 200, 50, 0.9));
-  }
-  .explosion {
-    position: absolute;
-    pointer-events: none;
-    animation: explode 0.5s ease-out forwards;
-    z-index: 52;
-  }
-  .particle {
-    position: absolute;
-    pointer-events: none;
-    border-radius: 50%;
-    z-index: 52;
-  }
-  @keyframes explode {
-    0% { transform: scale(0.5); opacity: 1; }
-    100% { transform: scale(2); opacity: 0; }
-  }
-  @keyframes particleFly {
-    0% { opacity: 1; transform: translate(0, 0) scale(1); }
-    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
-  }
-  .damage-flash {
-    animation: damageFlash 0.3s ease-out;
-  }
-  @keyframes damageFlash {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(2) hue-rotate(30deg); }
-  }
-  #restartBtn:hover {
-    transform: scale(1.1);
-    box-shadow: 0 0 30px rgba(74,222,128,0.8);
-  }
-  .score-popup {
-    position: absolute;
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #ffd700;
-    text-shadow: 0 0 10px rgba(255,215,0,0.8);
-    pointer-events: none;
-    animation: scoreFloat 1s ease-out forwards;
-    z-index: 60;
-  }
-  @keyframes scoreFloat {
-    0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-50px) scale(1.5); }
-  }
-</style>
+</script>
+<!-- Asteroid Game -->
 <script>
 (function() {
   const gameLayer = document.getElementById('gameLayer');
@@ -1449,7 +990,7 @@ window.addEventListener('load', function() {
   const asteroidScoreEl = document.getElementById('asteroidScore');
   const planetHealthEl = document.getElementById('planetHealth');
   const finalScoreEl = document.getElementById('finalScore');
-  const planet = document.querySelector('.planet');
+  const gamePlanet = document.getElementById('gamePlanet');
   
   let asteroidScore = 0;
   let planetHealth = 100;
@@ -1458,28 +999,24 @@ window.addEventListener('load', function() {
   let difficultyLevel = 1;
   let asteroids = [];
   
-  // Get planet center position
   function getPlanetCenter() {
-    const planetContainer = document.querySelector('.planet-container');
+    const planetContainer = document.getElementById('gamePlanetContainer');
+    if (!planetContainer) return { x: window.innerWidth / 2, y: window.innerHeight / 2 };
     const rect = planetContainer.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
-    };
+    return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
   }
   
-  // Create asteroid
   function createAsteroid() {
     if (!gameRunning) return;
+    const gamesSection = document.getElementById('games-section');
+    if (!gamesSection.classList.contains('active')) return;
     
     const asteroid = document.createElement('div');
     asteroid.className = 'asteroid';
     
-    // Random size based on difficulty
     const size = 30 + Math.random() * 30 - difficultyLevel * 2;
     const clampedSize = Math.max(20, Math.min(50, size));
     
-    // Random spawn position from edges
     const side = Math.floor(Math.random() * 4);
     let startX, startY;
     
@@ -1490,7 +1027,6 @@ window.addEventListener('load', function() {
       case 3: startX = -50; startY = Math.random() * window.innerHeight; break;
     }
     
-    // Asteroid appearance
     const hue = 20 + Math.random() * 30;
     asteroid.innerHTML = `<svg width="${clampedSize}" height="${clampedSize}" viewBox="0 0 100 100">
       <polygon points="50,5 75,20 95,45 85,75 60,95 30,90 10,65 15,35 35,15" 
@@ -1499,17 +1035,13 @@ window.addEventListener('load', function() {
         stroke-width="3"/>
       <circle cx="35" cy="40" r="8" fill="hsl(${hue}, 40%, 25%)"/>
       <circle cx="60" cy="55" r="6" fill="hsl(${hue}, 40%, 25%)"/>
-      <circle cx="45" cy="70" r="5" fill="hsl(${hue}, 40%, 25%)"/>
     </svg>`;
     
     asteroid.style.left = startX + 'px';
     asteroid.style.top = startY + 'px';
-    asteroid.style.transform = `rotate(${Math.random() * 360}deg)`;
     
-    // Speed increases with difficulty
     const speed = 1 + difficultyLevel * 0.3 + Math.random() * 0.5;
     
-    // Store asteroid data
     const asteroidData = {
       element: asteroid,
       x: startX,
@@ -1529,14 +1061,12 @@ window.addEventListener('load', function() {
     asteroids.push(asteroidData);
   }
   
-  // Destroy asteroid with effects
   function destroyAsteroid(asteroidData, clickX, clickY) {
     if (!asteroidData.element.parentNode) return;
     
     const x = asteroidData.x;
     const y = asteroidData.y;
     
-    // Create explosion
     const explosion = document.createElement('div');
     explosion.className = 'explosion';
     explosion.innerHTML = '💥';
@@ -1546,27 +1076,6 @@ window.addEventListener('load', function() {
     gameLayer.appendChild(explosion);
     setTimeout(() => explosion.remove(), 500);
     
-    // Create particles
-    for (let i = 0; i < 8; i++) {
-      const particle = document.createElement('div');
-      particle.className = 'particle';
-      const angle = (i / 8) * Math.PI * 2;
-      const distance = 50 + Math.random() * 50;
-      particle.style.cssText = `
-        left: ${x + asteroidData.size/2}px;
-        top: ${y + asteroidData.size/2}px;
-        width: 8px;
-        height: 8px;
-        background: hsl(${30 + Math.random() * 30}, 80%, 50%);
-        --dx: ${Math.cos(angle) * distance}px;
-        --dy: ${Math.sin(angle) * distance}px;
-        animation: particleFly 0.6s ease-out forwards;
-      `;
-      gameLayer.appendChild(particle);
-      setTimeout(() => particle.remove(), 600);
-    }
-    
-    // Score popup
     const points = Math.floor(10 + (50 - asteroidData.size));
     const popup = document.createElement('div');
     popup.className = 'score-popup';
@@ -1576,16 +1085,13 @@ window.addEventListener('load', function() {
     document.body.appendChild(popup);
     setTimeout(() => popup.remove(), 1000);
     
-    // Update score
     asteroidScore += points;
     asteroidScoreEl.textContent = asteroidScore;
     
-    // Remove asteroid
     asteroidData.element.remove();
     asteroids = asteroids.filter(a => a !== asteroidData);
   }
   
-  // Game loop
   function gameLoop() {
     if (!gameRunning) return;
     
@@ -1593,7 +1099,6 @@ window.addEventListener('load', function() {
     const planetRadius = 100;
     
     asteroids.forEach(asteroidData => {
-      // Move toward planet
       const dx = planetCenter.x - asteroidData.x;
       const dy = planetCenter.y - asteroidData.y;
       const distance = Math.sqrt(dx * dx + dy * dy);
@@ -1603,223 +1108,73 @@ window.addEventListener('load', function() {
         asteroidData.y += (dy / distance) * asteroidData.speed;
       }
       
-      // Rotate
       asteroidData.rotation += asteroidData.rotationSpeed;
-      
-      // Update position
       asteroidData.element.style.left = asteroidData.x + 'px';
       asteroidData.element.style.top = asteroidData.y + 'px';
       asteroidData.element.style.transform = `rotate(${asteroidData.rotation}deg)`;
       
-      // Check collision with planet
       if (distance < planetRadius) {
-        // Damage planet
         const damage = Math.floor(asteroidData.size / 3);
         planetHealth -= damage;
         planetHealthEl.textContent = Math.max(0, planetHealth);
         
-        // Visual feedback
-        planet.classList.add('damage-flash');
-        setTimeout(() => planet.classList.remove('damage-flash'), 300);
-        
-        // Update health color
-        if (planetHealth > 60) {
-          planetHealthEl.style.color = '#4ade80';
-        } else if (planetHealth > 30) {
-          planetHealthEl.style.color = '#fbbf24';
-        } else {
-          planetHealthEl.style.color = '#ef4444';
+        if (gamePlanet) {
+          gamePlanet.classList.add('damage-flash');
+          setTimeout(() => gamePlanet.classList.remove('damage-flash'), 300);
         }
         
-        // Remove asteroid
+        if (planetHealth > 60) planetHealthEl.style.color = '#4ade80';
+        else if (planetHealth > 30) planetHealthEl.style.color = '#fbbf24';
+        else planetHealthEl.style.color = '#ef4444';
+        
         asteroidData.element.remove();
         asteroids = asteroids.filter(a => a !== asteroidData);
         
-        // Check game over
-        if (planetHealth <= 0) {
-          endGame();
-        }
+        if (planetHealth <= 0) endGame();
       }
     });
     
     requestAnimationFrame(gameLoop);
   }
   
-  // Spawn asteroids
   function startSpawning() {
-    const baseInterval = 2000;
-    
     function spawn() {
       if (!gameRunning) return;
       createAsteroid();
-      
-      // Increase difficulty over time
       difficultyLevel = 1 + asteroidScore / 100;
-      const interval = Math.max(500, baseInterval - difficultyLevel * 100);
-      
+      const interval = Math.max(500, 2000 - difficultyLevel * 100);
       spawnInterval = setTimeout(spawn, interval);
     }
-    
     spawn();
   }
   
-  // End game
   function endGame() {
     gameRunning = false;
     clearTimeout(spawnInterval);
     finalScoreEl.textContent = asteroidScore;
     gameOverScreen.style.display = 'flex';
-    
-    // Clear remaining asteroids
     asteroids.forEach(a => a.element.remove());
     asteroids = [];
   }
   
-  // Restart game
   function restartGame() {
     gameRunning = true;
     asteroidScore = 0;
     planetHealth = 100;
     difficultyLevel = 1;
-    
     asteroidScoreEl.textContent = '0';
     planetHealthEl.textContent = '100';
     planetHealthEl.style.color = '#4ade80';
     gameOverScreen.style.display = 'none';
-    
     startSpawning();
     gameLoop();
   }
   
   restartBtn.addEventListener('click', restartGame);
   
-  // Start game
   startSpawning();
   gameLoop();
 })();
-</script><script>
-(function() {
-  const elephant = document.getElementById('spaceElephant');
-  const trunk = document.getElementById('elephantTrunk');
-  const gameLayer = document.getElementById('gameLayer');
-  
-  let waterCooldown = false;
-  
-  function getElephantTrunkPosition() {
-    const rect = trunk.getBoundingClientRect();
-    return {
-      x: rect.left + rect.width / 2,
-      y: rect.bottom
-    };
-  }
-  
-  function createWaterStream(targetX, targetY) {
-    const start = getElephantTrunkPosition();
-    const numDroplets = 5;
-    
-    for (let i = 0; i < numDroplets; i++) {
-      setTimeout(() => {
-        const droplet = document.createElement('div');
-        droplet.className = 'water-stream';
-        
-        // Add some randomness
-        const offsetX = (Math.random() - 0.5) * 20;
-        const offsetY = (Math.random() - 0.5) * 20;
-        
-        droplet.style.left = start.x + 'px';
-        droplet.style.top = start.y + 'px';
-        
-        document.body.appendChild(droplet);
-        
-        // Animate to target
-        const duration = 500 + Math.random() * 200;
-        const startTime = performance.now();
-        
-        function animateDroplet(currentTime) {
-          const elapsed = currentTime - startTime;
-          const progress = Math.min(elapsed / duration, 1);
-          
-          // Parabolic arc
-          const x = start.x + (targetX + offsetX - start.x) * progress;
-          const arcHeight = -100 * Math.sin(progress * Math.PI);
-          const y = start.y + (targetY + offsetY - start.y) * progress + arcHeight;
-          
-          droplet.style.left = x + 'px';
-          droplet.style.top = y + 'px';
-          
-          if (progress < 1) {
-            requestAnimationFrame(animateDroplet);
-          } else {
-            // Create splash
-            const splash = document.createElement('div');
-            splash.className = 'water-splash';
-            splash.textContent = '💦';
-            splash.style.left = x + 'px';
-            splash.style.top = y + 'px';
-            document.body.appendChild(splash);
-            setTimeout(() => splash.remove(), 500);
-            
-            droplet.remove();
-          }
-        }
-        
-        requestAnimationFrame(animateDroplet);
-      }, i * 80);
-    }
-  }
-  
-  // Spray water at nearest asteroid periodically
-  function sprayAtAsteroids() {
-    if (waterCooldown) return;
-    
-    const asteroidElements = document.querySelectorAll('.asteroid');
-    if (asteroidElements.length === 0) {
-      setTimeout(sprayAtAsteroids, 500);
-      return;
-    }
-    
-    // Find nearest asteroid
-    const elephantPos = getElephantTrunkPosition();
-    let nearest = null;
-    let nearestDist = Infinity;
-    
-    asteroidElements.forEach(asteroid => {
-      const rect = asteroid.getBoundingClientRect();
-      const ax = rect.left + rect.width / 2;
-      const ay = rect.top + rect.height / 2;
-      const dist = Math.sqrt(Math.pow(ax - elephantPos.x, 2) + Math.pow(ay - elephantPos.y, 2));
-      
-      if (dist < nearestDist) {
-        nearestDist = dist;
-        nearest = { x: ax, y: ay, element: asteroid };
-      }
-    });
-    
-    if (nearest && nearestDist < 400) {
-      waterCooldown = true;
-      
-      // Spray water!
-      createWaterStream(nearest.x, nearest.y);
-      
-      // Simulate click on asteroid after water reaches it
-      setTimeout(() => {
-        if (nearest.element && nearest.element.parentNode) {
-          nearest.element.click();
-        }
-      }, 600);
-      
-      // Cooldown
-      setTimeout(() => {
-        waterCooldown = false;
-        sprayAtAsteroids();
-      }, 2500);
-    } else {
-      setTimeout(sprayAtAsteroids, 500);
-    }
-  }
-  
-  // Start spraying after a delay
-  setTimeout(sprayAtAsteroids, 2000);
-})();
-</script></body>
+</script>
+</body>
 </html>
