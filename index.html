@@ -126,6 +126,42 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
+        
+        .music-player {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        #playPauseBtn {
+            background: linear-gradient(135deg, #8b5a2b 0%, #d4a574 50%, #8b5a2b 100%);
+            border: 3px solid #f4e4bc;
+            border-radius: 25px;
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            color: #3d2914;
+            cursor: pointer;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(139, 90, 43, 0.5), inset 0 2px 4px rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            font-family: Georgia, serif;
+        }
+        
+        #playPauseBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(212, 165, 116, 0.6), inset 0 2px 4px rgba(255,255,255,0.4);
+        }
+        
+        #playPauseBtn:active {
+            transform: scale(0.98);
+        }
+        
+        .music-title {
+            font-size: 0.9rem;
+            color: #d4a574;
+            margin-top: 10px;
+            font-style: italic;
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +169,16 @@
     
     
     <h1>Hello World</h1>
+    
+    <div class="music-player">
+        <button id="playPauseBtn" onclick="toggleMusic()">
+            <span id="playIcon">▶️</span> Play Music
+        </button>
+        <audio id="bgMusic" loop>
+            <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg">
+        </audio>
+        <p class="music-title">🎩 Professor Layton - More London Streets</p>
+    </div>
     <div class="planet-container">
         <div class="planet"></div>
         <div class="ring"></div>
@@ -148,6 +194,24 @@
             star.style.width = Math.random() * 2 + 1 + 'px';
             star.style.height = star.style.width;
             starsContainer.appendChild(star);
+        }
+        
+        const bgMusic = document.getElementById('bgMusic');
+        const playPauseBtn = document.getElementById('playPauseBtn');
+        const playIcon = document.getElementById('playIcon');
+        let isPlaying = false;
+        
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                playIcon.textContent = '▶️';
+                playPauseBtn.innerHTML = '<span id="playIcon">▶️</span> Play Music';
+            } else {
+                bgMusic.play();
+                playIcon.textContent = '⏸️';
+                playPauseBtn.innerHTML = '<span id="playIcon">⏸️</span> Pause Music';
+            }
+            isPlaying = !isPlaying;
         }
         
         
