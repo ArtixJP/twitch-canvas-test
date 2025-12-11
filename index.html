@@ -80,6 +80,59 @@
             animation: ringRotate 20s linear infinite;
         }
         
+        .moon-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            transform: translate(-50%, -50%);
+            animation: orbitMoon 8s linear infinite;
+            pointer-events: none;
+        }
+        
+        .moon {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            margin-left: -20px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 30%, #888888 70%, #555555 100%);
+            box-shadow: 
+                inset -8px -8px 20px rgba(0,0,0,0.4),
+                inset 3px 3px 10px rgba(255,255,255,0.3),
+                0 0 20px rgba(200, 200, 200, 0.3);
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            width: 8px;
+            height: 8px;
+            background: rgba(100,100,100,0.5);
+            border-radius: 50%;
+        }
+        
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 18px;
+            left: 20px;
+            width: 12px;
+            height: 10px;
+            background: rgba(100,100,100,0.4);
+            border-radius: 50%;
+        }
+        
+        @keyframes orbitMoon {
+            from { transform: translate(-50%, -50%) rotateZ(0deg); }
+            to { transform: translate(-50%, -50%) rotateZ(360deg); }
+        }
+        
         .ring::before {
             content: '';
             position: absolute;
@@ -182,6 +235,9 @@
     <div class="planet-container">
         <div class="planet"></div>
         <div class="ring"></div>
+        <div class="moon-orbit">
+            <div class="moon"></div>
+        </div>
     </div>
     <script>
         const starsContainer = document.getElementById('stars');
