@@ -97,7 +97,26 @@
     </style>
 </head>
 <body>
-<h1>Hello World</h1>
+<h1>Hello World</h1><audio autoplay="" loop="">
+<source src="https://cdn.pixabay.com/audio/2022/03/10/audio_2c87ba15c0.mp3" type="audio/mpeg"/>
+</audio>
+<div style="position: fixed; bottom: 20px; right: 20px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 15px; backdrop-filter: blur(10px); display: flex; align-items: center; gap: 10px;">
+<span style="font-size: 0.9rem;">🎵 Space Ambience</span>
+<button onclick="toggleAudio()" style="background: rgba(74, 88, 153, 0.8); border: none; color: white; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-size: 0.9rem;">Pause</button>
+</div>
+<script>
+function toggleAudio() {
+  const audio = document.querySelector('[data-llm-id="e7"]');
+  const button = document.querySelector('[data-llm-id="e9"]');
+  if (audio.paused) {
+    audio.play();
+    button.textContent = 'Pause';
+  } else {
+    audio.pause();
+    button.textContent = 'Play';
+  }
+}
+</script>
 <div class="planet-container">
 <div class="orbit-ring"></div>
 <div class="planet">
