@@ -194,5 +194,36 @@
                 }).catch(() => {});
             }
         }, { once: true });
+    </script><script>
+        const audio = document.getElementById('background-music');
+        const playPauseBtn = document.getElementById('play-pause-btn');
+        const playIcon = document.getElementById('play-icon');
+        const pauseIcon = document.getElementById('pause-icon');
+        
+        window.isPlaying = false;
+        
+        playPauseBtn.addEventListener('click', () => {
+            if (window.isPlaying) {
+                audio.pause();
+                playIcon.style.display = 'inline';
+                pauseIcon.style.display = 'none';
+            } else {
+                audio.play();
+                playIcon.style.display = 'none';
+                pauseIcon.style.display = 'inline';
+            }
+            window.isPlaying = !window.isPlaying;
+        });
+        
+        // Fallback: Auto-play on first user interaction if not already playing
+        document.body.addEventListener('click', () => {
+            if (!window.isPlaying && audio.paused) {
+                audio.play().then(() => {
+                    window.isPlaying = true;
+                    playIcon.style.display = 'none';
+                    pauseIcon.style.display = 'inline';
+                }).catch(() => {});
+            }
+        }, { once: true });
     </script></body>
 </html>
