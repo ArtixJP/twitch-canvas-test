@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code - Cozy Pixel Lounge</title>
-    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code - Cozy Pixel Lounge</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=VT323&amp;display=swap" rel="stylesheet"/>
+<style>
         * {
             image-rendering: pixelated;
         }
@@ -579,89 +580,92 @@
     </style>
 </head>
 <body>
-    <!-- Background Music -->
-    <audio id="bgMusic" autoplay loop>
-        <source src="https://audiocdn.epidemicsound.com/lqmp3/01HSGPBQGATGZBHV13N0PDEW0M.mp3" type="audio/mpeg">
-    </audio>
-    
-    <!-- Floating pixels background -->
-    <div class="pixel-bg" id="pixelBg"></div>
-    
-    <!-- Twitch Live Badge -->
-    <div class="twitch-badge">
-        <div class="live-dot"></div>
-        <span>LIVE COLLAB</span>
-    </div>
-    
-    <!-- Vinyl Player -->
-    <div class="vinyl-player" onclick="toggleMusic()" style="cursor: pointer;" title="Click to play/pause">
-        <div class="vinyl" id="vinylDisc"></div>
-        <div class="vinyl-label">♪ TRIP-HOP ♪<br>VIBES<br><span id="musicStatus" style="color: #27ae60;">▶ PLAYING</span></div>
-    </div>
-    
-    <!-- Main Content -->
-    <div class="welcome-banner">
-        <h1>🎮 TWITCH VERSUS CODE 🎮<br>✨ Pixel Lounge ✨</h1>
-    </div>
-    
-    <div class="retro-icons">
-        <span class="retro-icon">🕹️</span>
-        <span class="retro-icon">👾</span>
-        <span class="retro-icon">🎮</span>
-        <span class="retro-icon">💜</span>
-        <span class="retro-icon">🌟</span>
-    </div>
-    
-    <p class="welcome-text">
-        Welcome to our <span class="highlight">cozy corner</span> of the internet! 🏠<br>
+
+
+
+<div class="pixel-bg" id="pixelBg"></div>
+
+<div class="twitch-badge">
+<div class="live-dot"></div>
+<span>LIVE COLLAB</span>
+</div>
+
+<div class="vinyl-player" onclick="toggleMusic()" style="cursor: pointer;" title="Click to play/pause">
+<div class="vinyl" id="vinylDisc"></div>
+<div class="vinyl-label">♪ TRIP-HOP ♪<br/>VIBES<br/><span id="musicStatus" style="color: #27ae60;">▶ PLAYING</span></div>
+</div>
+
+<div class="welcome-banner">
+<h1>🎮 TWITCH VERSUS CODE 🎮<br/>✨ Pixel Lounge ✨</h1>
+</div>
+<div class="retro-icons">
+<span class="retro-icon">🕹️</span>
+<span class="retro-icon">👾</span>
+<span class="retro-icon">🎮</span>
+<span class="retro-icon">💜</span>
+<span class="retro-icon">🌟</span>
+</div>
+<p class="welcome-text">
+        Welcome to our <span class="highlight">cozy corner</span> of the internet! 🏠<br/>
         A warm space for <span class="highlight">collaborative creation</span> and <span class="highlight">retro vibes</span>.
     </p>
-    
-    <div class="cozy-container">
-        <div class="pixel-card">
-            <div class="chessboard" id="chess"></div>
-        </div>
-        
-        <div class="pixel-card">
-            <div class="scene">
-                <div class="tree">
-                    <div class="trunk"></div>
-                    <div class="foliage">
-                        <div class="leaves layer1"></div>
-                        <div class="leaves layer2"></div>
-                        <div class="leaves layer3"></div>
-                    </div>
-                    <div class="apple"></div>
-                    <div class="apple apple2"></div>
-                    <div class="apple apple3"></div>
-                    <div class="speech-bubble">Qxe4!! 👑💥</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="pixel-card">
-            <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #f39c12; margin: 0 0 10px 0; text-align: center;">🗺️ SECRET MAP</h3>
-            <div class="minimap-container" id="minimapContainer">
-                <div class="minimap-info">ZOOM: <span id="zoomLevel">1.0</span>x | FOUND: <span class="found-counter" id="foundCounter">0</span>/<span id="totalSecrets">12</span></div>
-                <div class="minimap-world" id="minimapWorld"></div>
-                <div class="minimap-controls">
-                    <button class="zoom-btn" onclick="zoomMap(0.5)">+</button>
-                    <button class="zoom-btn" onclick="zoomMap(-0.5)">-</button>
-                    <button class="zoom-btn" onclick="resetMap()" style="font-size: 0.5rem;">⟲</button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="pixel-card message-board">
-            <h3>💬 COMMUNITY</h3>
-            <div class="message"><span class="user">@Viewer:</span> Let's create together! 🎨</div>
-            <div class="message"><span class="user">@Coder:</span> Pixel perfect vibes ✨</div>
-            <div class="message"><span class="user">@Artist:</span> Love the retro feel! 💜</div>
-            <div class="message"><span class="user">@Chess:</span> 1. e4 Qxe4!! ♛💥 BOLD!</div>
-        </div>
-    </div>
-    
-    <script>
+<div class="cozy-container">
+<div class="pixel-card">
+<div class="chessboard" id="chess"></div>
+</div>
+<div class="pixel-card">
+<div class="scene">
+<div class="tree">
+<div class="trunk"></div>
+<div class="foliage">
+<div class="leaves layer1"></div>
+<div class="leaves layer2"></div>
+<div class="leaves layer3"></div>
+</div>
+<div class="apple"></div>
+<div class="apple apple2"></div>
+<div class="apple apple3"></div>
+<div class="speech-bubble">Qxe4!! 👑💥</div>
+</div>
+</div>
+</div>
+<div class="pixel-card">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #f39c12; margin: 0 0 10px 0; text-align: center;">🗺️ SECRET MAP</h3>
+<div class="minimap-container" id="minimapContainer">
+<div class="minimap-info">ZOOM: <span id="zoomLevel">1.0</span>x | FOUND: <span class="found-counter" id="foundCounter">0</span>/<span id="totalSecrets">12</span></div>
+<div class="minimap-world" id="minimapWorld"></div>
+<div class="minimap-controls">
+<button class="zoom-btn" onclick="zoomMap(0.5)">+</button>
+<button class="zoom-btn" onclick="zoomMap(-0.5)">-</button>
+<button class="zoom-btn" onclick="resetMap()" style="font-size: 0.5rem;">⟲</button>
+</div>
+</div>
+</div>
+<div class="pixel-card message-board">
+<h3>💬 COMMUNITY</h3>
+<div class="message"><span class="user">@Viewer:</span> Let's create together! 🎨</div>
+<div class="message"><span class="user">@Coder:</span> Pixel perfect vibes ✨</div>
+<div class="message"><span class="user">@Artist:</span> Love the retro feel! 💜</div>
+<div class="message"><span class="user">@Chess:</span> 1. e4 Qxe4!! ♛💥 BOLD!</div>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #27ae60; margin: 0 0 15px 0;">🧪 TEST ZONE 🧪</h3>
+<div class="test-pattern">
+<div style="display: grid; grid-template-columns: repeat(8, 20px); gap: 2px; justify-content: center;">
+<div style="width:20px;height:20px;background:#e74c3c;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#f39c12;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#f1c40f;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#27ae60;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#3498db;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#9b59b6;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#e91e63;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#00bcd4;border-radius:2px;"></div>
+</div>
+</div>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 15px;">✅ All systems go!<br/>💖 Spread kindness!<br/>🌈 Be excellent to each other!</p>
+</div>
+</div>
+<script>
         // Chess board with e4 opening move played!
         // Black pieces (top)
         const blackPieces = ['♜','♞','♝','♛','♚','♝','♞','♜'];
