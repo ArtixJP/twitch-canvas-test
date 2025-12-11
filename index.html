@@ -818,5 +818,134 @@
                 window.hasCaught = false;
             }
         };
+    </script><script>
+        // Store original planet color
+        window.originalPlanetColor = 0x4a90e2;
+        window.originalPlanetEmissive = 0x112244;
+        window.isChangingColor = false;
+        
+        // Override the checkCatch function to include planet color change
+        const originalCheckCatch = window.checkCatch;
+        window.checkCatch = function(distance) {
+            const catchDistance = 0.8;
+            const releaseDistance = 1.2;
+            
+            if (distance < catchDistance && !window.hasCaught) {
+                window.hasCaught = true;
+                window.dogScore++;
+                document.getElementById('dog-score').textContent = window.dogScore;
+                
+                // Change planet color!
+                if (typeof planet !== 'undefined' && !window.isChangingColor) {
+                    window.isChangingColor = true;
+                    
+                    // Flash to celebration colors
+                    const celebrationColors = [
+                        {color: 0xff69b4, emissive: 0xff1493}, // Hot pink
+                        {color: 0xffd700, emissive: 0xffa500}, // Gold
+                        {color: 0x00ff00, emissive: 0x00aa00}, // Green
+                        {color: 0xff6347, emissive: 0xff4500}  // Tomato red
+                    ];
+                    
+                    const randomColor = celebrationColors[Math.floor(Math.random() * celebrationColors.length)];
+                    
+                    // Animate color change
+                    let progress = 0;
+                    const duration = 2000; // 2 seconds
+                    const startTime = Date.now();
+                    
+                    const animateColor = () => {
+                        const elapsed = Date.now() - startTime;
+                        progress = Math.min(elapsed / duration, 1);
+                        
+                        if (progress < 0.3) {
+                            // Quick flash to celebration color
+                            const flashProgress = progress / 0.3;
+                            planet.material.color.setHex(lerpColor(window.originalPlanetColor, randomColor.color, flashProgress));
+                            planet.material.emissive.setHex(lerpColor(window.originalPlanetEmissive, randomColor.emissive, flashProgress));
+                        } else {
+                            // Slow fade back to original
+                            const fadeProgress = (progress - 0.3) / 0.7;
+                            planet.material.color.setHex(lerpColor(randomColor.color, window.originalPlanetColor, fadeProgress));
+                            planet.material.emissive.setHex(lerpColor(randomColor.emissive, window.originalPlanetEmissive, fadeProgress));
+                        }
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animateColor);
+                        } else {
+                            window.isChangingColor = false;
+                            planet.material.color.setHex(window.originalPlanetColor);
+                            planet.material.emissive.setHex(window.originalPlanetEmissive);
+                        }
+                    };
+                    
+                    animateColor();
+                }
+                
+                // Keep original celebration animation
+                const dogScoreElement = document.getElementById('dog-score');
+                dogScoreElement.style.transform = 'scale(1.5)';
+                dogScoreElement.style.transition = 'transform 0.3s ease';
+                setTimeout(() => {
+                    dogScoreElement.style.transform = 'scale(1)';
+                }, 300);
+                
+                // Particle effect
+                const scoreDisplay = document.getElementById('score-display');
+                for(let i = 0; i < 20; i++) {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.width = '8px';
+                    particle.style.height = '8px';
+                    particle.style.borderRadius = '50%';
+                    particle.style.background = '#d2691e';
+                    particle.style.boxShadow = '0 0 10px #d2691e';
+                    particle.style.top = scoreDisplay.offsetTop + 50 + 'px';
+                    particle.style.left = scoreDisplay.offsetLeft + 60 + 'px';
+                    particle.style.zIndex = '999';
+                    particle.style.pointerEvents = 'none';
+                    document.body.appendChild(particle);
+                    
+                    const angle = (Math.PI * 2 * i) / 20;
+                    const velocity = 3;
+                    const vx = Math.cos(angle) * velocity;
+                    const vy = Math.sin(angle) * velocity;
+                    
+                    let x = 0, y = 0;
+                    const animate = () => {
+                        x += vx;
+                        y += vy;
+                        particle.style.transform = `translate(${x}px, ${y}px)`;
+                        particle.style.opacity = 1 - (Math.abs(x) + Math.abs(y)) / 200;
+                        
+                        if (Math.abs(x) < 100 && Math.abs(y) < 100) {
+                            requestAnimationFrame(animate);
+                        } else {
+                            particle.remove();
+                        }
+                    };
+                    animate();
+                }
+            } else if (distance > releaseDistance && window.hasCaught) {
+                window.hasCaught = false;
+            }
+        };
+        
+        // Helper function to interpolate between two hex colors
+        function lerpColor(color1, color2, t) {
+            const r1 = (color1 >> 16) & 0xff;
+            const g1 = (color1 >> 8) & 0xff;
+            const b1 = color1 & 0xff;
+            
+            const r2 = (color2 >> 16) & 0xff;
+            const g2 = (color2 >> 8) & 0xff;
+            const b2 = color2 & 0xff;
+            
+            const r = Math.round(r1 + (r2 - r1) * t);
+            const g = Math.round(g1 + (g2 - g1) * t);
+            const b = Math.round(b1 + (b2 - b1) * t);
+            
+            return (r << 16) | (g << 8) | b;
+        }
     </script></body>
 </html>
