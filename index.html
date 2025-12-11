@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paris Weather - Twitch Versus Code</title>
+    <title>Brittany Weather - Twitch Versus Code</title>
     <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -292,6 +292,27 @@
             0%, 100% { opacity: 0; transform: translateY(10px); }
             10%, 90% { opacity: 1; transform: translateY(0); }
         }
+    /* Breton celtic knot decoration */
+        .celtic-knot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            font-size: 4rem;
+            opacity: 0.3;
+            animation: celtic-spin 20s linear infinite;
+            z-index: 1;
+        }
+        @keyframes celtic-spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .menhir {
+            position: fixed;
+            bottom: 0;
+            font-size: 5rem;
+            z-index: 2;
+            opacity: 0.6;
+        }
     </style>
 </head>
 <body>
@@ -321,10 +342,15 @@
         <div class="pokemon-collection" id="pokemon-collection"></div>
     </div>
     
-    <!-- Rain container -->
+    <!-- Breton decorations -->
+    <div class="celtic-knot">☘️</div>
+    <div class="menhir" style="left: 5%;">🪨</div>
+    <div class="menhir" style="right: 15%;">🪨</div>
+    
+    <!-- Rain container (it's Brittany, always raining!) -->
     <div class="rain-container" id="rain-container"></div>
     <div class="weather-card">
-        <div class="city">🗼 Paris, France</div>
+        <div class="city">🏴󠁧󠁢󠁢󠁲󠁴󠁿 Bretagne, France</div>
         <div class="weather-icon" id="weather-icon">⏳</div>
         <div class="temp" id="temperature">--°C</div>
         <div id="description">Loading...</div>
@@ -346,7 +372,7 @@
     <script>
         async function getWeather() {
             try {
-                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=48.8566&longitude=2.3522&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=Europe/Paris');
+                const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=48.1173&longitude=-1.6778&current=temperature_2m,relative_humidity_2m,apparent_temperature,weather_code,wind_speed_10m&timezone=Europe/Paris');
                 const data = await response.json();
                 const current = data.current;
                 
@@ -412,10 +438,10 @@
         
         // Dracula speech bubble
         const draculaQuotes = [
-            "Ah, Paris... the city of love and blood! 🩸",
+            "Ah, Bretagne... land of crêpes and legends! 🥞",
             "This rain reminds me of Transylvania...",
             "I vant to check ze veather! Bleh!",
-            "The Eiffel Tower looks delicious tonight...",
+            "These standing stones look mysterious tonight...",
             "Perfect weather for a midnight flight!"
         ];
         
@@ -431,12 +457,12 @@
         }, 10000);
         
         // Dracula click interaction
-        // Elon quotes when raining
+        // Elon quotes when raining (in Brittany it's ALWAYS raining!)
         const elonQuotes = [
             "Rain? Time to build a weather-proof Tesla! 🚀",
             "This umbrella runs on sustainable energy ☀️",
             "Buying Twitter was drier than this... 💀",
-            "Paris rain > Mars dust storms 🔴",
+            "Breton rain > Mars dust storms 🔴",
             "Should I make umbrellas electric? 🤔"
         ];
         
