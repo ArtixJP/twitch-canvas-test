@@ -440,20 +440,24 @@
             overflow: hidden;
             background: #0a0612;
             box-shadow: 8px 8px 0 rgba(0,0,0,0.3), inset 0 0 50px rgba(155, 89, 182, 0.2);
+            touch-action: none;
         }
         
         .minimap-world {
             position: absolute;
             width: 1000px;
             height: 800px;
+            left: 0;
+            top: 0;
             background: 
                 radial-gradient(circle at 20% 30%, rgba(155, 89, 182, 0.3) 0%, transparent 30%),
                 radial-gradient(circle at 80% 70%, rgba(230, 126, 34, 0.3) 0%, transparent 25%),
                 radial-gradient(circle at 50% 50%, rgba(46, 204, 113, 0.2) 0%, transparent 40%),
                 linear-gradient(135deg, #0a0612 0%, #1a1025 50%, #0a0612 100%);
-            transform-origin: center;
-            transition: transform 0.3s ease-out;
+            transform-origin: 0 0;
+            transition: none;
             cursor: grab;
+            user-select: none;
         }
         
         .minimap-world:active {
@@ -962,10 +966,11 @@
         const minimapWorld = document.getElementById('minimapWorld');
         const minimapContainer = document.getElementById('minimapContainer');
         let currentZoom = 1;
-        let panX = -325;
-        let panY = -275;
+        let panX = 0;
+        let panY = 0;
         let isDragging = false;
-        let startX, startY;
+        let dragStartX, dragStartY;
+        let lastPanX, lastPanY;
         let foundSecrets = new Set();
         
         const secretMessages = [
@@ -1022,6 +1027,15 @@
         }
         
         function updateMapTransform() {
+            // Clamp pan values to keep content visible
+            const maxPanX = 0;
+            const maxPanY = 0;
+            const minPanX = -(1000 * currentZoom - 350);
+            const minPanY = -(800 * currentZoom - 250);
+            
+            panX = Math.min(maxPanX, Math.max(minPanX, panX));
+            panY = Math.min(maxPanY, Math.max(minPanY, panY));
+            
             minimapWorld.style.transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
             document.getElementById('zoomLevel').textContent = currentZoom.toFixed(1);
         }
@@ -1033,26 +1047,36 @@
         
         function resetMap() {
             currentZoom = 1;
-            panX = -325;
-            panY = -275;
+            panX = 0;
+            panY = 0;
             updateMapTransform();
         }
         
         minimapContainer.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('zoom-btn')) return;
             isDragging = true;
-            startX = e.clientX - panX;
-            startY = e.clientY - panY;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            lastPanX = panX;
+            lastPanY = panY;
+            minimapWorld.style.cursor = 'grabbing';
+            e.preventDefault();
         });
         
         document.addEventListener('mousemove', (e) => {
             if (!isDragging) return;
-            panX = e.clientX - startX;
-            panY = e.clientY - startY;
+            const deltaX = e.clientX - dragStartX;
+            const deltaY = e.clientY - dragStartY;
+            panX = lastPanX + deltaX;
+            panY = lastPanY + deltaY;
             updateMapTransform();
         });
         
         document.addEventListener('mouseup', () => {
-            isDragging = false;
+            if (isDragging) {
+                isDragging = false;
+                minimapWorld.style.cursor = 'grab';
+            }
         });
         
         minimapContainer.addEventListener('wheel', (e) => {
