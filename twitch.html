@@ -948,24 +948,35 @@
         const musicStatus = document.getElementById('musicStatus');
         
         function toggleMusic() {
+            if (!bgMusic) return;
             if (bgMusic.paused) {
                 bgMusic.play();
-                vinylDisc.style.animationPlayState = 'running';
-                musicStatus.textContent = '▶ PLAYING';
-                musicStatus.style.color = '#27ae60';
+                if (vinylDisc) vinylDisc.style.animationPlayState = 'running';
+                if (musicStatus) {
+                    musicStatus.textContent = '▶ PLAYING';
+                    musicStatus.style.color = '#27ae60';
+                }
             } else {
                 bgMusic.pause();
-                vinylDisc.style.animationPlayState = 'paused';
-                musicStatus.textContent = '⏸ PAUSED';
-                musicStatus.style.color = '#e74c3c';
+                if (vinylDisc) vinylDisc.style.animationPlayState = 'paused';
+                if (musicStatus) {
+                    musicStatus.textContent = '⏸ PAUSED';
+                    musicStatus.style.color = '#e74c3c';
+                }
             }
         }
         
         // Auto-play might be blocked, handle it
-        bgMusic.play().catch(() => {
-            vinylDisc.style.animationPlayState = 'paused';
-            musicStatus.textContent = '⏸ CLICK TO PLAY';
-            musicStatus.style.color = '#f39c12';
+        document.addEventListener('DOMContentLoaded', function() {
+            if (bgMusic) {
+                bgMusic.play().catch(() => {
+                    if (vinylDisc) vinylDisc.style.animationPlayState = 'paused';
+                    if (musicStatus) {
+                        musicStatus.textContent = '⏸ CLICK TO PLAY';
+                        musicStatus.style.color = '#f39c12';
+                    }
+                });
+            }
         });
         
         // Minimap Explorer
