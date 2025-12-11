@@ -568,6 +568,13 @@
             50% { transform: translateY(-15px); }
         }
         
+        @keyframes potato-wobble {
+            0%, 100% { transform: rotate(-3deg) scale(1); }
+            25% { transform: rotate(3deg) scale(1.02); }
+            50% { transform: rotate(-3deg) scale(1); }
+            75% { transform: rotate(3deg) scale(0.98); }
+        }
+        
         @keyframes icon-bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
@@ -661,7 +668,6 @@
 <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #e74c3c; margin: 0 0 15px 0;">🍄 MARIO TIME 🍄</h3>
 <div style="position: relative; display: inline-block;">
 <svg height="160" style="border: 4px solid #e74c3c; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: mario-jump 1s ease-in-out infinite;" viewbox="0 0 16 16" width="160">
-
 <rect fill="#e74c3c" height="1" width="6" x="5" y="0"></rect>
 <rect fill="#e74c3c" height="1" width="9" x="4" y="1"></rect>
 <rect fill="#8B4513" height="1" width="3" x="4" y="2"></rect>
@@ -708,6 +714,11 @@
 </svg>
 </div>
 <p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">It's-a me! 🍄✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #f39c12; margin: 0 0 15px 0;">🥔 POTATO TIME 🥔</h3>
+<img alt="Delicious Potatoes" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/1200px-Patates.jpg" style="width: 200px; height: auto; border: 4px solid #f39c12; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: potato-wobble 2s ease-in-out infinite; object-fit: cover;"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Magnifique Patate! ✨</p>
 </div>
 <div class="pixel-card" style="text-align: center;">
 <h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #27ae60; margin: 0 0 15px 0;">🧪 TEST ZONE 🧪</h3>
