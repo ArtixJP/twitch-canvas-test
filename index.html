@@ -525,7 +525,7 @@
                     <div class="apple"></div>
                     <div class="apple apple2"></div>
                     <div class="apple apple3"></div>
-                    <div class="speech-bubble">Welcome! 💜</div>
+                    <div class="speech-bubble">Qxe4!! 👑💥</div>
                 </div>
             </div>
         </div>
@@ -535,7 +535,7 @@
             <div class="message"><span class="user">@Viewer:</span> Let's create together! 🎨</div>
             <div class="message"><span class="user">@Coder:</span> Pixel perfect vibes ✨</div>
             <div class="message"><span class="user">@Artist:</span> Love the retro feel! 💜</div>
-            <div class="message"><span class="user">@Chess:</span> 1. e4 played! ♙➔e4 🎯</div>
+            <div class="message"><span class="user">@Chess:</span> 1. e4 Qxe4!! ♛💥 BOLD!</div>
         </div>
     </div>
     
@@ -548,13 +548,13 @@
         const whitePawns = ['♙','♙','♙','♙','♙','♙','♙','♙'];
         const whitePieces = ['♖','♘','♗','♕','♔','♗','♘','♖'];
         
-        // Board state after 1. e4
+        // Board state after 1. e4 Qxe4!! - Black Queen takes!
         const boardState = [
-            blackPieces,                                    // Row 0
+            ['♜','♞','♝','','♚','♝','♞','♜'],              // Row 0 - Queen moved!
             blackPawns,                                     // Row 1
             ['','','','','','','',''],                      // Row 2
             ['','','','','','','',''],                      // Row 3
-            ['','','','','♙','','',''],                     // Row 4 - White pawn on e4!
+            ['','','','','♛','','',''],                     // Row 4 - Black Queen on e4!!
             ['','','','','','','',''],                      // Row 5
             ['♙','♙','♙','♙','','♙','♙','♙'],              // Row 6 - e2 pawn moved
             whitePieces                                     // Row 7
@@ -567,16 +567,16 @@
                 const isWhiteSquare = (row + col) % 2 === 0;
                 square.className = 'chess-square ' + (isWhiteSquare ? 'white-square' : 'black-square');
                 
-                // Highlight e4 and e2 squares (the move that was played)
-                if ((row === 4 && col === 4) || (row === 6 && col === 4)) {
+                // Highlight e4 (Queen capture!) and d8 (where Queen came from)
+                if ((row === 4 && col === 4) || (row === 0 && col === 3)) {
                     square.classList.add('highlight-move');
                 }
                 
                 const piece = boardState[row][col];
                 if(piece) {
                     square.textContent = piece;
-                    // White pieces are on rows 4, 6, 7
-                    if(row >= 4) {
+                    // Determine piece color by piece type
+                    if(['♙','♖','♘','♗','♕','♔'].includes(piece)) {
                         square.classList.add('white-piece');
                     } else {
                         square.classList.add('black-piece');
