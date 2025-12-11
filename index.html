@@ -158,6 +158,78 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
+        .music-controls {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .music-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .music-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+        }
+        
+        .music-btn:active {
+            transform: scale(0.98);
+        }
+        
+        .music-btn.playing {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+        
+        .music-btn .icon {
+            font-size: 1.3rem;
+        }
+        
+        .music-title {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-align: center;
+        }
+        
+        .sound-waves {
+            display: flex;
+            gap: 3px;
+            height: 20px;
+            align-items: flex-end;
+        }
+        
+        .sound-wave {
+            width: 4px;
+            background: white;
+            border-radius: 2px;
+            animation: wave 0.5s ease-in-out infinite;
+        }
+        
+        .sound-wave:nth-child(1) { animation-delay: 0s; height: 8px; }
+        .sound-wave:nth-child(2) { animation-delay: 0.1s; height: 15px; }
+        .sound-wave:nth-child(3) { animation-delay: 0.2s; height: 10px; }
+        .sound-wave:nth-child(4) { animation-delay: 0.3s; height: 18px; }
+        .sound-wave:nth-child(5) { animation-delay: 0.4s; height: 12px; }
+        
+        .sound-waves.paused .sound-wave {
+            animation: none;
+            height: 4px !important;
+        }
+        
         @keyframes rotate {
             from { transform: translate(-50%, -50%) rotate(0deg); }
             to { transform: translate(-50%, -50%) rotate(360deg); }
@@ -182,6 +254,11 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 1; }
         }
+        
+        @keyframes wave {
+            0%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.5); }
+        }
     </style>
 </head>
 <body>
@@ -194,6 +271,23 @@
 <div class="moon-orbit">
 <div class="moon"></div>
 </div>
+</div>
+<div class="music-controls">
+<audio id="bgMusic" loop="">
+<source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg"/>
+</audio>
+<button class="music-btn" id="musicBtn" onclick="toggleMusic()">
+<span class="icon" id="musicIcon">▶</span>
+<span id="musicText">Play Music</span>
+<div class="sound-waves paused" id="soundWaves">
+<div class="sound-wave"></div>
+<div class="sound-wave"></div>
+<div class="sound-wave"></div>
+<div class="sound-wave"></div>
+<div class="sound-wave"></div>
+</div>
+</button>
+<div class="music-title">🎵 Professor Layton - More London Streets</div>
 </div>
 <script>
         // Generate random stars
@@ -209,6 +303,40 @@
             star.style.animationDuration = (Math.random() * 2 + 1) + 's';
             starsContainer.appendChild(star);
         }
+        
+        // Music controls
+        const audio = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const musicIcon = document.getElementById('musicIcon');
+        const musicText = document.getElementById('musicText');
+        const soundWaves = document.getElementById('soundWaves');
+        let isPlaying = false;
+        
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicIcon.textContent = '▶';
+                musicText.textContent = 'Play Music';
+                musicBtn.classList.remove('playing');
+                soundWaves.classList.add('paused');
+            } else {
+                audio.play();
+                musicIcon.textContent = '⏸';
+                musicText.textContent = 'Pause Music';
+                musicBtn.classList.add('playing');
+                soundWaves.classList.remove('paused');
+            }
+            isPlaying = !isPlaying;
+        }
+        
+        // Handle audio ending (even though it loops)
+        audio.addEventListener('ended', () => {
+            musicIcon.textContent = '▶';
+            musicText.textContent = 'Play Music';
+            musicBtn.classList.remove('playing');
+            soundWaves.classList.add('paused');
+            isPlaying = false;
+        });
     </script>
 </body>
 </html>
