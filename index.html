@@ -880,7 +880,16 @@ h1 {
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
-<body><canvas id="gameCanvas"></canvas>
+<body><nav id="autoNav" style="position: fixed; top: 50%; left: 20px; transform: translateY(-50%); z-index: 150; display: flex; flex-direction: column; gap: 15px;">
+<button class="nav-btn active" data-section="space" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(100, 200, 255, 0.6); background: linear-gradient(135deg, rgba(74, 144, 164, 0.9), rgba(45, 90, 107, 0.9)); cursor: pointer; font-size: 20px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(74, 144, 164, 0.5);">🌌</button>
+<button class="nav-btn" data-section="animals" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(100, 200, 255, 0.3); background: linear-gradient(135deg, rgba(74, 144, 164, 0.5), rgba(45, 90, 107, 0.5)); cursor: pointer; font-size: 20px; transition: all 0.3s ease;">🐾</button>
+<button class="nav-btn" data-section="planet" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(100, 200, 255, 0.3); background: linear-gradient(135deg, rgba(74, 144, 164, 0.5), rgba(45, 90, 107, 0.5)); cursor: pointer; font-size: 20px; transition: all 0.3s ease;">🪐</button>
+<button class="nav-btn" data-section="game" style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid rgba(100, 200, 255, 0.3); background: linear-gradient(135deg, rgba(74, 144, 164, 0.5), rgba(45, 90, 107, 0.5)); cursor: pointer; font-size: 20px; transition: all 0.3s ease;">🎮</button>
+</nav>
+<div id="sectionIndicator" style="position: fixed; top: 80px; left: 50%; transform: translateX(-50%); z-index: 150; background: linear-gradient(135deg, rgba(20, 20, 40, 0.9), rgba(40, 40, 80, 0.9)); border: 2px solid #ffd700; border-radius: 25px; padding: 10px 25px; font-family: system-ui, sans-serif; font-size: 18px; color: #ffd700; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);">
+<span id="currentSection">🌌 SPACE</span>
+<div style="font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 5px;">Next in: <span id="countdown">30</span>s</div>
+</div><canvas id="gameCanvas"></canvas>
 <div id="gameUI">
 <div class="label">🚀 ASTEROID SCORE</div>
 <div class="value" id="asteroidScore">0</div>
@@ -1722,5 +1731,156 @@ setInterval(sprayWater, 3000);
 setTimeout(sprayWater, 1000);
 
 console.log('🐘 Space Elephant is ready to spray water! 🌊');
+</script><script>
+// Auto-rotating menu system
+const sections = [
+  { id: 'space', name: '🌌 SPACE', emoji: '🌌', focus: 'three-container' },
+  { id: 'animals', name: '🐾 ANIMALS', emoji: '🐾', focus: 'planet-container' },
+  { id: 'planet', name: '🪐 PLANET', emoji: '🪐', focus: 'planet-container' },
+  { id: 'game', name: '🎮 GAME', emoji: '🎮', focus: 'gameCanvas' }
+];
+
+let currentSectionIndex = 0;
+let countdown = 30;
+let autoRotateInterval;
+let countdownInterval;
+
+function updateNavButtons() {
+  document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+    if (index === currentSectionIndex) {
+      btn.style.border = '2px solid rgba(100, 200, 255, 0.6)';
+      btn.style.background = 'linear-gradient(135deg, rgba(74, 144, 164, 0.9), rgba(45, 90, 107, 0.9))';
+      btn.style.boxShadow = '0 0 20px rgba(74, 144, 164, 0.5)';
+      btn.style.transform = 'scale(1.2)';
+      btn.classList.add('active');
+    } else {
+      btn.style.border = '2px solid rgba(100, 200, 255, 0.3)';
+      btn.style.background = 'linear-gradient(135deg, rgba(74, 144, 164, 0.5), rgba(45, 90, 107, 0.5))';
+      btn.style.boxShadow = 'none';
+      btn.style.transform = 'scale(1)';
+      btn.classList.remove('active');
+    }
+  });
+}
+
+function highlightSection(sectionId) {
+  // Reset all highlights
+  document.querySelectorAll('.section-highlight').forEach(el => el.classList.remove('section-highlight'));
+  
+  const section = sections.find(s => s.id === sectionId);
+  if (!section) return;
+  
+  // Visual effects based on section
+  switch(sectionId) {
+    case 'space':
+      document.getElementById('three-container').style.opacity = '1';
+      document.querySelector('.planet-container').style.opacity = '0.5';
+      document.getElementById('spaceElephant').style.opacity = '0.5';
+      break;
+    case 'animals':
+      document.getElementById('three-container').style.opacity = '0.5';
+      document.querySelector('.planet-container').style.opacity = '1';
+      document.getElementById('spaceElephant').style.opacity = '1';
+      // Highlight the animals
+      document.querySelector('.space-kitty').style.filter = 'drop-shadow(0 0 20px #ff69b4)';
+      document.querySelector('.space-doggy').style.filter = 'drop-shadow(0 0 20px #90EE90)';
+      setTimeout(() => {
+        document.querySelector('.space-kitty').style.filter = '';
+        document.querySelector('.space-doggy').style.filter = '';
+      }, 2000);
+      break;
+    case 'planet':
+      document.getElementById('three-container').style.opacity = '0.7';
+      document.querySelector('.planet-container').style.opacity = '1';
+      document.querySelector('.planet').style.boxShadow = '0 0 80px rgba(74, 144, 164, 0.8), 0 0 120px rgba(74, 144, 164, 0.4)';
+      setTimeout(() => {
+        document.querySelector('.planet').style.boxShadow = '';
+      }, 2000);
+      break;
+    case 'game':
+      document.getElementById('three-container').style.opacity = '0.3';
+      document.querySelector('.planet-container').style.opacity = '0.3';
+      document.getElementById('gameUI').style.boxShadow = '0 0 40px rgba(85, 239, 196, 0.8)';
+      setTimeout(() => {
+        document.getElementById('gameUI').style.boxShadow = '';
+      }, 2000);
+      break;
+  }
+}
+
+function goToSection(index) {
+  currentSectionIndex = index;
+  countdown = 30;
+  
+  const section = sections[currentSectionIndex];
+  document.getElementById('currentSection').textContent = section.name;
+  document.getElementById('countdown').textContent = countdown;
+  
+  updateNavButtons();
+  highlightSection(section.id);
+  
+  // Announcement animation
+  const indicator = document.getElementById('sectionIndicator');
+  indicator.style.transform = 'translateX(-50%) scale(1.1)';
+  setTimeout(() => {
+    indicator.style.transform = 'translateX(-50%) scale(1)';
+  }, 300);
+}
+
+function nextSection() {
+  currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+  goToSection(currentSectionIndex);
+}
+
+function startAutoRotate() {
+  // Clear existing intervals
+  if (autoRotateInterval) clearInterval(autoRotateInterval);
+  if (countdownInterval) clearInterval(countdownInterval);
+  
+  // Countdown timer
+  countdownInterval = setInterval(() => {
+    countdown--;
+    document.getElementById('countdown').textContent = countdown;
+    
+    // Flash when close to change
+    if (countdown <= 5) {
+      document.getElementById('countdown').style.color = '#ff6b6b';
+    } else {
+      document.getElementById('countdown').style.color = 'inherit';
+    }
+  }, 1000);
+  
+  // Auto rotate every 30 seconds
+  autoRotateInterval = setInterval(() => {
+    nextSection();
+  }, 30000);
+}
+
+// Manual navigation
+document.querySelectorAll('.nav-btn').forEach((btn, index) => {
+  btn.addEventListener('click', () => {
+    goToSection(index);
+    // Reset auto-rotate timer
+    startAutoRotate();
+  });
+  
+  btn.addEventListener('mouseenter', () => {
+    if (!btn.classList.contains('active')) {
+      btn.style.transform = 'scale(1.1)';
+    }
+  });
+  
+  btn.addEventListener('mouseleave', () => {
+    if (!btn.classList.contains('active')) {
+      btn.style.transform = 'scale(1)';
+    }
+  });
+});
+
+// Initialize
+goToSection(0);
+startAutoRotate();
+
+console.log('🔄 Auto-rotating menu activated! Changes every 30 seconds.');
 </script></body>
 </html>
