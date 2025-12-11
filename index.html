@@ -371,6 +371,186 @@ h1 {
   text-shadow: 
     0 0 30px rgba(100, 200, 255, 0.5),
     -20px -10px 40px rgba(255, 200, 100, 0.3);
+}
+/* Space Doggy Styles */
+.doggy-orbit {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 380px;
+  height: 380px;
+  transform: translate(-50%, -50%);
+  animation: orbitDoggy 6s linear infinite;
+  z-index: 7;
+}
+.space-doggy {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%) rotate(180deg);
+  width: 55px;
+  height: 50px;
+  animation: doggyFloat 1.5s ease-in-out infinite;
+}
+.doggy-head {
+  position: absolute;
+  width: 40px;
+  height: 35px;
+  background: linear-gradient(135deg, #d4a574 0%, #c4956a 50%, #a67c52 100%);
+  border-radius: 50% 50% 45% 45%;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 15px rgba(212, 165, 116, 0.6), 0 0 30px rgba(212, 165, 116, 0.3);
+}
+.doggy-ear-left, .doggy-ear-right {
+  position: absolute;
+  width: 18px;
+  height: 25px;
+  background: linear-gradient(135deg, #c4956a, #8b6914);
+  border-radius: 50% 50% 40% 40%;
+  top: 0px;
+}
+.doggy-ear-left {
+  left: 2px;
+  transform: rotate(-20deg);
+}
+.doggy-ear-right {
+  right: 2px;
+  transform: rotate(20deg);
+}
+.doggy-eye-left, .doggy-eye-right {
+  position: absolute;
+  width: 10px;
+  height: 12px;
+  background: #1a1a2e;
+  border-radius: 50%;
+  top: 12px;
+  animation: doggyExcited 0.3s ease-in-out infinite;
+}
+.doggy-eye-left { left: 8px; }
+.doggy-eye-right { right: 8px; }
+.doggy-eye-left::after, .doggy-eye-right::after {
+  content: '';
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: white;
+  border-radius: 50%;
+  top: 2px;
+  left: 2px;
+}
+.doggy-nose {
+  position: absolute;
+  width: 12px;
+  height: 10px;
+  background: #2a2a2a;
+  border-radius: 50%;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.doggy-snout {
+  position: absolute;
+  width: 20px;
+  height: 12px;
+  background: #e8c9a8;
+  border-radius: 50%;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: -1;
+}
+.doggy-tongue {
+  position: absolute;
+  width: 8px;
+  height: 12px;
+  background: #ff6b8a;
+  border-radius: 0 0 50% 50%;
+  top: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: tonguePant 0.4s ease-in-out infinite;
+}
+.doggy-helmet {
+  position: absolute;
+  width: 50px;
+  height: 45px;
+  border: 3px solid rgba(150, 255, 150, 0.6);
+  border-radius: 50%;
+  top: 3px;
+  left: 50%;
+  transform: translateX(-50%);
+  box-shadow: 0 0 10px rgba(150, 255, 150, 0.4), inset 0 0 20px rgba(150, 255, 150, 0.1);
+}
+.doggy-helmet::before {
+  content: '🌟';
+  position: absolute;
+  font-size: 8px;
+  top: 5px;
+  right: 5px;
+}
+.doggy-tail {
+  position: absolute;
+  width: 8px;
+  height: 20px;
+  background: #c4956a;
+  border-radius: 50%;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: top center;
+  animation: tailWag 0.2s ease-in-out infinite;
+}
+@keyframes orbitDoggy {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes doggyFloat {
+  0%, 100% { transform: translateX(-50%) rotate(180deg) translateY(0); }
+  50% { transform: translateX(-50%) rotate(180deg) translateY(-3px); }
+}
+@keyframes doggyExcited {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+@keyframes tonguePant {
+  0%, 100% { height: 12px; }
+  50% { height: 16px; }
+}
+@keyframes tailWag {
+  0%, 100% { transform: translateX(-50%) rotate(-20deg); }
+  50% { transform: translateX(-50%) rotate(20deg); }
+}
+/* Chase mode animations */
+.kitty-orbit.escaping {
+  animation: orbitKittyFast 3s linear infinite !important;
+}
+.doggy-orbit.chasing {
+  animation: orbitDoggyFast 4s linear infinite !important;
+}
+@keyframes orbitKittyFast {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(-360deg); }
+}
+@keyframes orbitDoggyFast {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+.space-kitty.scared {
+  animation: kittyScared 0.2s ease-in-out infinite !important;
+}
+@keyframes kittyScared {
+  0%, 100% { transform: translateX(-50%) translateY(0) scale(1.1); }
+  25% { transform: translateX(-55%) translateY(-3px) scale(1.1); }
+  75% { transform: translateX(-45%) translateY(-3px) scale(1.1); }
+}
+.space-doggy.excited {
+  animation: doggyExcitedBounce 0.3s ease-in-out infinite !important;
+}
+@keyframes doggyExcitedBounce {
+  0%, 100% { transform: translateX(-50%) rotate(180deg) translateY(0); }
+  50% { transform: translateX(-50%) rotate(180deg) translateY(-8px); }
 }</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script></head>
 <body>
@@ -378,7 +558,7 @@ h1 {
 <div id="three-container" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 2; pointer-events: none;"></div><div class="planet-container">
 <div class="ring"></div>
 <div class="planet"></div>
-<div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="space-kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-head"><div class="kitty-eye-left"></div><div class="kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker left1"></div><div class="kitty-whisker left2"></div><div class="kitty-whisker right1"></div><div class="kitty-whisker right2"></div></div></div></div></div>
+<div class="moon-orbit"><div class="moon"></div></div><div class="kitty-orbit"><div class="space-kitty"><div class="kitty-helmet"></div><div class="kitty-ear-left"></div><div class="kitty-ear-right"></div><div class="kitty-head"><div class="kitty-eye-left"></div><div class="kitty-eye-right"></div><div class="kitty-nose"></div><div class="kitty-mouth"></div><div class="kitty-whisker left1"></div><div class="kitty-whisker left2"></div><div class="kitty-whisker right1"></div><div class="kitty-whisker right2"></div></div></div></div><div class="doggy-orbit"><div class="space-doggy"><div class="doggy-helmet"></div><div class="doggy-ear-left"></div><div class="doggy-ear-right"></div><div class="doggy-head"><div class="doggy-eye-left"></div><div class="doggy-eye-right"></div><div class="doggy-nose"></div><div class="doggy-tongue"></div><div class="doggy-snout"></div></div><div class="doggy-tail"></div></div></div></div>
 <div class="stars" id="stars"></div>
 <script>
         // Generate random stars
@@ -601,5 +781,82 @@ window.addEventListener('resize', () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
+</script><script>
+// Chase mechanics
+const kittyOrbit = document.querySelector('.kitty-orbit');
+const doggyOrbit = document.querySelector('.doggy-orbit');
+const spaceKitty = document.querySelector('.space-kitty');
+const spaceDoggy = document.querySelector('.space-doggy');
+
+let kittyAngle = 0;
+let doggyAngle = 180;
+let kittySpeed = -0.5; // degrees per frame (counter-clockwise)
+let doggySpeed = 0.8; // degrees per frame (clockwise, faster!)
+let isEscaping = false;
+let escapeTimer = null;
+
+function normalizeAngle(angle) {
+  while (angle < 0) angle += 360;
+  while (angle >= 360) angle -= 360;
+  return angle;
+}
+
+function getAngleDifference(a1, a2) {
+  let diff = Math.abs(normalizeAngle(a1) - normalizeAngle(a2));
+  return Math.min(diff, 360 - diff);
+}
+
+function updateChase() {
+  // Update angles based on current animation
+  kittyAngle += kittySpeed;
+  doggyAngle += doggySpeed;
+  
+  // Normalize angles
+  kittyAngle = normalizeAngle(kittyAngle);
+  doggyAngle = normalizeAngle(doggyAngle);
+  
+  // Apply rotations directly
+  kittyOrbit.style.transform = `translate(-50%, -50%) rotate(${kittyAngle}deg)`;
+  doggyOrbit.style.transform = `translate(-50%, -50%) rotate(${doggyAngle}deg)`;
+  
+  // Check distance between cat and dog
+  const angleDiff = getAngleDifference(kittyAngle, doggyAngle);
+  
+  if (angleDiff < 45 && !isEscaping) {
+    // Dog is close! Cat escapes!
+    isEscaping = true;
+    kittySpeed = -3; // Super fast escape!
+    spaceKitty.classList.add('scared');
+    spaceDoggy.classList.add('excited');
+    
+    // Clear any existing timer
+    if (escapeTimer) clearTimeout(escapeTimer);
+    
+    // Return to normal after escaping
+    escapeTimer = setTimeout(() => {
+      if (getAngleDifference(kittyAngle, doggyAngle) > 90) {
+        isEscaping = false;
+        kittySpeed = -0.5;
+        spaceKitty.classList.remove('scared');
+        spaceDoggy.classList.remove('excited');
+      }
+    }, 1500);
+  } else if (isEscaping && angleDiff > 120) {
+    // Cat has escaped far enough
+    isEscaping = false;
+    kittySpeed = -0.5;
+    spaceKitty.classList.remove('scared');
+    spaceDoggy.classList.remove('excited');
+  }
+  
+  requestAnimationFrame(updateChase);
+}
+
+// Disable CSS animations and use JS instead
+kittyOrbit.style.animation = 'none';
+doggyOrbit.style.animation = 'none';
+
+// Start the chase!
+updateChase();
 </script></body>
 </html>
