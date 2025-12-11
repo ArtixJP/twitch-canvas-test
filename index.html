@@ -1,35 +1,1129 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: https://artix.tech; frame-src 'self';">
-    <title>Twitch Versus Code</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .info {
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code - Cozy Pixel Lounge</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=VT323&amp;display=swap" rel="stylesheet"/>
+<style>
+        * {
+            image-rendering: pixelated;
+        }
+        
+        body { 
+            font-family: 'VT323', monospace; 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            margin: 0;
+            background: linear-gradient(180deg, #1a1025 0%, #2d1b3d 50%, #1f1428 100%);
+            color: #f0e6d3;
+            overflow-x: hidden;
+        }
+        
+        /* Scanline effect */
+        body::before {
+            content: '';
             position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #888;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: system-ui, sans-serif;
-            font-size: 12px;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.1) 0px,
+                rgba(0, 0, 0, 0.1) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            pointer-events: none;
             z-index: 1000;
         }
-        .info a { color: #6cf; text-decoration: none; }
-        .info a:hover { text-decoration: underline; }
+        
+        /* Floating pixels background */
+        .pixel-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .pixel {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            animation: float-pixel 15s infinite ease-in-out;
+            opacity: 0.4;
+        }
+        
+        @keyframes float-pixel {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+        
+        h1 { 
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5rem; 
+            text-align: center; 
+            color: #ff9f43;
+            text-shadow: 
+                4px 4px 0 #9b59b6,
+                -2px -2px 0 #3498db,
+                0 0 30px rgba(255, 159, 67, 0.5);
+            animation: glow-pulse 3s ease-in-out infinite;
+            margin: 20px 0;
+            line-height: 1.8;
+        }
+        
+        @keyframes glow-pulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        .welcome-banner {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            border: 4px solid #f39c12;
+            border-radius: 8px;
+            padding: 20px 40px;
+            margin-bottom: 30px;
+            box-shadow: 
+                0 0 0 4px #1a1025,
+                8px 8px 0 #2c3e50,
+                0 0 40px rgba(155, 89, 182, 0.4);
+            animation: banner-float 4s ease-in-out infinite;
+        }
+        
+        @keyframes banner-float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .cozy-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            padding: 20px;
+            max-width: 1200px;
+        }
+        
+        .pixel-card {
+            background: linear-gradient(145deg, #2d1b3d 0%, #3d2a4d 100%);
+            border: 4px solid #e67e22;
+            border-radius: 4px;
+            padding: 20px;
+            box-shadow: 
+                8px 8px 0 rgba(0,0,0,0.3),
+                0 0 30px rgba(230, 126, 34, 0.2);
+            transition: all 0.3s;
+        }
+        
+        .pixel-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                12px 12px 0 rgba(0,0,0,0.3),
+                0 0 50px rgba(230, 126, 34, 0.4);
+        }
+        
+        .chessboard {
+            display: grid;
+            grid-template-columns: repeat(8, 35px);
+            grid-template-rows: repeat(8, 35px);
+            border: 4px solid #e67e22;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+            border-radius: 4px;
+        }
+        
+        .chess-square {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        .white-piece {
+            color: #ffffff;
+            text-shadow: 0 0 3px #000, 1px 1px 2px #000, -1px -1px 2px #000;
+        }
+        
+        .black-piece {
+            color: #1a1025;
+            text-shadow: 0 0 2px rgba(255,255,255,0.3);
+        }
+        
+        .highlight-move {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%) !important;
+            animation: pulse-square 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-square {
+            0%, 100% { box-shadow: inset 0 0 10px rgba(241, 196, 15, 0.5); }
+            50% { box-shadow: inset 0 0 20px rgba(241, 196, 15, 0.8); }
+        }
+        
+        .chess-square:hover {
+            transform: scale(1.15);
+            z-index: 10;
+            filter: brightness(1.3);
+        }
+        
+        .white-square {
+            background: linear-gradient(135deg, #f5e6d3 0%, #edd5b7 100%);
+        }
+        
+        .black-square {
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+        }
+        
+        .scene {
+            position: relative;
+            width: 200px;
+            height: 280px;
+        }
+        
+        .tree {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 100px;
+            background: linear-gradient(90deg, #8b4513 0%, #a0522d 50%, #8b4513 100%);
+            border-radius: 4px;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+        }
+        
+        .foliage {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .leaves {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #27ae60, #1e8449);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+        }
+        
+        .layer1 {
+            width: 120px;
+            height: 120px;
+            top: -50px;
+            left: -60px;
+        }
+        
+        .layer2 {
+            width: 90px;
+            height: 90px;
+            top: -110px;
+            left: -45px;
+        }
+        
+        .layer3 {
+            width: 60px;
+            height: 60px;
+            top: -150px;
+            left: -30px;
+        }
+        
+        .apple {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle at 30% 30%, #e74c3c, #c0392b);
+            border-radius: 50%;
+            bottom: 140px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.3);
+            animation: swing 3s ease-in-out infinite;
+        }
+        
+        .apple::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 8px;
+            background: #5D4037;
+        }
+        
+        .apple2 { left: 30%; bottom: 170px; animation-delay: 0.5s; }
+        .apple3 { left: 70%; bottom: 130px; animation-delay: 1s; }
+        
+        @keyframes swing {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        
+        .speech-bubble {
+            position: absolute;
+            bottom: 220px;
+            right: -80px;
+            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
+            color: #1a1025;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.6rem;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            animation: bounce 2s ease-in-out infinite;
+            white-space: nowrap;
+        }
+        
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 20px;
+            border-width: 8px 8px 0;
+            border-style: solid;
+            border-color: #e67e22 transparent transparent transparent;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        
+        /* Twitch-style elements */
+        .twitch-badge {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, #9146ff 0%, #772ce8 100%);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 3px solid #bf94ff;
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+            animation: pulse-badge 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-badge {
+            0%, 100% { box-shadow: 4px 4px 0 rgba(0,0,0,0.3), 0 0 20px rgba(145, 70, 255, 0.3); }
+            50% { box-shadow: 4px 4px 0 rgba(0,0,0,0.3), 0 0 40px rgba(145, 70, 255, 0.6); }
+        }
+        
+        .live-dot {
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .twitch-badge span {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7rem;
+            color: white;
+        }
+        
+        /* Cozy message board */
+        .message-board {
+            background: linear-gradient(145deg, #1a1025 0%, #2d1b3d 100%);
+            border: 4px solid #9b59b6;
+            border-radius: 8px;
+            padding: 20px;
+            max-width: 300px;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.3);
+        }
+        
+        .message-board h3 {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            color: #f39c12;
+            margin: 0 0 15px 0;
+            text-align: center;
+        }
+        
+        .message {
+            background: rgba(155, 89, 182, 0.2);
+            border-left: 4px solid #9b59b6;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 0 4px 4px 0;
+            font-size: 1.2rem;
+        }
+        
+        .message .user {
+            color: #e67e22;
+            font-weight: bold;
+        }
+        
+        /* Trip-hop vinyl */
+        .vinyl-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .vinyl {
+            width: 80px;
+            height: 80px;
+            background: conic-gradient(from 0deg, #1a1025, #2d1b3d, #1a1025, #2d1b3d, #1a1025);
+            border-radius: 50%;
+            border: 3px solid #e67e22;
+            animation: spin-vinyl 4s linear infinite;
+            box-shadow: 0 0 20px rgba(230, 126, 34, 0.3);
+        }
+        
+        .vinyl::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            background: #9b59b6;
+            border-radius: 50%;
+            border: 2px solid #f39c12;
+        }
+        
+        @keyframes spin-vinyl {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .vinyl-label {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #9b59b6;
+            text-align: center;
+        }
+        
+        /* Minimap Explorer */
+        .minimap-container {
+            position: relative;
+            width: 350px;
+            height: 250px;
+            border: 4px solid #9b59b6;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #0a0612;
+            box-shadow: 8px 8px 0 rgba(0,0,0,0.3), inset 0 0 50px rgba(155, 89, 182, 0.2);
+            touch-action: none;
+            isolation: isolate;
+        }
+        
+        .minimap-world {
+            position: absolute;
+            width: 1000px;
+            height: 800px;
+            left: 0;
+            top: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(155, 89, 182, 0.3) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(230, 126, 34, 0.3) 0%, transparent 25%),
+                radial-gradient(circle at 50% 50%, rgba(46, 204, 113, 0.2) 0%, transparent 40%),
+                linear-gradient(135deg, #0a0612 0%, #1a1025 50%, #0a0612 100%);
+            transform-origin: 0 0;
+            transition: none;
+            cursor: grab;
+            user-select: none;
+            z-index: 1;
+        }
+        
+        .minimap-world:active {
+            cursor: grabbing;
+        }
+        
+        .secret-message {
+            position: absolute;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 8px;
+            padding: 6px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            opacity: 1;
+            transition: all 0.3s;
+            text-shadow: 0 0 5px currentColor;
+            z-index: 10;
+            pointer-events: auto;
+        }
+        
+        .secret-message:hover {
+            opacity: 1;
+            transform: scale(1.5);
+            z-index: 100;
+        }
+        
+        .secret-message.rare {
+            animation: sparkle 1s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { filter: brightness(1) drop-shadow(0 0 3px currentColor); }
+            50% { filter: brightness(1.5) drop-shadow(0 0 8px currentColor); }
+        }
+        
+        .pixel-landmark {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            z-index: 5;
+            box-shadow: 0 0 8px currentColor;
+        }
+        
+        .minimap-controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            z-index: 50;
+        }
+        
+        .zoom-btn {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+            border: 2px solid #f39c12;
+            border-radius: 4px;
+            color: white;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .zoom-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(243, 156, 18, 0.5);
+        }
+        
+        .minimap-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.5rem;
+            color: #bf94ff;
+            background: rgba(10, 6, 18, 0.8);
+            padding: 5px 8px;
+            border-radius: 4px;
+            z-index: 50;
+        }
+        
+        .found-counter {
+            color: #f39c12;
+        }
+        
+        /* Retro gaming icons */
+        .retro-icons {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .retro-icon {
+            font-size: 2rem;
+            animation: icon-bounce 1s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px currentColor);
+        }
+        
+        .retro-icon:nth-child(1) { animation-delay: 0s; color: #e74c3c; }
+        .retro-icon:nth-child(2) { animation-delay: 0.2s; color: #f39c12; }
+        .retro-icon:nth-child(3) { animation-delay: 0.4s; color: #27ae60; }
+        .retro-icon:nth-child(4) { animation-delay: 0.6s; color: #3498db; }
+        .retro-icon:nth-child(5) { animation-delay: 0.8s; color: #9b59b6; }
+        
+        /* Cute Sun */
+        .cute-sun {
+            position: fixed;
+            top: 80px;
+            right: 120px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 40% 40%, #fff7a1, #ffd93d, #ffb347);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 40px rgba(255, 217, 61, 0.6),
+                0 0 80px rgba(255, 179, 71, 0.4),
+                inset -5px -5px 15px rgba(255, 140, 0, 0.3);
+            animation: sun-pulse 4s ease-in-out infinite, sun-float 6s ease-in-out infinite;
+            z-index: 50;
+        }
+        
+        .cute-sun::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 217, 61, 0.4), transparent, rgba(255, 217, 61, 0.4), transparent, rgba(255, 217, 61, 0.4), transparent, rgba(255, 217, 61, 0.4), transparent);
+            border-radius: 50%;
+            animation: sun-rays 10s linear infinite;
+            z-index: -1;
+        }
+        
+        .sun-face {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .sun-eye {
+            position: absolute;
+            top: 30px;
+            width: 10px;
+            height: 12px;
+            background: #5d4037;
+            border-radius: 50%;
+            animation: blink-eyes 4s ease-in-out infinite;
+        }
+        
+        .sun-eye.left { left: 22px; }
+        .sun-eye.right { right: 22px; }
+        
+        .sun-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .sun-cheek {
+            position: absolute;
+            top: 38px;
+            width: 12px;
+            height: 8px;
+            background: rgba(255, 107, 107, 0.5);
+            border-radius: 50%;
+        }
+        
+        .sun-cheek.left { left: 10px; }
+        .sun-cheek.right { right: 10px; }
+        
+        .sun-mouth {
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            border: 3px solid #5d4037;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            background: transparent;
+        }
+        
+        @keyframes sun-pulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 217, 61, 0.6), 0 0 80px rgba(255, 179, 71, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(255, 217, 61, 0.8), 0 0 100px rgba(255, 179, 71, 0.6); }
+        }
+        
+        @keyframes sun-float {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+        
+        @keyframes sun-rays {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes blink-eyes {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+        
+        @keyframes cat-float {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        
+        @keyframes mario-jump {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes potato-wobble {
+            0%, 100% { transform: rotate(-3deg) scale(1); }
+            25% { transform: rotate(3deg) scale(1.02); }
+            50% { transform: rotate(-3deg) scale(1); }
+            75% { transform: rotate(3deg) scale(0.98); }
+        }
+        
+        @keyframes icon-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Welcome text */
+        .welcome-text {
+            font-size: 1.5rem;
+            color: #bf94ff;
+            text-align: center;
+            max-width: 600px;
+            line-height: 1.6;
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            color: #f39c12;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
-    <iframe src="twitch.html" sandbox="allow-scripts allow-forms allow-popups"></iframe>
-    <div class="info">
-        🎮 <a href="https://artix.tech/twitch_plays_code/" target="_blank">Twitch Versus Code</a> - 
-        Live collaborative coding on Twitch
-    </div>
+<div class="pixel-bg" id="pixelBg"></div>
+<div class="twitch-badge">
+<div class="live-dot"></div>
+<span>LIVE COLLAB</span>
+</div>
+<div class="cute-sun" title="Hello sunshine! ☀️">
+<div class="sun-face">
+<div class="sun-eye left"></div>
+<div class="sun-eye right"></div>
+<div class="sun-cheek left"></div>
+<div class="sun-cheek right"></div>
+<div class="sun-mouth"></div>
+</div>
+</div>
+<div class="vinyl-player" onclick="toggleMusic()" style="cursor: pointer;" title="Click to play/pause">
+<div class="vinyl" id="vinylDisc"></div>
+<div class="vinyl-label">♪ TRIP-HOP ♪<br/>VIBES<br/><span id="musicStatus" style="color: #27ae60;">▶ PLAYING</span></div>
+</div>
+<div class="welcome-banner">
+<h1>🎮 TWITCH VERSUS CODE 🎮<br/>✨ Pixel Lounge ✨</h1>
+</div>
+<div class="retro-icons">
+<span class="retro-icon">🕹️</span>
+<span class="retro-icon">👾</span>
+<span class="retro-icon">🎮</span>
+<span class="retro-icon">💜</span>
+<span class="retro-icon">🌟</span>
+</div>
+<p class="welcome-text">
+        Welcome to our <span class="highlight">cozy corner</span> of the internet! 🏠<br/>
+        A warm space for <span class="highlight">collaborative creation</span> and <span class="highlight">retro vibes</span>.
+    </p>
+<div class="cozy-container">
+<div class="pixel-card">
+<div class="chessboard" id="chess"></div>
+</div>
+<div class="pixel-card">
+<div class="scene">
+<div class="tree">
+<div class="trunk"></div>
+<div class="foliage">
+<div class="leaves layer1"></div>
+<div class="leaves layer2"></div>
+<div class="leaves layer3"></div>
+</div>
+<div class="apple"></div>
+<div class="apple apple2"></div>
+<div class="apple apple3"></div>
+<div class="speech-bubble">Qxe4!! 👑💥</div>
+</div>
+</div>
+</div>
+<div class="pixel-card">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #f39c12; margin: 0 0 10px 0; text-align: center;">🗺️ SECRET MAP</h3>
+<div class="minimap-container" id="minimapContainer">
+<div class="minimap-info">ZOOM: <span id="zoomLevel">1.0</span>x | FOUND: <span class="found-counter" id="foundCounter">0</span>/<span id="totalSecrets">12</span></div>
+<div class="minimap-world" id="minimapWorld"></div>
+<div class="minimap-controls">
+<button class="zoom-btn" id="zoomInBtn">+</button>
+<button class="zoom-btn" id="zoomOutBtn">-</button>
+<button class="zoom-btn" id="resetMapBtn" style="font-size: 0.5rem;">⟲</button>
+</div>
+</div>
+</div>
+<div class="pixel-card message-board">
+<h3>💬 COMMUNITY</h3>
+<div class="message"><span class="user">@Viewer:</span> Let's create together! 🎨</div>
+<div class="message"><span class="user">@Coder:</span> Pixel perfect vibes ✨</div>
+<div class="message"><span class="user">@Artist:</span> Love the retro feel! 💜</div>
+<div class="message"><span class="user">@Chess:</span> 1. e4 Qxe4!! ♛💥 BOLD!</div>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #e74c3c; margin: 0 0 15px 0;">🐱 COZY CAT 🐱</h3>
+<img alt="Content blocked" src="/img/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #f39c12; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: cat-float 3s ease-in-out infinite;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Pixel Purrfection! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #e74c3c; margin: 0 0 15px 0;">🍄 MARIO TIME 🍄</h3>
+<div style="position: relative; display: inline-block;">
+<svg height="160" style="border: 4px solid #e74c3c; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: mario-jump 1s ease-in-out infinite;" viewbox="0 0 16 16" width="160">
+<rect fill="#e74c3c" height="1" width="6" x="5" y="0"></rect>
+<rect fill="#e74c3c" height="1" width="9" x="4" y="1"></rect>
+<rect fill="#8B4513" height="1" width="3" x="4" y="2"></rect>
+<rect fill="#FFDAB9" height="1" width="2" x="7" y="2"></rect>
+<rect fill="#8B4513" height="1" width="1" x="9" y="2"></rect>
+<rect fill="#FFDAB9" height="1" width="1" x="10" y="2"></rect>
+<rect fill="#8B4513" height="1" width="1" x="3" y="3"></rect>
+<rect fill="#FFDAB9" height="1" width="1" x="4" y="3"></rect>
+<rect fill="#8B4513" height="1" width="1" x="5" y="3"></rect>
+<rect fill="#FFDAB9" height="1" width="3" x="6" y="3"></rect>
+<rect fill="#8B4513" height="1" width="1" x="9" y="3"></rect>
+<rect fill="#FFDAB9" height="1" width="3" x="10" y="3"></rect>
+<rect fill="#8B4513" height="1" width="1" x="3" y="4"></rect>
+<rect fill="#FFDAB9" height="1" width="2" x="4" y="4"></rect>
+<rect fill="#8B4513" height="1" width="1" x="6" y="4"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="7" y="4"></rect>
+<rect fill="#8B4513" height="1" width="2" x="11" y="4"></rect>
+<rect fill="#FFDAB9" height="1" width="8" x="4" y="5"></rect>
+<rect fill="#e74c3c" height="1" width="8" x="4" y="6"></rect>
+<rect fill="#e74c3c" height="1" width="3" x="3" y="7"></rect>
+<rect fill="#3498db" height="1" width="1" x="6" y="7"></rect>
+<rect fill="#e74c3c" height="1" width="2" x="7" y="7"></rect>
+<rect fill="#3498db" height="1" width="1" x="9" y="7"></rect>
+<rect fill="#e74c3c" height="1" width="3" x="10" y="7"></rect>
+<rect fill="#3498db" height="1" width="12" x="2" y="8"></rect>
+<rect fill="#3498db" height="1" width="4" x="2" y="9"></rect>
+<rect fill="#e74c3c" height="1" width="4" x="6" y="9"></rect>
+<rect fill="#3498db" height="1" width="4" x="10" y="9"></rect>
+<rect fill="#FFDAB9" height="1" width="3" x="1" y="10"></rect>
+<rect fill="#3498db" height="1" width="8" x="4" y="10"></rect>
+<rect fill="#FFDAB9" height="1" width="3" x="12" y="10"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="0" y="11"></rect>
+<rect fill="#3498db" height="1" width="2" x="4" y="11"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="6" y="11"></rect>
+<rect fill="#3498db" height="1" width="2" x="10" y="11"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="12" y="11"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="0" y="12"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="6" y="12"></rect>
+<rect fill="#FFDAB9" height="1" width="4" x="12" y="12"></rect>
+<rect fill="#8B4513" height="1" width="3" x="2" y="13"></rect>
+<rect fill="#8B4513" height="1" width="3" x="11" y="13"></rect>
+<rect fill="#8B4513" height="2" width="4" x="1" y="14"></rect>
+<rect fill="#8B4513" height="2" width="4" x="11" y="14"></rect>
+</svg>
+</div>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">It's-a me! 🍄✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #f39c12; margin: 0 0 15px 0;">🥔 POTATO TIME 🥔</h3>
+<img alt="Delicious Potatoes" src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Patates.jpg/1200px-Patates.jpg" style="width: 200px; height: auto; border: 4px solid #f39c12; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: potato-wobble 2s ease-in-out infinite; object-fit: cover;"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Magnifique Patate! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #ff69b4; margin: 0 0 15px 0;">🌸 KAWAII ZONE 🌸</h3>
+<img alt="Content blocked" src="/img/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #ff69b4; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: cat-float 3s ease-in-out infinite;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ So Adorable! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #00bcd4; margin: 0 0 15px 0;">🐸 FROGGY FRIEND 🐸</h3>
+<img alt="Content blocked" src="/twitch_plays_code/img/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #27ae60; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: cat-float 2.5s ease-in-out infinite;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Ribbit Ribbit! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #00bcd4; margin: 0 0 15px 0;">🎨 COMMUNITY ART 🎨</h3>
+<img alt="Content blocked" src="https://artix.tech/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #00bcd4; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: cat-float 2.8s ease-in-out infinite; object-fit: cover;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Added by Chat! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #ff6b6b; margin: 0 0 15px 0;">🐾 MYSTERY PET 🐾</h3>
+<img alt="Content blocked" src="https://artix.tech/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #ff6b6b; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: cat-float 2.7s ease-in-out infinite; object-fit: cover;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Chat's Choice! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #ffb347; margin: 0 0 15px 0;">🐹 HAMSTER BUDDY 🐹</h3>
+<img alt="Content blocked" src="https://artix.tech/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #ffb347; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: potato-wobble 2s ease-in-out infinite; object-fit: cover;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ So Fluffy! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #ff4500; margin: 0 0 15px 0;">🔥 MYSTERY DROP 🔥</h3>
+<img alt="Content blocked" src="https://artix.tech/claude-is-sorry.jpg" style="width: 200px; height: auto; border: 4px solid #ff4500; border-radius: 8px; box-shadow: 8px 8px 0 rgba(0,0,0,0.3); animation: cat-float 2.5s ease-in-out infinite; object-fit: cover;" title="This image was blocked by content moderation"/>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 10px;">✨ Chat Delivery! ✨</p>
+</div>
+<div class="pixel-card" style="text-align: center;">
+<h3 style="font-family: 'Press Start 2P', cursive; font-size: 0.7rem; color: #27ae60; margin: 0 0 15px 0;">🧪 TEST ZONE 🧪</h3>
+<div class="test-pattern">
+<div style="display: grid; grid-template-columns: repeat(8, 20px); gap: 2px; justify-content: center;">
+<div style="width:20px;height:20px;background:#e74c3c;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#f39c12;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#f1c40f;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#27ae60;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#3498db;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#9b59b6;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#e91e63;border-radius:2px;"></div>
+<div style="width:20px;height:20px;background:#00bcd4;border-radius:2px;"></div>
+</div>
+</div>
+<p style="font-size: 1rem; color: #bf94ff; margin-top: 15px;">✅ All systems go!<br/>💖 Spread kindness!<br/>🌈 Be excellent to each other!</p>
+</div>
+</div>
+<script>
+        // Chess board with e4 opening move played!
+        // Black pieces (top)
+        const blackPieces = ['♜','♞','♝','♛','♚','♝','♞','♜'];
+        const blackPawns = ['♟','♟','♟','♟','♟','♟','♟','♟'];
+        // White pieces (bottom)
+        const whitePawns = ['♙','♙','♙','♙','♙','♙','♙','♙'];
+        const whitePieces = ['♖','♘','♗','♕','♔','♗','♘','♖'];
+        
+        // Board state after 1. e4 Qxe4!! - Black Queen takes!
+        const boardState = [
+            ['♜','♞','♝','','♚','♝','♞','♜'],              // Row 0 - Queen moved!
+            blackPawns,                                     // Row 1
+            ['','','','','','','',''],                      // Row 2
+            ['','','','','','','',''],                      // Row 3
+            ['','','','','♛','','',''],                     // Row 4 - Black Queen on e4!!
+            ['','','','','','','',''],                      // Row 5
+            ['♙','♙','♙','♙','','♙','♙','♙'],              // Row 6 - e2 pawn moved
+            whitePieces                                     // Row 7
+        ];
+        
+        const board = document.getElementById('chess');
+        for(let row = 0; row < 8; row++) {
+            for(let col = 0; col < 8; col++) {
+                const square = document.createElement('div');
+                const isWhiteSquare = (row + col) % 2 === 0;
+                square.className = 'chess-square ' + (isWhiteSquare ? 'white-square' : 'black-square');
+                
+                // Highlight e4 (Queen capture!) and d8 (where Queen came from)
+                if ((row === 4 && col === 4) || (row === 0 && col === 3)) {
+                    square.classList.add('highlight-move');
+                }
+                
+                const piece = boardState[row][col];
+                if(piece) {
+                    square.textContent = piece;
+                    // Determine piece color by piece type
+                    if(['♙','♖','♘','♗','♕','♔'].includes(piece)) {
+                        square.classList.add('white-piece');
+                    } else {
+                        square.classList.add('black-piece');
+                    }
+                }
+                board.appendChild(square);
+            }
+        }
+        
+        // Music control
+        const bgMusic = document.getElementById('bgMusic');
+        const vinylDisc = document.getElementById('vinylDisc');
+        const musicStatus = document.getElementById('musicStatus');
+        
+        function toggleMusic() {
+            if (!bgMusic) return;
+            if (bgMusic.paused) {
+                bgMusic.play();
+                if (vinylDisc) vinylDisc.style.animationPlayState = 'running';
+                if (musicStatus) {
+                    musicStatus.textContent = '▶ PLAYING';
+                    musicStatus.style.color = '#27ae60';
+                }
+            } else {
+                bgMusic.pause();
+                if (vinylDisc) vinylDisc.style.animationPlayState = 'paused';
+                if (musicStatus) {
+                    musicStatus.textContent = '⏸ PAUSED';
+                    musicStatus.style.color = '#e74c3c';
+                }
+            }
+        }
+        
+        // Auto-play might be blocked, handle it
+        document.addEventListener('DOMContentLoaded', function() {
+            if (bgMusic) {
+                bgMusic.play().catch(() => {
+                    if (vinylDisc) vinylDisc.style.animationPlayState = 'paused';
+                    if (musicStatus) {
+                        musicStatus.textContent = '⏸ CLICK TO PLAY';
+                        musicStatus.style.color = '#f39c12';
+                    }
+                });
+            }
+        });
+        
+        // Minimap Explorer
+        const minimapWorld = document.getElementById('minimapWorld');
+        const minimapContainer = document.getElementById('minimapContainer');
+        let currentZoom = 1;
+        let panX = 0;
+        let panY = 0;
+        let isDragging = false;
+        let dragStartX, dragStartY;
+        let lastPanX, lastPanY;
+        let foundSecrets = new Set();
+        
+        const secretMessages = [
+            { x: 50, y: 100, text: '🎮 GG WP!', color: '#e74c3c', rare: false },
+            { x: 200, y: 50, text: '✨ PIXEL MAGIC', color: '#f39c12', rare: true },
+            { x: 450, y: 200, text: '💜 TWITCH LOVE', color: '#9b59b6', rare: false },
+            { x: 700, y: 100, text: '🌟 YOU FOUND ME!', color: '#f1c40f', rare: true },
+            { x: 150, y: 400, text: '👾 RETRO 4EVER', color: '#27ae60', rare: false },
+            { x: 800, y: 350, text: '🔮 SECRET ZONE', color: '#9b59b6', rare: true },
+            { x: 350, y: 600, text: '☕ COZY VIBES', color: '#e67e22', rare: false },
+            { x: 600, y: 500, text: '🎵 TRIP-HOP!', color: '#3498db', rare: false },
+            { x: 100, y: 700, text: '🏆 EXPLORER PRO', color: '#f1c40f', rare: true },
+            { x: 900, y: 600, text: '🚀 TO THE MOON', color: '#e74c3c', rare: false },
+            { x: 500, y: 750, text: '💎 RARE FIND!', color: '#00ffff', rare: true },
+            { x: 750, y: 700, text: '🎪 CIRCUS MODE', color: '#ff69b4', rare: false }
+        ];
+        
+        // Colors array for pixels and landmarks
+        const colors = ['#9b59b6', '#e67e22', '#f39c12', '#27ae60', '#3498db', '#e74c3c'];
+        
+        // Create secret messages
+        secretMessages.forEach((msg, index) => {
+            const el = document.createElement('div');
+            el.className = 'secret-message' + (msg.rare ? ' rare' : '');
+            el.style.left = msg.x + 'px';
+            el.style.top = msg.y + 'px';
+            el.style.color = msg.color;
+            el.style.background = 'rgba(0,0,0,0.7)';
+            el.textContent = msg.text;
+            el.dataset.index = index;
+            el.onclick = () => discoverSecret(index);
+            minimapWorld.appendChild(el);
+        });
+        
+        // Add pixel landmarks
+        for(let i = 0; i < 50; i++) {
+            const landmark = document.createElement('div');
+            landmark.className = 'pixel-landmark';
+            landmark.style.left = Math.random() * 980 + 'px';
+            landmark.style.top = Math.random() * 780 + 'px';
+            landmark.style.background = colors[Math.floor(Math.random() * colors.length)];
+            landmark.style.opacity = 0.3 + Math.random() * 0.4;
+            minimapWorld.appendChild(landmark);
+        }
+        
+        function discoverSecret(index) {
+            if (!foundSecrets.has(index)) {
+                foundSecrets.add(index);
+                document.getElementById('foundCounter').textContent = foundSecrets.size;
+                const el = minimapWorld.querySelector(`[data-index="${index}"]`);
+                el.style.border = '2px solid #f1c40f';
+                el.style.boxShadow = '0 0 10px #f1c40f';
+            }
+        }
+        
+        function updateMapTransform() {
+            // Clamp pan values to keep content visible
+            const maxPanX = 0;
+            const maxPanY = 0;
+            const minPanX = -(1000 * currentZoom - 350);
+            const minPanY = -(800 * currentZoom - 250);
+            
+            panX = Math.min(maxPanX, Math.max(minPanX, panX));
+            panY = Math.min(maxPanY, Math.max(minPanY, panY));
+            
+            minimapWorld.style.transform = `translate(${panX}px, ${panY}px) scale(${currentZoom})`;
+            document.getElementById('zoomLevel').textContent = currentZoom.toFixed(1);
+        }
+        
+        function zoomMap(delta) {
+            currentZoom = Math.max(0.5, Math.min(4, currentZoom + delta));
+            updateMapTransform();
+        }
+        
+        function resetMap() {
+            currentZoom = 1;
+            panX = 0;
+            panY = 0;
+            updateMapTransform();
+        }
+        
+        minimapContainer.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('zoom-btn')) return;
+            isDragging = true;
+            dragStartX = e.clientX;
+            dragStartY = e.clientY;
+            lastPanX = panX;
+            lastPanY = panY;
+            minimapWorld.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            const deltaX = e.clientX - dragStartX;
+            const deltaY = e.clientY - dragStartY;
+            panX = lastPanX + deltaX;
+            panY = lastPanY + deltaY;
+            updateMapTransform();
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (isDragging) {
+                isDragging = false;
+                minimapWorld.style.cursor = 'grab';
+            }
+        });
+        
+        minimapContainer.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            zoomMap(e.deltaY > 0 ? -0.2 : 0.2);
+        });
+        
+        updateMapTransform();
+        
+        // Add event listeners for zoom buttons
+        document.getElementById('zoomInBtn').addEventListener('click', () => zoomMap(0.5));
+        document.getElementById('zoomOutBtn').addEventListener('click', () => zoomMap(-0.5));
+        document.getElementById('resetMapBtn').addEventListener('click', () => resetMap());
+        
+        // Floating pixels
+        const pixelBg = document.getElementById('pixelBg');
+        
+        for(let i = 0; i < 30; i++) {
+            const pixel = document.createElement('div');
+            pixel.className = 'pixel';
+            pixel.style.left = Math.random() * 100 + '%';
+            pixel.style.background = colors[Math.floor(Math.random() * colors.length)];
+            pixel.style.animationDelay = Math.random() * 15 + 's';
+            pixel.style.animationDuration = (10 + Math.random() * 10) + 's';
+            pixelBg.appendChild(pixel);
+        }
+    </script>
+<audio autoplay="" id="bgMusic" loop="" preload="auto">
+<source src="https://audiocdn.epidemicsound.com/lqmp3/01HSGPBQGATGZBHV13N0PDEW0M.mp3" type="audio/mpeg"/>
+Your browser does not support the audio element.
+</audio>
 </body>
 </html>
