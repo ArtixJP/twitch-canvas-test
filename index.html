@@ -20,7 +20,7 @@
     </style>
 </head>
 <body>
-<h1>Hello World</h1><div class="planet-container">
+<h1>Hello World</h1><audio autoplay="" id="bgMusic" loop=""><source src="https://nu.vgmtreasurechest.com/soundtracks/animal-crossing-full-gamerip/qsnoeekm/009%20-%20Off%20The%20Train.mp3" type="audio/mpeg"/>Your browser does not support audio.</audio><button id="musicToggle" onclick="toggleMusic()" style="position: fixed; top: 20px; right: 20px; padding: 12px 24px; background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50px; color: white; font-size: 16px; cursor: pointer; backdrop-filter: blur(10px); transition: all 0.3s ease; z-index: 1000;">⏸️ Pause Music</button><script>function toggleMusic() { const audio = document.getElementById('bgMusic'); const btn = document.getElementById('musicToggle'); if (audio.paused) { audio.play(); btn.textContent = '⏸️ Pause Music'; btn.style.background = 'rgba(255, 255, 255, 0.1)'; } else { audio.pause(); btn.textContent = '▶️ Play Music'; btn.style.background = 'rgba(255, 100, 100, 0.2)'; } } document.getElementById('musicToggle').addEventListener('mouseenter', function() { this.style.background = 'rgba(255, 255, 255, 0.2)'; this.style.transform = 'scale(1.05)'; }); document.getElementById('musicToggle').addEventListener('mouseleave', function() { const audio = document.getElementById('bgMusic'); this.style.background = audio.paused ? 'rgba(255, 100, 100, 0.2)' : 'rgba(255, 255, 255, 0.1)'; this.style.transform = 'scale(1)'; });</script><div class="planet-container">
 <div class="orbit-ring"></div>
 <div class="planet">
 <div class="planet-surface"></div>
