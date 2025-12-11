@@ -6,18 +6,84 @@
     <title>Twitch Versus Code</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
+        * { box-sizing: border-box; }
         body { 
             font-family: system-ui, sans-serif; 
-            display: flex;
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            overflow-x: hidden;
+        }
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(26, 26, 46, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            box-shadow: 0 4px 30px rgba(74, 144, 226, 0.3);
+            border-bottom: 2px solid rgba(74, 144, 226, 0.2);
+        }
+        .nav-item {
+            margin: 0 20px;
+            padding: 12px 30px;
+            background: transparent;
+            border: 2px solid rgba(74, 144, 226, 0.4);
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .nav-item:hover {
+            background: linear-gradient(135deg, #4a90e2, #2c5aa0);
+            border-color: #4a90e2;
+            box-shadow: 0 0 20px rgba(74, 144, 226, 0.6);
+            transform: translateY(-2px);
+        }
+        .nav-item.active {
+            background: linear-gradient(135deg, #ff6b9d, #ff5e7e);
+            border-color: #ff6b9d;
+            box-shadow: 0 0 25px rgba(255, 107, 157, 0.8);
+        }
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 100px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .section.active {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
         }
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+        .section-title {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #4a90e2, #ff6b9d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: none;
+            animation: titleGlow 3s ease-in-out infinite;
+        }
+        @keyframes titleGlow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(74, 144, 226, 0.6)); }
+            50% { filter: drop-shadow(0 0 40px rgba(255, 107, 157, 0.8)); }
+        }
         .planet-container { position: relative; width: 200px; height: 200px; margin: 2rem auto; }
         .planet { width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, #4a90e2 0%, #2c5aa0 50%, #1a3a6e 100%); box-shadow: inset -30px -30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(74, 144, 226, 0.6); animation: rotate 20s linear infinite; position: relative; overflow: hidden; transition: background 0.8s ease, box-shadow 0.8s ease; }
         .planet::before { content: ''; position: absolute; top: 20%; left: 30%; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 50%; box-shadow: 60px 40px 0 10px rgba(255,255,255,0.08), -20px 60px 0 5px rgba(255,255,255,0.06); }
@@ -64,7 +130,7 @@
         .audio-controls {
             position: fixed;
             bottom: 30px;
-            right: 30px;
+            left: 30px;
             display: flex;
             gap: 15px;
             align-items: center;
@@ -319,9 +385,10 @@
             text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
         }
         .game-btn {
-            position: fixed;
-            bottom: 100px;
-            right: 30px;
+            position: relative;
+            bottom: auto;
+            right: auto;
+            margin-top: 30px;
             padding: 15px 30px;
             background: linear-gradient(135deg, #ff6b9d, #ff5e7e);
             border: none;
@@ -366,13 +433,92 @@
     </style>
 </head>
 <body>
-    <canvas id="sun-canvas"></canvas>
-    <div class="score-display" id="scoreDisplay">
-        <div class="score-label">DOG CATCHES</div>
-        <div class="score-number" id="scoreNumber">0</div>
-    </div>
-    <div>
-        <h1>Hello World</h1>
+    <nav class="nav-menu">
+        <button class="nav-item active" onclick="showSection('space')">🌌 Space</button>
+        <button class="nav-item" onclick="showSection('animals')">🐾 Animals</button>
+        <button class="nav-item" onclick="showSection('games')">🎮 Games</button>
+    </nav>
+
+    <!-- SPACE SECTION -->
+    <section id="space-section" class="section active">
+        <canvas id="sun-canvas"></canvas>
+        <div>
+            <h1 class="section-title">Cosmic Wonders</h1>
+            <div class="planet-container">
+            <div class="planet"></div>
+            <div class="ring"></div>
+            <div class="moon-orbit">
+                <div class="moon"></div>
+            </div>
+            <div class="kitty-orbit" id="kittyOrbit">
+                <div class="kitty">
+                    <div class="kitty-body">
+                        <div class="kitty-ear left"></div>
+                        <div class="kitty-ear right"></div>
+                        <div class="kitty-face">
+                            <div class="kitty-eye left"></div>
+                            <div class="kitty-eye right"></div>
+                            <div class="kitty-nose"></div>
+                            <div class="kitty-whiskers">
+                                <div class="kitty-whisker left1"></div>
+                                <div class="kitty-whisker left2"></div>
+                                <div class="kitty-whisker right1"></div>
+                                <div class="kitty-whisker right2"></div>
+                            </div>
+                        </div>
+                        <div class="kitty-tail"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="elephant">
+                <div class="elephant-body">
+                    <div class="elephant-ear left"></div>
+                    <div class="elephant-ear right"></div>
+                    <div class="elephant-eye left"></div>
+                    <div class="elephant-eye right"></div>
+                    <div class="elephant-tusk left"></div>
+                    <div class="elephant-tusk right"></div>
+                    <div class="elephant-trunk">
+                        <div class="water-spray">
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                            <div class="water-particle"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="dog-orbit" id="dogOrbit">
+                <div class="dog">
+                    <div class="dog-body">
+                        <div class="dog-ear left"></div>
+                        <div class="dog-ear right"></div>
+                        <div class="dog-eye left"></div>
+                        <div class="dog-eye right"></div>
+                        <div class="dog-snout">
+                            <div class="dog-nose"></div>
+                            <div class="dog-tongue"></div>
+                        </div>
+                        <div class="dog-tail"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ANIMALS SECTION -->
+    <section id="animals-section" class="section">
+        <h1 class="section-title">Wildlife Chase</h1>
+        <div class="score-display" id="scoreDisplay">
+            <div class="score-label">DOG CATCHES</div>
+            <div class="score-number" id="scoreNumber">0</div>
+        </div>
         <div class="planet-container">
             <div class="planet"></div>
             <div class="ring"></div>
@@ -439,7 +585,14 @@
                 </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- GAMES SECTION -->
+    <section id="games-section" class="section">
+        <h1 class="section-title">Arcade Zone</h1>
+        <p style="font-size: 20px; margin-bottom: 20px; text-align: center; max-width: 600px;">🚀 Pilot your spaceship through waves of asteroids!<br>Use arrow keys to move, spacebar to shoot.</p>
+        <button class="game-btn" onclick="toggleGame()">🚀 PLAY SPACE SHOOTER</button>
+    </section>
 
     <audio id="bgMusic" loop autoplay>
         <source src="https://nu.vgmtreasurechest.com/soundtracks/professor-layton-and-the-unwound-future-hd-android-ios-mobile-gamerip-2020/bhjayocv/08.%20More%20London%20Streets.mp3" type="audio/mpeg">
@@ -467,6 +620,23 @@
     </div>
 
     <script>
+        // Section Navigation
+        function showSection(sectionName) {
+            const sections = document.querySelectorAll('.section');
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            navItems.forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            document.getElementById(sectionName + '-section').classList.add('active');
+            event.target.classList.add('active');
+        }
+
         const music = document.getElementById('bgMusic');
         const btn = document.getElementById('playPauseBtn');
         let isPlaying = false;
