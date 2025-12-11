@@ -558,6 +558,115 @@
         .retro-icon:nth-child(4) { animation-delay: 0.6s; color: #3498db; }
         .retro-icon:nth-child(5) { animation-delay: 0.8s; color: #9b59b6; }
         
+        /* Cute Sun */
+        .cute-sun {
+            position: fixed;
+            top: 80px;
+            right: 120px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 40% 40%, #fff7a1, #ffd93d, #ffb347);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 40px rgba(255, 217, 61, 0.6),
+                0 0 80px rgba(255, 179, 71, 0.4),
+                inset -5px -5px 15px rgba(255, 140, 0, 0.3);
+            animation: sun-pulse 4s ease-in-out infinite, sun-float 6s ease-in-out infinite;
+            z-index: 50;
+        }
+        
+        .cute-sun::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 217, 61, 0.4), transparent, rgba(255, 217, 61, 0.4), transparent, rgba(255, 217, 61, 0.4), transparent, rgba(255, 217, 61, 0.4), transparent);
+            border-radius: 50%;
+            animation: sun-rays 10s linear infinite;
+            z-index: -1;
+        }
+        
+        .sun-face {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+        }
+        
+        .sun-eye {
+            position: absolute;
+            top: 30px;
+            width: 10px;
+            height: 12px;
+            background: #5d4037;
+            border-radius: 50%;
+            animation: blink-eyes 4s ease-in-out infinite;
+        }
+        
+        .sun-eye.left { left: 22px; }
+        .sun-eye.right { right: 22px; }
+        
+        .sun-eye::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+        }
+        
+        .sun-cheek {
+            position: absolute;
+            top: 38px;
+            width: 12px;
+            height: 8px;
+            background: rgba(255, 107, 107, 0.5);
+            border-radius: 50%;
+        }
+        
+        .sun-cheek.left { left: 10px; }
+        .sun-cheek.right { right: 10px; }
+        
+        .sun-mouth {
+            position: absolute;
+            bottom: 22px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 10px;
+            border: 3px solid #5d4037;
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            background: transparent;
+        }
+        
+        @keyframes sun-pulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(255, 217, 61, 0.6), 0 0 80px rgba(255, 179, 71, 0.4); }
+            50% { box-shadow: 0 0 60px rgba(255, 217, 61, 0.8), 0 0 100px rgba(255, 179, 71, 0.6); }
+        }
+        
+        @keyframes sun-float {
+            0%, 100% { transform: translateY(0) rotate(-3deg); }
+            50% { transform: translateY(-10px) rotate(3deg); }
+        }
+        
+        @keyframes sun-rays {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        @keyframes blink-eyes {
+            0%, 45%, 55%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); }
+        }
+        
         @keyframes cat-float {
             0%, 100% { transform: translateY(0) rotate(-2deg); }
             50% { transform: translateY(-10px) rotate(2deg); }
@@ -601,6 +710,15 @@
 <div class="twitch-badge">
 <div class="live-dot"></div>
 <span>LIVE COLLAB</span>
+</div>
+<div class="cute-sun" title="Hello sunshine! ☀️">
+<div class="sun-face">
+<div class="sun-eye left"></div>
+<div class="sun-eye right"></div>
+<div class="sun-cheek left"></div>
+<div class="sun-cheek right"></div>
+<div class="sun-mouth"></div>
+</div>
 </div>
 <div class="vinyl-player" onclick="toggleMusic()" style="cursor: pointer;" title="Click to play/pause">
 <div class="vinyl" id="vinylDisc"></div>
