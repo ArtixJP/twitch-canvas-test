@@ -304,6 +304,106 @@
         
         scene.add(kittyGroup);
         
+        // Create adorable space dog!
+        const dogGroup = new THREE.Group();
+        
+        // Dog body (elongated sphere)
+        const dogBodyGeo = new THREE.SphereGeometry(0.35, 32, 32);
+        dogBodyGeo.scale(1.3, 1, 1);
+        const dogMaterial = new THREE.MeshPhongMaterial({
+            color: 0xd2691e,
+            emissive: 0x221100,
+            shininess: 40
+        });
+        const dogBody = new THREE.Mesh(dogBodyGeo, dogMaterial);
+        dogBody.castShadow = true;
+        dogGroup.add(dogBody);
+        
+        // Dog head
+        const dogHeadGeo = new THREE.SphereGeometry(0.28, 32, 32);
+        const dogHead = new THREE.Mesh(dogHeadGeo, dogMaterial);
+        dogHead.position.set(0.4, 0.1, 0);
+        dogHead.castShadow = true;
+        dogGroup.add(dogHead);
+        
+        // Dog snout
+        const snoutGeo = new THREE.CylinderGeometry(0.12, 0.15, 0.25, 16);
+        const snoutMat = new THREE.MeshPhongMaterial({ color: 0xc19a6b });
+        const snout = new THREE.Mesh(snoutGeo, snoutMat);
+        snout.rotation.z = Math.PI / 2;
+        snout.position.set(0.6, 0.05, 0);
+        snout.castShadow = true;
+        dogGroup.add(snout);
+        
+        // Dog ears (floppy)
+        const dogEarGeo = new THREE.BoxGeometry(0.15, 0.3, 0.05);
+        const leftDogEar = new THREE.Mesh(dogEarGeo, dogMaterial);
+        leftDogEar.position.set(0.35, 0.35, -0.15);
+        leftDogEar.rotation.z = 0.4;
+        leftDogEar.castShadow = true;
+        dogGroup.add(leftDogEar);
+        
+        const rightDogEar = new THREE.Mesh(dogEarGeo, dogMaterial);
+        rightDogEar.position.set(0.35, 0.35, 0.15);
+        rightDogEar.rotation.z = 0.4;
+        rightDogEar.castShadow = true;
+        dogGroup.add(rightDogEar);
+        
+        // Dog eyes
+        const dogEyeGeo = new THREE.SphereGeometry(0.06, 16, 16);
+        const dogEyeMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
+        
+        const leftDogEye = new THREE.Mesh(dogEyeGeo, dogEyeMat);
+        leftDogEye.position.set(0.5, 0.2, -0.1);
+        dogGroup.add(leftDogEye);
+        
+        const rightDogEye = new THREE.Mesh(dogEyeGeo, dogEyeMat);
+        rightDogEye.position.set(0.5, 0.2, 0.1);
+        dogGroup.add(rightDogEye);
+        
+        // Dog nose
+        const dogNoseGeo = new THREE.SphereGeometry(0.05, 16, 16);
+        const dogNoseMat = new THREE.MeshPhongMaterial({ color: 0x000000 });
+        const dogNose = new THREE.Mesh(dogNoseGeo, dogNoseMat);
+        dogNose.position.set(0.73, 0.05, 0);
+        dogGroup.add(dogNose);
+        
+        // Dog tail
+        const dogTailGeo = new THREE.CylinderGeometry(0.05, 0.03, 0.4, 8);
+        const dogTail = new THREE.Mesh(dogTailGeo, dogMaterial);
+        dogTail.position.set(-0.4, 0.1, 0);
+        dogTail.rotation.z = -0.5;
+        dogTail.castShadow = true;
+        dogGroup.add(dogTail);
+        
+        // Dog legs
+        const legGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.3, 8);
+        const positions = [
+            {x: 0.15, z: -0.15},
+            {x: 0.15, z: 0.15},
+            {x: -0.15, z: -0.15},
+            {x: -0.15, z: 0.15}
+        ];
+        positions.forEach(pos => {
+            const leg = new THREE.Mesh(legGeo, dogMaterial);
+            leg.position.set(pos.x, -0.3, pos.z);
+            leg.castShadow = true;
+            dogGroup.add(leg);
+        });
+        
+        // Dog glow
+        const dogGlowGeo = new THREE.SphereGeometry(0.6, 32, 32);
+        const dogGlowMat = new THREE.MeshBasicMaterial({
+            color: 0xd2691e,
+            transparent: true,
+            opacity: 0.12,
+            side: THREE.BackSide
+        });
+        const dogGlow = new THREE.Mesh(dogGlowGeo, dogGlowMat);
+        dogGroup.add(dogGlow);
+        
+        scene.add(dogGroup);
+        
         // Add stars
         const starGeometry = new THREE.BufferGeometry();
         const starVertices = [];
@@ -337,7 +437,16 @@
         
         let kittyAngle = Math.PI;
         const kittyOrbitRadius = 3.5;
-        const kittyOrbitSpeed = 0.015;
+        let kittyOrbitSpeed = 0.015;
+        const kittyNormalSpeed = 0.015;
+        const kittyEscapeSpeed = 0.08;
+        let kittyIsEscaping = false;
+        
+        let dogAngle = 0;
+        const dogOrbitRadius = 3.5;
+        const dogSpeed = 0.025;
+        const dangerDistance = 1.5;
+        const safeDistance = 2.5;
         
         // Animation
         function animate() {
@@ -368,25 +477,85 @@
             moon.rotation.y += 0.005;
             moonGlow.rotation.y += 0.005;
             
+            // Calculate distance between dog and kitty
+            const distance = Math.sqrt(
+                Math.pow(kittyGroup.position.x - dogGroup.position.x, 2) +
+                Math.pow(kittyGroup.position.y - dogGroup.position.y, 2) +
+                Math.pow(kittyGroup.position.z - dogGroup.position.z, 2)
+            );
+            
+            // Kitty escape logic
+            if (distance < dangerDistance && !kittyIsEscaping) {
+                kittyIsEscaping = true;
+                kittyOrbitSpeed = kittyEscapeSpeed;
+                kittyGlow.material.opacity = 0.35;
+                kittyGlow.material.color.setHex(0xff6b9d);
+            } else if (distance > safeDistance && kittyIsEscaping) {
+                kittyIsEscaping = false;
+                kittyOrbitSpeed = kittyNormalSpeed;
+                kittyGlow.material.opacity = 0.15;
+                kittyGlow.material.color.setHex(0xffb6c1);
+            }
+            
             // Orbit kitty around planet
             kittyAngle += kittyOrbitSpeed;
             kittyGroup.position.x = Math.cos(kittyAngle) * kittyOrbitRadius;
             kittyGroup.position.z = Math.sin(kittyAngle) * kittyOrbitRadius;
             kittyGroup.position.y = Math.cos(kittyAngle * 0.7) * 0.8;
             
-            // Make kitty look at planet
-            kittyGroup.lookAt(planet.position);
+            // Make kitty look at planet (or away from dog when escaping)
+            if (kittyIsEscaping) {
+                const escapeDirection = new THREE.Vector3(
+                    kittyGroup.position.x - dogGroup.position.x,
+                    kittyGroup.position.y - dogGroup.position.y,
+                    kittyGroup.position.z - dogGroup.position.z
+                ).normalize();
+                const lookAtPoint = new THREE.Vector3(
+                    kittyGroup.position.x + escapeDirection.x,
+                    kittyGroup.position.y + escapeDirection.y,
+                    kittyGroup.position.z + escapeDirection.z
+                );
+                kittyGroup.lookAt(lookAtPoint);
+            } else {
+                kittyGroup.lookAt(planet.position);
+            }
             
             // Add playful bobbing to kitty
             kittyBody.position.y = Math.sin(Date.now() * 0.003) * 0.05;
             kittyHead.position.y = 0.4 + Math.sin(Date.now() * 0.003) * 0.05;
             
-            // Animate tail
+            // Animate tail (faster when escaping)
+            const tailSpeed = kittyIsEscaping ? 0.015 : 0.005;
             kittyGroup.children.forEach((child, index) => {
                 if(index >= 14 && index <= 16) {
-                    child.rotation.z = Math.sin(Date.now() * 0.005 + index) * 0.3;
+                    child.rotation.z = Math.sin(Date.now() * tailSpeed + index) * 0.3;
                 }
             });
+            
+            // Dog chases kitty
+            const angleToKitty = Math.atan2(
+                kittyGroup.position.z - dogGroup.position.z,
+                kittyGroup.position.x - dogGroup.position.x
+            );
+            dogAngle += (angleToKitty - dogAngle) * 0.05 + dogSpeed * 0.3;
+            
+            dogGroup.position.x = Math.cos(dogAngle) * dogOrbitRadius;
+            dogGroup.position.z = Math.sin(dogAngle) * dogOrbitRadius;
+            dogGroup.position.y = Math.cos(dogAngle * 0.5) * 0.6;
+            
+            // Make dog look at kitty
+            dogGroup.lookAt(kittyGroup.position);
+            
+            // Dog running animation
+            dogBody.position.y = Math.sin(Date.now() * 0.01) * 0.08;
+            dogHead.position.y = 0.1 + Math.sin(Date.now() * 0.01) * 0.08;
+            
+            // Wag tail
+            dogTail.rotation.y = Math.sin(Date.now() * 0.01) * 0.5;
+            
+            // Ears flapping
+            leftDogEar.rotation.x = Math.sin(Date.now() * 0.008) * 0.3;
+            rightDogEar.rotation.x = Math.sin(Date.now() * 0.008 + Math.PI) * 0.3;
             
             // Rotate stars
             starsMesh.rotation.y += 0.0002;
