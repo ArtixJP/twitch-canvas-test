@@ -457,7 +457,7 @@
         
         // Process primes in batches using requestAnimationFrame
         function processPrimeBatch() {
-          const batchSize = 50;
+          const batchSize = 200;
           for (let i = 0; i < batchSize && nextNumber < 10000000; i++) {
             const num = nextNumber++;
             const virtualWorkerId = num % NUM_VIRTUAL_WORKERS;
@@ -475,6 +475,98 @@
         
         // Start processing
         requestAnimationFrame(processPrimeBatch);
+        
+        // 🌀 JULIA FRACTAL COMPUTATION 🌀
+        const juliaCanvas = document.createElement('canvas');
+        juliaCanvas.className = 'julia-canvas';
+        juliaCanvas.width = 200;
+        juliaCanvas.height = 200;
+        document.body.appendChild(juliaCanvas);
+        
+        const juliaInfo = document.createElement('div');
+        juliaInfo.className = 'julia-info';
+        juliaInfo.innerHTML = '🌀 Julia Fractal | c = -0.7 + 0.27i';
+        document.body.appendChild(juliaInfo);
+        
+        const ctx = juliaCanvas.getContext('2d');
+        let juliaTime = 0;
+        let juliaIterations = 0;
+        
+        function computeJulia() {
+          const w = juliaCanvas.width;
+          const h = juliaCanvas.height;
+          const imageData = ctx.createImageData(w, h);
+          const data = imageData.data;
+          
+          // Animated c parameter for dynamic fractals
+          const cReal = -0.7 + Math.sin(juliaTime * 0.02) * 0.1;
+          const cImag = 0.27 + Math.cos(juliaTime * 0.015) * 0.1;
+          
+          const maxIter = 100;
+          let pixelsComputed = 0;
+          
+          for (let py = 0; py < h; py++) {
+            for (let px = 0; px < w; px++) {
+              let zx = (px - w/2) / (w/4);
+              let zy = (py - h/2) / (h/4);
+              let iter = 0;
+              
+              while (zx*zx + zy*zy < 4 && iter < maxIter) {
+                const tmp = zx*zx - zy*zy + cReal;
+                zy = 2*zx*zy + cImag;
+                zx = tmp;
+                iter++;
+              }
+              
+              const idx = (py * w + px) * 4;
+              if (iter === maxIter) {
+                data[idx] = 0;
+                data[idx+1] = 0;
+                data[idx+2] = 0;
+              } else {
+                const hue = (iter / maxIter) * 360;
+                const rgb = hslToRgb(hue/360, 1, 0.5);
+                data[idx] = rgb[0];
+                data[idx+1] = rgb[1];
+                data[idx+2] = rgb[2];
+              }
+              data[idx+3] = 255;
+              pixelsComputed++;
+            }
+          }
+          
+          ctx.putImageData(imageData, 0, 0);
+          juliaTime++;
+          juliaIterations += w * h * maxIter;
+          
+          juliaInfo.innerHTML = `🌀 Julia Fractal<br>c = ${cReal.toFixed(3)} + ${cImag.toFixed(3)}i<br>Iterations: ${(juliaIterations/1000000).toFixed(1)}M`;
+          
+          requestAnimationFrame(computeJulia);
+        }
+        
+        function hslToRgb(h, s, l) {
+          let r, g, b;
+          if (s === 0) {
+            r = g = b = l;
+          } else {
+            const hue2rgb = (p, q, t) => {
+              if (t < 0) t += 1;
+              if (t > 1) t -= 1;
+              if (t < 1/6) return p + (q - p) * 6 * t;
+              if (t < 1/2) return q;
+              if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+              return p;
+            };
+            const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+            const p = 2 * l - q;
+            r = hue2rgb(p, q, h + 1/3);
+            g = hue2rgb(p, q, h);
+            b = hue2rgb(p, q, h - 1/3);
+          }
+          return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+        }
+        
+        computeJulia();
     </script>
 <div id="snowContainer"></div>
 <script>
@@ -611,7 +703,31 @@ chaosStyle.textContent = `
     will-change: transform;
     transition: color 0.1s, text-shadow 0.1s;
   }
-  .chaos-counter {
+  .julia-canvas {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 200px;
+  height: 200px;
+  border: 2px solid #0ff;
+  border-radius: 10px;
+  z-index: 50;
+  box-shadow: 0 0 20px rgba(0,255,255,0.5);
+}
+.julia-info {
+  position: fixed;
+  bottom: 210px;
+  right: 10px;
+  background: rgba(0,0,0,0.8);
+  color: #ff0;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  z-index: 51;
+  border: 1px solid #ff0;
+}
+.chaos-counter {
     position: fixed;
     top: 10px;
     right: 10px;
