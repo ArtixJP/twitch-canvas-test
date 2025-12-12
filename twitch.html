@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Super Mario Bros Fandom</title>
+<title>Sparky the Purple Dragon</title>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;family=Nunito:wght@400;700&amp;display=swap" rel="stylesheet"/>
 <style>
         * {
@@ -16,50 +16,71 @@
         body { 
             font-family: 'Nunito', sans-serif; 
             min-height: 100vh; 
-            background: linear-gradient(180deg, #5c94fc 0%, #5c94fc 60%, #8b4513 60%, #8b4513 100%);
+            background: linear-gradient(180deg, #1a0a2e 0%, #3d1a5c 40%, #6b2d8a 70%, #2d1f3d 100%);
             color: white;
             overflow-x: hidden;
         }
         
-        .clouds {
+        .stars {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            height: 60vh;
+            height: 100vh;
             pointer-events: none;
             overflow: hidden;
         }
         
-        .cloud {
-            position: absolute;
-            background: white;
-            border-radius: 50px;
-            animation: float 20s infinite linear;
-        }
-        
-        .cloud::before, .cloud::after {
-            content: '';
+        .star {
             position: absolute;
             background: white;
             border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
         }
         
-        .cloud:nth-child(1) { width: 100px; height: 40px; top: 10%; left: -100px; animation-duration: 25s; }
-        .cloud:nth-child(1)::before { width: 50px; height: 50px; top: -25px; left: 15px; }
-        .cloud:nth-child(1)::after { width: 35px; height: 35px; top: -15px; left: 55px; }
+        .star:nth-child(1) { width: 3px; height: 3px; top: 10%; left: 15%; animation-delay: 0s; }
+        .star:nth-child(2) { width: 2px; height: 2px; top: 20%; left: 35%; animation-delay: 0.3s; }
+        .star:nth-child(3) { width: 4px; height: 4px; top: 8%; left: 55%; animation-delay: 0.6s; }
+        .star:nth-child(4) { width: 2px; height: 2px; top: 25%; left: 75%; animation-delay: 0.9s; }
+        .star:nth-child(5) { width: 3px; height: 3px; top: 15%; left: 90%; animation-delay: 1.2s; }
+        .star:nth-child(6) { width: 2px; height: 2px; top: 30%; left: 10%; animation-delay: 0.4s; }
+        .star:nth-child(7) { width: 3px; height: 3px; top: 5%; left: 45%; animation-delay: 0.8s; }
+        .star:nth-child(8) { width: 2px; height: 2px; top: 35%; left: 65%; animation-delay: 1.1s; }
         
-        .cloud:nth-child(2) { width: 80px; height: 30px; top: 25%; left: -80px; animation-duration: 30s; animation-delay: 5s; }
-        .cloud:nth-child(2)::before { width: 40px; height: 40px; top: -20px; left: 10px; }
-        .cloud:nth-child(2)::after { width: 30px; height: 30px; top: -12px; left: 45px; }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.3); }
+        }
         
-        .cloud:nth-child(3) { width: 120px; height: 45px; top: 5%; left: -120px; animation-duration: 35s; animation-delay: 10s; }
-        .cloud:nth-child(3)::before { width: 60px; height: 60px; top: -30px; left: 20px; }
-        .cloud:nth-child(3)::after { width: 45px; height: 45px; top: -20px; left: 70px; }
+        .magic-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
         
-        @keyframes float {
-            from { transform: translateX(0); }
-            to { transform: translateX(calc(100vw + 150px)); }
+        .particle {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, #bf5fff, transparent);
+            border-radius: 50%;
+            animation: float-up 8s infinite linear;
+        }
+        
+        .particle:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .particle:nth-child(2) { left: 30%; animation-delay: 2s; }
+        .particle:nth-child(3) { left: 50%; animation-delay: 4s; }
+        .particle:nth-child(4) { left: 70%; animation-delay: 6s; }
+        .particle:nth-child(5) { left: 90%; animation-delay: 1s; }
+        
+        @keyframes float-up {
+            0% { bottom: -20px; opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { bottom: 100vh; opacity: 0; }
         }
         
         header {
@@ -70,23 +91,35 @@
         
         h1 { 
             font-family: 'Press Start 2P', cursive;
-            font-size: 2.5rem; 
-            text-shadow: 4px 4px 0 #e52521, 8px 8px 0 #000;
-            color: #fbd000;
-            animation: bounce 0.5s ease infinite alternate;
+            font-size: 2.2rem; 
+            text-shadow: 4px 4px 0 #9b30ff, 8px 8px 0 #000;
+            color: #e0b0ff;
+            animation: dragon-bounce 0.6s ease infinite alternate;
             display: inline-block;
         }
         
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-10px); }
+        @keyframes dragon-bounce {
+            from { transform: translateY(0) rotate(-2deg); }
+            to { transform: translateY(-15px) rotate(2deg); }
         }
         
         .subtitle {
             font-size: 1.2rem;
             margin-top: 15px;
-            color: #fff;
+            color: #ffb3ff;
             text-shadow: 2px 2px 0 #000;
+        }
+        
+        .dragon-emoji {
+            font-size: 4rem;
+            display: block;
+            margin: 20px auto;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 10px #9b30ff); }
+            to { filter: drop-shadow(0 0 30px #e066ff); }
         }
         
         .container {
@@ -103,61 +136,61 @@
         }
         
         .character-card {
-            background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            background: linear-gradient(145deg, rgba(155, 48, 255, 0.3), rgba(75, 0, 130, 0.5));
+            backdrop-filter: blur(10px);
             border-radius: 20px;
             padding: 25px;
             text-align: center;
-            color: #333;
+            color: #fff;
             transition: transform 0.3s, box-shadow 0.3s;
-            border: 4px solid #000;
-            box-shadow: 5px 5px 0 #000;
+            border: 3px solid #9b30ff;
+            box-shadow: 0 0 20px rgba(155, 48, 255, 0.4);
         }
         
         .character-card:hover {
-            transform: translateY(-10px) rotate(2deg);
-            box-shadow: 8px 8px 0 #000;
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 0 40px rgba(155, 48, 255, 0.8);
         }
         
-        .character-card img {
-            width: 120px;
-            height: 120px;
-            object-fit: contain;
+        .character-card .emoji {
+            font-size: 5rem;
             margin-bottom: 15px;
-            filter: drop-shadow(3px 3px 0 rgba(0,0,0,0.3));
+            display: block;
             transition: transform 0.3s;
         }
         
-        .character-card:hover img {
-            transform: scale(1.1);
+        .character-card:hover .emoji {
+            transform: scale(1.2) rotate(10deg);
         }
         
         .character-card h3 {
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-bottom: 10px;
-            color: #e52521;
+            color: #e0b0ff;
         }
         
         .character-card p {
             font-size: 0.95rem;
-            line-height: 1.5;
+            line-height: 1.6;
+            color: #ddd;
         }
         
         .fun-facts {
-            background: linear-gradient(145deg, #e52521, #c41e1a);
+            background: linear-gradient(145deg, #6b2d8a, #4a1a6b);
             border-radius: 20px;
             padding: 30px;
             margin: 40px 0;
-            border: 4px solid #000;
-            box-shadow: 5px 5px 0 #000;
+            border: 3px solid #bf5fff;
+            box-shadow: 0 0 30px rgba(191, 95, 255, 0.3);
         }
         
         .fun-facts h2 {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             margin-bottom: 20px;
             text-align: center;
-            color: #fbd000;
+            color: #ffb3ff;
         }
         
         .fun-facts ul {
@@ -167,7 +200,7 @@
         
         .fun-facts li {
             padding: 12px 0;
-            border-bottom: 2px dashed rgba(255,255,255,0.3);
+            border-bottom: 2px dashed rgba(255,255,255,0.2);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -178,124 +211,137 @@
         }
         
         .fun-facts li::before {
-            content: '🍄';
+            content: '✨';
             font-size: 1.5rem;
         }
         
-        .coin-counter {
+        .magic-counter {
             position: fixed;
             top: 20px;
             right: 20px;
-            background: #000;
+            background: linear-gradient(145deg, #4a1a6b, #2d1f3d);
             padding: 10px 20px;
-            border-radius: 10px;
+            border-radius: 15px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             display: flex;
             align-items: center;
             gap: 10px;
+            border: 2px solid #9b30ff;
+            box-shadow: 0 0 15px rgba(155, 48, 255, 0.5);
         }
         
-        .coin {
+        .magic-orb {
             width: 25px;
             height: 25px;
-            background: #fbd000;
+            background: radial-gradient(circle at 30% 30%, #e066ff, #9b30ff, #6b2d8a);
             border-radius: 50%;
-            border: 3px solid #c7a600;
-            animation: spin 1s linear infinite;
+            animation: pulse 1.5s ease-in-out infinite;
         }
         
-        @keyframes spin {
-            0%, 100% { transform: scaleX(1); }
-            50% { transform: scaleX(0.2); }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px #9b30ff; }
+            50% { transform: scale(1.2); box-shadow: 0 0 25px #e066ff; }
         }
         
-        .ground {
+        .magical-ground {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 80px;
-            background: repeating-linear-gradient(
-                90deg,
-                #c84c0c 0px,
-                #c84c0c 40px,
-                #e09050 40px,
-                #e09050 80px
-            );
-            border-top: 8px solid #000;
+            height: 60px;
+            background: linear-gradient(180deg, transparent, #1a0a2e);
         }
         
         footer {
             text-align: center;
             padding: 20px;
-            margin-bottom: 100px;
+            margin-bottom: 80px;
             font-size: 0.9rem;
         }
         
         footer a {
-            color: #fbd000;
+            color: #e0b0ff;
             text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        footer a:hover {
+            color: #ffb3ff;
         }
         
         @media (max-width: 768px) {
-            h1 { font-size: 1.5rem; }
-            .fun-facts h2 { font-size: 1rem; }
+            h1 { font-size: 1.3rem; }
+            .fun-facts h2 { font-size: 0.9rem; }
         }
     </style>
 </head>
 <body>
-<div class="clouds">
-<div class="cloud"></div>
-<div class="cloud"></div>
-<div class="cloud"></div>
+<div class="stars">
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
+<div class="star"></div>
 </div>
-<div class="coin-counter">
-<div class="coin"></div>
-<span>× 99</span>
+<div class="magic-particles">
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+<div class="particle"></div>
+</div>
+<div class="magic-counter">
+<div class="magic-orb"></div>
+<span>MAGIC × ∞</span>
 </div>
 <header>
-<h1>SUPER MARIO BROS</h1>
-<p class="subtitle">The Ultimate Fan Page - It's-a Me!</p>
+<span class="dragon-emoji">🐉</span>
+<h1>SPARKY THE DRAGON</h1>
+<p class="subtitle">A Small Purple Dragon with Big Magic Dreams!</p>
 </header>
 <div class="container">
 <div class="characters">
 <div class="character-card">
-<img alt="Mario" src="https://upload.wikimedia.org/wikipedia/en/a/a9/MarioNSMBUDeluxe.png"/>
-<h3>MARIO</h3>
-<p>The legendary plumber from Brooklyn! Always ready to save Princess Peach from Bowser's clutches. His jumping skills are unmatched!</p>
+<span class="emoji">🐲</span>
+<h3>SPARKY</h3>
+<p>A tiny purple dragon with shimmering scales and a heart full of courage! Despite his small size, his magic powers can move mountains and light up the darkest nights!</p>
 </div>
 <div class="character-card">
-<img alt="Luigi" src="https://upload.wikimedia.org/wikipedia/en/7/73/Luigi_NSMBUDX.png"/>
-<h3>LUIGI</h3>
-<p>Mario's taller, greener brother! He may be a bit scared of ghosts, but his loyalty and courage shine through when it counts!</p>
+<span class="emoji">🧙‍♀️</span>
+<h3>LUNA</h3>
+<p>Sparky's wise mentor, an ancient sorceress who taught him the ways of purple flame magic. She believes in him even when he doubts himself!</p>
 </div>
 <div class="character-card">
-<img alt="Princess Peach" src="https://upload.wikimedia.org/wikipedia/en/d/d5/Peach_%28Super_Mario_3D_World%29.png"/>
-<h3>PRINCESS PEACH</h3>
-<p>The beloved ruler of the Mushroom Kingdom. Despite frequent kidnappings, she's a fierce competitor in sports and kart racing!</p>
+<span class="emoji">🦋</span>
+<h3>FLUTTER</h3>
+<h3></h3>
+<p>A magical butterfly companion who guides Sparky on his quests. Her wings shimmer with stardust and can reveal hidden paths!</p>
 </div>
 <div class="character-card">
-<img alt="Toad" src="https://upload.wikimedia.org/wikipedia/en/1/16/Toad_3D_Land.png"/>
-<h3>TOAD</h3>
-<p>The cheerful mushroom retainer! Always helpful and full of energy. "Thank you Mario! But our princess is in another castle!"</p>
+<span class="emoji">🌟</span>
+<h3>THE STAR SPIRITS</h3>
+<p>Ancient guardians of the realm who grant Sparky special powers during his adventures. They whisper secrets of the universe!</p>
 </div>
 </div>
 <div class="fun-facts">
-<h2>🌟 FUN FACTS 🌟</h2>
+<h2>🔮 MAGICAL FACTS 🔮</h2>
 <ul>
-<li>Mario was originally called "Jumpman" in Donkey Kong (1981)</li>
-<li>Mario's full name is Mario Mario (confirmed in the 1993 movie!)</li>
-<li>The Super Mushroom was inspired by Alice in Wonderland</li>
-<li>Mario has appeared in over 200 video games!</li>
-<li>Bowser was originally designed as an ox, not a turtle!</li>
-<li>The clouds and bushes in Super Mario Bros use the same sprite, just recolored!</li>
+<li>Sparky's purple flames can heal wounds and purify dark magic!</li>
+<li>He was born from a shooting star that landed in the Enchanted Valley</li>
+<li>Despite being only 2 feet tall, his roar can be heard across three kingdoms!</li>
+<li>His favorite snack is crystallized moonbeams (they taste like honey!)</li>
+<li>Sparky has saved the world 47 times - and he's still counting!</li>
+<li>His scales change from purple to pink when he's extra happy!</li>
 </ul>
 </div>
 </div>
 <footer>
-<p>Made with ❤️ by fans, for fans | <a href="#">Join the Mushroom Kingdom!</a></p>
+<p>Made with 💜 by believers in magic | <a href="#">Join Sparky's Adventure!</a></p>
 </footer>
-<div class="ground"></div>
+<div class="magical-ground"></div>
 </body>
 </html>
