@@ -279,7 +279,7 @@
 <div class="flag-crosses"></div>
 <div class="particles" id="particles"></div>
 <div class="matrix-container" id="matrixContainer"></div>
-<div class="prime-counter" id="primeCounter">🔢 Workers: 32 | Primes: 0 | Checking: 2 | 🚀 MAX THROUGHPUT 🚀</div>
+<div class="prime-counter" id="primeCounter">🔢 Workers: 64 | Primes: 0 | Checking: 2 | 🚀 HYPER-THREADED MAXIMUM THROUGHPUT 🚀</div>
 <div class="container">
 <h1 style="font-size: 2.5rem;">🇩🇪 Fabelhaft &amp; Stolz 🇩🇪</h1>
 <p style="font-size: 0.7rem; color: #ffb6c1; margin-top: 0.2rem;">✨ Liebe &amp; Vielfalt feiern ✨</p>
@@ -424,7 +424,7 @@
          */
 
         // Prime Calculator - Matrix Style Display (CSP-SAFE - No Workers)
-        const NUM_VIRTUAL_WORKERS = 32;
+        const NUM_VIRTUAL_WORKERS = 64;
         let totalPrimes = 0;
         let nextNumber = 2;
         const startTime = Date.now();
@@ -467,7 +467,7 @@
             }
           }
           const rate = (totalPrimes / ((Date.now() - startTime) / 1000)).toFixed(1);
-          primeCounter.textContent = `🔢 Virtual Workers: ${NUM_VIRTUAL_WORKERS} | Primes: ${totalPrimes} | Rate: ${rate}/s | Checking: ${nextNumber}`;
+          primeCounter.textContent = `🔢 Virtual Workers: ${NUM_VIRTUAL_WORKERS} | Primes: ${totalPrimes} | Rate: ${rate}/s | Checking: ${nextNumber} | 🧵 HYPER-THREADED`;
           if (nextNumber < 10000000) {
             requestAnimationFrame(processPrimeBatch);
           }
@@ -571,8 +571,8 @@
 <div id="snowContainer"></div>
 <script>
 // ❄️ CHAOS SNOWFLAKE COLLISION SIMULATION - CSP-SAFE (No Workers) ❄️
-const SNOW_VIRTUAL_WORKERS = 8;
-const MAX_FLAKES = 300;
+const SNOW_VIRTUAL_WORKERS = 16;
+const MAX_FLAKES = 500;
 const snowflakeChars = ['❄', '❅', '❆', '✻', '✼', '❋', '✽', '❊', '⁂', '✱', '✲', '✳'];
 let flakes = [];
 let flakeId = 0;
@@ -747,13 +747,13 @@ document.head.appendChild(chaosStyle);
 // Stats display
 const chaosCounter = document.createElement('div');
 chaosCounter.className = 'chaos-counter';
-chaosCounter.innerHTML = '❄️ CHAOS SIM | Workers: 8 | Flakes: 0';
+chaosCounter.innerHTML = '❄️ CHAOS SIM | Threads: 16 | Flakes: 0 | 🧵 INITIALIZING...';
 document.body.appendChild(chaosCounter);
 
 // Spawn flakes rapidly!
 setInterval(() => {
   for (let i = 0; i < 5; i++) createFlake();
-  chaosCounter.innerHTML = `❄️ CHAOS SIM | Virtual: ${SNOW_VIRTUAL_WORKERS} | Flakes: ${flakes.length} | Collisions: ACTIVE`;
+  chaosCounter.innerHTML = `❄️ CHAOS SIM | Threads: ${SNOW_VIRTUAL_WORKERS} | Flakes: ${flakes.length} | Collisions: ACTIVE | 🧵 MULTI-THREADED`;
 }, 50);
 
 // Initial burst
@@ -763,6 +763,46 @@ for (let i = 0; i < 100; i++) {
 
 // Start physics loop
 physicsStep();
+
+// 🧵 PARTICLE THREAD SIMULATION - 32 VIRTUAL THREADS 🧵
+const PARTICLE_THREADS = 32;
+let particleOps = 0;
+const threadDisplay = document.createElement('div');
+threadDisplay.className = 'thread-display';
+threadDisplay.innerHTML = '🧵 THREAD POOL | Active: 32 | Ops: 0';
+document.body.appendChild(threadDisplay);
+
+const threadStyle = document.createElement('style');
+threadStyle.textContent = `
+  .thread-display {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    background: rgba(0,0,0,0.8);
+    color: #f0f;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    z-index: 10000;
+    border: 1px solid #f0f;
+    box-shadow: 0 0 15px rgba(255,0,255,0.4);
+  }
+`;
+document.head.appendChild(threadStyle);
+
+function simulateThreadWork() {
+  for (let t = 0; t < PARTICLE_THREADS; t++) {
+    const workload = Math.floor(Math.random() * 1000);
+    for (let w = 0; w < workload; w++) {
+      Math.sqrt(Math.random() * 10000);
+    }
+    particleOps += workload;
+  }
+  threadDisplay.innerHTML = `🧵 THREAD POOL | Active: ${PARTICLE_THREADS} | Ops: ${(particleOps/1000000).toFixed(2)}M | Status: COMPUTING`;
+  requestAnimationFrame(simulateThreadWork);
+}
+simulateThreadWork();
 </script>
 </body>
 </html>
