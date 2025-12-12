@@ -29,9 +29,9 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #ff0000, #ff8c00, #ffff00, #00ff00, #0000ff, #8b00ff, #ff0000);
-            background-size: 400% 400%;
-            animation: rainbowBg 8s ease infinite;
+            background: #1a1a1a;
+            background-size: 100% 100%;
+            
             color: #ffffff;
             overflow: hidden;
         }
@@ -176,6 +176,28 @@
          */
     </style>
 <style>
+.flag-crosses {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
+  background: 
+    repeating-linear-gradient(0deg, transparent 0px, transparent 80px, #cc0000 80px, #cc0000 100px, transparent 100px, transparent 180px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 80px, #cc0000 80px, #cc0000 100px, transparent 100px, transparent 180px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 85px, white 85px, white 95px, transparent 95px, transparent 180px),
+    repeating-linear-gradient(90deg, transparent 0px, transparent 85px, white 85px, white 95px, transparent 95px, transparent 180px),
+    linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+  animation: flagPulse 4s ease-in-out infinite;
+}
+@keyframes flagPulse {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.1); }
+}
+</style>
+<style>
 .matrix-container {
   position: fixed;
   top: 0;
@@ -254,6 +276,7 @@
 </style>
 </head>
 <body>
+<div class="flag-crosses"></div>
 <div class="particles" id="particles"></div>
 <div class="matrix-container" id="matrixContainer"></div>
 <div class="prime-counter" id="primeCounter">🔢 Workers: 32 | Primes: 0 | Checking: 2 | 🚀 MAX THROUGHPUT 🚀</div>
