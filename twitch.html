@@ -89,6 +89,18 @@
         .instructions li {
             transition: transform 0.3s ease;
         }
+        .tank-container {
+            margin-top: 1.5rem;
+            animation: tankRoll 4s ease-in-out infinite;
+        }
+        .german-tank {
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        }
+        @keyframes tankRoll {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(20px); }
+            75% { transform: translateX(-20px); }
+        }
         .instructions li:hover {
             transform: translateX(10px);
         }
@@ -177,6 +189,34 @@
 <p style="margin-top: 1rem; font-size: 0.8rem; color: #636e72;">💡 Stay safe, code responsibly! 💡</p>
 </div>
 <div style="margin-top: 2rem; font-size: 3rem;">🇩🇪 🚂 🇩🇪</div>
+<div class="tank-container">
+<svg class="german-tank" height="100" viewbox="0 0 200 100" width="200">
+
+<rect fill="#5d6d7e" height="35" rx="5" width="140" x="30" y="40"></rect>
+
+<rect fill="#566573" height="20" rx="3" width="60" x="70" y="25"></rect>
+
+<rect fill="#4a5568" height="8" rx="2" width="50" x="130" y="30"></rect>
+
+<rect fill="#2d3436" height="20" rx="10" width="160" x="20" y="70"></rect>
+
+<circle cx="45" cy="80" fill="#636e72" r="12"></circle>
+<circle cx="45" cy="80" fill="#2d3436" r="6"></circle>
+<circle cx="80" cy="80" fill="#636e72" r="12"></circle>
+<circle cx="80" cy="80" fill="#2d3436" r="6"></circle>
+<circle cx="115" cy="80" fill="#636e72" r="12"></circle>
+<circle cx="115" cy="80" fill="#2d3436" r="6"></circle>
+<circle cx="150" cy="80" fill="#636e72" r="12"></circle>
+<circle cx="150" cy="80" fill="#2d3436" r="6"></circle>
+
+<rect fill="#dfe6e9" height="8" width="30" x="85" y="45"></rect>
+<rect fill="#dfe6e9" height="22" width="8" x="96" y="38"></rect>
+
+<circle cx="145" cy="33" fill="#2d3436" r="2"></circle>
+<path d="M150 36 Q155 38 160 36" fill="none" stroke="#2d3436" stroke-width="2"></path>
+</svg>
+<p style="font-size: 0.9rem; color: #636e72; margin-top: 0.5rem;">🎖️ Freundlicher Panzer sagt Hallo! 🎖️</p>
+</div>
 <p style="margin-top: 1rem; font-size: 1rem; color: #636e72;">Willkommen in Deutschland! 🏰</p>
 </div>
 <script>
