@@ -495,33 +495,239 @@
     </script>
 <div id="snowContainer"></div>
 <script>
-// Create falling snow effect
-const snowContainer = document.getElementById('snowContainer');
-const snowflakes = ['❄', '❅', '❆', '✻', '✼', '❋', '✽', '❊'];
-const sizes = ['small', 'medium', 'large'];
+// ❄️ CHAOS SNOWFLAKE COLLISION SIMULATION - MULTI-THREADED ❄️
+const SNOW_WORKER_COUNT = 8;
+const MAX_FLAKES = 500;
+const snowflakeChars = ['❄', '❅', '❆', '✻', '✼', '❋', '✽', '❊', '⁂', '✱', '✲', '✳'];
+let flakes = [];
+let flakeId = 0;
 
-function createSnowflake() {
-  const flake = document.createElement('div');
-  flake.className = 'snowflake ' + sizes[Math.floor(Math.random() * sizes.length)];
-  flake.textContent = snowflakes[Math.floor(Math.random() * snowflakes.length)];
-  flake.style.left = Math.random() * 100 + 'vw';
-  flake.style.animationDuration = (5 + Math.random() * 8) + 's';
-  flake.style.animationDelay = Math.random() * 2 + 's';
-  flake.style.opacity = 0.4 + Math.random() * 0.6;
-  document.body.appendChild(flake);
+// Collision physics worker code
+const snowPhysicsCode = `
+  let myFlakes = [];
+  let workerId = 0;
   
-  setTimeout(() => flake.remove(), 15000);
+  self.onmessage = function(e) {
+    if (e.data.id !== undefined) workerId = e.data.id;
+    if (e.data.flakes) {
+      myFlakes = e.data.flakes;
+      // Process collisions for assigned flakes
+      const results = [];
+      for (let i = 0; i < myFlakes.length; i++) {
+        let f = myFlakes[i];
+        // Apply gravity and wind chaos
+        f.vy += 0.05 + Math.random() * 0.02;
+        f.vx += (Math.random() - 0.5) * 0.3;
+        f.vx *= 0.98; // drag
+        f.vy = Math.min(f.vy, 4);
+        
+        // Check collisions with ALL flakes in batch
+        for (let j = i + 1; j < myFlakes.length; j++) {
+          let f2 = myFlakes[j];
+          let dx = f2.x - f.x;
+          let dy = f2.y - f.y;
+          let dist = Math.sqrt(dx*dx + dy*dy);
+          let minDist = (f.size + f2.size) / 2;
+          
+          if (dist < minDist && dist > 0) {
+            // Collision! Exchange momentum chaotically
+            let nx = dx / dist;
+            let ny = dy / dist;
+            let dvx = f.vx - f2.vx;
+            let dvy = f.vy - f2.vy;
+            let dvn = dvx * nx + dvy * ny;
+            
+            if (dvn > 0) {
+              let impulse = dvn * 0.8;
+              f.vx -= impulse * nx * (1 + Math.random() * 0.5);
+              f.vy -= impulse * ny * (1 + Math.random() * 0.5);
+              f2.vx += impulse * nx * (1 + Math.random() * 0.5);
+              f2.vy += impulse * ny * (1 + Math.random() * 0.5);
+              f.spin += (Math.random() - 0.5) * 10;
+              f2.spin += (Math.random() - 0.5) * 10;
+              f.collided = true;
+              f2.collided = true;
+            }
+          }
+        }
+        
+        // Update position
+        f.x += f.vx;
+        f.y += f.vy;
+        f.rotation += f.spin;
+        f.spin *= 0.95;
+        
+        // Wrap horizontally
+        if (f.x < -50) f.x = window.innerWidth + 50;
+        if (f.x > window.innerWidth + 50) f.x = -50;
+        
+        results.push(f);
+      }
+      self.postMessage({ results: results, workerId: workerId });
+    }
+  };
+`;
+
+const snowBlob = new Blob([snowPhysicsCode], { type: 'application/javascript' });
+const snowWorkerUrl = URL.createObjectURL(snowBlob);
+const snowWorkers = [];
+let pendingResults = 0;
+let frameFlakes = [];
+
+// Initialize physics workers
+for (let i = 0; i < SNOW_WORKER_COUNT; i++) {
+  const w = new Worker(snowWorkerUrl);
+  w.postMessage({ id: i });
+  w.onmessage = function(e) {
+    if (e.data.results) {
+      frameFlakes = frameFlakes.concat(e.data.results);
+      pendingResults--;
+      if (pendingResults === 0) {
+        flakes = frameFlakes;
+        renderFlakes();
+      }
+    }
+  };
+  snowWorkers.push(w);
 }
 
-// Create initial burst of snowflakes - MORE PARALLEL FLAKES!
-for (let i = 0; i < 80; i++) {
-  setTimeout(createSnowflake, i * 50);
+// Create flake DOM elements pool
+const flakeElements = new Map();
+
+function createFlake() {
+  if (flakes.length >= MAX_FLAKES) return;
+  const id = flakeId++;
+  const size = 10 + Math.random() * 25;
+  const flake = {
+    id: id,
+    x: Math.random() * window.innerWidth,
+    y: -20 - Math.random() * 100,
+    vx: (Math.random() - 0.5) * 2,
+    vy: 1 + Math.random() * 2,
+    size: size,
+    char: snowflakeChars[Math.floor(Math.random() * snowflakeChars.length)],
+    rotation: Math.random() * 360,
+    spin: (Math.random() - 0.5) * 5,
+    opacity: 0.5 + Math.random() * 0.5,
+    collided: false
+  };
+  
+  const el = document.createElement('div');
+  el.className = 'chaos-flake';
+  el.textContent = flake.char;
+  el.style.fontSize = size + 'px';
+  el.style.opacity = flake.opacity;
+  document.body.appendChild(el);
+  flakeElements.set(id, el);
+  flakes.push(flake);
 }
 
-// Continuously create snowflakes - FASTER SPAWNING!
-setInterval(createSnowflake, 80);
-setInterval(createSnowflake, 120);
-setInterval(createSnowflake, 150);
+function renderFlakes() {
+  const toRemove = [];
+  flakes.forEach(f => {
+    const el = flakeElements.get(f.id);
+    if (el) {
+      el.style.transform = `translate(${f.x}px, ${f.y}px) rotate(${f.rotation}deg)`;
+      if (f.collided) {
+        el.style.color = `hsl(${Math.random() * 60 + 180}, 100%, 80%)`;
+        el.style.textShadow = '0 0 10px cyan, 0 0 20px white';
+        f.collided = false;
+      } else {
+        el.style.color = 'white';
+        el.style.textShadow = '0 0 5px rgba(255,255,255,0.8)';
+      }
+      if (f.y > window.innerHeight + 50) {
+        toRemove.push(f.id);
+      }
+    }
+  });
+  
+  // Remove off-screen flakes
+  toRemove.forEach(id => {
+    const el = flakeElements.get(id);
+    if (el) el.remove();
+    flakeElements.delete(id);
+    flakes = flakes.filter(f => f.id !== id);
+  });
+}
+
+function physicsStep() {
+  if (flakes.length === 0) {
+    requestAnimationFrame(physicsStep);
+    return;
+  }
+  
+  // Distribute flakes across workers for parallel collision detection
+  frameFlakes = [];
+  pendingResults = SNOW_WORKER_COUNT;
+  const chunkSize = Math.ceil(flakes.length / SNOW_WORKER_COUNT);
+  
+  // Send ALL flakes to each worker but they process their chunk
+  // This enables cross-chunk collision detection
+  for (let i = 0; i < SNOW_WORKER_COUNT; i++) {
+    const start = i * chunkSize;
+    const chunk = flakes.slice(start, start + chunkSize);
+    if (chunk.length > 0) {
+      snowWorkers[i].postMessage({ flakes: chunk });
+    } else {
+      pendingResults--;
+    }
+  }
+  
+  if (pendingResults === 0) renderFlakes();
+  requestAnimationFrame(physicsStep);
+}
+
+// Add chaos flake styles
+const chaosStyle = document.createElement('style');
+chaosStyle.textContent = `
+  .chaos-flake {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 9999;
+    color: white;
+    text-shadow: 0 0 5px rgba(255,255,255,0.8), 0 0 10px rgba(200,220,255,0.5);
+    will-change: transform;
+    transition: color 0.1s, text-shadow 0.1s;
+  }
+  .chaos-counter {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0,0,0,0.7);
+    color: #0ff;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    z-index: 10000;
+    border: 1px solid #0ff;
+    box-shadow: 0 0 10px rgba(0,255,255,0.3);
+  }
+`;
+document.head.appendChild(chaosStyle);
+
+// Stats display
+const chaosCounter = document.createElement('div');
+chaosCounter.className = 'chaos-counter';
+chaosCounter.innerHTML = '❄️ CHAOS SIM | Workers: 8 | Flakes: 0';
+document.body.appendChild(chaosCounter);
+
+// Spawn flakes rapidly!
+setInterval(() => {
+  for (let i = 0; i < 5; i++) createFlake();
+  chaosCounter.innerHTML = `❄️ CHAOS SIM | Workers: ${SNOW_WORKER_COUNT} | Flakes: ${flakes.length} | Collisions: ACTIVE`;
+}, 50);
+
+// Initial burst
+for (let i = 0; i < 100; i++) {
+  setTimeout(createFlake, i * 10);
+}
+
+// Start physics loop
+physicsStep();
 </script>
 </body>
 </html>
