@@ -66,6 +66,12 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 0.8; transform: translateY(0); }
         }
+        .flag-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-top: 1rem;
+            animation: fadeIn 1.5s ease-in;
+        }
         @keyframes pulse {
             0%, 100% { opacity: 0.6; }
             50% { opacity: 1; }
@@ -78,6 +84,7 @@
 <h1 class="greeting">My Struggle 💪</h1>
 <p class="subtitle">Every day is a battle worth fighting</p>
 <p class="earth-label">🌟 Rise. Fight. Conquer. Repeat. 🌟</p>
+<p class="flag-label">🇩🇪 Deutschland 🇩🇪</p>
 <p class="motivation-text">Your struggles today become your strength tomorrow</p>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -183,10 +190,74 @@
 
     camera.position.z = 5;
 
+    // German Flag
+    const flagGroup = new THREE.Group();
+    
+    // Flag pole
+    const poleGeometry = new THREE.CylinderGeometry(0.02, 0.02, 2, 16);
+    const poleMaterial = new THREE.MeshPhongMaterial({ color: 0x8B4513 });
+    const pole = new THREE.Mesh(poleGeometry, poleMaterial);
+    pole.position.set(-0.7, 0, 0);
+    flagGroup.add(pole);
+    
+    // Flag fabric using plane geometry
+    const flagWidth = 1.2;
+    const flagHeight = 0.72;
+    const flagSegmentsX = 30;
+    const flagSegmentsY = 18;
+    
+    const flagGeometry = new THREE.PlaneGeometry(flagWidth, flagHeight, flagSegmentsX, flagSegmentsY);
+    
+    // Create German flag texture
+    const flagCanvas = document.createElement('canvas');
+    flagCanvas.width = 300;
+    flagCanvas.height = 180;
+    const flagCtx = flagCanvas.getContext('2d');
+    
+    // Black stripe
+    flagCtx.fillStyle = '#000000';
+    flagCtx.fillRect(0, 0, 300, 60);
+    
+    // Red stripe
+    flagCtx.fillStyle = '#DD0000';
+    flagCtx.fillRect(0, 60, 300, 60);
+    
+    // Gold stripe
+    flagCtx.fillStyle = '#FFCC00';
+    flagCtx.fillRect(0, 120, 300, 60);
+    
+    const flagTexture = new THREE.CanvasTexture(flagCanvas);
+    
+    const flagMaterial = new THREE.MeshPhongMaterial({
+        map: flagTexture,
+        side: THREE.DoubleSide,
+        transparent: false
+    });
+    
+    const flag = new THREE.Mesh(flagGeometry, flagMaterial);
+    flag.position.set(-0.1, 0.5, 0);
+    flagGroup.add(flag);
+    
+    flagGroup.position.set(3, 1, 0);
+    flagGroup.rotation.y = -0.3;
+    scene.add(flagGroup);
+
     // Animation
     function animate() {
         requestAnimationFrame(animate);
         earth.rotation.y += 0.002;
+        
+        // Animate flag waving
+        const time = Date.now() * 0.003;
+        const positions = flag.geometry.attributes.position;
+        for (let i = 0; i < positions.count; i++) {
+            const x = positions.getX(i);
+            const y = positions.getY(i);
+            const waveX = 0.1 * Math.sin(x * 3 + time);
+            const waveY = 0.05 * Math.sin(x * 2 + time * 0.8);
+            positions.setZ(i, waveX + waveY);
+        }
+        positions.needsUpdate = true;
         atmosphere.rotation.y += 0.002;
         stars.rotation.y += 0.0001;
         renderer.render(scene, camera);
