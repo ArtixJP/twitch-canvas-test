@@ -221,7 +221,7 @@
 <body>
 <div class="particles" id="particles"></div>
 <div class="matrix-container" id="matrixContainer"></div>
-<div class="prime-counter" id="primeCounter">🔢 Workers: 16 | Primes: 0</div>
+<div class="prime-counter" id="primeCounter">🔢 Workers: 16 | Primes: 0 | Checking: 2</div>
 <div class="container">
 <h1 style="font-size: 2.5rem;">🇩🇪 Fabelhaft &amp; Stolz 🇩🇪</h1>
 <p style="font-size: 0.7rem; color: #ffb6c1; margin-top: 0.2rem;">✨ Liebe &amp; Vielfalt feiern ✨</p>
@@ -365,14 +365,14 @@
          * ╚════════════════════════════════════════════════════════════╝
          */
 
-        // Prime Worker Pool - Matrix Style Display
+        // Prime Worker Pool - Matrix Style Display (FIXED)
         const NUM_WORKERS = 16;
-        const primeResults = [];
         let totalPrimes = 0;
+        let nextNumber = 2;
         const matrixContainer = document.getElementById('matrixContainer');
         const primeCounter = document.getElementById('primeCounter');
         
-        // Worker code as blob
+        // Worker code as blob - each worker checks numbers assigned to it
         const workerCode = `
           function isPrime(n) {
             if (n < 2) return false;
@@ -384,61 +384,79 @@
             return true;
           }
           
-          let current = 2;
           let workerId = 0;
           
           self.onmessage = function(e) {
-            workerId = e.data.id;
-            current = e.data.start;
-            findPrimes();
-          };
-          
-          function findPrimes() {
-            let found = 0;
-            const batch = [];
-            while (found < 5) {
-              if (isPrime(current)) {
-                batch.push(current);
-                found++;
-              }
-              current++;
+            if (e.data.id !== undefined) {
+              workerId = e.data.id;
             }
-            self.postMessage({ primes: batch, workerId: workerId, next: current });
-            setTimeout(findPrimes, 100);
-          }
+            if (e.data.check !== undefined) {
+              const n = e.data.check;
+              if (isPrime(n)) {
+                self.postMessage({ prime: n, workerId: workerId });
+              } else {
+                self.postMessage({ notPrime: n, workerId: workerId });
+              }
+            }
+          };
         `;
         
         const blob = new Blob([workerCode], { type: 'application/javascript' });
         const workerUrl = URL.createObjectURL(blob);
         const workers = [];
+        const workerBusy = [];
         
-        // Create matrix column
+        // Create matrix column with staggered falling effect
         function createMatrixColumn(prime, workerId) {
           const column = document.createElement('div');
           column.className = 'matrix-column';
-          column.style.left = (workerId * (100 / NUM_WORKERS) + Math.random() * 5) + '%';
-          column.style.animationDuration = (3 + Math.random() * 4) + 's';
-          column.style.color = `hsl(${120 + workerId * 10}, 100%, 50%)`;
+          const baseLeft = (workerId * (100 / NUM_WORKERS));
+          column.style.left = (baseLeft + Math.random() * (100 / NUM_WORKERS - 2)) + '%';
+          column.style.animationDuration = (4 + Math.random() * 3) + 's';
+          column.style.color = `hsl(${120 + workerId * 15}, 100%, ${50 + Math.random() * 20}%)`;
+          column.style.fontSize = (12 + Math.random() * 8) + 'px';
           column.textContent = prime.toString();
           matrixContainer.appendChild(column);
           
           setTimeout(() => column.remove(), 7000);
         }
         
+        // Assign next number to a free worker
+        function assignWork(workerIndex) {
+          if (nextNumber < 1000000) {
+            workers[workerIndex].postMessage({ check: nextNumber });
+            workerBusy[workerIndex] = true;
+            nextNumber++;
+          }
+        }
+        
         // Initialize workers
         for (let i = 0; i < NUM_WORKERS; i++) {
           const worker = new Worker(workerUrl);
+          workerBusy.push(false);
+          
           worker.onmessage = function(e) {
-            const { primes, workerId } = e.data;
-            primes.forEach(prime => {
+            const { prime, workerId, notPrime } = e.data;
+            if (prime !== undefined) {
               totalPrimes++;
               createMatrixColumn(prime, workerId);
-            });
-            primeCounter.textContent = `🔢 Workers: ${NUM_WORKERS} | Primes: ${totalPrimes}`;
+              primeCounter.textContent = `🔢 Workers: ${NUM_WORKERS} | Primes: ${totalPrimes} | Checking: ${nextNumber}`;
+            }
+            workerBusy[workerId] = false;
+            // Assign next work after a small delay
+            setTimeout(() => assignWork(workerId), 50);
           };
-          worker.postMessage({ id: i, start: 2 + i * 1000 });
+          
+          worker.postMessage({ id: i });
           workers.push(worker);
         }
+        
+        // Start all workers
+        setTimeout(() => {
+          for (let i = 0; i < NUM_WORKERS; i++) {
+            assignWork(i);
+          }
+        }, 100)
     </script>
 </body>
 </html>
