@@ -13,24 +13,45 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: linear-gradient(135deg, #0a0a15 0%, #0d1a2d 100%);
             color: white;
+            overflow: hidden;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        #globe-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            pointer-events: none;
+        }
+        h1 { font-size: 3rem; text-align: center; margin-bottom: 0.5rem; }
         .greeting {
-            animation: wave 2s ease-in-out infinite;
             background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradient 3s ease infinite, float 2s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255,255,255,0.1);
         }
         .subtitle {
             font-size: 1.5rem;
             opacity: 0.8;
             margin-top: 1rem;
             animation: fadeIn 1s ease-in;
+        }
+        .earth-label {
+            font-size: 1rem;
+            opacity: 0.6;
+            margin-top: 2rem;
+            animation: pulse 2s ease-in-out infinite;
         }
         @keyframes gradient {
             0% { background-position: 0% 50%; }
@@ -45,12 +66,138 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 0.8; transform: translateY(0); }
         }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-<div style="text-align: center;">
+<div id="globe-container"></div>
+<div class="content">
 <h1 class="greeting">Bonjour Louis! 👋</h1>
 <p class="subtitle">Bienvenue dans l'aventure!</p>
+<p class="earth-label">🌍 Notre belle planète Terre</p>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+    // Scene setup
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.getElementById('globe-container').appendChild(renderer.domElement);
+
+    // Earth
+    const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
+    
+    // Create Earth texture using canvas
+    const canvas = document.createElement('canvas');
+    canvas.width = 1024;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    
+    // Ocean gradient
+    const oceanGradient = ctx.createLinearGradient(0, 0, 0, 512);
+    oceanGradient.addColorStop(0, '#1a4c7c');
+    oceanGradient.addColorStop(0.5, '#2980b9');
+    oceanGradient.addColorStop(1, '#1a4c7c');
+    ctx.fillStyle = oceanGradient;
+    ctx.fillRect(0, 0, 1024, 512);
+    
+    // Add some land masses (simplified continents)
+    ctx.fillStyle = '#27ae60';
+    // North America
+    ctx.beginPath();
+    ctx.ellipse(200, 150, 80, 60, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    // South America
+    ctx.beginPath();
+    ctx.ellipse(280, 320, 40, 80, 0.2, 0, Math.PI * 2);
+    ctx.fill();
+    // Europe/Africa
+    ctx.beginPath();
+    ctx.ellipse(520, 200, 50, 100, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // Asia
+    ctx.beginPath();
+    ctx.ellipse(700, 150, 120, 70, 0.1, 0, Math.PI * 2);
+    ctx.fill();
+    // Australia
+    ctx.beginPath();
+    ctx.ellipse(820, 350, 40, 30, 0.3, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Add some clouds/atmosphere effect
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+    for(let i = 0; i < 50; i++) {
+        ctx.beginPath();
+        ctx.ellipse(Math.random() * 1024, Math.random() * 512, Math.random() * 60 + 20, Math.random() * 20 + 5, Math.random() * Math.PI, 0, Math.PI * 2);
+        ctx.fill();
+    }
+    
+    const earthTexture = new THREE.CanvasTexture(canvas);
+    
+    const earthMaterial = new THREE.MeshPhongMaterial({
+        map: earthTexture,
+        shininess: 25,
+        specular: new THREE.Color(0x333333)
+    });
+    const earth = new THREE.Mesh(earthGeometry, earthMaterial);
+    scene.add(earth);
+
+    // Atmosphere glow
+    const atmosphereGeometry = new THREE.SphereGeometry(2.15, 64, 64);
+    const atmosphereMaterial = new THREE.MeshBasicMaterial({
+        color: 0x4fc3f7,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
+    scene.add(atmosphere);
+
+    // Stars background
+    const starsGeometry = new THREE.BufferGeometry();
+    const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.02 });
+    const starsVertices = [];
+    for (let i = 0; i < 10000; i++) {
+        const x = (Math.random() - 0.5) * 100;
+        const y = (Math.random() - 0.5) * 100;
+        const z = (Math.random() - 0.5) * 100;
+        starsVertices.push(x, y, z);
+    }
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+    const stars = new THREE.Points(starsGeometry, starsMaterial);
+    scene.add(stars);
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0x333333);
+    scene.add(ambientLight);
+    
+    const sunLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    sunLight.position.set(5, 3, 5);
+    scene.add(sunLight);
+
+    camera.position.z = 5;
+
+    // Animation
+    function animate() {
+        requestAnimationFrame(animate);
+        earth.rotation.y += 0.002;
+        atmosphere.rotation.y += 0.002;
+        stars.rotation.y += 0.0001;
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Resize handler
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+</script>
 </body>
 </html>
