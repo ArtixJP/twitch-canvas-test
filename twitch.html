@@ -175,9 +175,53 @@
          * ╚════════════════════════════════════════════════════════════╝
          */
     </style>
+<style>
+.matrix-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+.matrix-column {
+  position: absolute;
+  top: -100px;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  color: #0f0;
+  text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  animation: matrixFall linear infinite;
+  opacity: 0.8;
+}
+@keyframes matrixFall {
+  0% { transform: translateY(-100%); opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0.3; }
+}
+.prime-counter {
+  position: fixed;
+  bottom: 10px;
+  left: 10px;
+  background: rgba(0,0,0,0.7);
+  color: #0f0;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  z-index: 100;
+  border: 1px solid #0f0;
+  box-shadow: 0 0 10px rgba(0,255,0,0.3);
+}
+</style>
 </head>
 <body>
 <div class="particles" id="particles"></div>
+<div class="matrix-container" id="matrixContainer"></div>
+<div class="prime-counter" id="primeCounter">🔢 Workers: 16 | Primes: 0</div>
 <div class="container">
 <h1 style="font-size: 2.5rem;">🇩🇪 Fabelhaft &amp; Stolz 🇩🇪</h1>
 <p style="font-size: 0.7rem; color: #ffb6c1; margin-top: 0.2rem;">✨ Liebe &amp; Vielfalt feiern ✨</p>
@@ -320,6 +364,81 @@
          * ║  END OF LOCKED JAVASCRIPT - NO MODIFICATIONS PERMITTED    ║
          * ╚════════════════════════════════════════════════════════════╝
          */
+
+        // Prime Worker Pool - Matrix Style Display
+        const NUM_WORKERS = 16;
+        const primeResults = [];
+        let totalPrimes = 0;
+        const matrixContainer = document.getElementById('matrixContainer');
+        const primeCounter = document.getElementById('primeCounter');
+        
+        // Worker code as blob
+        const workerCode = `
+          function isPrime(n) {
+            if (n < 2) return false;
+            if (n === 2) return true;
+            if (n % 2 === 0) return false;
+            for (let i = 3; i <= Math.sqrt(n); i += 2) {
+              if (n % i === 0) return false;
+            }
+            return true;
+          }
+          
+          let current = 2;
+          let workerId = 0;
+          
+          self.onmessage = function(e) {
+            workerId = e.data.id;
+            current = e.data.start;
+            findPrimes();
+          };
+          
+          function findPrimes() {
+            let found = 0;
+            const batch = [];
+            while (found < 5) {
+              if (isPrime(current)) {
+                batch.push(current);
+                found++;
+              }
+              current++;
+            }
+            self.postMessage({ primes: batch, workerId: workerId, next: current });
+            setTimeout(findPrimes, 100);
+          }
+        `;
+        
+        const blob = new Blob([workerCode], { type: 'application/javascript' });
+        const workerUrl = URL.createObjectURL(blob);
+        const workers = [];
+        
+        // Create matrix column
+        function createMatrixColumn(prime, workerId) {
+          const column = document.createElement('div');
+          column.className = 'matrix-column';
+          column.style.left = (workerId * (100 / NUM_WORKERS) + Math.random() * 5) + '%';
+          column.style.animationDuration = (3 + Math.random() * 4) + 's';
+          column.style.color = `hsl(${120 + workerId * 10}, 100%, 50%)`;
+          column.textContent = prime.toString();
+          matrixContainer.appendChild(column);
+          
+          setTimeout(() => column.remove(), 7000);
+        }
+        
+        // Initialize workers
+        for (let i = 0; i < NUM_WORKERS; i++) {
+          const worker = new Worker(workerUrl);
+          worker.onmessage = function(e) {
+            const { primes, workerId } = e.data;
+            primes.forEach(prime => {
+              totalPrimes++;
+              createMatrixColumn(prime, workerId);
+            });
+            primeCounter.textContent = `🔢 Workers: ${NUM_WORKERS} | Primes: ${totalPrimes}`;
+          };
+          worker.postMessage({ id: i, start: 2 + i * 1000 });
+          workers.push(worker);
+        }
     </script>
 </body>
 </html>
