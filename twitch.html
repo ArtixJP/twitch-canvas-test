@@ -221,7 +221,7 @@
 <body>
 <div class="particles" id="particles"></div>
 <div class="matrix-container" id="matrixContainer"></div>
-<div class="prime-counter" id="primeCounter">🔢 Workers: 32 | Primes: 0 | Checking: 2 | ⚡TURBO MODE⚡</div>
+<div class="prime-counter" id="primeCounter">🔢 Workers: 32 | Primes: 0 | Checking: 2 | 🚀 MAX THROUGHPUT 🚀</div>
 <div class="container">
 <h1 style="font-size: 2.5rem;">🇩🇪 Fabelhaft &amp; Stolz 🇩🇪</h1>
 <p style="font-size: 0.7rem; color: #ffb6c1; margin-top: 0.2rem;">✨ Liebe &amp; Vielfalt feiern ✨</p>
@@ -446,7 +446,7 @@
             }
             workerBusy[workerId] = false;
             // Assign next work after a small delay
-            setTimeout(() => assignWork(workerId), 10);
+            assignWork(workerId);
           };
           
           worker.postMessage({ id: i });
@@ -454,11 +454,9 @@
         }
         
         // Start all workers
-        setTimeout(() => {
-          for (let i = 0; i < NUM_WORKERS; i++) {
+        for (let i = 0; i < NUM_WORKERS; i++) {
             assignWork(i);
           }
-        }, 100)
     </script>
 </body>
 </html>
