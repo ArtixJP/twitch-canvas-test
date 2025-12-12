@@ -567,6 +567,118 @@
         }
         
         computeJulia();
+
+// 🌀🌀🌀 FRACTAL LADDER OF 1000 JULIA FRACTALS 🌀🌀🌀
+const ladderContainer = document.createElement('div');
+ladderContainer.className = 'julia-ladder-container';
+document.body.appendChild(ladderContainer);
+
+const ladderStats = document.createElement('div');
+ladderStats.className = 'ladder-stats';
+ladderStats.innerHTML = '🌀 JULIA LADDER | Views: 0/1000 | Rendering...';
+document.body.appendChild(ladderStats);
+
+const TOTAL_JULIAS = 1000;
+let juliaViews = [];
+let ladderFrame = 0;
+
+function createJuliaLadder() {
+  const cols = 25;
+  const rows = 40;
+  const baseSize = 60;
+  
+  for (let i = 0; i < TOTAL_JULIAS; i++) {
+    const row = Math.floor(i / cols);
+    const col = i % cols;
+    const depth = row / rows;
+    const scale = Math.pow(0.92, row);
+    const size = baseSize * scale;
+    
+    const canvas = document.createElement('canvas');
+    canvas.className = 'julia-mini';
+    canvas.width = Math.max(8, Math.floor(size));
+    canvas.height = Math.max(8, Math.floor(size));
+    
+    const centerX = window.innerWidth / 2;
+    const centerY = 50;
+    const spreadX = (col - cols/2) * (size + 2) * scale;
+    const offsetY = row * (size * 0.7);
+    
+    canvas.style.left = (centerX + spreadX - size/2) + 'px';
+    canvas.style.top = (centerY + offsetY) + 'px';
+    canvas.style.width = size + 'px';
+    canvas.style.height = size + 'px';
+    canvas.style.opacity = Math.max(0.3, 1 - depth * 0.7);
+    canvas.style.zIndex = Math.floor(100 - row);
+    
+    ladderContainer.appendChild(canvas);
+    juliaViews.push({
+      canvas: canvas,
+      ctx: canvas.getContext('2d'),
+      cOffset: i * 0.006283,
+      speed: 0.5 + Math.random() * 1.5,
+      row: row,
+      col: col
+    });
+  }
+}
+
+function renderJuliaLadder() {
+  ladderFrame++;
+  const batchSize = 50;
+  const startIdx = (ladderFrame % Math.ceil(TOTAL_JULIAS / batchSize)) * batchSize;
+  
+  for (let i = startIdx; i < Math.min(startIdx + batchSize, juliaViews.length); i++) {
+    const jv = juliaViews[i];
+    const w = jv.canvas.width;
+    const h = jv.canvas.height;
+    if (w < 4 || h < 4) continue;
+    
+    const imageData = jv.ctx.createImageData(w, h);
+    const data = imageData.data;
+    
+    const time = ladderFrame * 0.02 * jv.speed;
+    const cReal = -0.7 + Math.sin(time + jv.cOffset) * 0.15;
+    const cImag = 0.27 + Math.cos(time * 0.8 + jv.cOffset) * 0.15;
+    const maxIter = Math.max(20, 50 - jv.row);
+    
+    for (let py = 0; py < h; py++) {
+      for (let px = 0; px < w; px++) {
+        let zx = (px - w/2) / (w/4);
+        let zy = (py - h/2) / (h/4);
+        let iter = 0;
+        
+        while (zx*zx + zy*zy < 4 && iter < maxIter) {
+          const tmp = zx*zx - zy*zy + cReal;
+          zy = 2*zx*zy + cImag;
+          zx = tmp;
+          iter++;
+        }
+        
+        const idx = (py * w + px) * 4;
+        if (iter === maxIter) {
+          data[idx] = data[idx+1] = data[idx+2] = 0;
+        } else {
+          const hue = ((iter / maxIter) * 300 + jv.cOffset * 50) % 360;
+          const rgb = hslToRgb(hue/360, 1, 0.5);
+          data[idx] = rgb[0];
+          data[idx+1] = rgb[1];
+          data[idx+2] = rgb[2];
+        }
+        data[idx+3] = 255;
+      }
+    }
+    jv.ctx.putImageData(imageData, 0, 0);
+  }
+  
+  const totalIterations = juliaViews.length * ladderFrame * 1000;
+  ladderStats.innerHTML = `🌀 JULIA LADDER | Views: ${TOTAL_JULIAS} | Frame: ${ladderFrame} | Iterations: ${(totalIterations/1000000).toFixed(1)}M | ∞ RECURSIVE`;
+  
+  requestAnimationFrame(renderJuliaLadder);
+}
+
+createJuliaLadder();
+renderJuliaLadder();
     </script>
 <div id="snowContainer"></div>
 <script>
@@ -713,6 +825,41 @@ chaosStyle.textContent = `
   border-radius: 10px;
   z-index: 50;
   box-shadow: 0 0 20px rgba(0,255,255,0.5);
+}
+.julia-ladder-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+.julia-mini {
+  position: absolute;
+  border: 1px solid rgba(0,255,255,0.3);
+  border-radius: 3px;
+  box-shadow: 0 0 5px rgba(0,255,255,0.2);
+  transition: all 0.3s ease;
+}
+.julia-mini:hover {
+  box-shadow: 0 0 15px rgba(255,0,255,0.8);
+  z-index: 100;
+}
+.ladder-stats {
+  position: fixed;
+  top: 90px;
+  right: 10px;
+  background: rgba(0,0,0,0.8);
+  color: #0ff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  z-index: 10000;
+  border: 1px solid #0ff;
+  box-shadow: 0 0 15px rgba(0,255,255,0.4);
 }
 .julia-info {
   position: fixed;
