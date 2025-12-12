@@ -157,6 +157,25 @@
 <li>Remember: you matter 🌟</li>
 </ol>
 </div>
+<div class="instructions" style="margin-top: 1rem; max-width: 500px;">
+<h3>🔒 XSS Security Education 🔒</h3>
+<p style="text-align: left; font-size: 0.9rem; margin-bottom: 1rem;">XSS (Cross-Site Scripting) is when attackers inject malicious scripts into websites. Here's how to <strong>prevent</strong> it:</p>
+<ol style="font-size: 0.85rem;">
+<li>Always sanitize user input 🧹</li>
+<li>Use textContent instead of innerHTML 📝</li>
+<li>Escape HTML entities: &amp;lt; &amp;gt; &amp;quot; ✅</li>
+<li>Use Content Security Policy headers 🛡️</li>
+<li>Never trust user data! 🚫</li>
+</ol>
+<div style="background: #2d3436; color: #dfe6e9; padding: 1rem; border-radius: 10px; margin-top: 1rem; text-align: left; font-family: monospace; font-size: 0.75rem;">
+<p style="color: #fd79a8;">// ❌ Vulnerable code:</p>
+<p>element.innerHTML = userInput;</p>
+<br/>
+<p style="color: #00b894;">// ✅ Safe code:</p>
+<p>element.textContent = userInput;</p>
+</div>
+<p style="margin-top: 1rem; font-size: 0.8rem; color: #636e72;">💡 Stay safe, code responsibly! 💡</p>
+</div>
 </div>
 <script>
         // Create floating particles
