@@ -513,13 +513,15 @@ function createSnowflake() {
   setTimeout(() => flake.remove(), 15000);
 }
 
-// Create initial burst of snowflakes
-for (let i = 0; i < 30; i++) {
-  setTimeout(createSnowflake, i * 100);
+// Create initial burst of snowflakes - MORE PARALLEL FLAKES!
+for (let i = 0; i < 80; i++) {
+  setTimeout(createSnowflake, i * 50);
 }
 
-// Continuously create snowflakes
-setInterval(createSnowflake, 200);
+// Continuously create snowflakes - FASTER SPAWNING!
+setInterval(createSnowflake, 80);
+setInterval(createSnowflake, 120);
+setInterval(createSnowflake, 150);
 </script>
 </body>
 </html>
