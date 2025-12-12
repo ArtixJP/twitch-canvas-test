@@ -423,196 +423,67 @@
          * ╚════════════════════════════════════════════════════════════╝
          */
 
-        // Prime Worker Pool - Matrix Style Display (FIXED)
-        const NUM_WORKERS = 32;
+        // Prime Calculator - Matrix Style Display (CSP-SAFE - No Workers)
+        const NUM_VIRTUAL_WORKERS = 32;
         let totalPrimes = 0;
         let nextNumber = 2;
         const startTime = Date.now();
         const matrixContainer = document.getElementById('matrixContainer');
         const primeCounter = document.getElementById('primeCounter');
         
-        // Worker code as blob - each worker checks numbers assigned to it
-        const workerCode = `
-          function isPrime(n) {
-            if (n < 2) return false;
-            if (n === 2) return true;
-            if (n % 2 === 0) return false;
-            for (let i = 3; i <= Math.sqrt(n); i += 2) {
-              if (n % i === 0) return false;
-            }
-            return true;
+        function isPrime(n) {
+          if (n < 2) return false;
+          if (n === 2) return true;
+          if (n % 2 === 0) return false;
+          for (let i = 3; i <= Math.sqrt(n); i += 2) {
+            if (n % i === 0) return false;
           }
-          
-          let workerId = 0;
-          
-          self.onmessage = function(e) {
-            if (e.data.id !== undefined) {
-              workerId = e.data.id;
-            }
-            if (e.data.check !== undefined) {
-              const n = e.data.check;
-              if (isPrime(n)) {
-                self.postMessage({ prime: n, workerId: workerId });
-              } else {
-                self.postMessage({ notPrime: n, workerId: workerId });
-              }
-            }
-          };
-        `;
-        
-        const blob = new Blob([workerCode], { type: 'application/javascript' });
-        const workerUrl = URL.createObjectURL(blob);
-        const workers = [];
-        const workerBusy = [];
+          return true;
+        }
         
         // Create matrix column with staggered falling effect
-        function createMatrixColumn(prime, workerId) {
+        function createMatrixColumn(prime, virtualWorkerId) {
           const column = document.createElement('div');
           column.className = 'matrix-column';
-          const baseLeft = (workerId * (100 / NUM_WORKERS));
-          column.style.left = (baseLeft + Math.random() * (100 / NUM_WORKERS - 2)) + '%';
+          const baseLeft = (virtualWorkerId * (100 / NUM_VIRTUAL_WORKERS));
+          column.style.left = (baseLeft + Math.random() * (100 / NUM_VIRTUAL_WORKERS - 2)) + '%';
           column.style.animationDuration = (4 + Math.random() * 3) + 's';
-          column.style.color = `hsl(${120 + workerId * 15}, 100%, ${50 + Math.random() * 20}%)`;
+          column.style.color = `hsl(${120 + virtualWorkerId * 15}, 100%, ${50 + Math.random() * 20}%)`;
           column.style.fontSize = (12 + Math.random() * 8) + 'px';
           column.textContent = prime.toString();
           matrixContainer.appendChild(column);
-          
           setTimeout(() => column.remove(), 7000);
         }
         
-        // Assign next number to a free worker
-        function assignWork(workerIndex) {
-          if (nextNumber < 10000000) {
-            workers[workerIndex].postMessage({ check: nextNumber });
-            workerBusy[workerIndex] = true;
-            nextNumber++;
-          }
-        }
-        
-        // Initialize workers
-        for (let i = 0; i < NUM_WORKERS; i++) {
-          const worker = new Worker(workerUrl);
-          workerBusy.push(false);
-          
-          worker.onmessage = function(e) {
-            const { prime, workerId, notPrime } = e.data;
-            if (prime !== undefined) {
+        // Process primes in batches using requestAnimationFrame
+        function processPrimeBatch() {
+          const batchSize = 50;
+          for (let i = 0; i < batchSize && nextNumber < 10000000; i++) {
+            const num = nextNumber++;
+            const virtualWorkerId = num % NUM_VIRTUAL_WORKERS;
+            if (isPrime(num)) {
               totalPrimes++;
-              createMatrixColumn(prime, workerId);
-              const rate = (totalPrimes / ((Date.now() - startTime) / 1000)).toFixed(1);
-            primeCounter.textContent = `🔢 Workers: ${NUM_WORKERS} | Primes: ${totalPrimes} | Rate: ${rate}/s | Checking: ${nextNumber}`;
+              createMatrixColumn(num, virtualWorkerId);
             }
-            workerBusy[workerId] = false;
-            // Assign next work after a small delay
-            assignWork(workerId);
-          };
-          
-          worker.postMessage({ id: i });
-          workers.push(worker);
+          }
+          const rate = (totalPrimes / ((Date.now() - startTime) / 1000)).toFixed(1);
+          primeCounter.textContent = `🔢 Virtual Workers: ${NUM_VIRTUAL_WORKERS} | Primes: ${totalPrimes} | Rate: ${rate}/s | Checking: ${nextNumber}`;
+          if (nextNumber < 10000000) {
+            requestAnimationFrame(processPrimeBatch);
+          }
         }
         
-        // Start all workers
-        for (let i = 0; i < NUM_WORKERS; i++) {
-            assignWork(i);
-          }
+        // Start processing
+        requestAnimationFrame(processPrimeBatch);
     </script>
 <div id="snowContainer"></div>
 <script>
-// ❄️ CHAOS SNOWFLAKE COLLISION SIMULATION - MULTI-THREADED ❄️
-const SNOW_WORKER_COUNT = 8;
-const MAX_FLAKES = 500;
+// ❄️ CHAOS SNOWFLAKE COLLISION SIMULATION - CSP-SAFE (No Workers) ❄️
+const SNOW_VIRTUAL_WORKERS = 8;
+const MAX_FLAKES = 300;
 const snowflakeChars = ['❄', '❅', '❆', '✻', '✼', '❋', '✽', '❊', '⁂', '✱', '✲', '✳'];
 let flakes = [];
 let flakeId = 0;
-
-// Collision physics worker code
-const snowPhysicsCode = `
-  let myFlakes = [];
-  let workerId = 0;
-  
-  self.onmessage = function(e) {
-    if (e.data.id !== undefined) workerId = e.data.id;
-    if (e.data.flakes) {
-      myFlakes = e.data.flakes;
-      // Process collisions for assigned flakes
-      const results = [];
-      for (let i = 0; i < myFlakes.length; i++) {
-        let f = myFlakes[i];
-        // Apply gravity and wind chaos
-        f.vy += 0.05 + Math.random() * 0.02;
-        f.vx += (Math.random() - 0.5) * 0.3;
-        f.vx *= 0.98; // drag
-        f.vy = Math.min(f.vy, 4);
-        
-        // Check collisions with ALL flakes in batch
-        for (let j = i + 1; j < myFlakes.length; j++) {
-          let f2 = myFlakes[j];
-          let dx = f2.x - f.x;
-          let dy = f2.y - f.y;
-          let dist = Math.sqrt(dx*dx + dy*dy);
-          let minDist = (f.size + f2.size) / 2;
-          
-          if (dist < minDist && dist > 0) {
-            // Collision! Exchange momentum chaotically
-            let nx = dx / dist;
-            let ny = dy / dist;
-            let dvx = f.vx - f2.vx;
-            let dvy = f.vy - f2.vy;
-            let dvn = dvx * nx + dvy * ny;
-            
-            if (dvn > 0) {
-              let impulse = dvn * 0.8;
-              f.vx -= impulse * nx * (1 + Math.random() * 0.5);
-              f.vy -= impulse * ny * (1 + Math.random() * 0.5);
-              f2.vx += impulse * nx * (1 + Math.random() * 0.5);
-              f2.vy += impulse * ny * (1 + Math.random() * 0.5);
-              f.spin += (Math.random() - 0.5) * 10;
-              f2.spin += (Math.random() - 0.5) * 10;
-              f.collided = true;
-              f2.collided = true;
-            }
-          }
-        }
-        
-        // Update position
-        f.x += f.vx;
-        f.y += f.vy;
-        f.rotation += f.spin;
-        f.spin *= 0.95;
-        
-        // Wrap horizontally
-        if (f.x < -50) f.x = window.innerWidth + 50;
-        if (f.x > window.innerWidth + 50) f.x = -50;
-        
-        results.push(f);
-      }
-      self.postMessage({ results: results, workerId: workerId });
-    }
-  };
-`;
-
-const snowBlob = new Blob([snowPhysicsCode], { type: 'application/javascript' });
-const snowWorkerUrl = URL.createObjectURL(snowBlob);
-const snowWorkers = [];
-let pendingResults = 0;
-let frameFlakes = [];
-
-// Initialize physics workers
-for (let i = 0; i < SNOW_WORKER_COUNT; i++) {
-  const w = new Worker(snowWorkerUrl);
-  w.postMessage({ id: i });
-  w.onmessage = function(e) {
-    if (e.data.results) {
-      frameFlakes = frameFlakes.concat(e.data.results);
-      pendingResults--;
-      if (pendingResults === 0) {
-        flakes = frameFlakes;
-        renderFlakes();
-      }
-    }
-  };
-  snowWorkers.push(w);
-}
 
 // Create flake DOM elements pool
 const flakeElements = new Map();
@@ -665,7 +536,6 @@ function renderFlakes() {
     }
   });
   
-  // Remove off-screen flakes
   toRemove.forEach(id => {
     const el = flakeElements.get(id);
     if (el) el.remove();
@@ -674,30 +544,56 @@ function renderFlakes() {
   });
 }
 
-function physicsStep() {
-  if (flakes.length === 0) {
-    requestAnimationFrame(physicsStep);
-    return;
-  }
-  
-  // Distribute flakes across workers for parallel collision detection
-  frameFlakes = [];
-  pendingResults = SNOW_WORKER_COUNT;
-  const chunkSize = Math.ceil(flakes.length / SNOW_WORKER_COUNT);
-  
-  // Send ALL flakes to each worker but they process their chunk
-  // This enables cross-chunk collision detection
-  for (let i = 0; i < SNOW_WORKER_COUNT; i++) {
-    const start = i * chunkSize;
-    const chunk = flakes.slice(start, start + chunkSize);
-    if (chunk.length > 0) {
-      snowWorkers[i].postMessage({ flakes: chunk });
-    } else {
-      pendingResults--;
+function processFlakePhysics() {
+  for (let i = 0; i < flakes.length; i++) {
+    let f = flakes[i];
+    f.vy += 0.05 + Math.random() * 0.02;
+    f.vx += (Math.random() - 0.5) * 0.3;
+    f.vx *= 0.98;
+    f.vy = Math.min(f.vy, 4);
+    
+    // Check collisions (limited for performance)
+    for (let j = i + 1; j < Math.min(i + 20, flakes.length); j++) {
+      let f2 = flakes[j];
+      let dx = f2.x - f.x;
+      let dy = f2.y - f.y;
+      let dist = Math.sqrt(dx*dx + dy*dy);
+      let minDist = (f.size + f2.size) / 2;
+      
+      if (dist < minDist && dist > 0) {
+        let nx = dx / dist;
+        let ny = dy / dist;
+        let dvx = f.vx - f2.vx;
+        let dvy = f.vy - f2.vy;
+        let dvn = dvx * nx + dvy * ny;
+        
+        if (dvn > 0) {
+          let impulse = dvn * 0.8;
+          f.vx -= impulse * nx * (1 + Math.random() * 0.5);
+          f.vy -= impulse * ny * (1 + Math.random() * 0.5);
+          f2.vx += impulse * nx * (1 + Math.random() * 0.5);
+          f2.vy += impulse * ny * (1 + Math.random() * 0.5);
+          f.spin += (Math.random() - 0.5) * 10;
+          f2.spin += (Math.random() - 0.5) * 10;
+          f.collided = true;
+          f2.collided = true;
+        }
+      }
     }
+    
+    f.x += f.vx;
+    f.y += f.vy;
+    f.rotation += f.spin;
+    f.spin *= 0.95;
+    
+    if (f.x < -50) f.x = window.innerWidth + 50;
+    if (f.x > window.innerWidth + 50) f.x = -50;
   }
-  
-  if (pendingResults === 0) renderFlakes();
+}
+
+function physicsStep() {
+  processFlakePhysics();
+  renderFlakes();
   requestAnimationFrame(physicsStep);
 }
 
@@ -741,7 +637,7 @@ document.body.appendChild(chaosCounter);
 // Spawn flakes rapidly!
 setInterval(() => {
   for (let i = 0; i < 5; i++) createFlake();
-  chaosCounter.innerHTML = `❄️ CHAOS SIM | Workers: ${SNOW_WORKER_COUNT} | Flakes: ${flakes.length} | Collisions: ACTIVE`;
+  chaosCounter.innerHTML = `❄️ CHAOS SIM | Virtual: ${SNOW_VIRTUAL_WORKERS} | Flakes: ${flakes.length} | Collisions: ACTIVE`;
 }, 50);
 
 // Initial burst
