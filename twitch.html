@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Creative Canvas</title>
+<title>Safe &amp; Happy Place 🌈</title>
 <style>
         * {
             margin: 0;
@@ -17,8 +17,8 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: white;
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 50%, #ffeaa7 100%);
+            color: #5d4e37;
             overflow: hidden;
         }
         .container {
@@ -27,7 +27,7 @@
         }
         h1 {
             font-size: 4rem;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf, #ff006e, #00d4ff);
+            background: linear-gradient(90deg, #ff9a9e, #fecfef, #a8edea, #fed6e3, #ff9a9e);
             background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -49,9 +49,34 @@
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-15px); }
         }
+        .affirmation {
+            font-size: 1.2rem;
+            margin-top: 1rem;
+            color: #e17055;
+            animation: fadeIn 3s ease-in;
+        }
+        .hugs {
+            margin-top: 2rem;
+            font-size: 2rem;
+            padding: 1rem 2rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50px;
+            display: inline-block;
+            animation: pulse 2s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        .hugs:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 182, 193, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 182, 193, 0.9); }
+        }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 0.8; transform: translateY(0); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .particles {
             position: fixed;
@@ -67,7 +92,7 @@
             position: absolute;
             width: 4px;
             height: 4px;
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 182, 193, 0.8);
             border-radius: 50%;
             animation: rise 8s infinite ease-in;
         }
@@ -92,8 +117,10 @@
 <body>
 <div class="particles" id="particles"></div>
 <div class="container">
-<h1>✨ Welcome ✨</h1>
-<p>A blank canvas awaits your imagination</p>
+<h1>🌸 You Are Safe Here 🌸</h1>
+<p>💛 You are loved, valued, and enough just as you are 💛</p>
+<p class="affirmation">🌈 Everything is going to be okay 🌈</p>
+<div class="hugs">🤗 Virtual Hugs 🤗</div>
 </div>
 <script>
         // Create floating particles
@@ -106,6 +133,36 @@
             particle.style.animationDuration = (Math.random() * 4 + 6) + 's';
             particlesContainer.appendChild(particle);
         }
+
+        // Add happy click interaction
+        document.querySelector('.hugs').addEventListener('click', function() {
+            const hearts = ['💖', '💕', '💗', '💓', '🌟', '✨', '🦋', '🌻'];
+            for(let i = 0; i < 10; i++) {
+                const heart = document.createElement('div');
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.cssText = `
+                    position: fixed;
+                    font-size: 2rem;
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    pointer-events: none;
+                    animation: floatUp 2s ease-out forwards;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(heart);
+                setTimeout(() => heart.remove(), 2000);
+            }
+        });
+
+        // Add floatUp animation dynamically
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes floatUp {
+                0% { opacity: 1; transform: translateY(0) scale(1); }
+                100% { opacity: 0; transform: translateY(-100px) scale(1.5); }
+            }
+        `;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
