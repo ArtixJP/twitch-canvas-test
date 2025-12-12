@@ -66,6 +66,32 @@
             cursor: pointer;
             transition: transform 0.3s ease;
         }
+        .instructions {
+            margin-top: 2rem;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            animation: fadeIn 2s ease-in;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .instructions h3 {
+            color: #e17055;
+            margin-bottom: 1rem;
+        }
+        .instructions ol {
+            text-align: left;
+            list-style-position: inside;
+            line-height: 2;
+        }
+        .instructions li {
+            transition: transform 0.3s ease;
+        }
+        .instructions li:hover {
+            transform: translateX(10px);
+        }
         .hugs:hover {
             transform: scale(1.1);
             background: rgba(255, 255, 255, 0.8);
@@ -122,6 +148,15 @@
 <p class="affirmation">🌈 Everything is going to be okay 🌈</p>
 <p class="affirmation" style="font-size: 1rem; margin-top: 0.5rem;">✨ We listen to everyone here! ✨</p>
 <div class="hugs">🤗 Virtual Hugs 🤗</div>
+<div class="instructions">
+<h3>✨ How to Feel Better ✨</h3>
+<ol>
+<li>Take a deep breath 🌬️</li>
+<li>Click the hugs button above 💕</li>
+<li>Smile - you're doing great! 😊</li>
+<li>Remember: you matter 🌟</li>
+</ol>
+</div>
 </div>
 <script>
         // Create floating particles
