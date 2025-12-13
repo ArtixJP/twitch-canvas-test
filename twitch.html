@@ -196,7 +196,7 @@
 <h1>Hello World</h1>
 <div class="music-controls">
 <button id="musicBtn" onclick="toggleMusic()">
-<span id="btnIcon">▶️</span> Play Music
+<span id="btnIcon">⏸️</span> Pause Music
     </button>
 
 </div>
@@ -224,7 +224,30 @@
         const bgMusic = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         const btnIcon = document.getElementById('btnIcon');
-        let isPlaying = false;
+        let isPlaying = true;
+        
+        // Auto-play music on page load
+        window.addEventListener('load', () => {
+            bgMusic.volume = 0;
+            bgMusic.play().then(() => {
+                // Fade in the music
+                let vol = 0;
+                const fadeIn = setInterval(() => {
+                    vol += 0.05;
+                    if (vol >= 0.7) {
+                        bgMusic.volume = 0.7;
+                        clearInterval(fadeIn);
+                    } else {
+                        bgMusic.volume = vol;
+                    }
+                }, 100);
+                musicBtn.classList.add('playing');
+            }).catch(() => {
+                                isPlaying = false;
+                musicBtn.classList.remove('playing');
+                musicBtn.innerHTML = '<span id="btnIcon">▶️</span> Play Music';
+            });
+        });
         
         function toggleMusic() {
             if (isPlaying) {
