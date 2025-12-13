@@ -1017,6 +1017,32 @@
         100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
     }
     
+    /* Pear Styles */
+    .pear-container {
+        font-size: 5rem;
+        cursor: pointer;
+        animation: pear-sway 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(200, 255, 100, 0.5));
+        position: relative;
+    }
+    
+    @keyframes pear-sway {
+        0%, 100% { transform: rotate(-8deg) translateY(0); }
+        50% { transform: rotate(8deg) translateY(-10px); }
+    }
+    
+    .pear-juice {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        animation: juice-drip 1.5s ease-out forwards;
+    }
+    
+    @keyframes juice-drip {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        100% { transform: scale(1.5) translateY(var(--ty)) translateX(var(--tx)); opacity: 0; }
+    }
+    
     /* Ham Styles */
     .ham-container {
         font-size: 5rem;
@@ -1213,6 +1239,14 @@
     <div id="appleBites"></div>
 </div>
 <p style="font-size: 0.9rem; color: #ff4444;">Click for a crunchy bite!</p>
+</div>
+<div class="animal-card">
+<h3>🍐 Juicy Pear</h3>
+<div class="pear-container" id="pear" onclick="squeezePear()">
+    🍐
+    <div id="pearJuice"></div>
+</div>
+<p style="font-size: 0.9rem; color: #9acd32;">Click for juicy goodness!</p>
 </div>
 <div class="animal-card">
 <h3>🍖 Bouncy Ham</h3>
@@ -1791,6 +1825,51 @@
             worm.style.top = '0%';
             appleBites.appendChild(worm);
             setTimeout(() => worm.remove(), 1500);
+        }
+    }
+    
+    // Pear squeeze function
+    let pearSqueezes = 0;
+    function squeezePear() {
+        const pearJuice = document.getElementById('pearJuice');
+        const pear = document.getElementById('pear');
+        const emojis = ['💧', '✨', '💚', '🌟', '💦', '🍐', 'JUICY!', 'SWEET!'];
+        
+        pearSqueezes++;
+        
+        // Squeeze effect
+        pear.style.transform = 'scale(0.8) rotate(15deg)';
+        setTimeout(() => {
+            pear.style.transform = '';
+        }, 200);
+        
+        // Create juice particles
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const juice = document.createElement('div');
+                juice.className = 'pear-juice';
+                juice.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                juice.style.setProperty('--tx', (Math.random() * 100 - 50) + 'px');
+                juice.style.setProperty('--ty', (Math.random() * 80 + 20) + 'px');
+                juice.style.left = '50%';
+                juice.style.top = '50%';
+                pearJuice.appendChild(juice);
+                setTimeout(() => juice.remove(), 1500);
+            }, i * 60);
+        }
+        
+        // Every 5 clicks show special message
+        if (pearSqueezes % 5 === 0) {
+            const special = document.createElement('div');
+            special.className = 'pear-juice';
+            special.textContent = '🍐 PARFAIT! 🇫🇷';
+            special.style.fontSize = '1.8rem';
+            special.style.setProperty('--tx', '0px');
+            special.style.setProperty('--ty', '-60px');
+            special.style.left = '50%';
+            special.style.top = '0%';
+            pearJuice.appendChild(special);
+            setTimeout(() => special.remove(), 1500);
         }
     }
     
