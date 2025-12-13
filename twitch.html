@@ -1345,6 +1345,56 @@
         100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
     }
     
+    /* Wolf Styles */
+    .wolf-container {
+        font-size: 5rem;
+        cursor: pointer;
+        position: relative;
+        animation: wolf-prowl 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 20px rgba(150, 150, 200, 0.6));
+    }
+    
+    @keyframes wolf-prowl {
+        0%, 100% { transform: translateX(0) rotate(-3deg); }
+        25% { transform: translateX(-10px) rotate(0deg); }
+        50% { transform: translateX(0) rotate(3deg); }
+        75% { transform: translateX(10px) rotate(0deg); }
+    }
+    
+    .wolf-container:hover {
+        transform: scale(1.3);
+        filter: drop-shadow(0 0 30px rgba(100, 100, 255, 0.9));
+    }
+    
+    .wolf-howl {
+        position: absolute;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #b8b8ff;
+        text-shadow: 0 0 15px rgba(150, 150, 255, 0.8);
+        animation: howl-float 2s ease-out forwards;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+    
+    @keyframes howl-float {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1.5) translateY(-30px); opacity: 1; }
+        100% { transform: scale(1) translateY(-70px); opacity: 0; }
+    }
+    
+    .moon-particle {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        animation: moon-rise 1.5s ease-out forwards;
+    }
+    
+    @keyframes moon-rise {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+    }
+    
     /* Eating Person Styles */
     .eating-container {
         font-size: 5rem;
@@ -1518,6 +1568,15 @@
 <div id="martianEffects"></div>
 </div>
 <p style="font-size: 0.9rem; color: #00ff66;">Click to communicate! Messages: <span id="martianMessages">0</span></p>
+</div>
+<div class="animal-card">
+<h3>🐺 Howling Wolf</h3>
+<div class="wolf-container" id="wolf" onclick="howlWolf()">
+    🐺
+    <div id="wolfEffects"></div>
+</div>
+<p style="font-size: 0.9rem; color: #b8b8ff;">Click to howl at the moon! 🌙</p>
+<p style="font-size: 0.8rem; color: #8888cc;">Howls: <span id="howlCount">0</span></p>
 </div>
 <div class="animal-card">
 <h3>😋 Hungry Person</h3>
@@ -2343,6 +2402,51 @@
                 martianEffects.appendChild(star);
                 setTimeout(() => star.remove(), 1000);
             }, i * 60);
+        }
+    }
+    
+    // Wolf howling function
+    let howlCount = 0;
+    function howlWolf() {
+        const wolfEffects = document.getElementById('wolfEffects');
+        const wolf = document.getElementById('wolf');
+        const howls = ['AWOOOO!', 'HOWL!', 'AROOO!', '🌙 AWOO!', '*howls at moon*', 'OUUUUH!'];
+        const particles = ['🌙', '⭐', '✨', '🌟', '💫', '🐾'];
+        
+        howlCount++;
+        document.getElementById('howlCount').textContent = howlCount;
+        
+        // Scale effect
+        wolf.style.transform = 'scale(1.4) rotate(-10deg)';
+        wolf.style.transition = 'transform 0.3s ease';
+        setTimeout(() => {
+            wolf.style.transform = '';
+            wolf.style.transition = '';
+        }, 300);
+        
+        // Show howl message
+        const howl = document.createElement('div');
+        howl.className = 'wolf-howl';
+        howl.textContent = howls[Math.floor(Math.random() * howls.length)];
+        howl.style.left = '50%';
+        howl.style.top = '-40px';
+        howl.style.transform = 'translateX(-50%)';
+        wolf.appendChild(howl);
+        setTimeout(() => howl.remove(), 2000);
+        
+        // Create moon particles
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'moon-particle';
+                particle.textContent = particles[Math.floor(Math.random() * particles.length)];
+                particle.style.setProperty('--tx', (Math.random() * 120 - 60) + 'px');
+                particle.style.setProperty('--ty', (Math.random() * -100 - 20) + 'px');
+                particle.style.left = '50%';
+                particle.style.top = '30%';
+                wolfEffects.appendChild(particle);
+                setTimeout(() => particle.remove(), 1500);
+            }, i * 80);
         }
     }
     
