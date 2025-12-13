@@ -147,6 +147,39 @@
             z-index: -1;
         }
         
+        .music-controls {
+            margin-bottom: 2rem;
+        }
+        
+        #musicBtn {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        #musicBtn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 25px rgba(99, 102, 241, 0.6);
+        }
+        
+        #musicBtn.playing {
+            background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+        
+        #musicBtn.playing:hover {
+            box-shadow: 0 6px 25px rgba(239, 68, 68, 0.6);
+        }
+        
         .star {
             position: absolute;
             width: 2px;
@@ -161,6 +194,12 @@
 <body>
 <div class="stars" id="stars"></div>
 <h1>Hello World</h1>
+<div class="music-controls">
+<button id="musicBtn" onclick="toggleMusic()">
+<span id="btnIcon">▶️</span> Play Music
+    </button>
+
+</div>
 <div class="solar-system">
 <div class="atmosphere"></div>
 <div class="rings"></div>
@@ -180,6 +219,26 @@
             star.style.animationDelay = Math.random() * 2 + 's';
             star.style.opacity = Math.random() * 0.5 + 0.5;
             starsContainer.appendChild(star);
+        }
+        
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const btnIcon = document.getElementById('btnIcon');
+        let isPlaying = false;
+        
+        function toggleMusic() {
+            if (isPlaying) {
+                bgMusic.pause();
+                musicBtn.classList.remove('playing');
+                btnIcon.textContent = '▶️';
+                musicBtn.innerHTML = '<span id="btnIcon">▶️</span> Play Music';
+            } else {
+                bgMusic.play();
+                musicBtn.classList.add('playing');
+                btnIcon.textContent = '⏸️';
+                musicBtn.innerHTML = '<span id="btnIcon">⏸️</span> Pause Music';
+            }
+            isPlaying = !isPlaying;
         }
         
         
