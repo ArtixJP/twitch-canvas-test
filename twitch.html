@@ -189,11 +189,103 @@
             0%, 100% { transform: scale(1); opacity: 0.3; }
             50% { transform: scale(0.8); opacity: 0.2; }
         }
+            .ww2-content {
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 3px solid #9b59b6;
+        }
+        
+        .timeline-item {
+            margin-bottom: 25px;
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        
+        .timeline-item:hover {
+            transform: translateX(10px);
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            border: 3px solid #9b59b6;
+        }
+        
+        .timeline-date {
+            color: #f39c12;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-title {
+            font-size: 1.2rem;
+            margin: 5px 0;
+            color: #3498db;
+        }
+        
+        .timeline-desc {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .info-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-card h3 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            color: #3498db;
+        }
     </style>
 </head>
 <body>
 <div style="display: flex; flex-direction: column; align-items: center;">
-<h1>Hello World</h1>
+<h1>World War II Documentary</h1>
+<p style="text-align: center; opacity: 0.8; margin-bottom: 30px;">A brief overview of the Second World War (1939-1945)</p>
 <div class="bunny-container">
 <div class="bunny">
 <div class="ear ear-left"></div>
@@ -212,6 +304,75 @@
 <div class="foot foot-right"></div>
 </div>
 <div class="shadow"></div>
+</div>
+</div>
+<div class="ww2-content">
+<h2 class="section-title">📊 Key Statistics</h2>
+<div class="info-cards">
+<div class="info-card">
+<h3>Duration</h3>
+<div class="stat-number">6 Years</div>
+<p>September 1939 - September 1945</p>
+</div>
+<div class="info-card">
+<h3>Countries Involved</h3>
+<div class="stat-number">61+</div>
+<p>Nations from every continent</p>
+</div>
+<div class="info-card">
+<h3>Major Theaters</h3>
+<div class="stat-number">3</div>
+<p>European, Pacific, African</p>
+</div>
+</div>
+<h2 class="section-title">📅 Major Events Timeline</h2>
+<div class="timeline">
+<div class="timeline-item">
+<span class="timeline-date">September 1, 1939</span>
+<h4 class="timeline-title">Germany Invades Poland</h4>
+<p class="timeline-desc">The war begins as Nazi Germany launches a surprise attack on Poland, prompting Britain and France to declare war.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">June 1940</span>
+<h4 class="timeline-title">Fall of France</h4>
+<p class="timeline-desc">Germany defeats France in just six weeks. The Dunkirk evacuation saves over 300,000 Allied soldiers.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">June 22, 1941</span>
+<h4 class="timeline-title">Operation Barbarossa</h4>
+<p class="timeline-desc">Germany invades the Soviet Union in the largest military operation in history, opening the Eastern Front.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">December 7, 1941</span>
+<h4 class="timeline-title">Pearl Harbor Attack</h4>
+<p class="timeline-desc">Japan attacks the US naval base at Pearl Harbor, bringing America into the war.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">June 6, 1944</span>
+<h4 class="timeline-title">D-Day - Normandy Landings</h4>
+<p class="timeline-desc">Allied forces launch the largest amphibious invasion in history on the beaches of Normandy, France.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">May 8, 1945</span>
+<h4 class="timeline-title">Victory in Europe (V-E Day)</h4>
+<p class="timeline-desc">Germany surrenders unconditionally, ending the war in Europe.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">September 2, 1945</span>
+<h4 class="timeline-title">Victory over Japan (V-J Day)</h4>
+<p class="timeline-desc">Japan formally surrenders aboard USS Missouri, ending World War II.</p>
+</div>
+</div>
+<h2 class="section-title">⚔️ Major Powers</h2>
+<div class="info-cards">
+<div class="info-card">
+<h3>Allied Powers</h3>
+<p>🇬🇧 United Kingdom<br/>🇺🇸 United States<br/>🇷🇺 Soviet Union<br/>🇫🇷 France<br/>🇨🇳 China</p>
+</div>
+<div class="info-card">
+<h3>Axis Powers</h3>
+<p>🇩🇪 Germany<br/>🇮🇹 Italy<br/>🇯🇵 Japan</p>
+</div>
 </div>
 </div>
 </body>
