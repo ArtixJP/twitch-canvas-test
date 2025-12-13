@@ -213,77 +213,7 @@
         animation: orbit-reverse 8s linear infinite;
     }
     
-    /* Rabbit Planet */
-    .rabbit-planet-container {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(calc(-50% + 250px), -50%);
-        width: 80px;
-        height: 80px;
-    }
     
-    .rabbit-planet {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #ffb6c1 0%, #ff69b4 30%, #ffb6c1 50%, #ff1493 70%, #ff69b4 100%);
-        box-shadow: 
-            inset -15px -15px 30px rgba(0,0,0,0.3),
-            inset 5px 5px 20px rgba(255,255,255,0.3),
-            0 0 40px rgba(255, 105, 180, 0.6),
-            0 0 80px rgba(255, 105, 180, 0.3);
-        position: relative;
-        animation: rabbit-bounce 2s ease-in-out infinite;
-    }
-    
-    .rabbit-planet::before {
-        content: '🐰';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 2.5rem;
-        filter: drop-shadow(0 0 10px rgba(255,255,255,0.8));
-    }
-    
-    .rabbit-ears {
-        position: absolute;
-        top: -25px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 1.5rem;
-    }
-    
-    .carrot-orbit {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 120px;
-        height: 120px;
-        border: 1px dashed rgba(255, 165, 0, 0.4);
-        border-radius: 50%;
-        animation: orbit 4s linear infinite;
-    }
-    
-    .orbiting-carrot {
-        position: absolute;
-        top: -12px;
-        left: 50%;
-        font-size: 1.5rem;
-        animation: carrot-spin 4s linear infinite reverse;
-    }
-    
-    @keyframes rabbit-bounce {
-        0%, 100% { transform: scale(1) translateY(0); }
-        50% { transform: scale(1.05) translateY(-5px); }
-    }
-    
-    @keyframes carrot-spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
     
     .moon-2 {
         width: 12px;
@@ -1254,18 +1184,6 @@
 </div>
 <div class="moon-orbit moon-orbit-2">
 <div class="moon moon-2" style="position: absolute; top: -10px; left: 50%;"></div>
-</div>
-</div>
-
-<div class="rabbit-planet-container">
-<div class="rabbit-planet">
-<div class="rabbit-ears">🐇</div>
-</div>
-<div class="carrot-orbit">
-<div class="orbiting-carrot">🥕</div>
-</div>
-<div class="carrot-orbit" style="width: 150px; height: 150px; animation-duration: 6s; animation-direction: reverse;">
-<div class="orbiting-carrot" style="animation-duration: 6s;">🥕</div>
 </div>
 </div>
 </section>
