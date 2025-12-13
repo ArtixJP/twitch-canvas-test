@@ -10,10 +10,11 @@
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
-            justify-content: center; 
-            align-items: center; 
+            justify-content: flex-start; 
+            align-items: flex-start; 
             min-height: 100vh; 
             margin: 0;
+            padding: 40px;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
         }
@@ -275,7 +276,7 @@
         }
         
         .section-title {
-            text-align: center;
+            text-align: left;
             font-size: 1.8rem;
             margin: 40px 0 20px;
             color: #3498db;
@@ -283,9 +284,9 @@
     </style>
 </head>
 <body>
-<div style="display: flex; flex-direction: column; align-items: center;">
+<div style="display: flex; flex-direction: column; align-items: flex-start;">
 <h1>World War II Documentary</h1>
-<p style="text-align: center; opacity: 0.8; margin-bottom: 30px;">A brief overview of the Second World War (1939-1945)</p>
+<p style="text-align: left; opacity: 0.8; margin-bottom: 30px;">A brief overview of the Second World War (1939-1945)</p>
 <div class="bunny-container">
 <div class="bunny">
 <div class="ear ear-left"></div>
