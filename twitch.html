@@ -213,6 +213,70 @@
         animation: orbit-reverse 8s linear infinite;
     }
     
+    .space-dog-orbit {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 320px;
+        height: 320px;
+        border: 1px dashed rgba(255, 215, 0, 0.3);
+        border-radius: 50%;
+        animation: orbit 15s linear infinite;
+    }
+    
+    .space-dog {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        font-size: 2.5rem;
+        animation: space-dog-spin 15s linear infinite reverse, space-dog-float 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.8));
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+    
+    .space-dog:hover {
+        transform: scale(1.4);
+    }
+    
+    .space-dog::after {
+        content: '⭐';
+        position: absolute;
+        font-size: 0.8rem;
+        top: -10px;
+        left: 50%;
+        animation: star-twinkle 0.5s ease-in-out infinite;
+    }
+    
+    @keyframes space-dog-spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    @keyframes space-dog-float {
+        0%, 100% { margin-top: 0; }
+        50% { margin-top: -8px; }
+    }
+    
+    @keyframes star-twinkle {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.5; transform: scale(0.7); }
+    }
+    
+    .space-helmet {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(200, 200, 255, 0.6);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.3), transparent);
+        pointer-events: none;
+    }
+    
     
     
     .moon-2 {
@@ -1251,6 +1315,12 @@
 <div class="moon-orbit moon-orbit-2">
 <div class="moon moon-2" style="position: absolute; top: -10px; left: 50%;"></div>
 </div>
+<div class="space-dog-orbit">
+<div class="space-dog" id="spaceDog" onclick="spaceDogBark()" title="Space Dog! 🚀🐕">
+🐕‍🦺
+<div class="space-helmet"></div>
+</div>
+</div>
 </div>
 </section>
 <section class="section" id="section-animals">
@@ -1823,6 +1893,53 @@
     kittyOrbit.style.animation = 'none';
     dogOrbit.style.animation = 'none';
     updateChase();
+    
+    // Space Dog bark function
+    let spaceDogBarks = 0;
+    function spaceDogBark() {
+        const spaceDog = document.getElementById('spaceDog');
+        spaceDogBarks++;
+        
+        // Bark animation
+        spaceDog.style.transform = 'scale(1.5)';
+        setTimeout(() => {
+            spaceDog.style.transform = '';
+        }, 200);
+        
+        // Create bark effects
+        const barkTexts = ['WOOF! 🚀', 'BARK! ⭐', 'ARF ARF! 🌙', 'SPACE WOOF! 🛸', '*happy space noises*'];
+        const bark = document.createElement('div');
+        bark.style.position = 'absolute';
+        bark.style.fontSize = '1.2rem';
+        bark.style.fontWeight = 'bold';
+        bark.style.color = '#ffd700';
+        bark.style.textShadow = '0 0 10px rgba(255, 215, 0, 0.8)';
+        bark.style.whiteSpace = 'nowrap';
+        bark.style.left = '50%';
+        bark.style.top = '-40px';
+        bark.style.animation = 'message-float 1.5s ease-out forwards';
+        bark.style.pointerEvents = 'none';
+        bark.textContent = barkTexts[Math.floor(Math.random() * barkTexts.length)];
+        spaceDog.appendChild(bark);
+        setTimeout(() => bark.remove(), 1500);
+        
+        // Create star particles
+        const particles = ['⭐', '✨', '💫', '🌟', '🦴', '🐾'];
+        for (let i = 0; i < 6; i++) {
+            setTimeout(() => {
+                const star = document.createElement('div');
+                star.className = 'star-particle';
+                star.textContent = particles[Math.floor(Math.random() * particles.length)];
+                star.style.setProperty('--tx', (Math.random() * 100 - 50) + 'px');
+                star.style.setProperty('--ty', (Math.random() * 100 - 50) + 'px');
+                star.style.left = '50%';
+                star.style.top = '50%';
+                spaceDog.appendChild(star);
+                setTimeout(() => star.remove(), 1000);
+            }, i * 80);
+        }
+    }
+    window.spaceDogBark = spaceDogBark;
     
     // Hamster running function
     let hamsterSpeed = 0.5;
