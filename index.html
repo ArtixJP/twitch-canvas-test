@@ -1,35 +1,379 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: https://artix.tech; frame-src 'self';">
-    <title>Twitch Versus Code</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .info {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(0,0,0,0.8);
-            color: #888;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-family: system-ui, sans-serif;
-            font-size: 12px;
-            z-index: 1000;
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code</title>
+<style>
+        body { 
+            font-family: system-ui, sans-serif; 
+            display: flex; 
+            justify-content: flex-start; 
+            align-items: flex-start; 
+            min-height: 100vh; 
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
         }
-        .info a { color: #6cf; text-decoration: none; }
-        .info a:hover { text-decoration: underline; }
+        h1 { font-size: 3rem; text-align: center; }
+        
+        .bunny-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 40px;
+        }
+        
+        .bunny {
+            position: relative;
+            width: 120px;
+            height: 150px;
+            animation: hop 1s ease-in-out infinite;
+        }
+        
+        @keyframes hop {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .ear {
+            position: absolute;
+            width: 25px;
+            height: 60px;
+            background: #f5f5f5;
+            border-radius: 50% 50% 50% 50%;
+            top: 0;
+        }
+        
+        .ear::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 45px;
+            background: #ffb6c1;
+            border-radius: 50%;
+            top: 8px;
+            left: 6px;
+        }
+        
+        .ear-left { left: 25px; transform: rotate(-15deg); }
+        .ear-right { right: 25px; transform: rotate(15deg); }
+        
+        .face {
+            position: absolute;
+            width: 90px;
+            height: 80px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            top: 45px;
+            left: 15px;
+        }
+        
+        .eye {
+            position: absolute;
+            width: 12px;
+            height: 16px;
+            background: #333;
+            border-radius: 50%;
+            top: 25px;
+            animation: blink 3s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 96%, 100% { transform: scaleY(1); }
+            98% { transform: scaleY(0.1); }
+        }
+        
+        .eye-left { left: 20px; }
+        .eye-right { right: 20px; }
+        
+        .eye::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            top: 3px;
+            left: 2px;
+        }
+        
+        .nose {
+            position: absolute;
+            width: 15px;
+            height: 12px;
+            background: #ffb6c1;
+            border-radius: 50%;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .mouth {
+            position: absolute;
+            width: 20px;
+            height: 10px;
+            border: 2px solid #ffb6c1;
+            border-top: none;
+            border-radius: 0 0 50% 50%;
+            top: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: transparent;
+        }
+        
+        .whiskers {
+            position: absolute;
+            top: 45px;
+        }
+        
+        .whiskers::before,
+        .whiskers::after {
+            content: '';
+            position: absolute;
+            width: 25px;
+            height: 2px;
+            background: #ccc;
+        }
+        
+        .whiskers::before { transform: rotate(-10deg); }
+        .whiskers::after { top: 8px; transform: rotate(10deg); }
+        
+        .whiskers-left { left: -15px; }
+        .whiskers-right { right: -15px; transform: scaleX(-1); }
+        
+        .body {
+            position: absolute;
+            width: 80px;
+            height: 70px;
+            background: #f5f5f5;
+            border-radius: 50% 50% 50% 50%;
+            top: 100px;
+            left: 20px;
+        }
+        
+        .tail {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: #fff;
+            border-radius: 50%;
+            top: 130px;
+            right: 10px;
+        }
+        
+        .foot {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            top: 155px;
+        }
+        
+        .foot-left { left: 25px; }
+        .foot-right { right: 25px; }
+        
+        .shadow {
+            width: 80px;
+            height: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+            margin-top: 10px;
+            animation: shadow-pulse 1s ease-in-out infinite;
+        }
+        
+        @keyframes shadow-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(0.8); opacity: 0.2; }
+        }
+            .ww2-content {
+            max-width: 900px;
+            padding: 20px;
+            margin-top: 40px;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            border-left: 3px solid #9b59b6;
+        }
+        
+        .timeline-item {
+            margin-bottom: 25px;
+            position: relative;
+            background: rgba(255,255,255,0.1);
+            padding: 15px 20px;
+            border-radius: 10px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        
+        .timeline-item:hover {
+            transform: translateX(10px);
+            background: rgba(255,255,255,0.15);
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border-radius: 50%;
+            border: 3px solid #9b59b6;
+        }
+        
+        .timeline-date {
+            color: #f39c12;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        
+        .timeline-title {
+            font-size: 1.2rem;
+            margin: 5px 0;
+            color: #3498db;
+        }
+        
+        .timeline-desc {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .info-card {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .info-card h3 {
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #f39c12;
+        }
+        
+        .section-title {
+            text-align: left;
+            font-size: 1.8rem;
+            margin: 40px 0 20px;
+            color: #3498db;
+        }
     </style>
 </head>
 <body>
-    <iframe src="twitch.html" sandbox="allow-scripts allow-forms allow-popups"></iframe>
-    <div class="info">
-        🎮 <a href="https://artix.tech/twitch_plays_code/" target="_blank">Twitch Versus Code</a> - 
-        Live collaborative coding on Twitch
-    </div>
+<div style="display: flex; flex-direction: column; align-items: flex-start;">
+<h1>World War II Documentary</h1>
+<p style="text-align: left; opacity: 0.8; margin-bottom: 30px;">A brief overview of the Second World War (1939-1945)</p>
+<div class="bunny-container">
+<div class="bunny">
+<div class="ear ear-left"></div>
+<div class="ear ear-right"></div>
+<div class="face">
+<div class="eye eye-left"></div>
+<div class="eye eye-right"></div>
+<div class="nose"></div>
+<div class="mouth"></div>
+<div class="whiskers whiskers-left"></div>
+<div class="whiskers whiskers-right"></div>
+</div>
+<div class="body"></div>
+<div class="tail"></div>
+<div class="foot foot-left"></div>
+<div class="foot foot-right"></div>
+</div>
+<div class="shadow"></div>
+</div>
+</div>
+<div class="ww2-content">
+<h2 class="section-title">📊 Key Statistics</h2>
+<div class="info-cards">
+<div class="info-card">
+<h3>Duration</h3>
+<div class="stat-number">6 Years</div>
+<p>September 1939 - September 1945</p>
+</div>
+<div class="info-card">
+<h3>Countries Involved</h3>
+<div class="stat-number">61+</div>
+<p>Nations from every continent</p>
+</div>
+<div class="info-card">
+<h3>Major Theaters</h3>
+<div class="stat-number">3</div>
+<p>European, Pacific, African</p>
+</div>
+</div>
+<h2 class="section-title">📅 Major Events Timeline</h2>
+<div class="timeline">
+<div class="timeline-item">
+<span class="timeline-date">September 1, 1939</span>
+<h4 class="timeline-title">Germany Invades Poland</h4>
+<p class="timeline-desc">The war begins as Nazi Germany launches a surprise attack on Poland, prompting Britain and France to declare war.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">June 1940</span>
+<h4 class="timeline-title">Fall of France</h4>
+<p class="timeline-desc">Germany defeats France in just six weeks. The Dunkirk evacuation saves over 300,000 Allied soldiers.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">June 22, 1941</span>
+<h4 class="timeline-title">Operation Barbarossa</h4>
+<p class="timeline-desc">Germany invades the Soviet Union in the largest military operation in history, opening the Eastern Front.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">December 7, 1941</span>
+<h4 class="timeline-title">Pearl Harbor Attack</h4>
+<p class="timeline-desc">Japan attacks the US naval base at Pearl Harbor, bringing America into the war.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">June 6, 1944</span>
+<h4 class="timeline-title">D-Day - Normandy Landings</h4>
+<p class="timeline-desc">Allied forces launch the largest amphibious invasion in history on the beaches of Normandy, France.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">May 8, 1945</span>
+<h4 class="timeline-title">Victory in Europe (V-E Day)</h4>
+<p class="timeline-desc">Germany surrenders unconditionally, ending the war in Europe.</p>
+</div>
+<div class="timeline-item">
+<span class="timeline-date">September 2, 1945</span>
+<h4 class="timeline-title">Victory over Japan (V-J Day)</h4>
+<p class="timeline-desc">Japan formally surrenders aboard USS Missouri, ending World War II.</p>
+</div>
+</div>
+<h2 class="section-title">⚔️ Major Powers</h2>
+<div class="info-cards">
+<div class="info-card">
+<h3>Allied Powers</h3>
+<p>🇬🇧 United Kingdom<br/>🇺🇸 United States<br/>🇷🇺 Soviet Union<br/>🇫🇷 France<br/>🇨🇳 China</p>
+</div>
+<div class="info-card">
+<h3>Axis Powers</h3>
+<p>🇩🇪 Germany<br/>🇮🇹 Italy<br/>🇯🇵 Japan</p>
+</div>
+</div>
+</div>
 </body>
 </html>
