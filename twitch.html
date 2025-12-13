@@ -601,6 +601,49 @@
         width: 400px;
         height: 400px;
     }
+    
+    .camembert-container {
+        font-size: 6rem;
+        cursor: pointer;
+        animation: cheese-wobble 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 20px rgba(255, 223, 186, 0.6));
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+    
+    .camembert-container:hover {
+        transform: scale(1.2) rotate(10deg);
+    }
+    
+    @keyframes cheese-wobble {
+        0%, 100% { transform: rotate(-5deg) scale(1); }
+        50% { transform: rotate(5deg) scale(1.05); }
+    }
+    
+    .cheese-slice {
+        position: absolute;
+        font-size: 2rem;
+        pointer-events: none;
+        animation: slice-fly 1.5s ease-out forwards;
+        opacity: 0;
+    }
+    
+    @keyframes slice-fly {
+        0% { 
+            transform: translate(0, 0) rotate(0deg) scale(0.5);
+            opacity: 1;
+        }
+        100% { 
+            transform: translate(var(--tx), var(--ty)) rotate(360deg) scale(1.2);
+            opacity: 0;
+        }
+    }
+    
+    .french-text {
+        font-style: italic;
+        color: #fbbf24;
+        text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+    }
 </style>
 </head>
 <body>
@@ -636,6 +679,15 @@
 <span class="score-item">🐕 Dog Catches: <span id="dogScore">0</span></span>
 </div>
 <div class="animals-container">
+<div class="animal-card">
+<h3>🧀 Le Camembert</h3>
+<div class="camembert-container" id="camembert" onclick="sliceCheese()">
+                🧀
+                <div class="cheese-slices" id="cheeseSlices"></div>
+</div>
+<p class="french-text">"C'est magnifique!" 🇫🇷</p>
+<p style="font-size: 0.9rem; color: #a78bfa;">Click for cheese magic!</p>
+</div>
 <div class="animal-card">
 <h3>🐘 Splash Elephant</h3>
 <div class="elephant-container" id="elephant" onclick="sprayWater()">
@@ -735,6 +787,41 @@
     
     setInterval(sprayWater, 3000);
     setTimeout(sprayWater, 1000);
+    
+    // Camembert cheese slicing function
+    function sliceCheese() {
+        const cheeseSlices = document.getElementById('cheeseSlices');
+        const emojis = ['🧀', '🥖', '🍷', '✨', '💛', '🇫🇷'];
+        
+        for (let i = 0; i < 10; i++) {
+            setTimeout(() => {
+                const slice = document.createElement('div');
+                slice.className = 'cheese-slice';
+                slice.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                
+                const angle = (Math.random() * 360) * (Math.PI / 180);
+                const distance = 80 + Math.random() * 120;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                slice.style.setProperty('--tx', tx + 'px');
+                slice.style.setProperty('--ty', ty + 'px');
+                slice.style.left = '50%';
+                slice.style.top = '50%';
+                
+                cheeseSlices.appendChild(slice);
+                
+                setTimeout(() => slice.remove(), 1500);
+            }, i * 80);
+        }
+        
+        // Play a fun sound effect visually
+        const camembert = document.getElementById('camembert');
+        camembert.style.transform = 'scale(1.3) rotate(20deg)';
+        setTimeout(() => {
+            camembert.style.transform = '';
+        }, 200);
+    }
     
     // Generate twinkling stars
     const starsContainer = document.getElementById('stars');
