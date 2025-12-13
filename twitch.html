@@ -606,13 +606,11 @@
 <body>
 <div class="stars" id="stars"></div>
 <div id="three-container"></div>
-
 <nav class="nav-menu">
 <button class="nav-btn active" id="nav-space" onclick="showSection('space')">🌌 Space</button>
 <button class="nav-btn" id="nav-animals" onclick="showSection('animals')">🐾 Animals</button>
 <button class="nav-btn" id="nav-games" onclick="showSection('games')">🎮 Games</button>
 </nav>
-
 <section class="section active" id="section-space">
 <h1 class="section-title">🌌 Space Explorer</h1>
 <div class="music-controls">
@@ -632,7 +630,6 @@
 </div>
 </div>
 </section>
-
 <section class="section" id="section-animals">
 <h1 class="section-title">🐾 Animal Kingdom</h1>
 <div class="scoreboard" id="scoreboard">
@@ -661,7 +658,6 @@
 </div>
 </div>
 </section>
-
 <section class="section" id="section-games">
 <h1 class="section-title">🎮 Arcade Zone</h1>
 <div class="arcade-cabinet">
@@ -676,7 +672,19 @@
 </section>
 <script>
     // Section Navigation
+    const sections = ['space', 'animals', 'games'];
+    let currentSectionIndex = 0;
+    let autoRotateInterval;
+    
+    function startAutoRotate() {
+        autoRotateInterval = setInterval(() => {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            showSection(sections[currentSectionIndex]);
+        }, 30000);
+    }
+    
     function showSection(sectionName) {
+        currentSectionIndex = sections.indexOf(sectionName);
         // Hide all sections
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         // Remove active from all nav buttons
@@ -685,7 +693,16 @@
         // Show selected section
         document.getElementById('section-' + sectionName).classList.add('active');
         document.getElementById('nav-' + sectionName).classList.add('active');
+        
+        // Reset the auto-rotate timer when manually switching
+        if (autoRotateInterval) {
+            clearInterval(autoRotateInterval);
+            startAutoRotate();
+        }
     }
+    
+    // Start automatic rotation on page load
+    startAutoRotate();
     
     // Elephant water spray function
     let sprayInterval;
