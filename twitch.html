@@ -1115,12 +1115,56 @@
         cursor: pointer;
         animation: ham-bounce 1.5s ease-in-out infinite;
         filter: drop-shadow(0 0 15px rgba(255, 150, 150, 0.5));
+        position: relative;
     }
     
     @keyframes ham-bounce {
         0%, 100% { transform: scale(1) rotate(0deg); }
         25% { transform: scale(1.1) rotate(-5deg); }
         75% { transform: scale(0.95) rotate(5deg); }
+    }
+    
+    .ham-particle {
+        position: absolute;
+        font-size: 2rem;
+        pointer-events: none;
+        animation: ham-fly 1.2s ease-out forwards;
+    }
+    
+    @keyframes ham-fly {
+        0% { transform: scale(0) rotate(0deg); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
+    }
+    
+    .super-jambon-container {
+        font-size: 4rem;
+        cursor: pointer;
+        animation: super-jambon-spin 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 25px rgba(255, 105, 180, 0.7));
+        position: relative;
+        transition: transform 0.3s ease;
+    }
+    
+    .super-jambon-container:hover {
+        transform: scale(1.3) rotate(15deg);
+    }
+    
+    @keyframes super-jambon-spin {
+        0%, 100% { transform: rotate(-10deg) scale(1); }
+        50% { transform: rotate(10deg) scale(1.15); }
+    }
+    
+    .jambon-explosion {
+        position: absolute;
+        font-size: 2.5rem;
+        pointer-events: none;
+        animation: jambon-explode 1.5s ease-out forwards;
+    }
+    
+    @keyframes jambon-explode {
+        0% { transform: scale(0) rotate(0deg); opacity: 1; }
+        50% { transform: translate(var(--tx), var(--ty)) scale(2) rotate(180deg); opacity: 1; }
+        100% { transform: translate(calc(var(--tx) * 1.5), calc(var(--ty) * 1.5)) scale(0.5) rotate(360deg); opacity: 0; }
     }
     
     /* Penguin Styles */
@@ -1387,11 +1431,21 @@
 <p style="font-size: 0.9rem; color: #9acd32;">Click for juicy goodness!</p>
 </div>
 <div class="animal-card">
-<h3>🍖 Bouncy Ham</h3>
+<h3>🍖 Bouncy Jambon</h3>
 <div class="ham-container" id="ham" onclick="bounceHam()">
     🍖
+    <div id="hamParticles"></div>
 </div>
-<p style="font-size: 0.9rem; color: #ff6b6b;">Click to bounce!</p>
+<p style="font-size: 0.9rem; color: #ff6b6b;">Click for jambon party!</p>
+<p style="font-size: 0.8rem; color: #ffa07a;">Jambon count: <span id="jambonCount">0</span> 🇫🇷</p>
+</div>
+<div class="animal-card">
+<h3>🥓 Super Jambon</h3>
+<div class="super-jambon-container" id="superJambon" onclick="superJambonPower()">
+    🥓🍖🥓
+    <div id="jambonEffects"></div>
+</div>
+<p style="font-size: 0.9rem; color: #ff69b4;">ULTIMATE JAMBON POWER!</p>
 </div>
 <div class="animal-card">
 <h3>🐧 Hungry Penguin</h3>
@@ -2068,15 +2122,67 @@
     }
     
     // Ham bounce function
+    let jambonCount = 0;
     function bounceHam() {
         const ham = document.getElementById('ham');
+        const hamParticles = document.getElementById('hamParticles');
+        jambonCount++;
+        document.getElementById('jambonCount').textContent = jambonCount;
+        
         ham.style.transform = 'scale(1.5) rotate(360deg)';
         ham.style.transition = 'transform 0.5s ease';
         setTimeout(() => {
             ham.style.transform = '';
             ham.style.transition = '';
         }, 500);
+        
+        // Create ham particles
+        const hamEmojis = ['🍖', '🥓', '🐷', '✨', '💖', 'JAMBON!', 'DÉLICIEUX!'];
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const particle = document.createElement('div');
+                particle.className = 'ham-particle';
+                particle.textContent = hamEmojis[Math.floor(Math.random() * hamEmojis.length)];
+                particle.style.setProperty('--tx', (Math.random() * 150 - 75) + 'px');
+                particle.style.setProperty('--ty', (Math.random() * 150 - 75) + 'px');
+                particle.style.left = '50%';
+                particle.style.top = '50%';
+                hamParticles.appendChild(particle);
+                setTimeout(() => particle.remove(), 1200);
+            }, i * 50);
+        }
     }
+    
+    // Super Jambon Power function
+    let superJambonPower = 0;
+    function superJambonPower() {
+        const superJambon = document.getElementById('superJambon');
+        const jambonEffects = document.getElementById('jambonEffects');
+        
+        superJambon.style.transform = 'scale(2) rotate(720deg)';
+        superJambon.style.transition = 'transform 0.8s ease';
+        setTimeout(() => {
+            superJambon.style.transform = '';
+            superJambon.style.transition = '';
+        }, 800);
+        
+        // Epic jambon explosion
+        const jambonEmojis = ['🍖', '🥓', '🐷', '🐖', '💥', '⭐', '✨', '💖', '', 'JAMBON!', 'MAGNIFIQUE!', 'OUI OUI!'];
+        for (let i = 0; i < 15; i++) {
+            setTimeout(() => {
+                const explosion = document.createElement('div');
+                explosion.className = 'jambon-explosion';
+                explosion.textContent = jambonEmojis[Math.floor(Math.random() * jambonEmojis.length)];
+                explosion.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                explosion.style.setProperty('--ty', (Math.random() * 200 - 100) + 'px');
+                explosion.style.left = '50%';
+                explosion.style.top = '50%';
+                jambonEffects.appendChild(explosion);
+                setTimeout(() => explosion.remove(), 1500);
+            }, i * 60);
+        }
+    }
+    window.superJambonPower = superJambonPower;
     
     // Feeding penguin function
     let fishEaten = 0;
