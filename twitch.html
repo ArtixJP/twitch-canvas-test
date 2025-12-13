@@ -443,6 +443,54 @@
             50% { opacity: 0.5; }
         }
         
+        .elephant-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 50;
+            font-size: 5rem;
+            cursor: pointer;
+            animation: elephant-bounce 2s ease-in-out infinite;
+            filter: drop-shadow(0 0 20px rgba(128, 128, 128, 0.5));
+        }
+        
+        @keyframes elephant-bounce {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -55%) scale(1.05); }
+        }
+        
+        .water-drop {
+            position: absolute;
+            font-size: 1.5rem;
+            pointer-events: none;
+            animation: water-spray 1.5s ease-out forwards;
+            opacity: 0;
+        }
+        
+        @keyframes water-spray {
+            0% { 
+                transform: translate(0, 0) scale(0.5);
+                opacity: 1;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) scale(1);
+                opacity: 0;
+            }
+        }
+        
+        .water-stream {
+            position: absolute;
+            top: -30px;
+            left: 60px;
+            width: 80px;
+            height: 60px;
+            pointer-events: none;
+        }
+        
         .star {
             position: absolute;
             width: 2px;
@@ -475,6 +523,10 @@
 <span id="btnIcon">⏸️</span> Pause Music
     </button>
 </div>
+<div class="elephant-container" id="elephant" onclick="sprayWater()">
+        🐘
+        <div class="water-stream" id="waterStream"></div>
+</div>
 <div class="solar-system">
 <div class="atmosphere"></div>
 <div class="rings"></div>
@@ -493,6 +545,43 @@
 </div>
 </div>
 <script>
+        // Elephant water spray function
+        let sprayInterval;
+        
+        function sprayWater() {
+            const waterStream = document.getElementById('waterStream');
+            
+            // Create multiple water drops
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const drop = document.createElement('div');
+                    drop.className = 'water-drop';
+                    drop.textContent = '💧';
+                    
+                    // Random trajectory
+                    const angle = (Math.random() * 60 - 30) * (Math.PI / 180); // -30 to 30 degrees
+                    const distance = 80 + Math.random() * 100;
+                    const tx = Math.cos(angle - Math.PI/4) * distance;
+                    const ty = Math.sin(angle - Math.PI/4) * distance - 50;
+                    
+                    drop.style.setProperty('--tx', tx + 'px');
+                    drop.style.setProperty('--ty', ty + 'px');
+                    drop.style.left = '0px';
+                    drop.style.top = '0px';
+                    
+                    waterStream.appendChild(drop);
+                    
+                    // Remove after animation
+                    setTimeout(() => drop.remove(), 1500);
+                }, i * 100);
+            }
+        }
+        
+        // Auto spray water every 3 seconds
+        setInterval(sprayWater, 3000);
+        // Initial spray
+        setTimeout(sprayWater, 1000);
+        
         // Generate twinkling stars
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 100; i++) {
