@@ -934,6 +934,117 @@
         width: 100%;
         transition: width 0.3s ease;
     }
+    
+    /* Hamster Styles */
+    .hamster-container {
+        font-size: 5rem;
+        cursor: pointer;
+        animation: hamster-run 0.5s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 200, 150, 0.5));
+        position: relative;
+    }
+    
+    @keyframes hamster-run {
+        0%, 100% { transform: translateX(0) rotate(-5deg); }
+        50% { transform: translateX(10px) rotate(5deg); }
+    }
+    
+    .hamster-wheel {
+        position: absolute;
+        width: 120px;
+        height: 120px;
+        border: 4px dashed rgba(255, 200, 100, 0.5);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: wheel-spin 1s linear infinite;
+    }
+    
+    @keyframes wheel-spin {
+        from { transform: translate(-50%, -50%) rotate(0deg); }
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    /* Carrot Styles */
+    .carrot-container {
+        font-size: 5rem;
+        cursor: pointer;
+        animation: carrot-wiggle 2s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 165, 0, 0.5));
+    }
+    
+    @keyframes carrot-wiggle {
+        0%, 100% { transform: rotate(-10deg); }
+        50% { transform: rotate(10deg); }
+    }
+    
+    .carrot-sparkle {
+        position: absolute;
+        font-size: 1.5rem;
+        animation: sparkle-fly 1s ease-out forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes sparkle-fly {
+        0% { transform: scale(0); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
+    }
+    
+    /* Ham Styles */
+    .ham-container {
+        font-size: 5rem;
+        cursor: pointer;
+        animation: ham-bounce 1.5s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 150, 150, 0.5));
+    }
+    
+    @keyframes ham-bounce {
+        0%, 100% { transform: scale(1) rotate(0deg); }
+        25% { transform: scale(1.1) rotate(-5deg); }
+        75% { transform: scale(0.95) rotate(5deg); }
+    }
+    
+    /* Eating Person Styles */
+    .eating-container {
+        font-size: 5rem;
+        cursor: pointer;
+        position: relative;
+        animation: eating-motion 1s ease-in-out infinite;
+    }
+    
+    @keyframes eating-motion {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    .food-flying {
+        position: absolute;
+        font-size: 2rem;
+        animation: food-to-mouth 1s ease-in forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes food-to-mouth {
+        0% { transform: translate(var(--startX), var(--startY)) scale(1); opacity: 1; }
+        80% { transform: translate(0, 0) scale(0.8); opacity: 1; }
+        100% { transform: translate(0, 0) scale(0); opacity: 0; }
+    }
+    
+    .yum-text {
+        position: absolute;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff6b6b;
+        animation: yum-pop 1s ease-out forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes yum-pop {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1.5) translateY(-20px); opacity: 1; }
+        100% { transform: scale(1) translateY(-40px); opacity: 0; }
+    }
 </style>
 </head>
 <body>
@@ -994,6 +1105,37 @@
                 <div class="fire-breath" id="fireBreath"></div>
 </div>
 <p style="font-size: 0.9rem; color: #ff6b00;">Click to breathe fire!</p>
+</div>
+<div class="animal-card">
+<h3>🐹 Hamster Wheel</h3>
+<div class="hamster-container" id="hamster" onclick="runHamster()">
+<div class="hamster-wheel"></div>
+    🐹
+</div>
+<p style="font-size: 0.9rem; color: #ffa500;">Click to run faster!</p>
+</div>
+<div class="animal-card">
+<h3>🥕 Magic Carrot</h3>
+<div class="carrot-container" id="carrot" onclick="sparkleCarrot()">
+    🥕
+    <div id="carrotSparkles"></div>
+</div>
+<p style="font-size: 0.9rem; color: #ff8c00;">Click for veggie magic!</p>
+</div>
+<div class="animal-card">
+<h3>🍖 Bouncy Ham</h3>
+<div class="ham-container" id="ham" onclick="bounceHam()">
+    🍖
+</div>
+<p style="font-size: 0.9rem; color: #ff6b6b;">Click to bounce!</p>
+</div>
+<div class="animal-card">
+<h3>😋 Hungry Person</h3>
+<div class="eating-container" id="eater" onclick="feedPerson()">
+    😋
+    <div id="foodContainer"></div>
+</div>
+<p style="font-size: 0.9rem; color: #4ade80;">Click to feed! Meals: <span id="mealsEaten">0</span></p>
 </div>
 <div class="animal-card">
 <h3>🐕 Chase Arena</h3>
@@ -1469,6 +1611,85 @@
     kittyOrbit.style.animation = 'none';
     dogOrbit.style.animation = 'none';
     updateChase();
+    
+    // Hamster running function
+    let hamsterSpeed = 0.5;
+    function runHamster() {
+        const hamster = document.getElementById('hamster');
+        hamsterSpeed = Math.max(0.1, hamsterSpeed - 0.1);
+        hamster.style.animationDuration = hamsterSpeed + 's';
+        hamster.querySelector('.hamster-wheel').style.animationDuration = (hamsterSpeed * 2) + 's';
+        
+        // Reset after a while
+        setTimeout(() => {
+            hamsterSpeed = 0.5;
+            hamster.style.animationDuration = '0.5s';
+            hamster.querySelector('.hamster-wheel').style.animationDuration = '1s';
+        }, 3000);
+    }
+    
+    // Carrot sparkle function
+    function sparkleCarrot() {
+        const sparkles = document.getElementById('carrotSparkles');
+        const emojis = ['✨', '🌟', '💫', '⭐', '🥕', '🐰'];
+        
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'carrot-sparkle';
+                sparkle.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                sparkle.style.setProperty('--tx', (Math.random() * 100 - 50) + 'px');
+                sparkle.style.setProperty('--ty', (Math.random() * 100 - 50) + 'px');
+                sparkle.style.left = '50%';
+                sparkle.style.top = '50%';
+                sparkles.appendChild(sparkle);
+                setTimeout(() => sparkle.remove(), 1000);
+            }, i * 80);
+        }
+    }
+    
+    // Ham bounce function
+    function bounceHam() {
+        const ham = document.getElementById('ham');
+        ham.style.transform = 'scale(1.5) rotate(360deg)';
+        ham.style.transition = 'transform 0.5s ease';
+        setTimeout(() => {
+            ham.style.transform = '';
+            ham.style.transition = '';
+        }, 500);
+    }
+    
+    // Feeding person function
+    let mealsEaten = 0;
+    function feedPerson() {
+        const foodContainer = document.getElementById('foodContainer');
+        const eater = document.getElementById('eater');
+        const foods = ['🍖', '🥕', '🧀', '🍕', '🌮', '🍔', '🍟', '🍩'];
+        
+        const food = document.createElement('div');
+        food.className = 'food-flying';
+        food.textContent = foods[Math.floor(Math.random() * foods.length)];
+        food.style.setProperty('--startX', (Math.random() * 100 - 50) + 'px');
+        food.style.setProperty('--startY', '-80px');
+        food.style.left = '50%';
+        food.style.top = '20%';
+        foodContainer.appendChild(food);
+        
+        setTimeout(() => {
+            food.remove();
+            mealsEaten++;
+            document.getElementById('mealsEaten').textContent = mealsEaten;
+            
+            // Yum effect
+            const yum = document.createElement('div');
+            yum.className = 'yum-text';
+            yum.textContent = ['YUM!', 'DELICIOUS!', 'TASTY!', 'NOM NOM!'][Math.floor(Math.random() * 4)];
+            yum.style.left = '50%';
+            yum.style.top = '-20px';
+            eater.appendChild(yum);
+            setTimeout(() => yum.remove(), 1000);
+        }, 1000);
+    }
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
