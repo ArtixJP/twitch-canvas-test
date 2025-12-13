@@ -991,6 +991,32 @@
         100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
     }
     
+    /* Apple Styles */
+    .apple-container {
+        font-size: 5rem;
+        cursor: pointer;
+        animation: apple-spin 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(255, 50, 50, 0.5));
+        position: relative;
+    }
+    
+    @keyframes apple-spin {
+        0%, 100% { transform: rotate(-5deg) scale(1); }
+        50% { transform: rotate(5deg) scale(1.1); }
+    }
+    
+    .apple-bite {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        animation: bite-fly 1s ease-out forwards;
+    }
+    
+    @keyframes bite-fly {
+        0% { transform: scale(0) rotate(0deg); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
+    }
+    
     /* Ham Styles */
     .ham-container {
         font-size: 5rem;
@@ -1179,6 +1205,14 @@
     <div id="carrotSparkles"></div>
 </div>
 <p style="font-size: 0.9rem; color: #ff8c00;">Click for veggie magic!</p>
+</div>
+<div class="animal-card">
+<h3>🍎 Magic Apple</h3>
+<div class="apple-container" id="apple" onclick="biteApple()">
+    🍎
+    <div id="appleBites"></div>
+</div>
+<p style="font-size: 0.9rem; color: #ff4444;">Click for a crunchy bite!</p>
 </div>
 <div class="animal-card">
 <h3>🍖 Bouncy Ham</h3>
@@ -1712,6 +1746,51 @@
                 sparkles.appendChild(sparkle);
                 setTimeout(() => sparkle.remove(), 1000);
             }, i * 80);
+        }
+    }
+    
+    // Apple bite function
+    let appleClicks = 0;
+    function biteApple() {
+        const appleBites = document.getElementById('appleBites');
+        const apple = document.getElementById('apple');
+        const emojis = ['✨', '🌟', '💫', '🍏', '🐛', '🌈', 'CRUNCH!', 'YUM!'];
+        
+        appleClicks++;
+        
+        // Scale effect on click
+        apple.style.transform = 'scale(1.4) rotate(15deg)';
+        setTimeout(() => {
+            apple.style.transform = '';
+        }, 200);
+        
+        // Create bite particles
+        for (let i = 0; i < 6; i++) {
+            setTimeout(() => {
+                const bite = document.createElement('div');
+                bite.className = 'apple-bite';
+                bite.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                bite.style.setProperty('--tx', (Math.random() * 120 - 60) + 'px');
+                bite.style.setProperty('--ty', (Math.random() * 120 - 60) + 'px');
+                bite.style.left = '50%';
+                bite.style.top = '50%';
+                appleBites.appendChild(bite);
+                setTimeout(() => bite.remove(), 1000);
+            }, i * 60);
+        }
+        
+        // After 5 clicks, show a worm!
+        if (appleClicks % 5 === 0) {
+            const worm = document.createElement('div');
+            worm.className = 'apple-bite';
+            worm.textContent = '🐛 SURPRISE!';
+            worm.style.fontSize = '2rem';
+            worm.style.setProperty('--tx', '0px');
+            worm.style.setProperty('--ty', '-80px');
+            worm.style.left = '50%';
+            worm.style.top = '0%';
+            appleBites.appendChild(worm);
+            setTimeout(() => worm.remove(), 1500);
         }
     }
     
