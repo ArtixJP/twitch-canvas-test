@@ -35,7 +35,8 @@
             width: 150px;
             height: 150px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #4a90d9 0%, #1e5799 30%, #2989d8 50%, #207cca 70%, #1e5799 100%);
+            background: var(--planet-gradient, linear-gradient(135deg, #4a90d9 0%, #1e5799 30%, #2989d8 50%, #207cca 70%, #1e5799 100%));
+            transition: background 0.5s ease, box-shadow 0.5s ease;
             box-shadow: 
                 inset -30px -30px 60px rgba(0,0,0,0.5),
                 inset 10px 10px 40px rgba(255,255,255,0.2),
@@ -622,6 +623,9 @@
                 document.body.appendChild(effect);
                 setTimeout(() => effect.remove(), 1000);
                 
+                // Change planet color on catch!
+                changePlanetColor();
+                
                 // Reset positions after catch
                 setTimeout(() => {
                     kittyAngle = Math.random() * 2 * Math.PI;
@@ -661,6 +665,40 @@
             dogOrbit.style.transform = `translate(-50%, -50%) rotate(${dogAngle}rad)`;
             
             requestAnimationFrame(updateChase);
+        }
+        
+        // Planet color palettes
+        const planetColors = [
+            { gradient: 'linear-gradient(135deg, #4a90d9 0%, #1e5799 30%, #2989d8 50%, #207cca 70%, #1e5799 100%)', glow: 'rgba(74, 144, 217, 0.5)' }, // Blue (original)
+            { gradient: 'linear-gradient(135deg, #e74c3c 0%, #c0392b 30%, #e74c3c 50%, #d35400 70%, #c0392b 100%)', glow: 'rgba(231, 76, 60, 0.5)' }, // Red/Mars
+            { gradient: 'linear-gradient(135deg, #9b59b6 0%, #8e44ad 30%, #9b59b6 50%, #6c3483 70%, #8e44ad 100%)', glow: 'rgba(155, 89, 182, 0.5)' }, // Purple
+            { gradient: 'linear-gradient(135deg, #2ecc71 0%, #27ae60 30%, #2ecc71 50%, #1e8449 70%, #27ae60 100%)', glow: 'rgba(46, 204, 113, 0.5)' }, // Green
+            { gradient: 'linear-gradient(135deg, #f39c12 0%, #d68910 30%, #f39c12 50%, #b9770e 70%, #d68910 100%)', glow: 'rgba(243, 156, 18, 0.5)' }, // Orange
+            { gradient: 'linear-gradient(135deg, #e91e63 0%, #c2185b 30%, #e91e63 50%, #ad1457 70%, #c2185b 100%)', glow: 'rgba(233, 30, 99, 0.5)' }, // Pink
+            { gradient: 'linear-gradient(135deg, #00bcd4 0%, #0097a7 30%, #00bcd4 50%, #00838f 70%, #0097a7 100%)', glow: 'rgba(0, 188, 212, 0.5)' }, // Cyan
+            { gradient: 'linear-gradient(135deg, #ffeb3b 0%, #fdd835 30%, #ffeb3b 50%, #f9a825 70%, #fdd835 100%)', glow: 'rgba(255, 235, 59, 0.5)' }, // Yellow
+        ];
+        let currentColorIndex = 0;
+        
+        function changePlanetColor() {
+            currentColorIndex = (currentColorIndex + 1) % planetColors.length;
+            const planet = document.querySelector('.planet');
+            const colorScheme = planetColors[currentColorIndex];
+            
+            planet.style.setProperty('--planet-gradient', colorScheme.gradient);
+            planet.style.background = colorScheme.gradient;
+            planet.style.boxShadow = `
+                inset -30px -30px 60px rgba(0,0,0,0.5),
+                inset 10px 10px 40px rgba(255,255,255,0.2),
+                0 0 60px ${colorScheme.glow},
+                0 0 100px ${colorScheme.glow.replace('0.5', '0.3')}
+            `;
+            
+            // Add a flash effect
+            planet.style.filter = 'brightness(1.5)';
+            setTimeout(() => {
+                planet.style.filter = 'brightness(1)';
+            }, 200);
         }
         
         // Override CSS animations with JS control
