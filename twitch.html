@@ -250,6 +250,53 @@
             50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
         }
         
+        .scoreboard {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px 30px;
+            border-radius: 50px;
+            margin-bottom: 1rem;
+            display: flex;
+            gap: 30px;
+            font-size: 1.3rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            position: relative;
+        }
+        
+        .score-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        #dogScore {
+            color: #ffcc00;
+            font-weight: bold;
+            font-size: 1.5rem;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
+            transition: transform 0.3s ease;
+        }
+        
+        #dogScore.scored {
+            transform: scale(1.5);
+            color: #ff6600;
+        }
+        
+        .catch-effect {
+            position: fixed;
+            font-size: 3rem;
+            pointer-events: none;
+            z-index: 100;
+            animation: catch-pop 1s ease-out forwards;
+        }
+        
+        @keyframes catch-pop {
+            0% { transform: scale(0) rotate(0deg); opacity: 1; }
+            50% { transform: scale(1.5) rotate(180deg); opacity: 1; }
+            100% { transform: scale(2) rotate(360deg) translateY(-50px); opacity: 0; }
+        }
+        
         .stars {
             position: fixed;
             top: 0;
@@ -327,6 +374,9 @@
 <div class="stars" id="stars"></div>
 <div id="three-container"></div>
 <h1>Hello World</h1>
+<div class="scoreboard" id="scoreboard">
+<span class="score-item">🐕 Dog: <span id="dogScore">0</span></span>
+</div>
 <div class="music-controls">
 <button id="musicBtn" onclick="toggleMusic()">
 <span id="btnIcon">⏸️</span> Pause Music
@@ -543,6 +593,8 @@
         let kittySpeed = 0.008;
         let dogSpeed = 0.015; // Dog is faster normally
         let isEscaping = false;
+        let dogScore = 0;
+        let canScore = true; // Prevent multiple scores from one catch
         
         function updateChase() {
             // Calculate angle difference
@@ -551,6 +603,32 @@
             
             // If dog is close (within ~60 degrees), cat escapes!
             const closeThreshold = Math.PI / 3;
+            
+            // Check for catch (very close)
+            const catchThreshold = Math.PI / 8;
+            if (angleDiff < catchThreshold && canScore) {
+                dogScore++;
+                document.getElementById('dogScore').textContent = dogScore;
+                document.getElementById('dogScore').classList.add('scored');
+                setTimeout(() => document.getElementById('dogScore').classList.remove('scored'), 300);
+                canScore = false;
+                
+                // Create catch effect
+                const effect = document.createElement('div');
+                effect.className = 'catch-effect';
+                effect.textContent = '💥';
+                effect.style.left = '50%';
+                effect.style.top = '50%';
+                document.body.appendChild(effect);
+                setTimeout(() => effect.remove(), 1000);
+                
+                // Reset positions after catch
+                setTimeout(() => {
+                    kittyAngle = Math.random() * 2 * Math.PI;
+                    dogAngle = (kittyAngle + Math.PI) % (2 * Math.PI);
+                    canScore = true;
+                }, 500);
+            }
             
             if (angleDiff < closeThreshold && !isEscaping) {
                 isEscaping = true;
