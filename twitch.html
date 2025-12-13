@@ -1005,6 +1005,64 @@
         75% { transform: scale(0.95) rotate(5deg); }
     }
     
+    /* Penguin Styles */
+    .penguin-container {
+        font-size: 5rem;
+        cursor: pointer;
+        position: relative;
+        animation: penguin-waddle 1s ease-in-out infinite;
+        filter: drop-shadow(0 0 15px rgba(100, 200, 255, 0.5));
+    }
+    
+    @keyframes penguin-waddle {
+        0%, 100% { transform: rotate(-5deg) translateY(0); }
+        25% { transform: rotate(5deg) translateY(-5px); }
+        50% { transform: rotate(-5deg) translateY(0); }
+        75% { transform: rotate(5deg) translateY(-5px); }
+    }
+    
+    .fish-flying {
+        position: absolute;
+        font-size: 2rem;
+        animation: fish-to-penguin 1.2s ease-in forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes fish-to-penguin {
+        0% { transform: translate(var(--startX), var(--startY)) rotate(0deg) scale(1); opacity: 1; }
+        50% { transform: translate(calc(var(--startX) / 2), calc(var(--startY) / 2)) rotate(180deg) scale(1.2); opacity: 1; }
+        80% { transform: translate(0, 0) rotate(360deg) scale(0.8); opacity: 1; }
+        100% { transform: translate(0, 0) rotate(360deg) scale(0); opacity: 0; }
+    }
+    
+    .penguin-happy {
+        position: absolute;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #00bfff;
+        text-shadow: 0 0 10px rgba(0, 191, 255, 0.8);
+        animation: happy-pop 1s ease-out forwards;
+        pointer-events: none;
+    }
+    
+    @keyframes happy-pop {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1.5) translateY(-20px); opacity: 1; }
+        100% { transform: scale(1) translateY(-40px); opacity: 0; }
+    }
+    
+    .ice-cube {
+        position: absolute;
+        width: 80px;
+        height: 30px;
+        background: linear-gradient(135deg, rgba(200, 240, 255, 0.8), rgba(150, 220, 255, 0.6));
+        border-radius: 5px;
+        bottom: -20px;
+        left: 50%;
+        transform: translateX(-50%);
+        box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
+    }
+    
     /* Eating Person Styles */
     .eating-container {
         font-size: 5rem;
@@ -1128,6 +1186,15 @@
     🍖
 </div>
 <p style="font-size: 0.9rem; color: #ff6b6b;">Click to bounce!</p>
+</div>
+<div class="animal-card">
+<h3>🐧 Hungry Penguin</h3>
+<div class="penguin-container" id="penguin" onclick="feedPenguin()">
+    🐧
+    <div class="ice-cube"></div>
+<div id="fishContainer"></div>
+</div>
+<p style="font-size: 0.9rem; color: #00bfff;">Click to feed fish! 🐟 Fish eaten: <span id="fishEaten">0</span></p>
 </div>
 <div class="animal-card">
 <h3>😋 Hungry Person</h3>
@@ -1657,6 +1724,43 @@
             ham.style.transform = '';
             ham.style.transition = '';
         }, 500);
+    }
+    
+    // Feeding penguin function
+    let fishEaten = 0;
+    function feedPenguin() {
+        const fishContainer = document.getElementById('fishContainer');
+        const penguin = document.getElementById('penguin');
+        const fishTypes = ['🐟', '🐠', '🐡', '🦐', '🦑', '🦞'];
+        
+        const fish = document.createElement('div');
+        fish.className = 'fish-flying';
+        fish.textContent = fishTypes[Math.floor(Math.random() * fishTypes.length)];
+        fish.style.setProperty('--startX', (Math.random() * 150 - 75) + 'px');
+        fish.style.setProperty('--startY', '-100px');
+        fish.style.left = '50%';
+        fish.style.top = '30%';
+        fishContainer.appendChild(fish);
+        
+        // Penguin gets excited
+        penguin.style.animationDuration = '0.3s';
+        
+        setTimeout(() => {
+            fish.remove();
+            fishEaten++;
+            document.getElementById('fishEaten').textContent = fishEaten;
+            penguin.style.animationDuration = '1s';
+            
+            // Happy effect
+            const happyTexts = ['MIAM!', 'DÉLICIEUX!', 'ENCORE!', '🐟💕', 'SLURP!'];
+            const happy = document.createElement('div');
+            happy.className = 'penguin-happy';
+            happy.textContent = happyTexts[Math.floor(Math.random() * happyTexts.length)];
+            happy.style.left = '50%';
+            happy.style.top = '-20px';
+            penguin.appendChild(happy);
+            setTimeout(() => happy.remove(), 1000);
+        }, 1200);
     }
     
     // Feeding person function
