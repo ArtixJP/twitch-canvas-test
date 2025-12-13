@@ -784,6 +784,73 @@
         text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
     }
     
+    /* Dragon Styles */
+    .dragon-container {
+        font-size: 6rem;
+        cursor: pointer;
+        position: relative;
+        animation: dragon-hover 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 20px rgba(255, 100, 50, 0.6));
+        transition: transform 0.3s ease;
+    }
+    
+    .dragon-container:hover {
+        transform: scale(1.2);
+    }
+    
+    @keyframes dragon-hover {
+        0%, 100% { transform: translateY(0) rotate(-3deg); }
+        50% { transform: translateY(-15px) rotate(3deg); }
+    }
+    
+    .fire-breath {
+        position: absolute;
+        top: 20%;
+        left: 80%;
+        width: 100px;
+        height: 50px;
+        pointer-events: none;
+    }
+    
+    .fire-particle {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        animation: fire-shoot 1s ease-out forwards;
+        opacity: 0;
+    }
+    
+    @keyframes fire-shoot {
+        0% { 
+            transform: translateX(0) scale(0.5);
+            opacity: 1;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% { 
+            transform: translateX(var(--fx)) translateY(var(--fy)) scale(1.5);
+            opacity: 0;
+        }
+    }
+    
+    .dragon-roar {
+        position: absolute;
+        font-size: 2rem;
+        font-weight: bold;
+        color: #ff6b00;
+        text-shadow: 0 0 15px rgba(255, 107, 0, 0.8);
+        animation: roar-pop 1s ease-out forwards;
+        pointer-events: none;
+        z-index: 25;
+    }
+    
+    @keyframes roar-pop {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1.5) translateY(-20px); opacity: 1; }
+        100% { transform: scale(1) translateY(-50px); opacity: 0; }
+    }
+    
     /* Evil Magical Banana */
     .banana-villain {
         position: absolute;
@@ -921,6 +988,14 @@
 <p style="font-size: 0.9rem; color: #a78bfa;">Click to spray water!</p>
 </div>
 <div class="animal-card">
+<h3>🐉 Fire Dragon</h3>
+<div class="dragon-container" id="dragon" onclick="breatheFire()">
+                🐉
+                <div class="fire-breath" id="fireBreath"></div>
+</div>
+<p style="font-size: 0.9rem; color: #ff6b00;">Click to breathe fire!</p>
+</div>
+<div class="animal-card">
 <h3>🐕 Chase Arena</h3>
 <div class="chase-arena">
 <div class="kitty-orbit" id="kittyOrbit">
@@ -1036,6 +1111,55 @@
     
     setInterval(sprayWater, 3000);
     setTimeout(sprayWater, 1000);
+    
+    // Dragon fire breathing function
+    function breatheFire() {
+        const fireBreath = document.getElementById('fireBreath');
+        const dragon = document.getElementById('dragon');
+        
+        // Dragon roar effect
+        const roarTexts = ['ROAR!', 'GRAAAH!', '🔥🔥🔥', 'FWOOSH!'];
+        const roar = document.createElement('div');
+        roar.className = 'dragon-roar';
+        roar.textContent = roarTexts[Math.floor(Math.random() * roarTexts.length)];
+        roar.style.left = '50%';
+        roar.style.top = '-30px';
+        dragon.appendChild(roar);
+        setTimeout(() => roar.remove(), 1000);
+        
+        // Scale effect
+        dragon.style.transform = 'scale(1.3)';
+        setTimeout(() => dragon.style.transform = '', 300);
+        
+        // Fire particles
+        const fireEmojis = ['🔥', '💥', '✨', '🧡', '💛', '☄️'];
+        for (let i = 0; i < 12; i++) {
+            setTimeout(() => {
+                const fire = document.createElement('div');
+                fire.className = 'fire-particle';
+                fire.textContent = fireEmojis[Math.floor(Math.random() * fireEmojis.length)];
+                
+                const fx = 50 + Math.random() * 150;
+                const fy = (Math.random() - 0.5) * 80;
+                
+                fire.style.setProperty('--fx', fx + 'px');
+                fire.style.setProperty('--fy', fy + 'px');
+                fire.style.left = '0px';
+                fire.style.top = '0px';
+                
+                fireBreath.appendChild(fire);
+                
+                setTimeout(() => fire.remove(), 1000);
+            }, i * 50);
+        }
+    }
+    
+    // Dragon breathes fire periodically
+    setInterval(() => {
+        if (document.getElementById('section-animals').classList.contains('active')) {
+            breatheFire();
+        }
+    }, 5000);
     
     // Super Potato Hero Logic
     let worldsSaved = 0;
