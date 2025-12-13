@@ -1395,6 +1395,19 @@
         100% { transform: translate(var(--tx), var(--ty)) scale(1.5); opacity: 0; }
     }
     
+    @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        20% { transform: translateX(-10px) rotate(-2deg); }
+        40% { transform: translateX(10px) rotate(2deg); }
+        60% { transform: translateX(-10px) rotate(-2deg); }
+        80% { transform: translateX(10px) rotate(2deg); }
+    }
+    
+    .wolf-container.werewolf {
+        animation: wolf-prowl 1s ease-in-out infinite !important;
+        filter: drop-shadow(0 0 30px rgba(255, 0, 0, 0.8)) !important;
+    }
+    
     /* Eating Person Styles */
     .eating-container {
         font-size: 5rem;
@@ -1570,13 +1583,14 @@
 <p style="font-size: 0.9rem; color: #00ff66;">Click to communicate! Messages: <span id="martianMessages">0</span></p>
 </div>
 <div class="animal-card">
-<h3>🐺 Howling Wolf</h3>
+<h3>🐺 Loup-Garou 🌕</h3>
 <div class="wolf-container" id="wolf" onclick="howlWolf()">
-    🐺
-    <div id="wolfEffects"></div>
+<span id="wolfEmoji">🐺</span><span id="moonPhase" style="position:absolute;top:-30px;left:50%;transform:translateX(-50%);font-size:2rem;">🌕</span>
+<div id="wolfEffects"></div>
 </div>
-<p style="font-size: 0.9rem; color: #b8b8ff;">Click to howl at the moon! 🌙</p>
-<p style="font-size: 0.8rem; color: #8888cc;">Howls: <span id="howlCount">0</span></p>
+<p style="font-size: 0.9rem; color: #b8b8ff;">Click to transform! 🌕➡️🐺</p>
+<p style="font-size: 0.8rem; color: #8888cc;">Transformations: <span id="howlCount">0</span></p>
+<p id="werewolfStatus" style="font-size: 0.7rem; color: #ff6b6b;">Human form... 🧑</p>
 </div>
 <div class="animal-card">
 <h3>😋 Hungry Person</h3>
@@ -2405,16 +2419,46 @@
         }
     }
     
-    // Wolf howling function
+    // Loup-Garou transformation function
     let howlCount = 0;
+    let isWerewolf = false;
     function howlWolf() {
         const wolfEffects = document.getElementById('wolfEffects');
         const wolf = document.getElementById('wolf');
-        const howls = ['AWOOOO!', 'HOWL!', 'AROOO!', '🌙 AWOO!', '*howls at moon*', 'OUUUUH!'];
-        const particles = ['🌙', '⭐', '✨', '🌟', '💫', '🐾'];
+        const wolfEmoji = document.getElementById('wolfEmoji');
+        const moonPhase = document.getElementById('moonPhase');
+        const statusEl = document.getElementById('werewolfStatus');
+        
+        // Toggle werewolf form
+        isWerewolf = !isWerewolf;
+        
+        if (isWerewolf) {
+            wolfEmoji.textContent = '🐺';
+            wolfEmoji.style.fontSize = '6rem';
+            wolfEmoji.style.filter = 'drop-shadow(0 0 20px red)';
+            moonPhase.textContent = '🌕';
+            moonPhase.style.animation = 'pulse 0.5s ease-in-out infinite';
+            statusEl.textContent = 'LOUP-GAROU! 🐺🌕';
+            statusEl.style.color = '#ff4444';
+        } else {
+            wolfEmoji.textContent = '🧑';
+            wolfEmoji.style.fontSize = '5rem';
+            wolfEmoji.style.filter = '';
+            moonPhase.textContent = '🌑';
+            moonPhase.style.animation = '';
+            statusEl.textContent = 'Human form... 🧑';
+            statusEl.style.color = '#8888cc';
+        }
+        
+        const howls = isWerewolf ? ['GRAAAWR!', 'AWOOOO!', '*transforms*', '🌕 LOUP-GAROU!', 'LA BÊTE!', 'AROOOOO!'] : ['*transforms back*', 'Ouf...', 'Human again!', '🌑 Safe...'];
+        const particles = isWerewolf ? ['🌕', '🐺', '💀', '🦴', '🩸', '⚡'] : ['🌑', '🧑', '✨', '💫', '🌟', '😮‍💨'];
         
         howlCount++;
         document.getElementById('howlCount').textContent = howlCount;
+        
+        // Screen shake effect for transformation
+        wolf.parentElement.style.animation = 'shake 0.5s ease-in-out';
+        setTimeout(() => wolf.parentElement.style.animation = '', 500);
         
         // Scale effect
         wolf.style.transform = 'scale(1.4) rotate(-10deg)';
