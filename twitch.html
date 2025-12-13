@@ -1117,6 +1117,72 @@
         box-shadow: 0 5px 15px rgba(100, 200, 255, 0.3);
     }
     
+    /* Martian Styles */
+    .martian-container {
+        font-size: 5rem;
+        cursor: pointer;
+        position: relative;
+        animation: martian-float 3s ease-in-out infinite;
+        filter: drop-shadow(0 0 20px rgba(0, 255, 100, 0.6));
+    }
+    
+    @keyframes martian-float {
+        0%, 100% { transform: translateY(0) rotate(-3deg); }
+        50% { transform: translateY(-15px) rotate(3deg); }
+    }
+    
+    .martian-container:hover {
+        transform: scale(1.3);
+        filter: drop-shadow(0 0 30px rgba(0, 255, 100, 0.9));
+    }
+    
+    .ufo-beam {
+        position: absolute;
+        width: 60px;
+        height: 80px;
+        background: linear-gradient(180deg, rgba(0, 255, 100, 0.8), transparent);
+        clip-path: polygon(30% 0%, 70% 0%, 100% 100%, 0% 100%);
+        bottom: -70px;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        animation: beam-pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes beam-pulse {
+        0%, 100% { opacity: 0; height: 40px; }
+        50% { opacity: 0.7; height: 80px; }
+    }
+    
+    .martian-message {
+        position: absolute;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #00ff66;
+        text-shadow: 0 0 10px rgba(0, 255, 100, 0.8);
+        animation: message-float 1.5s ease-out forwards;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+    
+    @keyframes message-float {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1.3) translateY(-20px); opacity: 1; }
+        100% { transform: scale(1) translateY(-50px); opacity: 0; }
+    }
+    
+    .star-particle {
+        position: absolute;
+        font-size: 1.5rem;
+        pointer-events: none;
+        animation: star-fly 1s ease-out forwards;
+    }
+    
+    @keyframes star-fly {
+        0% { transform: scale(0) rotate(0deg); opacity: 1; }
+        100% { transform: translate(var(--tx), var(--ty)) scale(1.5) rotate(360deg); opacity: 0; }
+    }
+    
     /* Eating Person Styles */
     .eating-container {
         font-size: 5rem;
@@ -1265,6 +1331,15 @@
 <div id="fishContainer"></div>
 </div>
 <p style="font-size: 0.9rem; color: #00bfff;">Click to feed fish! 🐟 Fish eaten: <span id="fishEaten">0</span></p>
+</div>
+<div class="animal-card">
+<h3>👽 Friendly Martian</h3>
+<div class="martian-container" id="martian" onclick="greetMartian()">
+    👽
+    <div class="ufo-beam"></div>
+<div id="martianEffects"></div>
+</div>
+<p style="font-size: 0.9rem; color: #00ff66;">Click to communicate! Messages: <span id="martianMessages">0</span></p>
 </div>
 <div class="animal-card">
 <h3>😋 Hungry Person</h3>
@@ -1921,6 +1996,49 @@
             penguin.appendChild(happy);
             setTimeout(() => happy.remove(), 1000);
         }, 1200);
+    }
+    
+    // Martian greeting function
+    let martianMessages = 0;
+    function greetMartian() {
+        const martianEffects = document.getElementById('martianEffects');
+        const martian = document.getElementById('martian');
+        const messages = ['GREETINGS!', 'BLEEP BLOOP!', 'TAKE ME TO YOUR LEADER!', '👽💚🌍', 'WE COME IN PEACE!', 'ZORP ZORP!', 'EARTHLINGS!', '🛸✨'];
+        const particles = ['⭐', '✨', '💫', '🌟', '🛸', '🌙', '💚'];
+        
+        martianMessages++;
+        document.getElementById('martianMessages').textContent = martianMessages;
+        
+        // Scale effect
+        martian.style.transform = 'scale(1.4)';
+        setTimeout(() => {
+            martian.style.transform = '';
+        }, 300);
+        
+        // Show message
+        const msg = document.createElement('div');
+        msg.className = 'martian-message';
+        msg.textContent = messages[Math.floor(Math.random() * messages.length)];
+        msg.style.left = '50%';
+        msg.style.top = '-30px';
+        msg.style.transform = 'translateX(-50%)';
+        martian.appendChild(msg);
+        setTimeout(() => msg.remove(), 1500);
+        
+        // Create star particles
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const star = document.createElement('div');
+                star.className = 'star-particle';
+                star.textContent = particles[Math.floor(Math.random() * particles.length)];
+                star.style.setProperty('--tx', (Math.random() * 120 - 60) + 'px');
+                star.style.setProperty('--ty', (Math.random() * 120 - 60) + 'px');
+                star.style.left = '50%';
+                star.style.top = '50%';
+                martianEffects.appendChild(star);
+                setTimeout(() => star.remove(), 1000);
+            }, i * 60);
+        }
     }
     
     // Feeding person function
