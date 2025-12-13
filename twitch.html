@@ -783,6 +783,90 @@
         color: #fbbf24;
         text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
     }
+    
+    /* Evil Magical Banana */
+    .banana-villain {
+        position: absolute;
+        font-size: 5rem;
+        cursor: pointer;
+        filter: drop-shadow(0 0 20px rgba(255, 255, 0, 0.8)) hue-rotate(0deg);
+        animation: banana-float 2s ease-in-out infinite, banana-glow 1s ease-in-out infinite alternate;
+        z-index: 15;
+        transition: transform 0.3s ease;
+    }
+    
+    .banana-villain:hover {
+        transform: scale(1.3) rotate(20deg);
+    }
+    
+    .banana-villain.attacking {
+        animation: banana-attack 0.8s ease-in-out forwards, banana-glow 0.2s ease-in-out infinite alternate;
+    }
+    
+    @keyframes banana-float {
+        0%, 100% { transform: translateY(0) rotate(-15deg); }
+        50% { transform: translateY(-20px) rotate(15deg); }
+    }
+    
+    @keyframes banana-glow {
+        0% { filter: drop-shadow(0 0 20px rgba(255, 255, 0, 0.8)) hue-rotate(0deg); }
+        100% { filter: drop-shadow(0 0 40px rgba(255, 0, 255, 0.8)) hue-rotate(60deg); }
+    }
+    
+    @keyframes banana-attack {
+        0% { transform: translateX(0) rotate(0deg); }
+        25% { transform: translateX(-100px) rotate(-45deg) scale(1.5); }
+        50% { transform: translateX(-200px) translateY(50px) rotate(-90deg) scale(1.8); }
+        75% { transform: translateX(-100px) rotate(-135deg) scale(1.5); }
+        100% { transform: translateX(0) rotate(-360deg) scale(1); }
+    }
+    
+    .banana-magic {
+        position: absolute;
+        font-size: 2rem;
+        pointer-events: none;
+        animation: magic-spark 1s ease-out forwards;
+        z-index: 20;
+    }
+    
+    @keyframes magic-spark {
+        0% { transform: scale(0) rotate(0deg); opacity: 1; }
+        100% { transform: scale(2) rotate(360deg) translate(var(--tx), var(--ty)); opacity: 0; }
+    }
+    
+    .battle-text {
+        position: absolute;
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #ff6b6b;
+        text-shadow: 0 0 10px rgba(255, 107, 107, 0.8);
+        animation: battle-pop 1s ease-out forwards;
+        pointer-events: none;
+        z-index: 25;
+    }
+    
+    @keyframes battle-pop {
+        0% { transform: scale(0) translateY(0); opacity: 1; }
+        50% { transform: scale(1.5) translateY(-30px); opacity: 1; }
+        100% { transform: scale(1) translateY(-60px); opacity: 0; }
+    }
+    
+    .banana-hp-bar {
+        width: 150px;
+        height: 15px;
+        background: rgba(0,0,0,0.5);
+        border-radius: 10px;
+        overflow: hidden;
+        border: 2px solid #ffd700;
+        margin-top: 10px;
+    }
+    
+    .banana-hp-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #ff0000, #ffff00);
+        width: 100%;
+        transition: width 0.3s ease;
+    }
 </style>
 </head>
 <body>
@@ -860,6 +944,16 @@
 <div class="world-saved">🌍</div>
 <div class="potato-hero" id="superPotato" onclick="saveTheWorld()">
 🥔
+</div>
+<div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+<p style="color: #ff6b6b; font-size: 1rem;">⚔️ EVIL BANANA HP:</p>
+<div class="banana-hp-bar">
+<div class="banana-hp-fill" id="bananaHp"></div>
+</div>
+<div class="banana-villain" id="evilBanana" onclick="attackBanana()">
+🍌
+</div>
+<p style="color: #ffd700; font-size: 0.9rem; margin-top: 10px;">Click banana to fight back!</p>
 </div>
 <p class="hero-message">"With great starch comes great responsibility!"</p>
 <p style="color: #ffd700; font-size: 1.2rem;">Worlds Saved: <span id="worldsSaved">0</span> 🏆</p>
@@ -991,6 +1085,95 @@
             document.getElementById('dangerFill').style.width = dangerLevel + '%';
         }
     }, 2000);
+    
+    // Evil Magical Banana Attack System
+    let bananaHp = 100;
+    let bananaAttacking = false;
+    
+    function bananaAttack() {
+        if (bananaAttacking) return;
+        bananaAttacking = true;
+        
+        const banana = document.getElementById('evilBanana');
+        banana.classList.add('attacking');
+        
+        // Create magic sparks
+        const sparks = ['✨', '💫', '⚡', '🔮', '💥'];
+        for (let i = 0; i < 8; i++) {
+            setTimeout(() => {
+                const spark = document.createElement('div');
+                spark.className = 'banana-magic';
+                spark.textContent = sparks[Math.floor(Math.random() * sparks.length)];
+                spark.style.left = (Math.random() * 200 + 100) + 'px';
+                spark.style.top = (Math.random() * 100) + 'px';
+                spark.style.setProperty('--tx', (Math.random() * 100 - 50) + 'px');
+                spark.style.setProperty('--ty', (Math.random() * 100 - 50) + 'px');
+                banana.parentElement.appendChild(spark);
+                setTimeout(() => spark.remove(), 1000);
+            }, i * 100);
+        }
+        
+        // Show battle text
+        const battleTexts = ['POW!', 'BONK!', 'ZAP!', 'WHOOSH!', 'MAGIC!'];
+        const text = document.createElement('div');
+        text.className = 'battle-text';
+        text.textContent = battleTexts[Math.floor(Math.random() * battleTexts.length)];
+        text.style.left = '50%';
+        text.style.top = '20%';
+        banana.parentElement.appendChild(text);
+        setTimeout(() => text.remove(), 1000);
+        
+        // Increase danger when banana attacks
+        dangerLevel = Math.min(100, dangerLevel + 15);
+        document.getElementById('dangerFill').style.width = dangerLevel + '%';
+        
+        setTimeout(() => {
+            banana.classList.remove('attacking');
+            bananaAttacking = false;
+        }, 800);
+    }
+    
+    function attackBanana() {
+        bananaHp = Math.max(0, bananaHp - 20);
+        document.getElementById('bananaHp').style.width = bananaHp + '%';
+        
+        const banana = document.getElementById('evilBanana');
+        banana.style.transform = 'scale(0.8) rotate(-30deg)';
+        setTimeout(() => {
+            banana.style.transform = '';
+        }, 200);
+        
+        // Show hit effect
+        const hitText = document.createElement('div');
+        hitText.className = 'battle-text';
+        hitText.textContent = '-20 HP!';
+        hitText.style.color = '#4ade80';
+        hitText.style.left = '50%';
+        hitText.style.top = '0%';
+        banana.parentElement.appendChild(hitText);
+        setTimeout(() => hitText.remove(), 1000);
+        
+        // Banana defeated
+        if (bananaHp <= 0) {
+            banana.style.filter = 'grayscale(100%)';
+            banana.style.opacity = '0.5';
+            setTimeout(() => {
+                bananaHp = 100;
+                document.getElementById('bananaHp').style.width = '100%';
+                banana.style.filter = '';
+                banana.style.opacity = '';
+                worldsSaved++;
+                document.getElementById('worldsSaved').textContent = worldsSaved;
+            }, 2000);
+        }
+    }
+    
+    // Banana attacks periodically
+    setInterval(() => {
+        if (bananaHp > 0 && document.getElementById('section-hero').classList.contains('active')) {
+            bananaAttack();
+        }
+    }, 4000);
     
     // Camembert cheese slicing function
     function sliceCheese() {
