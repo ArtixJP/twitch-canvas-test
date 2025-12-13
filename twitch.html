@@ -132,6 +132,24 @@
             50% { transform: translate(-50%, -50%) rotateX(70deg) rotateZ(5deg); }
         }
         
+        .moon-orbit-2 {
+            width: 280px;
+            height: 280px;
+            animation: orbit-reverse 8s linear infinite;
+        }
+        
+        .moon-2 {
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #f4e4c1 0%, #c9a86c 100%);
+            box-shadow: inset -3px -3px 6px rgba(0,0,0,0.4), 0 0 10px rgba(244, 228, 193, 0.3);
+        }
+        
+        @keyframes orbit-reverse {
+            from { transform: translate(-50%, -50%) rotate(360deg); }
+            to { transform: translate(-50%, -50%) rotate(0deg); }
+        }
+        
         @keyframes pulse {
             0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
             50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.05); }
@@ -198,7 +216,6 @@
 <button id="musicBtn" onclick="toggleMusic()">
 <span id="btnIcon">⏸️</span> Pause Music
     </button>
-
 </div>
 <div class="solar-system">
 <div class="atmosphere"></div>
@@ -206,6 +223,9 @@
 <div class="planet"></div>
 <div class="moon-orbit">
 <div class="moon" style="position: absolute; top: -10px; left: 50%;"></div>
+</div>
+<div class="moon-orbit moon-orbit-2">
+<div class="moon moon-2" style="position: absolute; top: -10px; left: 50%;"></div>
 </div>
 </div>
 <script>
