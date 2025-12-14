@@ -5,310 +5,399 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Interactive Todo List</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
+<title>Museum Interior - Game Environment</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&amp;family=Poppins:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
 <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body { 
-            font-family: 'Poppins', sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            color: white;
-            padding: 20px;
-        }
-        .container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 40px;
-            width: 100%;
-            max-width: 500px;
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        h1 { 
-            font-size: 2.5rem; 
-            text-align: center;
-            margin-bottom: 30px;
-            background: linear-gradient(90deg, #e94560, #ff6b9d);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
-        #todoInput {
-            flex: 1;
-            padding: 15px 20px;
-            border: none;
-            border-radius: 50px;
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            font-size: 1rem;
-            outline: none;
-            transition: all 0.3s ease;
-        }
-        #todoInput::placeholder {
-            color: rgba(255, 255, 255, 0.5);
-        }
-        #todoInput:focus {
-            background: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
-        }
-        #addBtn {
-            padding: 15px 25px;
-            border: none;
-            border-radius: 50px;
-            background: linear-gradient(135deg, #e94560, #ff6b9d);
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        #addBtn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 30px rgba(233, 69, 96, 0.4);
-        }
-        .todo-list {
-            list-style: none;
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .todo-list::-webkit-scrollbar {
-            width: 8px;
-        }
-        .todo-list::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-        }
-        .todo-list::-webkit-scrollbar-thumb {
-            background: #e94560;
-            border-radius: 10px;
-        }
-        .todo-item {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 15px 20px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 15px;
-            margin-bottom: 10px;
-            animation: slideIn 0.3s ease;
-            transition: all 0.3s ease;
-        }
-        .todo-item:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateX(5px);
-        }
-        .todo-item.completed .todo-text {
-            text-decoration: line-through;
-            opacity: 0.5;
-        }
-        .todo-checkbox {
-            width: 24px;
-            height: 24px;
-            border: 2px solid #e94560;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
-        }
-        .todo-checkbox:hover {
-            background: rgba(233, 69, 96, 0.3);
-        }
-        .todo-item.completed .todo-checkbox {
-            background: #e94560;
-        }
-        .todo-checkbox::after {
-            content: '✓';
-            color: white;
-            font-size: 14px;
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    body { 
+        font-family: 'Poppins', sans-serif; 
+        margin: 0;
+        overflow: hidden;
+        background: #0a0a0a;
+        color: white;
+    }
+    #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+    }
+    .welcome-banner {
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background: linear-gradient(135deg, rgba(139, 90, 43, 0.9), rgba(101, 67, 33, 0.95));
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        padding: 15px 30px;
+        border: 2px solid #d4af37;
+        box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+        animation: slideDown 0.8s ease-out, glow 2s ease-in-out infinite;
+    }
+    .welcome-banner h2 {
+        font-family: 'Cinzel', serif;
+        font-size: 1.2rem;
+        color: #d4af37;
+        text-align: center;
+        text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+    .welcome-banner .viewer-name {
+        font-size: 1.5rem;
+        color: #fff;
+        display: block;
+        margin-top: 5px;
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+    .museum-title {
+        position: fixed;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        font-family: 'Cinzel', serif;
+        font-size: 2rem;
+        color: #d4af37;
+        text-shadow: 0 0 20px rgba(212, 175, 55, 0.5), 0 4px 15px rgba(0,0,0,0.8);
+        letter-spacing: 5px;
+    }
+    .controls-hint {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.6);
+        text-align: center;
+    }
+    @keyframes slideDown {
+        from {
             opacity: 0;
-            transition: opacity 0.2s ease;
+            transform: translateX(-50%) translateY(-50px);
         }
-        .todo-item.completed .todo-checkbox::after {
+        to {
             opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
-        .todo-text {
-            flex: 1;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        .delete-btn {
-            width: 30px;
-            height: 30px;
-            border: none;
-            border-radius: 50%;
-            background: rgba(255, 107, 107, 0.2);
-            color: #ff6b6b;
-            cursor: pointer;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .delete-btn:hover {
-            background: #ff6b6b;
-            color: white;
-            transform: rotate(90deg);
-        }
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        @keyframes slideOut {
-            from {
-                opacity: 1;
-                transform: translateX(0);
-            }
-            to {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-        }
-        .stats {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.9rem;
-            opacity: 0.7;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            opacity: 0.5;
-        }
-        .empty-state span {
-            font-size: 3rem;
-            display: block;
-            margin-bottom: 10px;
-        }
-    </style>
+    }
+    @keyframes glow {
+        0%, 100% { box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3), inset 0 1px 0 rgba(255,255,255,0.2); }
+        50% { box-shadow: 0 10px 60px rgba(212, 175, 55, 0.5), inset 0 1px 0 rgba(255,255,255,0.3); }
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+</style>
 </head>
 <body>
-<div class="container">
-<h1>✨ Todo List</h1>
-<div class="input-container">
-<input autocomplete="off" id="todoInput" placeholder="What needs to be done?" type="text"/>
-<button id="addBtn">+</button>
+<div id="canvas-container"></div>
+<div class="welcome-banner">
+<h2>🎨 Welcome to the Museum</h2>
+<span class="viewer-name" id="latestViewer">TwitchViewer_2024</span>
 </div>
-<ul class="todo-list" id="todoList">
-<li class="empty-state" id="emptyState">
-<span>📝</span>
-                No tasks yet. Add one above!
-            </li>
-</ul>
-<div class="stats" id="stats"></div>
-</div>
+<div class="controls-hint">Use mouse to look around • WASD to move</div>
+<div class="museum-title">THE GRAND GALLERY</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-        const todoInput = document.getElementById('todoInput');
-        const addBtn = document.getElementById('addBtn');
-        const todoList = document.getElementById('todoList');
-        const emptyState = document.getElementById('emptyState');
-        const stats = document.getElementById('stats');
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x1a1510);
+    scene.fog = new THREE.Fog(0x1a1510, 10, 50);
+
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 2, 8);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+    // Checkered floor
+    const floorSize = 40;
+    const tileSize = 2;
+    const floorGeometry = new THREE.PlaneGeometry(floorSize, floorSize);
+    
+    // Create checkered texture
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d');
+    const tiles = 16;
+    const tileW = canvas.width / tiles;
+    
+    for(let i = 0; i < tiles; i++) {
+        for(let j = 0; j < tiles; j++) {
+            ctx.fillStyle = (i + j) % 2 === 0 ? '#f5f5dc' : '#2d2d2d';
+            ctx.fillRect(i * tileW, j * tileW, tileW, tileW);
+        }
+    }
+    
+    const floorTexture = new THREE.CanvasTexture(canvas);
+    floorTexture.wrapS = THREE.RepeatWrapping;
+    floorTexture.wrapT = THREE.RepeatWrapping;
+    floorTexture.repeat.set(4, 4);
+    
+    const floorMaterial = new THREE.MeshStandardMaterial({ 
+        map: floorTexture,
+        roughness: 0.3,
+        metalness: 0.1
+    });
+    const floor = new THREE.Mesh(floorGeometry, floorMaterial);
+    floor.rotation.x = -Math.PI / 2;
+    floor.receiveShadow = true;
+    scene.add(floor);
+
+    // Walls
+    const wallMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0x8b4513,
+        roughness: 0.8
+    });
+    
+    // Back wall
+    const backWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(floorSize, 12),
+        new THREE.MeshStandardMaterial({ color: 0x654321, roughness: 0.9 })
+    );
+    backWall.position.set(0, 6, -floorSize/2);
+    scene.add(backWall);
+
+    // Side walls
+    const leftWall = new THREE.Mesh(
+        new THREE.PlaneGeometry(floorSize, 12),
+        new THREE.MeshStandardMaterial({ color: 0x5c4033, roughness: 0.9 })
+    );
+    leftWall.position.set(-floorSize/2, 6, 0);
+    leftWall.rotation.y = Math.PI / 2;
+    scene.add(leftWall);
+
+    const rightWall = leftWall.clone();
+    rightWall.position.set(floorSize/2, 6, 0);
+    rightWall.rotation.y = -Math.PI / 2;
+    scene.add(rightWall);
+
+    // Ceiling
+    const ceiling = new THREE.Mesh(
+        new THREE.PlaneGeometry(floorSize, floorSize),
+        new THREE.MeshStandardMaterial({ color: 0x2d2d2d, roughness: 1 })
+    );
+    ceiling.position.y = 12;
+    ceiling.rotation.x = Math.PI / 2;
+    scene.add(ceiling);
+
+    // Columns
+    const columnGeometry = new THREE.CylinderGeometry(0.4, 0.5, 10, 16);
+    const columnMaterial = new THREE.MeshStandardMaterial({ color: 0xd4c4a8, roughness: 0.5 });
+    
+    const columnPositions = [
+        [-8, 5, -15], [8, 5, -15],
+        [-8, 5, -5], [8, 5, -5],
+        [-8, 5, 5], [8, 5, 5]
+    ];
+    
+    columnPositions.forEach(pos => {
+        const column = new THREE.Mesh(columnGeometry, columnMaterial);
+        column.position.set(...pos);
+        column.castShadow = true;
+        scene.add(column);
         
-        let todos = [];
+        // Column base
+        const base = new THREE.Mesh(
+            new THREE.BoxGeometry(1.2, 0.5, 1.2),
+            columnMaterial
+        );
+        base.position.set(pos[0], 0.25, pos[2]);
+        scene.add(base);
+        
+        // Column capital
+        const capital = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 0.4, 1),
+            columnMaterial
+        );
+        capital.position.set(pos[0], 10.2, pos[2]);
+        scene.add(capital);
+    });
 
-        function updateStats() {
-            const total = todos.length;
-            const completed = todos.filter(t => t.completed).length;
-            if (total > 0) {
-                stats.textContent = `${completed} of ${total} tasks completed`;
-            } else {
-                stats.textContent = '';
+    // Pedestals with art frames
+    const pedestalGeometry = new THREE.BoxGeometry(1.5, 1, 1.5);
+    const pedestalMaterial = new THREE.MeshStandardMaterial({ color: 0x3d3d3d, roughness: 0.4 });
+    
+    const pedestalPositions = [
+        [-5, 0.5, -10], [0, 0.5, -10], [5, 0.5, -10],
+        [-5, 0.5, 0], [5, 0.5, 0]
+    ];
+    
+    pedestalPositions.forEach((pos, i) => {
+        const pedestal = new THREE.Mesh(pedestalGeometry, pedestalMaterial);
+        pedestal.position.set(...pos);
+        pedestal.castShadow = true;
+        scene.add(pedestal);
+        
+        // Artwork on pedestal (glowing orbs)
+        const orbGeometry = new THREE.SphereGeometry(0.4, 32, 32);
+        const orbColors = [0xff6b6b, 0x4ecdc4, 0xffe66d, 0x95e1d3, 0xf38181];
+        const orbMaterial = new THREE.MeshStandardMaterial({ 
+            color: orbColors[i],
+            emissive: orbColors[i],
+            emissiveIntensity: 0.3,
+            roughness: 0.2,
+            metalness: 0.8
+        });
+        const orb = new THREE.Mesh(orbGeometry, orbMaterial);
+        orb.position.set(pos[0], 1.5, pos[2]);
+        orb.castShadow = true;
+        scene.add(orb);
+    });
+
+    // Picture frames on walls
+    const frameGeometry = new THREE.BoxGeometry(3, 2, 0.1);
+    const frameMaterial = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.3, metalness: 0.7 });
+    
+    const framePositions = [
+        { pos: [0, 4, -19.9], rot: [0, 0, 0] },
+        { pos: [-19.9, 4, -8], rot: [0, Math.PI/2, 0] },
+        { pos: [19.9, 4, -8], rot: [0, -Math.PI/2, 0] }
+    ];
+    
+    framePositions.forEach(f => {
+        const frame = new THREE.Mesh(frameGeometry, frameMaterial);
+        frame.position.set(...f.pos);
+        frame.rotation.set(...f.rot);
+        scene.add(frame);
+        
+        // Canvas inside frame
+        const canvasGeo = new THREE.PlaneGeometry(2.6, 1.6);
+        const canvasMat = new THREE.MeshStandardMaterial({ 
+            color: Math.random() * 0xffffff,
+            roughness: 0.9
+        });
+        const artCanvas = new THREE.Mesh(canvasGeo, canvasMat);
+        artCanvas.position.set(f.pos[0], f.pos[1], f.pos[2] + (f.rot[1] === 0 ? 0.06 : 0));
+        if(f.rot[1] === Math.PI/2) artCanvas.position.x += 0.06;
+        if(f.rot[1] === -Math.PI/2) artCanvas.position.x -= 0.06;
+        artCanvas.rotation.set(...f.rot);
+        scene.add(artCanvas);
+    });
+
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xfff5e6, 0.3);
+    scene.add(ambientLight);
+
+    // Main chandelier light
+    const mainLight = new THREE.PointLight(0xffeedd, 1.5, 30);
+    mainLight.position.set(0, 10, 0);
+    mainLight.castShadow = true;
+    scene.add(mainLight);
+
+    // Spotlight for dramatic effect
+    const spotlight = new THREE.SpotLight(0xffffff, 1);
+    spotlight.position.set(0, 11, 5);
+    spotlight.angle = Math.PI / 6;
+    spotlight.penumbra = 0.5;
+    spotlight.castShadow = true;
+    scene.add(spotlight);
+
+    // Additional accent lights
+    const accentColors = [0xff9999, 0x99ff99, 0x9999ff];
+    accentColors.forEach((color, i) => {
+        const light = new THREE.PointLight(color, 0.5, 15);
+        light.position.set((i - 1) * 8, 3, -10);
+        scene.add(light);
+    });
+
+    // Camera controls
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    let mouseX = 0, mouseY = 0;
+    let cameraRotationY = 0, cameraRotationX = 0;
+
+    document.addEventListener('keydown', (e) => {
+        switch(e.code) {
+            case 'KeyW': moveForward = true; break;
+            case 'KeyS': moveBackward = true; break;
+            case 'KeyA': moveLeft = true; break;
+            case 'KeyD': moveRight = true; break;
+        }
+    });
+
+    document.addEventListener('keyup', (e) => {
+        switch(e.code) {
+            case 'KeyW': moveForward = false; break;
+            case 'KeyS': moveBackward = false; break;
+            case 'KeyA': moveLeft = false; break;
+            case 'KeyD': moveRight = false; break;
+        }
+    });
+
+    document.addEventListener('mousemove', (e) => {
+        cameraRotationY -= e.movementX * 0.002;
+        cameraRotationX -= e.movementY * 0.002;
+        cameraRotationX = Math.max(-Math.PI/3, Math.min(Math.PI/3, cameraRotationX));
+    });
+
+    renderer.domElement.addEventListener('click', () => {
+        renderer.domElement.requestPointerLock();
+    });
+
+    // Animation loop
+    let time = 0;
+    function animate() {
+        requestAnimationFrame(animate);
+        time += 0.01;
+
+        // Camera movement
+        const speed = 0.1;
+        const direction = new THREE.Vector3();
+        
+        if (moveForward) direction.z -= speed;
+        if (moveBackward) direction.z += speed;
+        if (moveLeft) direction.x -= speed;
+        if (moveRight) direction.x += speed;
+        
+        direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), cameraRotationY);
+        camera.position.add(direction);
+        camera.position.y = 2;
+        
+        camera.rotation.order = 'YXZ';
+        camera.rotation.y = cameraRotationY;
+        camera.rotation.x = cameraRotationX;
+
+        // Animate orbs floating
+        scene.children.forEach((child, i) => {
+            if (child.geometry && child.geometry.type === 'SphereGeometry') {
+                child.position.y = 1.5 + Math.sin(time * 2 + i) * 0.2;
+                child.rotation.y += 0.02;
             }
-        }
-
-        function renderTodos() {
-            todoList.innerHTML = '';
-            
-            if (todos.length === 0) {
-                todoList.innerHTML = `
-                    <li class="empty-state">
-                        <span>📝</span>
-                        No tasks yet. Add one above!
-                    </li>
-                `;
-            } else {
-                todos.forEach((todo, index) => {
-                    const li = document.createElement('li');
-                    li.className = `todo-item ${todo.completed ? 'completed' : ''}`;
-                    li.innerHTML = `
-                        <div class="todo-checkbox" onclick="toggleTodo(${index})"></div>
-                        <span class="todo-text">${escapeHtml(todo.text)}</span>
-                        <button class="delete-btn" onclick="deleteTodo(${index})">×</button>
-                    `;
-                    todoList.appendChild(li);
-                });
-            }
-            updateStats();
-        }
-
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-
-        function addTodo() {
-            const text = todoInput.value.trim();
-            if (text) {
-                todos.unshift({ text, completed: false });
-                todoInput.value = '';
-                renderTodos();
-            }
-        }
-
-        function toggleTodo(index) {
-            todos[index].completed = !todos[index].completed;
-            renderTodos();
-        }
-
-        function deleteTodo(index) {
-            const items = document.querySelectorAll('.todo-item');
-            if (items[index]) {
-                items[index].style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => {
-                    todos.splice(index, 1);
-                    renderTodos();
-                }, 300);
-            }
-        }
-
-        addBtn.addEventListener('click', addTodo);
-        todoInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') addTodo();
         });
 
-        // Add some sample todos
-        todos = [
-            { text: 'Welcome to the Todo List! 🎉', completed: false },
-            { text: 'Click the circle to complete a task', completed: false },
-            { text: 'Click × to delete a task', completed: true }
-        ];
-        renderTodos();
-    </script>
+        // Animate main light
+        mainLight.intensity = 1.5 + Math.sin(time) * 0.2;
+
+        renderer.render(scene, camera);
+    }
+    animate();
+
+    // Handle resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    // Simulate latest viewer updates
+    const viewerNames = ['ArtLover_42', 'GamerPro99', 'MuseumFan', 'TwitchExplorer', 'NightOwl_Stream', 'PixelArtist', 'CoolViewer2024'];
+    setInterval(() => {
+        const randomViewer = viewerNames[Math.floor(Math.random() * viewerNames.length)];
+        document.getElementById('latestViewer').textContent = randomViewer;
+    }, 8000);
+</script>
 </body>
 </html>
