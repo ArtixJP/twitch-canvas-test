@@ -271,18 +271,19 @@
 <div class="turn-indicator" id="turn-indicator">
 <span class="piece">♔</span> White's Turn
         </div>
-<input autocomplete="off" class="command-input" id="command-input" placeholder="e.g., dame b2, roi e1, e2 e4" type="text"/>
+<input autocomplete="off" class="command-input" id="command-input" placeholder="e.g., e4, Nf3, bishop to h4, queen to b2" type="text"/>
 <button class="btn btn-primary" id="submit-move">🎯 Make Move</button>
 <button class="btn btn-secondary" id="reset-game">🔄 New Game</button>
 <div class="status-message" id="status-message" style="display:none;"></div>
 <div class="help-section">
 <h3>📖 How to Play</h3>
-<p><code>dame b2</code> - Move queen to b2</p>
-<p><code>roi g1</code> - Move king to g1</p>
-<p><code>tour a1</code> - Move rook to a1</p>
-<p><code>fou c4</code> - Move bishop to c4</p>
-<p><code>cavalier f3</code> - Move knight to f3</p>
-<p><code>pion e4</code> - Move pawn to e4</p>
+<p><code>e4</code> - Move pawn to e4</p>
+<p><code>h5</code> - Move pawn to h5</p>
+<p><code>Nf3</code> - Knight to f3</p>
+<p><code>Bb5</code> - Bishop to b5</p>
+<p><code>Qh4</code> - Queen to h4</p>
+<p><code>bishop to h4</code> - Bishop to h4</p>
+<p><code>queen to b2</code> - Queen to b2</p>
 <p><code>e2 e4</code> - Move from e2 to e4</p>
 <p>Or click pieces to select and move!</p>
 </div>
@@ -306,6 +307,11 @@ const PIECES = {
 const PIECE_NAMES = {
     'roi': 'K', 'dame': 'Q', 'tour': 'R', 'fou': 'B', 'cavalier': 'N', 'pion': 'P',
     'king': 'K', 'queen': 'Q', 'rook': 'R', 'bishop': 'B', 'knight': 'N', 'pawn': 'P'
+};
+
+const PIECE_LETTERS = {
+    'K': 'K', 'Q': 'Q', 'R': 'R', 'B': 'B', 'N': 'N',
+    'k': 'K', 'q': 'Q', 'r': 'R', 'b': 'B', 'n': 'N'
 };
 
 let board = [];
@@ -524,6 +530,7 @@ function showStatus(message, type) {
 }
 
 function parseCommand(cmd) {
+    const originalCmd = cmd.trim();
     cmd = cmd.toLowerCase().trim();
     
     // Format: "e2 e4" (from-to)
@@ -536,7 +543,33 @@ function parseCommand(cmd) {
         return { type: 'fromTo', fromRow, fromCol, toRow, toCol };
     }
     
-    // Format: "dame b2" (piece to square)
+    // Format: Short algebraic notation "e4", "h5" (pawn moves)
+    const pawnShortMatch = cmd.match(/^([a-h])([1-8])$/);
+    if (pawnShortMatch) {
+        const toCol = pawnShortMatch[1].charCodeAt(0) - 97;
+        const toRow = 8 - parseInt(pawnShortMatch[2]);
+        return { type: 'pieceToSquare', pieceCode: 'P', toRow, toCol };
+    }
+    
+    // Format: Short algebraic "Nf3", "Bb5", "Qh4" (piece letter + square)
+    const pieceShortMatch = originalCmd.match(/^([KQRBN])([a-h])([1-8])$/i);
+    if (pieceShortMatch) {
+        const pieceLetter = pieceShortMatch[1].toUpperCase();
+        const toCol = pieceShortMatch[2].toLowerCase().charCodeAt(0) - 97;
+        const toRow = 8 - parseInt(pieceShortMatch[3]);
+        return { type: 'pieceToSquare', pieceCode: pieceLetter, toRow, toCol };
+    }
+    
+    // Format: "bishop to h4", "queen to b2" (piece name + to + square)
+    const pieceToMatch = cmd.match(/^(king|queen|rook|bishop|knight|pawn)\s+to\s+([a-h])([1-8])$/);
+    if (pieceToMatch) {
+        const pieceCode = PIECE_NAMES[pieceToMatch[1]];
+        const toCol = pieceToMatch[2].charCodeAt(0) - 97;
+        const toRow = 8 - parseInt(pieceToMatch[3]);
+        return { type: 'pieceToSquare', pieceCode, toRow, toCol };
+    }
+    
+    // Format: "dame b2" (piece name + square, French/English)
     for (const [name, pieceCode] of Object.entries(PIECE_NAMES)) {
         const regex = new RegExp(`^${name}\\s+([a-h])([1-8])$`);
         const match = cmd.match(regex);
