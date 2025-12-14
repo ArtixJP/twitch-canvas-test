@@ -392,6 +392,7 @@
 <h2 class="chess-title">⛧ DEATH CHESS ⛧</h2>
 <div class="chess-board" id="chessBoard"></div>
 <div class="chess-info" id="chessInfo">🩸 White's Turn 🩸</div>
+<div class="ai-status" style="margin-top:10px;font-family:'Creepster',cursive;color:#ff6666;font-size:0.9rem;">🤖 AI vs AI Battle 🤖</div>
 <div class="todo-overlay">
 <h3>☠ TODO LIST ☠</h3>
 <ul>
@@ -436,6 +437,8 @@
 <li>Split screen + Chess game 🎮</li>
 <li>Added Zombie Elon riddles 🧟</li>
 <li>Player is now Leonardo's ghost 👻🎨</li>
+<li>AI vs AI Chess battle 🤖♟️</li>
+<li>3D Electric Guitars exhibit 🎸</li>
 </ul>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -590,6 +593,106 @@
         scene.add(orb);
     });
 
+    // Electric Guitar 3D Models
+    function createElectricGuitar(x, y, z, rotation, color) {
+        const guitarGroup = new THREE.Group();
+        
+        // Guitar body (Les Paul style)
+        const bodyShape = new THREE.Shape();
+        bodyShape.moveTo(0, 0);
+        bodyShape.bezierCurveTo(0.8, 0.2, 1.2, 0.8, 1, 1.5);
+        bodyShape.bezierCurveTo(0.8, 2.2, 0.3, 2.5, 0, 2.3);
+        bodyShape.bezierCurveTo(-0.3, 2.5, -0.8, 2.2, -1, 1.5);
+        bodyShape.bezierCurveTo(-1.2, 0.8, -0.8, 0.2, 0, 0);
+        
+        const bodyGeometry = new THREE.ExtrudeGeometry(bodyShape, { depth: 0.15, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02 });
+        const bodyMaterial = new THREE.MeshStandardMaterial({ color: color, roughness: 0.3, metalness: 0.7 });
+        const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+        body.rotation.x = Math.PI / 2;
+        guitarGroup.add(body);
+        
+        // Neck
+        const neckGeometry = new THREE.BoxGeometry(0.25, 2.5, 0.08);
+        const neckMaterial = new THREE.MeshStandardMaterial({ color: 0x8B4513, roughness: 0.6 });
+        const neck = new THREE.Mesh(neckGeometry, neckMaterial);
+        neck.position.set(0, 1.2, 0.04);
+        neck.rotation.x = -0.1;
+        guitarGroup.add(neck);
+        
+        // Headstock
+        const headGeometry = new THREE.BoxGeometry(0.35, 0.6, 0.06);
+        const head = new THREE.Mesh(headGeometry, neckMaterial);
+        head.position.set(0, 2.5, 0.1);
+        guitarGroup.add(head);
+        
+        // Tuning pegs
+        const pegGeometry = new THREE.CylinderGeometry(0.03, 0.03, 0.15, 8);
+        const pegMaterial = new THREE.MeshStandardMaterial({ color: 0xC0C0C0, metalness: 0.9 });
+        for(let i = 0; i < 6; i++) {
+            const peg = new THREE.Mesh(pegGeometry, pegMaterial);
+            peg.rotation.z = Math.PI / 2;
+            peg.position.set(i < 3 ? -0.25 : 0.25, 2.35 + (i % 3) * 0.12, 0.1);
+            guitarGroup.add(peg);
+        }
+        
+        // Strings
+        const stringMaterial = new THREE.MeshBasicMaterial({ color: 0xFFFFFF });
+        for(let i = 0; i < 6; i++) {
+            const stringGeometry = new THREE.CylinderGeometry(0.003, 0.003, 3.5, 4);
+            const string = new THREE.Mesh(stringGeometry, stringMaterial);
+            string.position.set(-0.08 + i * 0.032, 0.7, 0.12);
+            guitarGroup.add(string);
+        }
+        
+        // Pickups
+        const pickupGeometry = new THREE.BoxGeometry(0.5, 0.15, 0.05);
+        const pickupMaterial = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8 });
+        const pickup1 = new THREE.Mesh(pickupGeometry, pickupMaterial);
+        pickup1.position.set(0, -0.4, 0.1);
+        guitarGroup.add(pickup1);
+        const pickup2 = new THREE.Mesh(pickupGeometry, pickupMaterial);
+        pickup2.position.set(0, -0.8, 0.1);
+        guitarGroup.add(pickup2);
+        
+        // Bridge
+        const bridgeGeometry = new THREE.BoxGeometry(0.4, 0.1, 0.08);
+        const bridge = new THREE.Mesh(bridgeGeometry, pegMaterial);
+        bridge.position.set(0, -1.1, 0.1);
+        guitarGroup.add(bridge);
+        
+        guitarGroup.position.set(x, y, z);
+        guitarGroup.rotation.y = rotation;
+        guitarGroup.castShadow = true;
+        
+        return guitarGroup;
+    }
+    
+    // Add guitars to museum
+    const guitar1 = createElectricGuitar(-5, 2.5, -8, 0.3, 0xff0000); // Red Gibson style
+    scene.add(guitar1);
+    
+    const guitar2 = createElectricGuitar(5, 2.5, -8, -0.3, 0x000080); // Blue Fender style  
+    scene.add(guitar2);
+    
+    const guitar3 = createElectricGuitar(0, 2.5, -12, 0, 0x000000); // Black metal guitar
+    scene.add(guitar3);
+    
+    const guitar4 = createElectricGuitar(-12, 2.5, 0, Math.PI/2, 0xFFD700); // Gold guitar on side wall
+    scene.add(guitar4);
+    
+    const guitar5 = createElectricGuitar(12, 2.5, 0, -Math.PI/2, 0x800080); // Purple guitar on side wall
+    scene.add(guitar5);
+    
+    // Guitar display stands
+    const standGeometry = new THREE.CylinderGeometry(0.3, 0.4, 0.1, 16);
+    const standMaterial = new THREE.MeshStandardMaterial({ color: 0x333333, metalness: 0.5 });
+    const standPositions = [[-5, 0.05, -8], [5, 0.05, -8], [0, 0.05, -12]];
+    standPositions.forEach(pos => {
+        const stand = new THREE.Mesh(standGeometry, standMaterial);
+        stand.position.set(...pos);
+        scene.add(stand);
+    });
+
     // Picture frames on walls
     const frameGeometry = new THREE.BoxGeometry(3, 2, 0.1);
     const frameMaterial = new THREE.MeshStandardMaterial({ color: 0xd4af37, roughness: 0.3, metalness: 0.7 });
@@ -709,6 +812,12 @@
                 child.rotation.y += 0.02;
             }
         });
+        
+        // Animate guitars gently swaying
+        [guitar1, guitar2, guitar3, guitar4, guitar5].forEach((g, i) => {
+            g.rotation.z = Math.sin(time + i) * 0.05;
+            g.position.y = 2.5 + Math.sin(time * 1.5 + i) * 0.1;
+        });
 
         // Animate main light
         mainLight.intensity = 1.5 + Math.sin(time) * 0.2;
@@ -771,7 +880,6 @@
         const piece = board[row][col];
         
         if(selectedSquare) {
-            // Try to move
             const [fromRow, fromCol] = selectedSquare;
             board[row][col] = board[fromRow][fromCol];
             board[fromRow][fromCol] = '';
@@ -791,6 +899,85 @@
     }
     
     renderChessBoard();
+    
+    // AI Chess Players
+    function getValidMoves(row, col, piece) {
+        const moves = [];
+        const isWhite = piece === piece.toUpperCase();
+        
+        // Simple move generation for all pieces
+        for(let r = 0; r < 8; r++) {
+            for(let c = 0; c < 8; c++) {
+                if(r === row && c === col) continue;
+                const target = board[r][c];
+                if(target && (target === target.toUpperCase()) === isWhite) continue;
+                
+                const p = piece.toLowerCase();
+                let valid = false;
+                
+                if(p === 'p') {
+                    const dir = isWhite ? -1 : 1;
+                    if(c === col && r === row + dir && !target) valid = true;
+                    if(c === col && ((isWhite && row === 6) || (!isWhite && row === 1)) && r === row + 2*dir && !target && !board[row+dir][col]) valid = true;
+                    if(Math.abs(c - col) === 1 && r === row + dir && target) valid = true;
+                } else if(p === 'r') {
+                    if(r === row || c === col) valid = true;
+                } else if(p === 'n') {
+                    const dr = Math.abs(r - row), dc = Math.abs(c - col);
+                    if((dr === 2 && dc === 1) || (dr === 1 && dc === 2)) valid = true;
+                } else if(p === 'b') {
+                    if(Math.abs(r - row) === Math.abs(c - col)) valid = true;
+                } else if(p === 'q') {
+                    if(r === row || c === col || Math.abs(r - row) === Math.abs(c - col)) valid = true;
+                } else if(p === 'k') {
+                    if(Math.abs(r - row) <= 1 && Math.abs(c - col) <= 1) valid = true;
+                }
+                
+                if(valid) moves.push({from: [row, col], to: [r, c], capture: !!target});
+            }
+        }
+        return moves;
+    }
+    
+    function getAllMoves(isWhite) {
+        const allMoves = [];
+        for(let r = 0; r < 8; r++) {
+            for(let c = 0; c < 8; c++) {
+                const piece = board[r][c];
+                if(piece && (piece === piece.toUpperCase()) === isWhite) {
+                    allMoves.push(...getValidMoves(r, c, piece));
+                }
+            }
+        }
+        return allMoves;
+    }
+    
+    function aiMove() {
+        const moves = getAllMoves(isWhiteTurn);
+        if(moves.length === 0) return;
+        
+        // Prefer captures
+        const captures = moves.filter(m => m.capture);
+        const move = captures.length > 0 ? captures[Math.floor(Math.random() * captures.length)] : moves[Math.floor(Math.random() * moves.length)];
+        
+        const [fromRow, fromCol] = move.from;
+        const [toRow, toCol] = move.to;
+        
+        // Highlight move
+        const squares = document.querySelectorAll('.chess-square');
+        squares[fromRow * 8 + fromCol].classList.add('selected');
+        
+        setTimeout(() => {
+            board[toRow][toCol] = board[fromRow][fromCol];
+            board[fromRow][fromCol] = '';
+            isWhiteTurn = !isWhiteTurn;
+            document.getElementById('chessInfo').textContent = isWhiteTurn ? '🩸 White\'s Turn 🩸' : '💀 Black\'s Turn 💀';
+            renderChessBoard();
+        }, 500);
+    }
+    
+    // Auto-play chess every 2 seconds
+    setInterval(aiMove, 2000);
 
     // Zombie Elon Riddles
     const riddles = [
