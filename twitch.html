@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code</title>
+<style>
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
@@ -15,11 +16,51 @@
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            overflow: hidden;
         }
         h1 { font-size: 3rem; text-align: center; }
+        
+        .panini {
+            position: fixed;
+            font-size: 4rem;
+            animation: fly 6s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 200, 100, 0.5));
+            z-index: 100;
+        }
+        
+        @keyframes fly {
+            0% {
+                transform: translate(-100px, 50vh) rotate(-15deg);
+            }
+            25% {
+                transform: translate(25vw, 30vh) rotate(10deg);
+            }
+            50% {
+                transform: translate(50vw, 60vh) rotate(-5deg);
+            }
+            75% {
+                transform: translate(75vw, 25vh) rotate(15deg);
+            }
+            100% {
+                transform: translate(110vw, 45vh) rotate(-10deg);
+            }
+        }
+        
+        .panini:nth-child(2) {
+            animation-delay: -2s;
+            font-size: 3rem;
+        }
+        
+        .panini:nth-child(3) {
+            animation-delay: -4s;
+            font-size: 2.5rem;
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="panini">🥪</div>
+<div class="panini">🥪</div>
+<div class="panini">🥪</div>
+<h1>Hello World</h1>
 </body>
 </html>
