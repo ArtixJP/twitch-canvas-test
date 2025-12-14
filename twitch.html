@@ -164,7 +164,23 @@
         width: 200px;
         height: 200px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #ff6b6b 0%, #c44569 50%, #6a0572 100%);
+        background: 
+            radial-gradient(ellipse 15px 12px at 20% 25%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 12px 10px at 35% 60%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 14px 11px at 55% 30%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 10px 13px at 70% 55%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 13px 10px at 45% 75%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 11px 14px at 80% 25%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 12px 9px at 25% 85%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 9px 12px at 65% 80%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 14px 11px at 15% 50%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 10px 13px at 85% 70%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 8px 10px at 50% 50%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 11px 9px at 30% 35%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 13px 11px at 75% 40%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 10px 8px at 40% 15%, #1a1a1a 70%, transparent 71%),
+            radial-gradient(ellipse 9px 11px at 60% 65%, #1a1a1a 70%, transparent 71%),
+            linear-gradient(135deg, #d4a574 0%, #c4956a 30%, #b8865a 60%, #a07550 100%);
         box-shadow: 
             inset -30px -30px 60px rgba(0,0,0,0.5),
             inset 10px 10px 40px rgba(255,255,255,0.2),
@@ -564,7 +580,7 @@
 <div class="timer-bar" id="timerBar"></div>
 <section class="section active" id="space">
 <div class="sun"></div>
-<h1>🌌 Space Explorer</h1>
+<h1>🌌 Space Explorer 🐆</h1>
 <p style="text-align:center; color: rgba(255,255,255,0.7); margin-bottom: 10px; font-size: 0.9rem;">🚀 Featuring Starman in the Tesla Roadster!</p>
 <div class="scene-container">
 <div class="tesla-orbit">
@@ -691,11 +707,11 @@ let dogScore = 0;
 let catchCooldown = 0;
 
 const planetColors = [
-    'linear-gradient(135deg, #ff6b6b 0%, #c44569 50%, #6a0572 100%)',
-    'linear-gradient(135deg, #00ff88 0%, #00b4d8 50%, #0077b6 100%)',
-    'linear-gradient(135deg, #ffd700 0%, #ff8c00 50%, #ff4500 100%)',
-    'linear-gradient(135deg, #9b59b6 0%, #3498db 50%, #1abc9c 100%)',
-    'linear-gradient(135deg, #e74c3c 0%, #9b59b6 50%, #3498db 100%)'
+    'radial-gradient(ellipse 15px 12px at 20% 25%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 12px 10px at 35% 60%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 14px 11px at 55% 30%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 10px 13px at 70% 55%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 13px 10px at 45% 75%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 11px 14px at 80% 25%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 12px 9px at 25% 85%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 9px 12px at 65% 80%, #1a1a1a 70%, transparent 71%), linear-gradient(135deg, #d4a574 0%, #c4956a 30%, #b8865a 60%, #a07550 100%)',
+    'radial-gradient(ellipse 12px 10px at 25% 30%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 14px 12px at 50% 50%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 11px 13px at 75% 35%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 13px 10px at 40% 70%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 10px 12px at 65% 75%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 12px 11px at 20% 65%, #2a2a2a 70%, transparent 71%), linear-gradient(135deg, #e8c89e 0%, #dbb88e 50%, #c9a07a 100%)',
+    'radial-gradient(ellipse 13px 11px at 30% 40%, #0a0a0a 70%, transparent 71%), radial-gradient(ellipse 11px 14px at 60% 25%, #0a0a0a 70%, transparent 71%), radial-gradient(ellipse 14px 10px at 45% 65%, #0a0a0a 70%, transparent 71%), radial-gradient(ellipse 10px 12px at 80% 50%, #0a0a0a 70%, transparent 71%), radial-gradient(ellipse 12px 13px at 15% 75%, #0a0a0a 70%, transparent 71%), linear-gradient(135deg, #f5deb3 0%, #deb887 50%, #c4a065 100%)',
+    'radial-gradient(ellipse 14px 12px at 35% 35%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 12px 11px at 70% 45%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 11px 13px at 25% 70%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 13px 10px at 55% 80%, #1a1a1a 70%, transparent 71%), radial-gradient(ellipse 10px 14px at 85% 30%, #1a1a1a 70%, transparent 71%), linear-gradient(135deg, #cd9b5a 0%, #b8864a 50%, #a07040 100%)',
+    'radial-gradient(ellipse 11px 13px at 40% 30%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 13px 11px at 65% 55%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 12px 14px at 30% 75%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 14px 10px at 75% 70%, #2a2a2a 70%, transparent 71%), radial-gradient(ellipse 10px 12px at 50% 20%, #2a2a2a 70%, transparent 71%), linear-gradient(135deg, #daa06d 0%, #c4956a 50%, #b08050 100%)'
 ];
 
 function updateChase() {
