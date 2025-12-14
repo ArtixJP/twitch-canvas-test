@@ -325,6 +325,54 @@
             50% { opacity: 1; }
         }
         
+        .firework {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: firework-explode 1.5s ease-out forwards;
+        }
+        
+        @keyframes firework-explode {
+            0% { transform: scale(0); opacity: 1; }
+            50% { opacity: 1; }
+            100% { transform: scale(20); opacity: 0; }
+        }
+        
+        .firework-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 1000;
+            animation: particle-fly 1.5s ease-out forwards;
+        }
+        
+        @keyframes particle-fly {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0); }
+        }
+        
+        .fireworks-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            animation: flash-bg 0.5s ease-out;
+        }
+        
+        @keyframes flash-bg {
+            0% { background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.5) 0%, transparent 50%); }
+            100% { background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%); }
+        }
+        
         .final-score {
             display: none;
             text-align: center;
@@ -536,6 +584,57 @@
             return 'Keep trying! History is tricky!';
         }
         
+        function createFireworks() {
+            const colors = ['#ffd700', '#ff6b6b', '#4ecdc4', '#ff00ff', '#00ff00', '#00bfff', '#ff4500', '#9400d3'];
+            const overlay = document.createElement('div');
+            overlay.className = 'fireworks-overlay';
+            document.body.appendChild(overlay);
+            setTimeout(() => overlay.remove(), 3000);
+            
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * window.innerWidth;
+                    const y = Math.random() * window.innerHeight * 0.6;
+                    createFireworkBurst(x, y, colors);
+                }, i * 200);
+            }
+        }
+        
+        function createFireworkBurst(x, y, colors) {
+            const particleCount = 30;
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.left = x + 'px';
+                particle.style.top = y + 'px';
+                particle.style.backgroundColor = color;
+                particle.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                
+                const angle = (i / particleCount) * Math.PI * 2;
+                const velocity = 100 + Math.random() * 100;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                particle.style.setProperty('--tx', tx + 'px');
+                particle.style.setProperty('--ty', ty + 'px');
+                
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1500);
+            }
+            
+            // Center glow
+            const glow = document.createElement('div');
+            glow.className = 'firework';
+            glow.style.left = x + 'px';
+            glow.style.top = y + 'px';
+            glow.style.backgroundColor = color;
+            glow.style.boxShadow = `0 0 30px ${color}, 0 0 60px ${color}`;
+            document.body.appendChild(glow);
+            setTimeout(() => glow.remove(), 1500);
+        }
+        
         function formatYear(year) {
             if (year < 0) return Math.abs(year) + ' BC';
             return year.toString();
@@ -635,6 +734,11 @@
                 pointsEarned.textContent = `+${points} points`;
                 
                 resultPanel.className = 'result-panel show ' + getResultClass(points);
+                
+                // Launch fireworks if perfect score!
+                if (points === 1000) {
+                    createFireworks();
+                }
             }, 2000);
         }
         
