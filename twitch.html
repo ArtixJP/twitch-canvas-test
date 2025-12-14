@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Who Wants to Be a Champion?</title>
+<title>🎯 Date Guesser - Historical Events</title>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -13,28 +13,27 @@
             min-height: 100vh; 
             background: radial-gradient(ellipse at center, #1a0a30 0%, #0a0a1a 100%);
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
         }
         
-        .stage {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: 
-                radial-gradient(circle at 50% 30%, rgba(100, 50, 200, 0.3) 0%, transparent 50%),
-                radial-gradient(circle at 20% 80%, rgba(0, 100, 200, 0.2) 0%, transparent 30%),
-                radial-gradient(circle at 80% 80%, rgba(0, 100, 200, 0.2) 0%, transparent 30%);
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         
         .title {
             text-align: center;
-            padding-top: 20px;
+            padding: 30px 0;
             font-size: 2.5rem;
-            background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #ffd700);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            text-shadow: 0 0 30px rgba(255, 200, 0, 0.5);
             animation: glow 2s ease-in-out infinite;
         }
         
@@ -43,275 +42,231 @@
             50% { filter: brightness(1.3); }
         }
         
-        .contestants {
+        .score-panel {
             display: flex;
-            justify-content: space-around;
-            align-items: flex-end;
-            padding: 0 50px;
-            position: absolute;
-            bottom: 50px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .score-box {
+            background: linear-gradient(135deg, rgba(100, 50, 200, 0.3), rgba(50, 100, 200, 0.3));
+            border: 2px solid #ffd700;
+            border-radius: 15px;
+            padding: 15px 30px;
+            text-align: center;
+        }
+        
+        .score-label {
+            font-size: 0.9rem;
+            color: #aaa;
+            letter-spacing: 2px;
+        }
+        
+        .score-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+        
+        .game-area {
+            background: linear-gradient(135deg, #1a1a4a 0%, #2a2a6a 100%);
+            border: 3px solid #ffd700;
+            border-radius: 25px;
+            padding: 40px;
             width: 100%;
+            max-width: 600px;
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.2);
+            animation: float 4s ease-in-out infinite;
         }
-        
-        .contestant {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            animation: float 3s ease-in-out infinite;
-        }
-        
-        .contestant:nth-child(1) { animation-delay: 0s; }
-        .contestant:nth-child(2) { animation-delay: 0.5s; }
-        .contestant:nth-child(3) { animation-delay: 1s; }
-        .contestant:nth-child(4) { animation-delay: 1.5s; }
         
         @keyframes float {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-10px); }
         }
         
-        .character {
-            width: 80px;
-            height: 120px;
-            position: relative;
-            cursor: pointer;
-            transition: transform 0.3s;
+        .event-label {
+            color: #ffd700;
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-align: center;
         }
         
-        .character:hover {
-            transform: scale(1.1);
-        }
-        
-        .head {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: blink 4s infinite;
-        }
-        
-        .eyes {
-            position: absolute;
-            top: 18px;
-            width: 100%;
+        .event-text {
+            font-size: 1.5rem;
+            text-align: center;
+            line-height: 1.5;
+            margin-bottom: 30px;
+            min-height: 80px;
             display: flex;
+            align-items: center;
             justify-content: center;
-            gap: 10px;
         }
         
-        .eye {
-            width: 8px;
-            height: 8px;
-            background: #333;
-            border-radius: 50%;
-            animation: eyeMove 3s ease-in-out infinite;
-        }
-        
-        @keyframes eyeMove {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(2px); }
-            75% { transform: translateX(-2px); }
-        }
-        
-        .mouth {
-            position: absolute;
-            top: 32px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15px;
-            height: 8px;
-            border-bottom: 3px solid #333;
-            border-radius: 0 0 10px 10px;
-        }
-        
-        .body {
-            width: 40px;
-            height: 50px;
-            position: absolute;
-            top: 45px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-radius: 10px 10px 5px 5px;
-        }
-        
-        .arms {
-            position: absolute;
-            top: 50px;
-            width: 100%;
-        }
-        
-        .arm {
-            width: 12px;
-            height: 35px;
-            position: absolute;
-            border-radius: 6px;
-            animation: wave 2s ease-in-out infinite;
-        }
-        
-        .arm.left { left: 8px; transform-origin: top center; }
-        .arm.right { right: 8px; transform-origin: top center; animation-delay: 1s; }
-        
-        @keyframes wave {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(15deg); }
-        }
-        
-        .podium {
-            width: 100px;
-            height: 80px;
-            background: linear-gradient(180deg, #2a2a5a 0%, #1a1a3a 100%);
-            border-radius: 10px 10px 0 0;
-            border: 3px solid #4a4a8a;
+        .input-section {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            margin-top: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            gap: 15px;
         }
         
-        .score {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #ffd700;
-            text-shadow: 0 0 10px rgba(255, 200, 0, 0.5);
-        }
-        
-        .name {
-            font-size: 0.8rem;
-            color: #aaa;
-            margin-top: 5px;
-        }
-        
-        /* Character colors */
-        .contestant:nth-child(1) .head { background: #ffcc99; }
-        .contestant:nth-child(1) .body { background: #e74c3c; }
-        .contestant:nth-child(1) .arm { background: #e74c3c; }
-        
-        .contestant:nth-child(2) .head { background: #8d6e63; }
-        .contestant:nth-child(2) .body { background: #3498db; }
-        .contestant:nth-child(2) .arm { background: #3498db; }
-        
-        .contestant:nth-child(3) .head { background: #ffe0bd; }
-        .contestant:nth-child(3) .body { background: #2ecc71; }
-        .contestant:nth-child(3) .arm { background: #2ecc71; }
-        
-        .contestant:nth-child(4) .head { background: #ffdbac; }
-        .contestant:nth-child(4) .body { background: #9b59b6; }
-        .contestant:nth-child(4) .arm { background: #9b59b6; }
-        
-        .spotlight {
-            position: absolute;
+        .date-input {
             width: 200px;
-            height: 400px;
-            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
-            top: 0;
-            animation: spotlightMove 8s ease-in-out infinite;
-        }
-        
-        @keyframes spotlightMove {
-            0%, 100% { left: 10%; }
-            50% { left: 70%; }
-        }
-        
-        .stars {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-        
-        .question-box {
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #1a1a4a 0%, #2a2a6a 100%);
-            border: 3px solid #ffd700;
-            border-radius: 20px;
-            padding: 25px 40px;
-            min-width: 500px;
-            max-width: 550px;
+            padding: 15px 20px;
+            font-size: 1.5rem;
             text-align: center;
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.3), inset 0 0 30px rgba(0,0,0,0.3);
-            animation: questionPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes questionPulse {
-            0%, 100% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.3), inset 0 0 30px rgba(0,0,0,0.3); }
-            50% { box-shadow: 0 0 60px rgba(255, 215, 0, 0.5), inset 0 0 30px rgba(0,0,0,0.3); }
-        }
-        
-        .question-label {
-            font-size: 0.9rem;
-            color: #ffd700;
-            letter-spacing: 3px;
-            margin-bottom: 10px;
-        }
-        
-        .question-text {
-            font-size: 1.4rem;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 15px;
             color: white;
-            line-height: 1.4;
-            min-height: 50px;
-            animation: fadeIn 0.5s ease-out;
+            outline: none;
+            transition: all 0.3s;
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .date-input:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
         }
         
-        .answer-box {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(46, 204, 113, 0.2);
-            border: 2px solid #2ecc71;
-            border-radius: 10px;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: all 0.3s ease;
+        .date-input::placeholder {
+            color: #666;
         }
         
-        .answer-box.show {
-            opacity: 1;
-            transform: scale(1);
+        .hint-text {
+            color: #888;
+            font-size: 0.85rem;
         }
         
-        .answer-label {
-            color: #2ecc71;
-            font-size: 0.8rem;
+        .submit-btn {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1a0a30;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
             letter-spacing: 2px;
         }
         
-        .answer-text {
+        .submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.5);
+        }
+        
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result-panel {
+            margin-top: 30px;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            display: none;
+            animation: popIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes popIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        
+        .result-panel.show {
             display: block;
-            margin-top: 5px;
-            font-size: 1.3rem;
-            color: #2ecc71;
+        }
+        
+        .result-panel.excellent {
+            background: rgba(46, 204, 113, 0.3);
+            border: 2px solid #2ecc71;
+        }
+        
+        .result-panel.good {
+            background: rgba(52, 152, 219, 0.3);
+            border: 2px solid #3498db;
+        }
+        
+        .result-panel.ok {
+            background: rgba(241, 196, 15, 0.3);
+            border: 2px solid #f1c40f;
+        }
+        
+        .result-panel.poor {
+            background: rgba(231, 76, 60, 0.3);
+            border: 2px solid #e74c3c;
+        }
+        
+        .result-emoji {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-text {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .result-details {
+            color: #aaa;
+            font-size: 0.9rem;
+        }
+        
+        .points-earned {
+            font-size: 2rem;
             font-weight: bold;
+            color: #ffd700;
+            margin-top: 15px;
         }
         
-        .timer-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 4px;
+        .next-btn {
+            margin-top: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            padding: 10px 30px;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .next-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
             background: linear-gradient(90deg, #ffd700, #ff6b6b);
-            border-radius: 0 0 17px 17px;
-            animation: timerShrink 3s linear infinite;
+            border-radius: 4px;
+            transition: width 0.5s;
         }
         
-        @keyframes timerShrink {
-            from { width: 100%; }
-            to { width: 0%; }
+        .question-counter {
+            color: #888;
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
         
-        .timer-bar {
-            animation: timerShrink 8s linear infinite;
+        .stars {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
         }
         
         .star {
@@ -323,690 +278,284 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
-        .twitch-chat {
-            position: absolute;
-            top: 70px;
-            left: 20px;
-            width: 300px;
-            max-height: calc(100vh - 150px);
-            background: linear-gradient(135deg, rgba(26, 26, 74, 0.95) 0%, rgba(42, 42, 106, 0.95) 100%);
-            border: 2px solid rgba(145, 70, 255, 0.8);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 0 30px rgba(145, 70, 255, 0.3);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .chat-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(145, 70, 255, 0.3);
-            margin-bottom: 10px;
-        }
-        
-        .chat-header img {
-            width: 24px;
-            height: 24px;
-        }
-        
-        .chat-title {
-            color: #9146FF;
-            font-size: 1rem;
-            font-weight: bold;
-        }
-        
-        .chat-status {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            border-radius: 10px;
-            margin-left: auto;
-        }
-        
-        .chat-status.connected {
-            background: rgba(46, 204, 113, 0.3);
-            color: #2ecc71;
-        }
-        
-        .chat-status.disconnected {
-            background: rgba(231, 76, 60, 0.3);
-            color: #e74c3c;
-        }
-        
-        .chat-messages {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            max-height: 300px;
-        }
-        
-        .chat-messages::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .chat-messages::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.2);
-            border-radius: 3px;
-        }
-        
-        .chat-messages::-webkit-scrollbar-thumb {
-            background: #9146FF;
-            border-radius: 3px;
-        }
-        
-        .chat-message {
-            font-size: 0.85rem;
-            padding: 5px 8px;
-            background: rgba(0,0,0,0.2);
-            border-radius: 8px;
-            animation: messageSlide 0.3s ease-out;
-        }
-        
-        @keyframes messageSlide {
-            from { opacity: 0; transform: translateX(-20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .chat-message .username {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-        
-        .chat-message .text {
-            color: #ddd;
-        }
-        
-        .chat-message.correct {
-            background: rgba(46, 204, 113, 0.3);
-            border: 1px solid #2ecc71;
-        }
-        
-        .chat-message.correct .text {
-            color: #2ecc71;
-        }
-        
-        .winner-announcement {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0);
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            color: #1a0a30;
-            padding: 30px 50px;
-            border-radius: 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            text-align: center;
-            z-index: 1000;
-            box-shadow: 0 0 60px rgba(255, 215, 0, 0.8);
-            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        
-        .winner-announcement.show {
-            transform: translate(-50%, -50%) scale(1);
-        }
-        
-        .winner-announcement .winner-name {
-            font-size: 2rem;
-            color: #9146FF;
-            display: block;
-            margin-top: 10px;
-        }
-        
-        .channel-input {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid rgba(145, 70, 255, 0.3);
-        }
-        
-        .channel-input input {
-            flex: 1;
-            background: rgba(0,0,0,0.3);
-            border: 1px solid rgba(145, 70, 255, 0.5);
-            border-radius: 8px;
-            padding: 8px 12px;
-            color: white;
-            font-size: 0.85rem;
-        }
-        
-        .channel-input input::placeholder {
-            color: #888;
-        }
-        
-        .channel-input button {
-            background: #9146FF;
-            border: none;
-            border-radius: 8px;
-            padding: 8px 15px;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        
-        .channel-input button:hover {
-            background: #7c3aed;
-        }
-        
-        .themes-panel {
-            position: absolute;
-            top: 70px;
-            right: 20px;
-            width: 280px;
-            max-height: calc(100vh - 100px);
-            overflow-y: auto;
-            background: linear-gradient(135deg, rgba(26, 26, 74, 0.95) 0%, rgba(42, 42, 106, 0.95) 100%);
-            border: 2px solid rgba(255, 215, 0, 0.5);
-            border-radius: 15px;
-            padding: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-            animation: slideIn 0.5s ease-out;
-            z-index: 100;
-        }
-        
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(50px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-        
-        .themes-panel::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .themes-panel::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.2);
-            border-radius: 3px;
-        }
-        
-        .themes-panel::-webkit-scrollbar-thumb {
-            background: #ffd700;
-            border-radius: 3px;
-        }
-        
-        .themes-title {
-            text-align: center;
-            font-size: 1.2rem;
-            color: #ffd700;
-            margin-bottom: 15px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
-        }
-        
-        .themes-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .theme-category {
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-            padding: 10px;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-        
-        .theme-category:hover {
-            transform: translateX(-5px);
-            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-        }
-        
-        .theme-category h3 {
-            font-size: 0.9rem;
-            color: #fff;
-            margin-bottom: 8px;
-        }
-        
-        .theme-category ul {
-            list-style: none;
-            padding-left: 10px;
-        }
-        
-        .theme-category li {
-            font-size: 0.75rem;
-            color: #aaa;
-            padding: 3px 0;
-            position: relative;
-            padding-left: 12px;
-            transition: color 0.2s;
-        }
-        
-        .theme-category li::before {
-            content: '▸';
-            position: absolute;
-            left: 0;
-            color: #ffd700;
-            opacity: 0.5;
-        }
-        
-        .theme-category li:hover {
-            color: #ffd700;
-        }
-        
         @keyframes twinkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.5); }
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        
+        .final-score {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .final-score.show {
+            display: block;
+        }
+        
+        .final-title {
+            font-size: 2rem;
+            color: #ffd700;
+            margin-bottom: 20px;
+        }
+        
+        .final-points {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, #ffd700, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .restart-btn {
+            margin-top: 30px;
+            background: linear-gradient(135deg, #9b59b6, #3498db);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .restart-btn:hover {
+            transform: scale(1.05);
         }
     </style>
 </head>
 <body>
-<div class="stage">
-<div class="spotlight"></div>
 <div class="stars">
 <div class="star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
 <div class="star" style="top: 15%; left: 80%; animation-delay: 0.5s;"></div>
 <div class="star" style="top: 5%; left: 50%; animation-delay: 1s;"></div>
 <div class="star" style="top: 25%; left: 30%; animation-delay: 1.5s;"></div>
 <div class="star" style="top: 8%; left: 70%; animation-delay: 2s;"></div>
-<div class="star" style="top: 20%; left: 10%; animation-delay: 0.3s;"></div>
-<div class="star" style="top: 12%; left: 90%; animation-delay: 0.8s;"></div>
+<div class="star" style="top: 60%; left: 10%; animation-delay: 0.3s;"></div>
+<div class="star" style="top: 80%; left: 90%; animation-delay: 0.8s;"></div>
+<div class="star" style="top: 45%; left: 5%; animation-delay: 1.2s;"></div>
+<div class="star" style="top: 70%; left: 75%; animation-delay: 0.6s;"></div>
 </div>
-<h1 class="title">🏆 Who Wants to Be a Champion? 🏆</h1>
-<div class="twitch-chat">
-<div class="chat-header">
-<svg fill="#9146FF" height="24" viewbox="0 0 24 24" width="24">
-<path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"></path>
-</svg>
-<span class="chat-title">Twitch Chat</span>
-<span class="chat-status disconnected" id="chat-status">Offline</span>
+<div class="container">
+<h1 class="title">🎯 Date Guesser 📅</h1>
+<div class="score-panel">
+<div class="score-box">
+<div class="score-label">TOTAL SCORE</div>
+<div class="score-value" id="total-score">0</div>
 </div>
-<div class="chat-messages" id="chat-messages">
-<div class="chat-message">
-<span class="text">Enter a channel name to connect...</span>
-</div>
-</div>
-<div class="channel-input">
-<input id="channel-name" placeholder="Channel name" type="text" value=""/>
-<button id="connect-btn">Connect</button>
+<div class="score-box">
+<div class="score-label">BEST GUESS</div>
+<div class="score-value" id="best-score">0</div>
 </div>
 </div>
-<div class="winner-announcement" id="winner-announcement">
-            🎉 CORRECT ANSWER! 🎉
-            <span class="winner-name" id="winner-name"></span>
+<div class="game-area" id="game-area">
+<div class="event-label">📜 WHEN DID THIS HAPPEN?</div>
+<div class="event-text" id="event-text">Loading...</div>
+<div class="input-section">
+<input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Year" type="number"/>
+<span class="hint-text">Enter the year (e.g., 1969)</span>
+<button class="submit-btn" id="submit-btn">Guess!</button>
 </div>
-<div class="themes-panel">
-<h2 class="themes-title">📜 Historical Themes</h2>
-<div class="themes-list">
-<div class="theme-category">
-<h3>🏛️ Ancient Civilizations</h3>
-<ul>
-<li>Ancient Egypt &amp; Pharaohs</li>
-<li>Greek Mythology &amp; History</li>
-<li>Roman Empire</li>
-<li>Mesopotamia &amp; Babylon</li>
-<li>Ancient China</li>
-</ul>
+<div class="result-panel" id="result-panel">
+<div class="result-emoji" id="result-emoji">🎉</div>
+<div class="result-text" id="result-text"></div>
+<div class="result-details" id="result-details"></div>
+<div class="points-earned" id="points-earned">+0 points</div>
+<button class="next-btn" id="next-btn">Next Event →</button>
 </div>
-<div class="theme-category">
-<h3>⚔️ Medieval Era</h3>
-<ul>
-<li>Knights &amp; Crusades</li>
-<li>Vikings &amp; Norse History</li>
-<li>Feudal Japan &amp; Samurai</li>
-<li>Byzantine Empire</li>
-<li>Black Death &amp; Plagues</li>
-</ul>
+<div class="progress-bar">
+<div class="progress-fill" id="progress-fill" style="width: 0%"></div>
 </div>
-<div class="theme-category">
-<h3>🎨 Renaissance &amp; Enlightenment</h3>
-<ul>
-<li>Renaissance Artists</li>
-<li>Scientific Revolution</li>
-<li>Age of Exploration</li>
-<li>Reformation</li>
-<li>Philosophers &amp; Thinkers</li>
-</ul>
+<div class="question-counter" id="question-counter">Question 1 / 10</div>
 </div>
-<div class="theme-category">
-<h3>🏰 Modern History</h3>
-<ul>
-<li>French Revolution</li>
-<li>American Revolution</li>
-<li>Industrial Revolution</li>
-<li>Colonial Era</li>
-<li>Napoleon &amp; His Wars</li>
-</ul>
-</div>
-<div class="theme-category">
-<h3>💥 20th Century</h3>
-<ul>
-<li>World War I</li>
-<li>World War II</li>
-<li>Cold War Era</li>
-<li>Space Race</li>
-<li>Civil Rights Movements</li>
-</ul>
-</div>
-<div class="theme-category">
-<h3>👑 Famous Figures</h3>
-<ul>
-<li>Kings &amp; Queens</li>
-<li>Military Leaders</li>
-<li>Inventors &amp; Scientists</li>
-<li>Explorers &amp; Adventurers</li>
-<li>Revolutionary Leaders</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="question-box">
-<div class="timer-bar"></div>
-<div class="question-label">QUESTION:</div>
-<div class="question-text" id="question">Loading...</div>
-<div class="answer-box" id="answer-box">
-<span class="answer-label">ANSWER:</span>
-<span class="answer-text" id="answer"></span>
-</div>
-</div>
-<div class="contestants">
-<div class="contestant">
-<div class="character">
-<div class="head">
-<div class="eyes">
-<div class="eye"></div>
-<div class="eye"></div>
-</div>
-<div class="mouth"></div>
-</div>
-<div class="body"></div>
-<div class="arms">
-<div class="arm left"></div>
-<div class="arm right"></div>
-</div>
-</div>
-<div class="podium">
-<div class="score">2500€</div>
-<div class="name">Alex</div>
-</div>
-</div>
-<div class="contestant">
-<div class="character">
-<div class="head">
-<div class="eyes">
-<div class="eye"></div>
-<div class="eye"></div>
-</div>
-<div class="mouth"></div>
-</div>
-<div class="body"></div>
-<div class="arms">
-<div class="arm left"></div>
-<div class="arm right"></div>
-</div>
-</div>
-<div class="podium">
-<div class="score">3000€</div>
-<div class="name">Marie</div>
-</div>
-</div>
-<div class="contestant">
-<div class="character">
-<div class="head">
-<div class="eyes">
-<div class="eye"></div>
-<div class="eye"></div>
-</div>
-<div class="mouth"></div>
-</div>
-<div class="body"></div>
-<div class="arms">
-<div class="arm left"></div>
-<div class="arm right"></div>
-</div>
-</div>
-<div class="podium">
-<div class="score">6000€</div>
-<div class="name">Lucas</div>
-</div>
-</div>
-<div class="contestant">
-<div class="character">
-<div class="head">
-<div class="eyes">
-<div class="eye"></div>
-<div class="eye"></div>
-</div>
-<div class="mouth"></div>
-</div>
-<div class="body"></div>
-<div class="arms">
-<div class="arm left"></div>
-<div class="arm right"></div>
-</div>
-</div>
-<div class="podium">
-<div class="score">12000€</div>
-<div class="name">Sophie</div>
-</div>
-</div>
+<div class="final-score" id="final-score">
+<div class="final-title">🏆 Game Complete! 🏆</div>
+<div class="final-points" id="final-points">0</div>
+<div style="color: #aaa; margin-top: 10px;">Total Points</div>
+<button class="restart-btn" id="restart-btn">Play Again 🔄</button>
 </div>
 </div>
 <script>
-        const triviaQuestions = [
-            { q: "What planet is known as the Red Planet?", a: "Mars" },
-            { q: "How many continents are there on Earth?", a: "7" },
-            { q: "What is the largest mammal in the world?", a: "Blue Whale" },
-            { q: "In what year did World War II end?", a: "1945" },
-            { q: "What is the chemical symbol for gold?", a: "Au" },
-            { q: "Who painted the Mona Lisa?", a: "Leonardo da Vinci" },
-            { q: "What is the capital of Japan?", a: "Tokyo" },
-            { q: "How many legs does a spider have?", a: "8" },
-            { q: "What is the largest ocean on Earth?", a: "Pacific Ocean" },
-            { q: "Who wrote Romeo and Juliet?", a: "William Shakespeare" },
-            { q: "What is the speed of light in km/s?", a: "299,792 km/s" },
-            { q: "What gas do plants absorb from the air?", a: "Carbon Dioxide (CO2)" },
-            { q: "How many bones are in the human body?", a: "206" },
-            { q: "What is the smallest country in the world?", a: "Vatican City" },
-            { q: "Who discovered penicillin?", a: "Alexander Fleming" },
-            { q: "What is the hardest natural substance?", a: "Diamond" },
-            { q: "How many colors are in a rainbow?", a: "7" },
-            { q: "What is the largest desert in the world?", a: "Sahara Desert" },
-            { q: "Who invented the telephone?", a: "Alexander Graham Bell" },
-            { q: "What is H2O commonly known as?", a: "Water" }
+        const historicalEvents = [
+            { event: "First Moon Landing (Apollo 11)", year: 1969 },
+            { event: "Fall of the Berlin Wall", year: 1989 },
+            { event: "Christopher Columbus reaches America", year: 1492 },
+            { event: "French Revolution begins", year: 1789 },
+            { event: "World War I starts", year: 1914 },
+            { event: "World War II ends", year: 1945 },
+            { event: "Declaration of Independence (USA)", year: 1776 },
+            { event: "Titanic sinks", year: 1912 },
+            { event: "First iPhone released", year: 2007 },
+            { event: "Martin Luther King Jr.'s 'I Have a Dream' speech", year: 1963 },
+            { event: "Construction of the Great Wall of China begins", year: -221 },
+            { event: "Gutenberg invents the printing press", year: 1440 },
+            { event: "Napoleon's defeat at Waterloo", year: 1815 },
+            { event: "First powered flight by Wright Brothers", year: 1903 },
+            { event: "Black Death reaches Europe", year: 1347 },
+            { event: "Signing of Magna Carta", year: 1215 },
+            { event: "Fall of the Roman Empire", year: 476 },
+            { event: "Einstein publishes Theory of Relativity", year: 1905 },
+            { event: "Chernobyl disaster", year: 1986 },
+            { event: "Nelson Mandela released from prison", year: 1990 },
+            { event: "First Olympic Games in modern era (Athens)", year: 1896 },
+            { event: "Assassination of Julius Caesar", year: -44 },
+            { event: "Construction of Eiffel Tower completed", year: 1889 },
+            { event: "Russian Revolution", year: 1917 },
+            { event: "Discovery of Penicillin", year: 1928 }
         ];
         
-        let currentIndex = -1;
-        const questionEl = document.getElementById('question');
-        const answerEl = document.getElementById('answer');
-        const answerBox = document.getElementById('answer-box');
+        let currentEvent = null;
+        let totalScore = 0;
+        let bestScore = 0;
+        let questionNumber = 0;
+        let maxQuestions = 10;
+        let usedEvents = [];
         
-        function showNewQuestion() {
-            // Hide answer
-            answerBox.classList.remove('show');
-            
-            // Get random question (different from current)
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * triviaQuestions.length);
-            } while (newIndex === currentIndex && triviaQuestions.length > 1);
-            currentIndex = newIndex;
-            
-            const trivia = triviaQuestions[currentIndex];
-            questionEl.textContent = trivia.q;
-            questionEl.style.animation = 'none';
-            questionEl.offsetHeight; // Trigger reflow
-            questionEl.style.animation = 'fadeIn 0.5s ease-out';
-            answerEl.textContent = trivia.a;
-            
-            // Show answer after 2 seconds
-            setTimeout(() => {
-                answerBox.classList.add('show');
-            }, 2000);
-        }
+        const eventText = document.getElementById('event-text');
+        const dateInput = document.getElementById('date-input');
+        const submitBtn = document.getElementById('submit-btn');
+        const resultPanel = document.getElementById('result-panel');
+        const resultEmoji = document.getElementById('result-emoji');
+        const resultText = document.getElementById('result-text');
+        const resultDetails = document.getElementById('result-details');
+        const pointsEarned = document.getElementById('points-earned');
+        const nextBtn = document.getElementById('next-btn');
+        const totalScoreEl = document.getElementById('total-score');
+        const bestScoreEl = document.getElementById('best-score');
+        const progressFill = document.getElementById('progress-fill');
+        const questionCounter = document.getElementById('question-counter');
+        const gameArea = document.getElementById('game-area');
+        const finalScore = document.getElementById('final-score');
+        const finalPoints = document.getElementById('final-points');
+        const restartBtn = document.getElementById('restart-btn');
         
-        // Twitch Chat Integration
-        let twitchSocket = null;
-        let currentAnswer = '';
-        let answerRevealed = false;
-        let questionTimeout = null;
-        
-        const chatMessages = document.getElementById('chat-messages');
-        const chatStatus = document.getElementById('chat-status');
-        const channelInput = document.getElementById('channel-name');
-        const connectBtn = document.getElementById('connect-btn');
-        const winnerAnnouncement = document.getElementById('winner-announcement');
-        const winnerName = document.getElementById('winner-name');
-        
-        function addChatMessage(username, text, isCorrect = false, color = '#9146FF') {
-            const msgEl = document.createElement('div');
-            msgEl.className = 'chat-message' + (isCorrect ? ' correct' : '');
-            msgEl.innerHTML = `<span class="username" style="color: ${color}">${username}:</span><span class="text">${text}</span>`;
-            chatMessages.appendChild(msgEl);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-            
-            // Keep only last 50 messages
-            while (chatMessages.children.length > 50) {
-                chatMessages.removeChild(chatMessages.firstChild);
+        function getRandomEvent() {
+            const available = historicalEvents.filter(e => !usedEvents.includes(e.event));
+            if (available.length === 0) {
+                usedEvents = [];
+                return historicalEvents[Math.floor(Math.random() * historicalEvents.length)];
             }
+            const event = available[Math.floor(Math.random() * available.length)];
+            usedEvents.push(event.event);
+            return event;
         }
         
-        function normalizeAnswer(str) {
-            return str.toLowerCase()
-                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
-                .replace(/[^a-z0-9]/g, '')
-                .trim();
+        function calculatePoints(guess, actual) {
+            const difference = Math.abs(guess - actual);
+            if (difference === 0) return 1000;
+            if (difference <= 1) return 900;
+            if (difference <= 5) return 700;
+            if (difference <= 10) return 500;
+            if (difference <= 25) return 300;
+            if (difference <= 50) return 150;
+            if (difference <= 100) return 75;
+            if (difference <= 200) return 25;
+            return 10;
         }
         
-        function checkAnswer(username, message) {
-            if (answerRevealed) return false;
-            
-            const normalizedMessage = normalizeAnswer(message);
-            const normalizedAnswer = normalizeAnswer(currentAnswer);
-            
-            // Check if message contains the answer
-            if (normalizedMessage.includes(normalizedAnswer) || normalizedAnswer.includes(normalizedMessage)) {
-                if (normalizedMessage.length >= 2) {
-                    return true;
-                }
-            }
-            return false;
+        function getResultClass(points) {
+            if (points >= 700) return 'excellent';
+            if (points >= 400) return 'good';
+            if (points >= 150) return 'ok';
+            return 'poor';
         }
         
-        function showWinner(username) {
-            answerRevealed = true;
-            winnerName.textContent = username;
-            winnerAnnouncement.classList.add('show');
-            answerBox.classList.add('show');
-            
-            setTimeout(() => {
-                winnerAnnouncement.classList.remove('show');
-            }, 2500);
+        function getResultEmoji(points) {
+            if (points >= 900) return '🎯';
+            if (points >= 700) return '🔥';
+            if (points >= 400) return '👍';
+            if (points >= 150) return '😅';
+            return '😬';
         }
         
-        function connectToTwitch(channel) {
-            if (twitchSocket) {
-                twitchSocket.close();
+        function getResultMessage(points, difference) {
+            if (points === 1000) return 'PERFECT! Exact year!';
+            if (points >= 900) return 'INCREDIBLE! So close!';
+            if (points >= 700) return 'EXCELLENT! Great guess!';
+            if (points >= 400) return 'GOOD! Not bad at all!';
+            if (points >= 150) return 'OK! You were in the ballpark';
+            return 'Keep trying! History is tricky!';
+        }
+        
+        function formatYear(year) {
+            if (year < 0) return Math.abs(year) + ' BC';
+            return year.toString();
+        }
+        
+        function loadNewEvent() {
+            questionNumber++;
+            if (questionNumber > maxQuestions) {
+                showFinalScore();
+                return;
             }
             
-            channel = channel.toLowerCase().replace('#', '');
-            if (!channel) return;
-            
-            chatMessages.innerHTML = '<div class="chat-message"><span class="text">Connecting to #' + channel + '...</span></div>';
-            
-            twitchSocket = new WebSocket('wss://irc-ws.chat.twitch.tv:443');
-            
-            twitchSocket.onopen = () => {
-                twitchSocket.send('CAP REQ :twitch.tv/tags');
-                twitchSocket.send('PASS SCHMOOPIIE');
-                twitchSocket.send('NICK justinfan' + Math.floor(Math.random() * 99999));
-                twitchSocket.send('JOIN #' + channel);
-            };
-            
-            twitchSocket.onmessage = (event) => {
-                const messages = event.data.split('\r\n');
-                messages.forEach(msg => {
-                    if (msg.includes('PING')) {
-                        twitchSocket.send('PONG :tmi.twitch.tv');
-                        return;
-                    }
-                    
-                    if (msg.includes('JOIN')) {
-                        chatStatus.textContent = 'Live';
-                        chatStatus.className = 'chat-status connected';
-                        addChatMessage('System', 'Connected to #' + channel + '! Type your answers!', false, '#2ecc71');
-                    }
-                    
-                    if (msg.includes('PRIVMSG')) {
-                        // Parse username and message
-                        const colorMatch = msg.match(/color=(#[A-Fa-f0-9]{6})/);
-                        const color = colorMatch ? colorMatch[1] : '#9146FF';
-                        
-                        const usernameMatch = msg.match(/display-name=([^;]+)/);
-                        const username = usernameMatch ? usernameMatch[1] : 'Anonymous';
-                        
-                        const textMatch = msg.match(/PRIVMSG[^:]+:(.+)$/);
-                        const text = textMatch ? textMatch[1].trim() : '';
-                        
-                        if (text) {
-                            const isCorrect = checkAnswer(username, text);
-                            addChatMessage(username, text, isCorrect, color);
-                            
-                            if (isCorrect) {
-                                showWinner(username);
-                            }
-                        }
-                    }
-                });
-            };
-            
-            twitchSocket.onclose = () => {
-                chatStatus.textContent = 'Offline';
-                chatStatus.className = 'chat-status disconnected';
-            };
-            
-            twitchSocket.onerror = () => {
-                addChatMessage('System', 'Connection error. Try again.', false, '#e74c3c');
-            };
+            currentEvent = getRandomEvent();
+            eventText.textContent = currentEvent.event;
+            dateInput.value = '';
+            dateInput.disabled = false;
+            submitBtn.disabled = false;
+            resultPanel.classList.remove('show', 'excellent', 'good', 'ok', 'poor');
+            progressFill.style.width = ((questionNumber - 1) / maxQuestions * 100) + '%';
+            questionCounter.textContent = `Question ${questionNumber} / ${maxQuestions}`;
+            dateInput.focus();
         }
         
-        connectBtn.addEventListener('click', () => {
-            connectToTwitch(channelInput.value);
+        function submitGuess() {
+            const guess = parseInt(dateInput.value);
+            if (isNaN(guess)) {
+                dateInput.style.borderColor = '#e74c3c';
+                setTimeout(() => dateInput.style.borderColor = 'rgba(255, 215, 0, 0.5)', 500);
+                return;
+            }
+            
+            const actual = currentEvent.year;
+            const difference = Math.abs(guess - actual);
+            const points = calculatePoints(guess, actual);
+            
+            totalScore += points;
+            if (points > bestScore) bestScore = points;
+            
+            totalScoreEl.textContent = totalScore;
+            bestScoreEl.textContent = bestScore;
+            
+            resultEmoji.textContent = getResultEmoji(points);
+            resultText.textContent = getResultMessage(points, difference);
+            resultDetails.textContent = `Correct answer: ${formatYear(actual)} | Your guess: ${formatYear(guess)} | Off by ${difference} year${difference !== 1 ? 's' : ''}`;
+            pointsEarned.textContent = `+${points} points`;
+            
+            resultPanel.className = 'result-panel show ' + getResultClass(points);
+            
+            dateInput.disabled = true;
+            submitBtn.disabled = true;
+        }
+        
+        function showFinalScore() {
+            gameArea.style.display = 'none';
+            finalScore.classList.add('show');
+            finalPoints.textContent = totalScore;
+        }
+        
+        function restartGame() {
+            totalScore = 0;
+            bestScore = 0;
+            questionNumber = 0;
+            usedEvents = [];
+            totalScoreEl.textContent = '0';
+            bestScoreEl.textContent = '0';
+            gameArea.style.display = 'block';
+            finalScore.classList.remove('show');
+            loadNewEvent();
+        }
+        
+        submitBtn.addEventListener('click', submitGuess);
+        dateInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter' && !submitBtn.disabled) submitGuess();
         });
+        nextBtn.addEventListener('click', loadNewEvent);
+        restartBtn.addEventListener('click', restartGame);
         
-        channelInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                connectToTwitch(channelInput.value);
-            }
-        });
-        
-        // Modified question display with longer timer for chat interaction
-        function showNewQuestion() {
-            answerRevealed = false;
-            answerBox.classList.remove('show');
-            
-            let newIndex;
-            do {
-                newIndex = Math.floor(Math.random() * triviaQuestions.length);
-            } while (newIndex === currentIndex && triviaQuestions.length > 1);
-            currentIndex = newIndex;
-            
-            const trivia = triviaQuestions[currentIndex];
-            questionEl.textContent = trivia.q;
-            currentAnswer = trivia.a;
-            questionEl.style.animation = 'none';
-            questionEl.offsetHeight;
-            questionEl.style.animation = 'fadeIn 0.5s ease-out';
-            answerEl.textContent = trivia.a;
-            
-            // Show answer after 8 seconds if no one got it
-            if (questionTimeout) clearTimeout(questionTimeout);
-            questionTimeout = setTimeout(() => {
-                if (!answerRevealed) {
-                    answerRevealed = true;
-                    answerBox.classList.add('show');
-                }
-            }, 8000);
-        }
-        
-        // Start the trivia loop with longer interval for chat
-        showNewQuestion();
-        setInterval(showNewQuestion, 12000);
+        // Start the game
+        loadNewEvent();
     </script>
 </body>
 </html>
