@@ -23,15 +23,109 @@
     #canvas-container {
         position: fixed;
         top: 0;
-        left: 0;
-        width: 100%;
+        left: 50%;
+        width: 50%;
         height: 100%;
         z-index: 1;
+    }
+    .chess-panel {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(180deg, #1a0000, #0a0000);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        border-right: 3px solid #8b0000;
+        box-shadow: inset 0 0 100px rgba(139, 0, 0, 0.3);
+    }
+    .chess-title {
+        font-family: 'Metal Mania', cursive;
+        color: #ff0000;
+        font-size: 2rem;
+        margin-bottom: 20px;
+        text-shadow: 0 0 20px #8b0000;
+        letter-spacing: 4px;
+    }
+    .chess-board {
+        display: grid;
+        grid-template-columns: repeat(8, 50px);
+        grid-template-rows: repeat(8, 50px);
+        border: 4px solid #8b0000;
+        box-shadow: 0 0 30px rgba(139, 0, 0, 0.5);
+    }
+    .chess-square {
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .chess-square:hover {
+        box-shadow: inset 0 0 20px rgba(255, 0, 0, 0.5);
+    }
+    .chess-square.light {
+        background: linear-gradient(135deg, #d4c4a8, #c4b498);
+    }
+    .chess-square.dark {
+        background: linear-gradient(135deg, #4a0000, #2a0000);
+    }
+    .chess-square.selected {
+        box-shadow: inset 0 0 25px #ff0000;
+    }
+    .chess-square.valid-move {
+        box-shadow: inset 0 0 15px #00ff00;
+    }
+    .chess-info {
+        margin-top: 20px;
+        font-family: 'Creepster', cursive;
+        color: #cc0000;
+        font-size: 1.2rem;
+    }
+    .todo-overlay {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(20, 0, 0, 0.85);
+        border: 2px solid #8b0000;
+        padding: 20px;
+        border-radius: 0;
+        box-shadow: 0 0 40px rgba(139, 0, 0, 0.6);
+        z-index: 60;
+        min-width: 250px;
+    }
+    .todo-overlay h3 {
+        font-family: 'Metal Mania', cursive;
+        color: #ff0000;
+        text-align: center;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px #8b0000;
+    }
+    .todo-overlay ul {
+        list-style: none;
+        padding: 0;
+    }
+    .todo-overlay li {
+        font-family: 'Creepster', cursive;
+        color: #cc0000;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(139, 0, 0, 0.3);
+    }
+    .todo-overlay li::before {
+        content: '☠ ';
     }
     .welcome-banner {
         position: fixed;
         top: 20px;
-        left: 50%;
+        left: 75%;
         transform: translateX(-50%);
         z-index: 100;
         background: linear-gradient(135deg, rgba(20, 0, 0, 0.95), rgba(50, 0, 0, 0.98));
@@ -62,7 +156,7 @@
     .museum-title {
         position: fixed;
         bottom: 30px;
-        left: 50%;
+        left: 75%;
         transform: translateX(-50%);
         z-index: 100;
         font-family: 'Metal Mania', cursive;
@@ -75,7 +169,7 @@
     .controls-hint {
         position: fixed;
         bottom: 80px;
-        left: 50%;
+        left: 75%;
         transform: translateX(-50%);
         z-index: 100;
         font-size: 0.9rem;
@@ -169,6 +263,20 @@
 </style>
 </head>
 <body>
+<div class="chess-panel">
+<h2 class="chess-title">⛧ DEATH CHESS ⛧</h2>
+<div class="chess-board" id="chessBoard"></div>
+<div class="chess-info" id="chessInfo">🩸 White's Turn 🩸</div>
+<div class="todo-overlay">
+<h3>☠ TODO LIST ☠</h3>
+<ul>
+<li>Conquer the board</li>
+<li>Sacrifice pawns</li>
+<li>Checkmate the king</li>
+<li>Claim victory</li>
+</ul>
+</div>
+</div>
 <div id="canvas-container"></div>
 <div class="welcome-banner">
 <h2>💀 WELCOME TO THE CRYPT 💀</h2>
@@ -186,6 +294,7 @@
 <li>Floating orb artworks</li>
 <li>Death Metal redesign 🤘</li>
 <li>History panel added</li>
+<li>Split screen + Chess game 🎮</li>
 </ul>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -473,6 +582,74 @@
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     });
+
+    // Chess Game Logic
+    const pieces = {
+        'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚', 'p': '♟',
+        'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔', 'P': '♙'
+    };
+    
+    let board = [
+        ['r','n','b','q','k','b','n','r'],
+        ['p','p','p','p','p','p','p','p'],
+        ['','','','','','','',''],
+        ['','','','','','','',''],
+        ['','','','','','','',''],
+        ['','','','','','','',''],
+        ['P','P','P','P','P','P','P','P'],
+        ['R','N','B','Q','K','B','N','R']
+    ];
+    
+    let selectedSquare = null;
+    let isWhiteTurn = true;
+    
+    function renderChessBoard() {
+        const boardEl = document.getElementById('chessBoard');
+        boardEl.innerHTML = '';
+        
+        for(let row = 0; row < 8; row++) {
+            for(let col = 0; col < 8; col++) {
+                const square = document.createElement('div');
+                square.className = 'chess-square ' + ((row + col) % 2 === 0 ? 'light' : 'dark');
+                square.dataset.row = row;
+                square.dataset.col = col;
+                
+                const piece = board[row][col];
+                if(piece) {
+                    square.textContent = pieces[piece];
+                    square.style.color = piece === piece.toUpperCase() ? '#f5f5dc' : '#1a0000';
+                }
+                
+                square.addEventListener('click', () => handleSquareClick(row, col));
+                boardEl.appendChild(square);
+            }
+        }
+    }
+    
+    function handleSquareClick(row, col) {
+        const piece = board[row][col];
+        
+        if(selectedSquare) {
+            // Try to move
+            const [fromRow, fromCol] = selectedSquare;
+            board[row][col] = board[fromRow][fromCol];
+            board[fromRow][fromCol] = '';
+            selectedSquare = null;
+            isWhiteTurn = !isWhiteTurn;
+            document.getElementById('chessInfo').textContent = isWhiteTurn ? '🩸 White\'s Turn 🩸' : '💀 Black\'s Turn 💀';
+            renderChessBoard();
+        } else if(piece) {
+            const isWhitePiece = piece === piece.toUpperCase();
+            if(isWhitePiece === isWhiteTurn) {
+                selectedSquare = [row, col];
+                renderChessBoard();
+                const squares = document.querySelectorAll('.chess-square');
+                squares[row * 8 + col].classList.add('selected');
+            }
+        }
+    }
+    
+    renderChessBoard();
 
     // Simulate latest viewer updates
     const viewerNames = ['ArtLover_42', 'GamerPro99', 'MuseumFan', 'TwitchExplorer', 'NightOwl_Stream', 'PixelArtist', 'CoolViewer2024'];
