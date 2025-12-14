@@ -450,7 +450,7 @@
 </div>
 <div class="event-text" id="event-text">Loading...</div>
 <div class="input-section">
-<input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Year" type="number" value="1969"/>
+<input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Year" type="number" value="1930"/>
 <span class="hint-text">🎭 Pray tell, enter the year (e.g., 1503) 🎨</span>
 <button class="submit-btn" id="submit-btn">🎭 Make Thy Guess!</button>
 </div>
@@ -770,6 +770,12 @@
         
         // Start the game
         loadNewEvent();
+        
+        // Auto-submit with 1930 after a short delay
+        setTimeout(() => {
+            dateInput.value = 1930;
+            submitGuess();
+        }, 1500);
     </script>
 </body>
 </html>
