@@ -85,6 +85,43 @@
             }
         }
         
+        .llama {
+            position: fixed;
+            font-size: 5rem;
+            animation: llama-walk 10s linear infinite;
+            filter: drop-shadow(0 5px 15px rgba(255, 255, 255, 0.3));
+            z-index: 75;
+        }
+        
+        @keyframes llama-walk {
+            0% {
+                transform: translate(-100px, 70vh) scaleX(1);
+            }
+            49% {
+                transform: translate(110vw, 65vh) scaleX(1);
+            }
+            50% {
+                transform: translate(110vw, 75vh) scaleX(-1);
+            }
+            100% {
+                transform: translate(-100px, 70vh) scaleX(-1);
+            }
+        }
+        
+        .llama::before {
+            content: '✨';
+            position: absolute;
+            font-size: 1.5rem;
+            animation: sparkle 0.5s ease-in-out infinite alternate;
+            top: -20px;
+            left: 50%;
+        }
+        
+        @keyframes sparkle {
+            0% { opacity: 0.3; transform: scale(0.8); }
+            100% { opacity: 1; transform: scale(1.2); }
+        }
+        
         .montgolfiere::after {
             content: '';
             position: absolute;
@@ -102,6 +139,7 @@
 <div class="panini">🥪</div>
 <div class="panini">🥪</div>
 <div class="montgolfiere">🎈</div>
+<div class="llama">🦙</div>
 <h1>Hello World</h1>
 </body>
 </html>
