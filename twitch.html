@@ -233,7 +233,8 @@
             border: 3px solid #ffd700;
             border-radius: 20px;
             padding: 25px 40px;
-            min-width: 600px;
+            min-width: 500px;
+            max-width: 550px;
             text-align: center;
             box-shadow: 0 0 40px rgba(255, 215, 0, 0.3), inset 0 0 30px rgba(0,0,0,0.3);
             animation: questionPulse 2s ease-in-out infinite;
@@ -318,6 +319,100 @@
             animation: twinkle 2s ease-in-out infinite;
         }
         
+        .themes-panel {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            width: 280px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            background: linear-gradient(135deg, rgba(26, 26, 74, 0.95) 0%, rgba(42, 42, 106, 0.95) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.5);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            animation: slideIn 0.5s ease-out;
+            z-index: 100;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .themes-panel::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .themes-panel::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 3px;
+        }
+        
+        .themes-panel::-webkit-scrollbar-thumb {
+            background: #ffd700;
+            border-radius: 3px;
+        }
+        
+        .themes-title {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #ffd700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+        }
+        
+        .themes-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .theme-category {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            padding: 10px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .theme-category:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .theme-category h3 {
+            font-size: 0.9rem;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+        
+        .theme-category ul {
+            list-style: none;
+            padding-left: 10px;
+        }
+        
+        .theme-category li {
+            font-size: 0.75rem;
+            color: #aaa;
+            padding: 3px 0;
+            position: relative;
+            padding-left: 12px;
+            transition: color 0.2s;
+        }
+        
+        .theme-category li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: #ffd700;
+            opacity: 0.5;
+        }
+        
+        .theme-category li:hover {
+            color: #ffd700;
+        }
+        
         @keyframes twinkle {
             0%, 100% { opacity: 0.3; transform: scale(1); }
             50% { opacity: 1; transform: scale(1.5); }
@@ -337,6 +432,71 @@
 <div class="star" style="top: 12%; left: 90%; animation-delay: 0.8s;"></div>
 </div>
 <h1 class="title">🏆 Who Wants to Be a Champion? 🏆</h1>
+<div class="themes-panel">
+<h2 class="themes-title">📜 Historical Themes</h2>
+<div class="themes-list">
+<div class="theme-category">
+<h3>🏛️ Ancient Civilizations</h3>
+<ul>
+<li>Ancient Egypt &amp; Pharaohs</li>
+<li>Greek Mythology &amp; History</li>
+<li>Roman Empire</li>
+<li>Mesopotamia &amp; Babylon</li>
+<li>Ancient China</li>
+</ul>
+</div>
+<div class="theme-category">
+<h3>⚔️ Medieval Era</h3>
+<ul>
+<li>Knights &amp; Crusades</li>
+<li>Vikings &amp; Norse History</li>
+<li>Feudal Japan &amp; Samurai</li>
+<li>Byzantine Empire</li>
+<li>Black Death &amp; Plagues</li>
+</ul>
+</div>
+<div class="theme-category">
+<h3>🎨 Renaissance &amp; Enlightenment</h3>
+<ul>
+<li>Renaissance Artists</li>
+<li>Scientific Revolution</li>
+<li>Age of Exploration</li>
+<li>Reformation</li>
+<li>Philosophers &amp; Thinkers</li>
+</ul>
+</div>
+<div class="theme-category">
+<h3>🏰 Modern History</h3>
+<ul>
+<li>French Revolution</li>
+<li>American Revolution</li>
+<li>Industrial Revolution</li>
+<li>Colonial Era</li>
+<li>Napoleon &amp; His Wars</li>
+</ul>
+</div>
+<div class="theme-category">
+<h3>💥 20th Century</h3>
+<ul>
+<li>World War I</li>
+<li>World War II</li>
+<li>Cold War Era</li>
+<li>Space Race</li>
+<li>Civil Rights Movements</li>
+</ul>
+</div>
+<div class="theme-category">
+<h3>👑 Famous Figures</h3>
+<ul>
+<li>Kings &amp; Queens</li>
+<li>Military Leaders</li>
+<li>Inventors &amp; Scientists</li>
+<li>Explorers &amp; Adventurers</li>
+<li>Revolutionary Leaders</li>
+</ul>
+</div>
+</div>
+</div>
 <div class="question-box">
 <div class="timer-bar"></div>
 <div class="question-label">QUESTION:</div>
