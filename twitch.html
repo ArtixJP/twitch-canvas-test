@@ -113,6 +113,46 @@
             border-radius: 50%;
             animation: twinkle 2s ease-in-out infinite;
         }
+            .music-control {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            z-index: 100;
+        }
+        
+        .music-control:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 30px rgba(102, 126, 234, 0.6);
+        }
+        
+        .music-control svg {
+            width: 24px;
+            height: 24px;
+            fill: white;
+        }
+        
+        .music-control .pause-icon {
+            display: none;
+        }
+        
+        .music-control.playing .play-icon {
+            display: none;
+        }
+        
+        .music-control.playing .pause-icon {
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -133,6 +173,36 @@
             star.style.opacity = Math.random() * 0.8 + 0.2;
             starsContainer.appendChild(star);
         }
+    </script>
+
+<button class="music-control" id="musicBtn" title="Play/Pause Music">
+<svg class="play-icon" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+<svg class="pause-icon" viewbox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+</button>
+<script>
+        const audio = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        
+        // Auto-play on first user interaction
+        document.addEventListener('click', function initAudio() {
+            if (audio.paused) {
+                audio.play().then(() => {
+                    musicBtn.classList.add('playing');
+                }).catch(() => {});
+            }
+            document.removeEventListener('click', initAudio);
+        }, { once: false });
+        
+        musicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (audio.paused) {
+                audio.play();
+                musicBtn.classList.add('playing');
+            } else {
+                audio.pause();
+                musicBtn.classList.remove('playing');
+            }
+        });
     </script>
 </body>
 </html>
