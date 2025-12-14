@@ -79,6 +79,59 @@
                 inset 0 0 20px rgba(255,200,150,0.1);
         }
         
+        .moon-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 280px;
+            height: 280px;
+            transform: translate(-50%, -50%);
+            animation: orbit 8s linear infinite;
+        }
+        
+        .moon {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 30px;
+            height: 30px;
+            margin-left: -15px;
+            margin-top: -15px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f0f0f0 0%, #c9c9c9 50%, #888888 100%);
+            box-shadow: 
+                inset -5px -5px 15px rgba(0,0,0,0.4),
+                inset 3px 3px 10px rgba(255,255,255,0.3),
+                0 0 20px rgba(255,255,255,0.3);
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 15%;
+            width: 8px;
+            height: 8px;
+            background: rgba(100,100,100,0.3);
+            border-radius: 50%;
+        }
+        
+        .moon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(100,100,100,0.2);
+            border-radius: 50%;
+        }
+        
+        @keyframes orbit {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
         .ring::before {
             content: '';
             position: absolute;
@@ -159,6 +212,9 @@
 <div class="stars" id="stars"></div>
 <h1>Hello World</h1>
 <div class="planet-container">
+<div class="moon-orbit">
+<div class="moon"></div>
+</div>
 <div class="ring"></div>
 <div class="planet"></div>
 </div>
@@ -174,7 +230,9 @@
             starsContainer.appendChild(star);
         }
     </script>
-
+<audio id="bgMusic" loop="" preload="auto">
+<source src="https://assets.mixkit.co/music/preview/mixkit-space-ambient-10730.mp3" type="audio/mpeg"/>
+</audio>
 <button class="music-control" id="musicBtn" title="Play/Pause Music">
 <svg class="play-icon" viewbox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
 <svg class="pause-icon" viewbox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
@@ -183,15 +241,22 @@
         const audio = document.getElementById('bgMusic');
         const musicBtn = document.getElementById('musicBtn');
         
-        // Auto-play on first user interaction
-        document.addEventListener('click', function initAudio() {
-            if (audio.paused) {
-                audio.play().then(() => {
-                    musicBtn.classList.add('playing');
-                }).catch(() => {});
-            }
-            document.removeEventListener('click', initAudio);
-        }, { once: false });
+        // Try to auto-play on page load
+        window.addEventListener('load', () => {
+            audio.volume = 0.5;
+            audio.play().then(() => {
+                musicBtn.classList.add('playing');
+            }).catch(() => {
+                                document.addEventListener('click', function initAudio() {
+                    if (audio.paused) {
+                        audio.play().then(() => {
+                            musicBtn.classList.add('playing');
+                        }).catch(() => {});
+                    }
+                    document.removeEventListener('click', initAudio);
+                }, { once: true });
+            });
+        });
         
         musicBtn.addEventListener('click', (e) => {
             e.stopPropagation();
