@@ -1,25 +1,339 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Who Wants to Be a Champion?</title>
+<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
             min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            background: radial-gradient(ellipse at center, #1a0a30 0%, #0a0a1a 100%);
             color: white;
+            overflow: hidden;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        
+        .stage {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: 
+                radial-gradient(circle at 50% 30%, rgba(100, 50, 200, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 20% 80%, rgba(0, 100, 200, 0.2) 0%, transparent 30%),
+                radial-gradient(circle at 80% 80%, rgba(0, 100, 200, 0.2) 0%, transparent 30%);
+        }
+        
+        .title {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 2.5rem;
+            background: linear-gradient(90deg, #ffd700, #ffaa00, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 200, 0, 0.5);
+            animation: glow 2s ease-in-out infinite;
+        }
+        
+        @keyframes glow {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        
+        .contestants {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 0 50px;
+            position: absolute;
+            bottom: 50px;
+            width: 100%;
+        }
+        
+        .contestant {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .contestant:nth-child(1) { animation-delay: 0s; }
+        .contestant:nth-child(2) { animation-delay: 0.5s; }
+        .contestant:nth-child(3) { animation-delay: 1s; }
+        .contestant:nth-child(4) { animation-delay: 1.5s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .character {
+            width: 80px;
+            height: 120px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        
+        .character:hover {
+            transform: scale(1.1);
+        }
+        
+        .head {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: blink 4s infinite;
+        }
+        
+        .eyes {
+            position: absolute;
+            top: 18px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .eye {
+            width: 8px;
+            height: 8px;
+            background: #333;
+            border-radius: 50%;
+            animation: eyeMove 3s ease-in-out infinite;
+        }
+        
+        @keyframes eyeMove {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(2px); }
+            75% { transform: translateX(-2px); }
+        }
+        
+        .mouth {
+            position: absolute;
+            top: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 8px;
+            border-bottom: 3px solid #333;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        .body {
+            width: 40px;
+            height: 50px;
+            position: absolute;
+            top: 45px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px 10px 5px 5px;
+        }
+        
+        .arms {
+            position: absolute;
+            top: 50px;
+            width: 100%;
+        }
+        
+        .arm {
+            width: 12px;
+            height: 35px;
+            position: absolute;
+            border-radius: 6px;
+            animation: wave 2s ease-in-out infinite;
+        }
+        
+        .arm.left { left: 8px; transform-origin: top center; }
+        .arm.right { right: 8px; transform-origin: top center; animation-delay: 1s; }
+        
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(15deg); }
+        }
+        
+        .podium {
+            width: 100px;
+            height: 80px;
+            background: linear-gradient(180deg, #2a2a5a 0%, #1a1a3a 100%);
+            border-radius: 10px 10px 0 0;
+            border: 3px solid #4a4a8a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        
+        .score {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 200, 0, 0.5);
+        }
+        
+        .name {
+            font-size: 0.8rem;
+            color: #aaa;
+            margin-top: 5px;
+        }
+        
+        /* Character colors */
+        .contestant:nth-child(1) .head { background: #ffcc99; }
+        .contestant:nth-child(1) .body { background: #e74c3c; }
+        .contestant:nth-child(1) .arm { background: #e74c3c; }
+        
+        .contestant:nth-child(2) .head { background: #8d6e63; }
+        .contestant:nth-child(2) .body { background: #3498db; }
+        .contestant:nth-child(2) .arm { background: #3498db; }
+        
+        .contestant:nth-child(3) .head { background: #ffe0bd; }
+        .contestant:nth-child(3) .body { background: #2ecc71; }
+        .contestant:nth-child(3) .arm { background: #2ecc71; }
+        
+        .contestant:nth-child(4) .head { background: #ffdbac; }
+        .contestant:nth-child(4) .body { background: #9b59b6; }
+        .contestant:nth-child(4) .arm { background: #9b59b6; }
+        
+        .spotlight {
+            position: absolute;
+            width: 200px;
+            height: 400px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+            top: 0;
+            animation: spotlightMove 8s ease-in-out infinite;
+        }
+        
+        @keyframes spotlightMove {
+            0%, 100% { left: 10%; }
+            50% { left: 70%; }
+        }
+        
+        .stars {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.5); }
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="stage">
+<div class="spotlight"></div>
+<div class="stars">
+<div class="star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
+<div class="star" style="top: 15%; left: 80%; animation-delay: 0.5s;"></div>
+<div class="star" style="top: 5%; left: 50%; animation-delay: 1s;"></div>
+<div class="star" style="top: 25%; left: 30%; animation-delay: 1.5s;"></div>
+<div class="star" style="top: 8%; left: 70%; animation-delay: 2s;"></div>
+<div class="star" style="top: 20%; left: 10%; animation-delay: 0.3s;"></div>
+<div class="star" style="top: 12%; left: 90%; animation-delay: 0.8s;"></div>
+</div>
+<h1 class="title">🏆 Who Wants to Be a Champion? 🏆</h1>
+<div class="contestants">
+<div class="contestant">
+<div class="character">
+<div class="head">
+<div class="eyes">
+<div class="eye"></div>
+<div class="eye"></div>
+</div>
+<div class="mouth"></div>
+</div>
+<div class="body"></div>
+<div class="arms">
+<div class="arm left"></div>
+<div class="arm right"></div>
+</div>
+</div>
+<div class="podium">
+<div class="score">1500€</div>
+<div class="name">Alex</div>
+</div>
+</div>
+<div class="contestant">
+<div class="character">
+<div class="head">
+<div class="eyes">
+<div class="eye"></div>
+<div class="eye"></div>
+</div>
+<div class="mouth"></div>
+</div>
+<div class="body"></div>
+<div class="arms">
+<div class="arm left"></div>
+<div class="arm right"></div>
+</div>
+</div>
+<div class="podium">
+<div class="score">3000€</div>
+<div class="name">Marie</div>
+</div>
+</div>
+<div class="contestant">
+<div class="character">
+<div class="head">
+<div class="eyes">
+<div class="eye"></div>
+<div class="eye"></div>
+</div>
+<div class="mouth"></div>
+</div>
+<div class="body"></div>
+<div class="arms">
+<div class="arm left"></div>
+<div class="arm right"></div>
+</div>
+</div>
+<div class="podium">
+<div class="score">6000€</div>
+<div class="name">Lucas</div>
+</div>
+</div>
+<div class="contestant">
+<div class="character">
+<div class="head">
+<div class="eyes">
+<div class="eye"></div>
+<div class="eye"></div>
+</div>
+<div class="mouth"></div>
+</div>
+<div class="body"></div>
+<div class="arms">
+<div class="arm left"></div>
+<div class="arm right"></div>
+</div>
+</div>
+<div class="podium">
+<div class="score">12000€</div>
+<div class="name">Sophie</div>
+</div>
+</div>
+</div>
+</div>
 </body>
 </html>
