@@ -331,18 +331,107 @@
     .music-control .pause-icon { display: none; }
     .music-control.playing .play-icon { display: none; }
     .music-control.playing .pause-icon { display: block; }
+    
+    /* Super Potato Hero */
+    .potato-hero {
+        position: fixed;
+        z-index: 9999;
+        font-size: 80px;
+        animation: flyAcross 8s linear infinite;
+        filter: drop-shadow(0 0 20px gold);
+        pointer-events: none;
+    }
+    
+    .potato-hero::after {
+        content: '';
+        position: absolute;
+        top: 10px;
+        right: -30px;
+        width: 40px;
+        height: 60px;
+        background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        clip-path: polygon(0 0, 100% 20%, 100% 80%, 0 100%, 30% 50%);
+        animation: capeWave 0.3s ease-in-out infinite alternate;
+        transform-origin: left center;
+    }
+    
+    .potato-sparkles {
+        position: fixed;
+        z-index: 9998;
+        pointer-events: none;
+        animation: flyAcross 8s linear infinite;
+    }
+    
+    .sparkle {
+        position: absolute;
+        font-size: 20px;
+        animation: sparkleGlow 0.5s ease-in-out infinite alternate;
+    }
+    
+    .hero-text {
+        position: fixed;
+        z-index: 9997;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: gold;
+        text-shadow: 0 0 10px rgba(255,215,0,0.8), 2px 2px 4px rgba(0,0,0,0.5);
+        white-space: nowrap;
+        animation: flyAcross 8s linear infinite;
+        pointer-events: none;
+    }
+    
+    @keyframes flyAcross {
+        0% { 
+            left: -150px; 
+            top: 30%;
+            transform: rotate(-5deg);
+        }
+        25% {
+            top: 25%;
+            transform: rotate(5deg);
+        }
+        50% { 
+            top: 35%;
+            transform: rotate(-5deg);
+        }
+        75% {
+            top: 28%;
+            transform: rotate(5deg);
+        }
+        100% { 
+            left: calc(100% + 150px); 
+            top: 30%;
+            transform: rotate(-5deg);
+        }
+    }
+    
+    @keyframes capeWave {
+        0% { transform: skewY(-10deg) scaleX(1); }
+        100% { transform: skewY(10deg) scaleX(1.1); }
+    }
+    
+    @keyframes sparkleGlow {
+        0% { opacity: 0.5; transform: scale(0.8); }
+        100% { opacity: 1; transform: scale(1.2); }
+    }
 </style>
 </head>
 <body>
 <div class="stars" id="stars"></div>
 
+<div class="potato-hero" id="potatoHero">🥔</div>
+<div class="potato-sparkles" id="potatoSparkles">
+<span class="sparkle" style="top: -20px; left: -40px;">✨</span>
+<span class="sparkle" style="top: 30px; left: -60px; animation-delay: 0.2s;">⭐</span>
+<span class="sparkle" style="top: 60px; left: -30px; animation-delay: 0.4s;">✨</span>
+</div>
+<div class="hero-text" id="heroText">🦸 SUPER POTATO SAVES THE WORLD! 🌍</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
 <button class="nav-btn" data-section="games">🎮 Games</button>
 </nav>
 <div class="timer-bar" id="timerBar"></div>
-
 <section class="section active" id="space">
 <div class="sun"></div>
 <h1>🌌 Space Explorer</h1>
@@ -356,7 +445,6 @@
 </div>
 </div>
 </section>
-
 <section class="section" id="animals">
 <h1>🐾 Animal Chase</h1>
 <div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
@@ -372,7 +460,6 @@
 </div>
 </div>
 </section>
-
 <section class="section" id="games">
 <h1>🎮 Space Shooter</h1>
 <div class="game-container">
@@ -616,6 +703,36 @@ function gameLoop() {
     requestAnimationFrame(gameLoop);
 }
 gameLoop();
+
+// Super Potato Hero - Random vertical position each loop
+const potatoHero = document.getElementById('potatoHero');
+const potatoSparkles = document.getElementById('potatoSparkles');
+const heroText = document.getElementById('heroText');
+
+function randomizePotatoPath() {
+    const randomTop = 15 + Math.random() * 50; // Between 15% and 65%
+    const newKeyframes = `
+        @keyframes flyAcross {
+            0% { left: -150px; top: ${randomTop}%; transform: rotate(-5deg); }
+            25% { top: ${randomTop - 5}%; transform: rotate(5deg); }
+            50% { top: ${randomTop + 5}%; transform: rotate(-5deg); }
+            75% { top: ${randomTop - 3}%; transform: rotate(5deg); }
+            100% { left: calc(100% + 150px); top: ${randomTop}%; transform: rotate(-5deg); }
+        }
+    `;
+    
+    // Remove old keyframes and add new
+    let styleSheet = document.getElementById('potatoStyle');
+    if (!styleSheet) {
+        styleSheet = document.createElement('style');
+        styleSheet.id = 'potatoStyle';
+        document.head.appendChild(styleSheet);
+    }
+    styleSheet.textContent = newKeyframes;
+}
+
+// Randomize path every animation cycle
+setInterval(randomizePotatoPath, 8000);
 
 // Music Control
 const audio = document.getElementById('bgMusic');
