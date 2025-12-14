@@ -226,6 +226,131 @@
     .history-panel::-webkit-scrollbar-track {
         background: #1a0000;
     }
+    .player-identity {
+        position: fixed;
+        top: 100px;
+        left: 75%;
+        transform: translateX(-50%);
+        z-index: 100;
+        background: linear-gradient(135deg, rgba(30, 20, 50, 0.95), rgba(20, 10, 40, 0.98));
+        border: 2px solid #9370db;
+        padding: 15px 25px;
+        text-align: center;
+        box-shadow: 0 0 30px rgba(147, 112, 219, 0.5);
+        animation: ghostFloat 3s ease-in-out infinite;
+    }
+    .ghost-avatar {
+        font-size: 3rem;
+        animation: ghostGlow 2s ease-in-out infinite;
+    }
+    .ghost-name {
+        font-family: 'Cinzel', serif;
+        color: #dda0dd;
+        font-size: 1.2rem;
+        margin-top: 5px;
+        text-shadow: 0 0 10px #9370db;
+    }
+    .ghost-subtitle {
+        font-family: 'Creepster', cursive;
+        color: #b8a0c8;
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    .zombie-elon {
+        position: fixed;
+        bottom: 120px;
+        left: 20px;
+        z-index: 100;
+        background: linear-gradient(135deg, rgba(20, 40, 20, 0.95), rgba(10, 30, 10, 0.98));
+        border: 3px solid #4a5;
+        padding: 20px;
+        max-width: 350px;
+        box-shadow: 0 0 40px rgba(68, 170, 85, 0.5), inset 0 0 30px rgba(0, 50, 0, 0.5);
+        animation: zombiePulse 4s ease-in-out infinite;
+    }
+    .zombie-portrait {
+        font-size: 4rem;
+        text-align: center;
+        animation: zombieShake 0.5s ease-in-out infinite;
+    }
+    .zombie-speech-bubble {
+        background: rgba(0, 20, 0, 0.8);
+        border: 1px solid #4a5;
+        padding: 15px;
+        margin-top: 10px;
+    }
+    .zombie-name {
+        font-family: 'Metal Mania', cursive;
+        color: #5f5;
+        font-size: 1.1rem;
+        text-align: center;
+        margin-bottom: 10px;
+        text-shadow: 0 0 10px #4a5;
+    }
+    .riddle-text {
+        font-family: 'Creepster', cursive;
+        color: #9f9;
+        font-size: 1rem;
+        line-height: 1.4;
+        margin-bottom: 15px;
+    }
+    .riddle-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+    .riddle-option {
+        background: rgba(68, 170, 85, 0.2);
+        border: 1px solid #4a5;
+        color: #9f9;
+        padding: 8px 12px;
+        cursor: pointer;
+        font-family: 'Creepster', cursive;
+        transition: all 0.3s;
+    }
+    .riddle-option:hover {
+        background: rgba(68, 170, 85, 0.4);
+        box-shadow: 0 0 15px rgba(68, 170, 85, 0.5);
+    }
+    .riddle-option.correct {
+        background: rgba(0, 255, 0, 0.3);
+        border-color: #0f0;
+    }
+    .riddle-option.wrong {
+        background: rgba(255, 0, 0, 0.3);
+        border-color: #f00;
+    }
+    .new-riddle-btn {
+        width: 100%;
+        margin-top: 15px;
+        background: linear-gradient(135deg, #2a4a2a, #1a3a1a);
+        border: 2px solid #4a5;
+        color: #5f5;
+        padding: 10px;
+        font-family: 'Metal Mania', cursive;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .new-riddle-btn:hover {
+        background: linear-gradient(135deg, #3a5a3a, #2a4a2a);
+        box-shadow: 0 0 20px rgba(68, 170, 85, 0.5);
+    }
+    @keyframes ghostFloat {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-10px); }
+    }
+    @keyframes ghostGlow {
+        0%, 100% { text-shadow: 0 0 20px #9370db; }
+        50% { text-shadow: 0 0 40px #dda0dd, 0 0 60px #9370db; }
+    }
+    @keyframes zombiePulse {
+        0%, 100% { box-shadow: 0 0 40px rgba(68, 170, 85, 0.5); }
+        50% { box-shadow: 0 0 60px rgba(68, 170, 85, 0.8); }
+    }
+    @keyframes zombieShake {
+        0%, 100% { transform: rotate(-2deg); }
+        50% { transform: rotate(2deg); }
+    }
     .history-panel::-webkit-scrollbar-thumb {
         background: #8b0000;
         border-radius: 0;
@@ -284,6 +409,20 @@
 </div>
 <div class="controls-hint">🩸 Use mouse to look around • WASD to move 🩸</div>
 <div class="museum-title">⛧ THE UNHOLY GALLERY ⛧</div>
+<div class="player-identity">
+<div class="ghost-avatar">👻🎨</div>
+<div class="ghost-name">Leonardo da Vinci's Ghost</div>
+<div class="ghost-subtitle">Wandering Painter Spirit</div>
+</div>
+<div class="zombie-elon" id="zombieElon">
+<div class="zombie-portrait">🧟</div>
+<div class="zombie-speech-bubble" id="elonSpeech">
+<div class="zombie-name">💀 ZOMBIE ELON 💀</div>
+<div class="riddle-text" id="riddleText">Loading dark riddle...</div>
+<div class="riddle-options" id="riddleOptions"></div>
+</div>
+<button class="new-riddle-btn" onclick="newRiddle()">☠ NEW RIDDLE ☠</button>
+</div>
 <div class="history-panel">
 <h3>⛧ MODIFICATION HISTORY ⛧</h3>
 <ul id="historyList">
@@ -295,6 +434,8 @@
 <li>Death Metal redesign 🤘</li>
 <li>History panel added</li>
 <li>Split screen + Chess game 🎮</li>
+<li>Added Zombie Elon riddles 🧟</li>
+<li>Player is now Leonardo's ghost 👻🎨</li>
 </ul>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -651,6 +792,70 @@
     
     renderChessBoard();
 
+    // Zombie Elon Riddles
+    const riddles = [
+        {
+            question: "Braaains... I mean... What has keys but no locks, space but no room, and you can enter but can't go inside?",
+            options: ["A keyboard", "A haunted mansion", "My Tesla factory", "A graveyard"],
+            correct: 0
+        },
+        {
+            question: "*groans* Before I was undead, I tweeted this: What runs but never walks, has a mouth but never talks?",
+            options: ["Twitter algorithm", "A river", "My Neuralink", "A zombie"],
+            correct: 1
+        },
+        {
+            question: "Uuuurgh... I'm sending this to Mars: The more you take, the more you leave behind. What am I?",
+            options: ["Rockets", "Footsteps", "Cryptocurrency", "Brain matter"],
+            correct: 1
+        },
+        {
+            question: "*decaying sounds* What can travel around the world while staying in a corner?",
+            options: ["A SpaceX satellite", "A stamp", "Zombie virus", "My ego"],
+            correct: 1
+        },
+        {
+            question: "Grrrr... Leonardo, answer this: I speak without a mouth and hear without ears. What am I?",
+            options: ["An echo", "A painting", "AI chatbot", "The undead"],
+            correct: 0
+        }
+    ];
+    
+    let currentRiddle = null;
+    
+    function newRiddle() {
+        currentRiddle = riddles[Math.floor(Math.random() * riddles.length)];
+        document.getElementById('riddleText').textContent = currentRiddle.question;
+        
+        const optionsEl = document.getElementById('riddleOptions');
+        optionsEl.innerHTML = '';
+        
+        currentRiddle.options.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'riddle-option';
+            btn.textContent = opt;
+            btn.onclick = () => checkAnswer(i, btn);
+            optionsEl.appendChild(btn);
+        });
+    }
+    
+    function checkAnswer(index, btn) {
+        const allBtns = document.querySelectorAll('.riddle-option');
+        allBtns.forEach(b => b.style.pointerEvents = 'none');
+        
+        if(index === currentRiddle.correct) {
+            btn.classList.add('correct');
+            document.getElementById('riddleText').textContent = "BRAAAAAINS... I mean, CORRECT! Your ghostly wisdom impresses even the undead! 🧠✨";
+        } else {
+            btn.classList.add('wrong');
+            allBtns[currentRiddle.correct].classList.add('correct');
+            document.getElementById('riddleText').textContent = "*zombie groan* WRONG! Your spirit needs more enlightenment, Leonardo! 💀";
+        }
+    }
+    
+    // Initialize first riddle
+    newRiddle();
+    
     // Simulate latest viewer updates
     const viewerNames = ['ArtLover_42', 'GamerPro99', 'MuseumFan', 'TwitchExplorer', 'NightOwl_Stream', 'PixelArtist', 'CoolViewer2024'];
     setInterval(() => {
