@@ -21,6 +21,15 @@
         }
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
         
+        .scene-container {
+            position: relative;
+            width: 500px;
+            height: 500px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
         .planet-container {
             position: relative;
             width: 200px;
@@ -166,7 +175,13 @@
             border-radius: 50%;
             animation: twinkle 2s ease-in-out infinite;
         }
-            .music-control {
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        .music-control {
             position: fixed;
             bottom: 30px;
             right: 30px;
@@ -206,11 +221,124 @@
         .music-control.playing .pause-icon {
             display: block;
         }
+        
+        /* Sun styles */
+        .sun {
+            position: fixed;
+            top: 50px;
+            right: 100px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff7a1 0%, #ffdd00 30%, #ff9500 70%, #ff6600 100%);
+            box-shadow: 
+                0 0 60px #ffdd00,
+                0 0 100px #ff9500,
+                0 0 150px rgba(255, 150, 0, 0.5),
+                inset -10px -10px 30px rgba(255, 100, 0, 0.4);
+            animation: sunPulse 4s ease-in-out infinite;
+        }
+        
+        .sun::before {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 15%;
+            width: 30%;
+            height: 20%;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            filter: blur(8px);
+        }
+        
+        .sun-rays {
+            position: fixed;
+            top: 50px;
+            right: 100px;
+            width: 120px;
+            height: 120px;
+            animation: sunRotate 20s linear infinite;
+        }
+        
+        .sun-ray {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255, 221, 0, 0.8), transparent);
+            transform-origin: 0 50%;
+        }
+        
+        @keyframes sunPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px #ffdd00, 0 0 100px #ff9500, 0 0 150px rgba(255, 150, 0, 0.5); }
+            50% { transform: scale(1.05); box-shadow: 0 0 80px #ffdd00, 0 0 120px #ff9500, 0 0 180px rgba(255, 150, 0, 0.6); }
+        }
+        
+        @keyframes sunRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Kitty orbit */
+        .kitty-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .kitty {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 32px;
+            filter: drop-shadow(0 0 10px rgba(255, 182, 193, 0.8));
+            transition: transform 0.1s ease;
+        }
+        
+        /* Dog chase */
+        .dog-orbit {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 350px;
+            height: 350px;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+        
+        .dog {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 28px;
+            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.8));
+        }
+        
+        .chase-status {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            color: rgba(255,255,255,0.7);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
 <div class="stars" id="stars"></div>
+
+<div class="sun-rays" id="sunRays"></div>
+<div class="sun"></div>
 <h1>Hello World</h1>
+<div class="scene-container">
 <div class="planet-container">
 <div class="moon-orbit">
 <div class="moon"></div>
@@ -218,18 +346,107 @@
 <div class="ring"></div>
 <div class="planet"></div>
 </div>
+
+<div class="kitty-orbit" id="kittyOrbit">
+<div class="kitty" id="kitty">🐱</div>
+</div>
+
+<div class="dog-orbit" id="dogOrbit">
+<div class="dog" id="dog">🐕</div>
+</div>
+</div>
+<div class="chase-status" id="chaseStatus">🐱 Kitty is peacefully orbiting...</div>
 <script>
-        const starsContainer = document.getElementById('stars');
-        for(let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 2 + 's';
-            star.style.opacity = Math.random() * 0.8 + 0.2;
-            starsContainer.appendChild(star);
+    // Create stars
+    const starsContainer = document.getElementById('stars');
+    for(let i = 0; i < 100; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        star.style.animationDelay = Math.random() * 2 + 's';
+        star.style.opacity = Math.random() * 0.8 + 0.2;
+        starsContainer.appendChild(star);
+    }
+    
+    // Create sun rays
+    const sunRays = document.getElementById('sunRays');
+    for(let i = 0; i < 12; i++) {
+        const ray = document.createElement('div');
+        ray.className = 'sun-ray';
+        ray.style.transform = `rotate(${i * 30}deg)`;
+        sunRays.appendChild(ray);
+    }
+    
+    // Cat and Dog chase animation
+    const kitty = document.getElementById('kitty');
+    const dog = document.getElementById('dog');
+    const kittyOrbit = document.getElementById('kittyOrbit');
+    const dogOrbit = document.getElementById('dogOrbit');
+    const chaseStatus = document.getElementById('chaseStatus');
+    
+    let catAngle = 0;
+    let dogAngle = Math.PI; // Start on opposite side
+    let catSpeed = 0.02;
+    let dogSpeed = 0.025;
+    const normalCatSpeed = 0.02;
+    const fastCatSpeed = 0.08;
+    const chaseThreshold = 0.8; // radians
+    let isEscaping = false;
+    
+    function updateChase() {
+        // Calculate angular distance (shortest path)
+        let angleDiff = catAngle - dogAngle;
+        // Normalize to -PI to PI
+        while (angleDiff > Math.PI) angleDiff -= 2 * Math.PI;
+        while (angleDiff < -Math.PI) angleDiff += 2 * Math.PI;
+        
+        const distance = Math.abs(angleDiff);
+        
+        // Check if dog is close to cat
+        if (distance < chaseThreshold) {
+            catSpeed = fastCatSpeed;
+            isEscaping = true;
+            kitty.style.transform = 'translateX(-50%) scale(1.3)';
+            chaseStatus.innerHTML = '😱 NYOOM! Kitty escaping at warp speed!';
+            chaseStatus.style.color = '#ff6b6b';
+        } else {
+            catSpeed = normalCatSpeed;
+            isEscaping = false;
+            kitty.style.transform = 'translateX(-50%) scale(1)';
+            chaseStatus.innerHTML = '🐱 Kitty is peacefully orbiting...';
+            chaseStatus.style.color = 'rgba(255,255,255,0.7)';
         }
-    </script>
+        
+        // Update positions
+        catAngle += catSpeed;
+        dogAngle += dogSpeed;
+        
+        // Keep angles in bounds
+        if (catAngle > 2 * Math.PI) catAngle -= 2 * Math.PI;
+        if (dogAngle > 2 * Math.PI) dogAngle -= 2 * Math.PI;
+        
+        // Position cat
+        const catX = Math.cos(catAngle - Math.PI/2) * 175;
+        const catY = Math.sin(catAngle - Math.PI/2) * 175;
+        kitty.style.left = `calc(50% + ${catX}px)`;
+        kitty.style.top = `calc(50% + ${catY}px)`;
+        
+        // Position dog
+        const dogX = Math.cos(dogAngle - Math.PI/2) * 175;
+        const dogY = Math.sin(dogAngle - Math.PI/2) * 175;
+        dog.style.left = `calc(50% + ${dogX}px)`;
+        dog.style.top = `calc(50% + ${dogY}px)`;
+        
+        // Flip sprites based on direction
+        kitty.style.transform += catX > 0 ? ' scaleX(-1)' : '';
+        dog.style.transform = dogX > 0 ? 'translateX(-50%) scaleX(-1)' : 'translateX(-50%)';
+        
+        requestAnimationFrame(updateChase);
+    }
+    
+    updateChase();
+</script>
 <audio id="bgMusic" loop="" preload="auto">
 <source src="https://assets.mixkit.co/music/preview/mixkit-space-ambient-10730.mp3" type="audio/mpeg"/>
 </audio>
@@ -238,36 +455,35 @@
 <svg class="pause-icon" viewbox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
 </button>
 <script>
-        const audio = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        
-        // Try to auto-play on page load
-        window.addEventListener('load', () => {
-            audio.volume = 0.5;
-            audio.play().then(() => {
-                musicBtn.classList.add('playing');
-            }).catch(() => {
-                                document.addEventListener('click', function initAudio() {
-                    if (audio.paused) {
-                        audio.play().then(() => {
-                            musicBtn.classList.add('playing');
-                        }).catch(() => {});
-                    }
-                    document.removeEventListener('click', initAudio);
-                }, { once: true });
-            });
+    const audio = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    
+    window.addEventListener('load', () => {
+        audio.volume = 0.5;
+        audio.play().then(() => {
+            musicBtn.classList.add('playing');
+        }).catch(() => {
+            document.addEventListener('click', function initAudio() {
+                if (audio.paused) {
+                    audio.play().then(() => {
+                        musicBtn.classList.add('playing');
+                    }).catch(() => {});
+                }
+                document.removeEventListener('click', initAudio);
+            }, { once: true });
         });
-        
-        musicBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (audio.paused) {
-                audio.play();
-                musicBtn.classList.add('playing');
-            } else {
-                audio.pause();
-                musicBtn.classList.remove('playing');
-            }
-        });
-    </script>
+    });
+    
+    musicBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (audio.paused) {
+            audio.play();
+            musicBtn.classList.add('playing');
+        } else {
+            audio.pause();
+            musicBtn.classList.remove('playing');
+        }
+    });
+</script>
 </body>
 </html>
