@@ -606,26 +606,36 @@
                 return;
             }
             
-            const actual = currentEvent.year;
-            const difference = Math.abs(guess - actual);
-            const points = calculatePoints(guess, actual);
-            
-            totalScore += points;
-            if (points > bestScore) bestScore = points;
-            
-            totalScoreEl.textContent = totalScore;
-            bestScoreEl.textContent = bestScore;
-            
-            resultEmoji.textContent = getResultEmoji(points);
-            resultText.textContent = getResultMessage(points, difference);
-            resultDetails.textContent = `Correct answer: ${formatYear(actual)} | Your guess: ${formatYear(guess)} | Off by ${difference} year${difference !== 1 ? 's' : ''}`;
-            pointsEarned.textContent = `+${points} points`;
-            
-            resultPanel.className = 'result-panel show ' + getResultClass(points);
-            
             dateInput.disabled = true;
             submitBtn.disabled = true;
             stopTimer();
+            
+            // Show suspense message
+            resultEmoji.textContent = '🤔';
+            resultText.textContent = 'Calculating thy wisdom...';
+            resultDetails.textContent = '';
+            pointsEarned.textContent = '';
+            resultPanel.className = 'result-panel show';
+            
+            // Reveal answer after 2 seconds
+            setTimeout(() => {
+                const actual = currentEvent.year;
+                const difference = Math.abs(guess - actual);
+                const points = calculatePoints(guess, actual);
+                
+                totalScore += points;
+                if (points > bestScore) bestScore = points;
+                
+                totalScoreEl.textContent = totalScore;
+                bestScoreEl.textContent = bestScore;
+                
+                resultEmoji.textContent = getResultEmoji(points);
+                resultText.textContent = getResultMessage(points, difference);
+                resultDetails.textContent = `Correct answer: ${formatYear(actual)} | Your guess: ${formatYear(guess)} | Off by ${difference} year${difference !== 1 ? 's' : ''}`;
+                pointsEarned.textContent = `+${points} points`;
+                
+                resultPanel.className = 'result-panel show ' + getResultClass(points);
+            }, 2000);
         }
         
         function showFinalScore() {
