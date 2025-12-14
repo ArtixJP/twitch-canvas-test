@@ -161,6 +161,85 @@
             100% { opacity: 1; transform: scale(1.2); }
         }
         
+        .jambon {
+            position: fixed;
+            font-size: 4rem;
+            animation: jambon-spin 7s ease-in-out infinite;
+            filter: drop-shadow(0 0 12px rgba(255, 150, 150, 0.5));
+            z-index: 85;
+        }
+        
+        @keyframes jambon-spin {
+            0% { transform: translate(-80px, 20vh) rotate(0deg); }
+            33% { transform: translate(40vw, 45vh) rotate(120deg); }
+            66% { transform: translate(70vw, 15vh) rotate(240deg); }
+            100% { transform: translate(110vw, 35vh) rotate(360deg); }
+        }
+        
+        .jambon:nth-child(10) {
+            animation-delay: -2.5s;
+            font-size: 3rem;
+        }
+        
+        .lapin {
+            position: fixed;
+            font-size: 4.5rem;
+            animation: lapin-hop 5s ease-in-out infinite;
+            filter: drop-shadow(0 5px 10px rgba(200, 200, 200, 0.4));
+            z-index: 80;
+        }
+        
+        @keyframes lapin-hop {
+            0% { transform: translate(-100px, 80vh) translateY(0); }
+            10% { transform: translate(5vw, 80vh) translateY(-50px); }
+            20% { transform: translate(15vw, 80vh) translateY(0); }
+            30% { transform: translate(25vw, 80vh) translateY(-60px); }
+            40% { transform: translate(40vw, 80vh) translateY(0); }
+            50% { transform: translate(55vw, 80vh) translateY(-40px); }
+            60% { transform: translate(65vw, 80vh) translateY(0); }
+            70% { transform: translate(75vw, 80vh) translateY(-55px); }
+            80% { transform: translate(85vw, 80vh) translateY(0); }
+            90% { transform: translate(95vw, 80vh) translateY(-45px); }
+            100% { transform: translate(110vw, 80vh) translateY(0); }
+        }
+        
+        .canard {
+            position: fixed;
+            font-size: 3.8rem;
+            animation: canard-waddle 9s linear infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 220, 0, 0.5));
+            z-index: 70;
+        }
+        
+        @keyframes canard-waddle {
+            0% { transform: translate(-100px, 85vh) rotate(-5deg); }
+            5% { transform: translate(0vw, 85vh) rotate(5deg); }
+            10% { transform: translate(10vw, 85vh) rotate(-5deg); }
+            15% { transform: translate(15vw, 85vh) rotate(5deg); }
+            20% { transform: translate(20vw, 85vh) rotate(-5deg); }
+            25% { transform: translate(25vw, 85vh) rotate(5deg); }
+            30% { transform: translate(30vw, 85vh) rotate(-5deg); }
+            35% { transform: translate(35vw, 85vh) rotate(5deg); }
+            40% { transform: translate(40vw, 85vh) rotate(-5deg); }
+            45% { transform: translate(45vw, 85vh) rotate(5deg); }
+            50% { transform: translate(50vw, 85vh) rotate(-5deg); }
+            55% { transform: translate(55vw, 85vh) rotate(5deg); }
+            60% { transform: translate(60vw, 85vh) rotate(-5deg); }
+            65% { transform: translate(65vw, 85vh) rotate(5deg); }
+            70% { transform: translate(70vw, 85vh) rotate(-5deg); }
+            75% { transform: translate(75vw, 85vh) rotate(5deg); }
+            80% { transform: translate(80vw, 85vh) rotate(-5deg); }
+            85% { transform: translate(85vw, 85vh) rotate(5deg); }
+            90% { transform: translate(90vw, 85vh) rotate(-5deg); }
+            95% { transform: translate(95vw, 85vh) rotate(5deg); }
+            100% { transform: translate(110vw, 85vh) rotate(-5deg); }
+        }
+        
+        .canard:nth-child(13) {
+            animation-delay: -3s;
+            font-size: 3rem;
+        }
+        
         .montgolfiere::after {
             content: '';
             position: absolute;
@@ -182,6 +261,11 @@
 <div class="saucisson">🌭</div>
 <div class="saucisson">🌭</div>
 <div class="llama">🦙</div>
+<div class="jambon">🍖</div>
+<div class="jambon">🍖</div>
+<div class="lapin">🐰</div>
+<div class="canard">🦆</div>
+<div class="canard">🦆</div>
 <h1>Hello World</h1>
 </body>
 </html>
