@@ -56,6 +56,45 @@
             font-size: 2.5rem;
         }
         
+        .saucisson {
+            position: fixed;
+            font-size: 3.5rem;
+            animation: saucisson-roll 8s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(139, 69, 19, 0.6));
+            z-index: 90;
+        }
+        
+        @keyframes saucisson-roll {
+            0% {
+                transform: translate(-80px, 40vh) rotate(0deg);
+            }
+            25% {
+                transform: translate(30vw, 55vh) rotate(180deg);
+            }
+            50% {
+                transform: translate(55vw, 35vh) rotate(360deg);
+            }
+            75% {
+                transform: translate(80vw, 50vh) rotate(540deg);
+            }
+            100% {
+                transform: translate(110vw, 42vh) rotate(720deg);
+            }
+        }
+        
+        .saucisson:nth-child(5) {
+            animation-delay: -3s;
+            font-size: 2.8rem;
+        }
+        
+        .saucisson:nth-child(6) {
+            animation-delay: -6s;
+            font-size: 2.2rem;
+        }
+            animation-delay: -4s;
+            font-size: 2.5rem;
+        }
+        
         .montgolfiere {
             position: fixed;
             font-size: 6rem;
@@ -139,6 +178,9 @@
 <div class="panini">🥪</div>
 <div class="panini">🥪</div>
 <div class="montgolfiere">🎈</div>
+<div class="saucisson">🌭</div>
+<div class="saucisson">🌭</div>
+<div class="saucisson">🌭</div>
 <div class="llama">🦙</div>
 <h1>Hello World</h1>
 </body>
