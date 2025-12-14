@@ -242,6 +242,66 @@
         50% { opacity: 0.3; }
     }
     
+    .tesla-orbit {
+        position: absolute;
+        width: 400px;
+        height: 400px;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation: teslaOrbit 20s linear infinite;
+        pointer-events: none;
+    }
+    
+    .tesla-car {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 35px;
+        filter: drop-shadow(0 0 15px rgba(255,0,0,0.6));
+        animation: carFloat 3s ease-in-out infinite;
+    }
+    
+    .starman {
+        position: absolute;
+        top: -25px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 25px;
+        animation: starmanWave 2s ease-in-out infinite;
+    }
+    
+    .tesla-trail {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%) translateX(30px);
+        font-size: 12px;
+        opacity: 0.6;
+        animation: trailFade 1s ease-out infinite;
+    }
+    
+    @keyframes teslaOrbit {
+        0% { transform: translate(-50%, -50%) rotate(0deg); }
+        100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+    
+    @keyframes carFloat {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-5px); }
+    }
+    
+    @keyframes starmanWave {
+        0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+        50% { transform: translateX(-50%) rotate(5deg); }
+    }
+    
+    @keyframes trailFade {
+        0% { opacity: 0.8; transform: translateX(-50%) translateX(30px) scale(1); }
+        100% { opacity: 0; transform: translateX(-50%) translateX(60px) scale(0.5); }
+    }
+    
     .sun {
         position: absolute;
         top: 50px;
@@ -505,7 +565,15 @@
 <section class="section active" id="space">
 <div class="sun"></div>
 <h1>🌌 Space Explorer</h1>
+<p style="text-align:center; color: rgba(255,255,255,0.7); margin-bottom: 10px; font-size: 0.9rem;">🚀 Featuring Starman in the Tesla Roadster!</p>
 <div class="scene-container">
+<div class="tesla-orbit">
+<div class="tesla-car">
+<span class="starman">🧑‍🚀</span>
+        🚗
+        <span class="tesla-trail">✨✨✨</span>
+</div>
+</div>
 <div class="planet-container">
 <div class="moon-orbit">
 <div class="moon"></div>
