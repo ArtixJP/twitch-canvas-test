@@ -601,7 +601,7 @@
 <section class="section" id="games">
 <h1>🎮 Space Shooter</h1>
 <div class="game-container">
-<div class="game-instructions">Click to shoot asteroids! Move with mouse.</div>
+<div class="game-instructions">🎯 Move: Arrow keys/WASD or Mouse | Shoot: Click or Space</div>
 <canvas height="400" id="gameCanvas" width="600"></canvas>
 <div class="game-info">
 <div class="game-score">Score: <span id="gameScore">0</span></div>
@@ -767,16 +767,35 @@ const gameLivesEl = document.getElementById('gameLives');
 let gameScore = 0;
 let gameLives = 3;
 let playerX = canvas.width / 2;
+let playerY = canvas.height - 50;
 let bullets = [];
+let keys = { up: false, down: false, left: false, right: false };
 let asteroids = [];
 
 canvas.addEventListener('mousemove', (e) => {
     const rect = canvas.getBoundingClientRect();
     playerX = e.clientX - rect.left;
+    playerY = e.clientY - rect.top;
+});
+
+// Keyboard controls for all directions
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') keys.up = true;
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') keys.down = true;
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = true;
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = true;
+    if (e.key === ' ') bullets.push({ x: playerX, y: playerY - 20, speed: 8 });
+});
+
+document.addEventListener('keyup', (e) => {
+    if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W') keys.up = false;
+    if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') keys.down = false;
+    if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') keys.left = false;
+    if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') keys.right = false;
 });
 
 canvas.addEventListener('click', () => {
-    bullets.push({ x: playerX, y: canvas.height - 40, speed: 8 });
+    bullets.push({ x: playerX, y: playerY - 20, speed: 8 });
 });
 
 function spawnAsteroid() {
@@ -792,12 +811,28 @@ function gameLoop() {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    // Update player position based on keys
+    const moveSpeed = 6;
+    if (keys.up) playerY = Math.max(30, playerY - moveSpeed);
+    if (keys.down) playerY = Math.min(canvas.height - 20, playerY + moveSpeed);
+    if (keys.left) playerX = Math.max(20, playerX - moveSpeed);
+    if (keys.right) playerX = Math.min(canvas.width - 20, playerX + moveSpeed);
+    
     // Draw player ship
     ctx.fillStyle = '#00ff88';
     ctx.beginPath();
-    ctx.moveTo(playerX, canvas.height - 50);
-    ctx.lineTo(playerX - 15, canvas.height - 20);
-    ctx.lineTo(playerX + 15, canvas.height - 20);
+    ctx.moveTo(playerX, playerY - 20);
+    ctx.lineTo(playerX - 15, playerY + 10);
+    ctx.lineTo(playerX + 15, playerY + 10);
+    ctx.closePath();
+    ctx.fill();
+    
+    // Draw engine glow
+    ctx.fillStyle = 'rgba(255, 150, 0, 0.7)';
+    ctx.beginPath();
+    ctx.moveTo(playerX - 8, playerY + 10);
+    ctx.lineTo(playerX, playerY + 20 + Math.random() * 5);
+    ctx.lineTo(playerX + 8, playerY + 10);
     ctx.closePath();
     ctx.fill();
     
@@ -826,7 +861,8 @@ function gameLoop() {
         });
         
         // Check player collision
-        if (a.y > canvas.height - 50 && Math.abs(a.x - playerX) < a.size + 15) {
+        const playerDist = Math.hypot(a.x - playerX, a.y - playerY);
+        if (playerDist < a.size + 15) {
             gameLives--;
             gameLivesEl.textContent = gameLives;
             if (gameLives <= 0) {
