@@ -5,13 +5,13 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🎯 Date Guesser - Historical Events</title>
+<title>🎯 Date Guesser - Renaissance Edition 🎭</title>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', system-ui, sans-serif; 
             min-height: 100vh; 
-            background: radial-gradient(ellipse at center, #1a0a30 0%, #0a0a1a 100%);
+            background: radial-gradient(ellipse at center, #2d1810 0%, #1a0f0a 100%);
             color: white;
             overflow-x: hidden;
         }
@@ -271,9 +271,10 @@
         
         .star {
             position: absolute;
-            width: 4px;
-            height: 4px;
-            background: white;
+            width: auto;
+            height: auto;
+            font-size: 1.5rem;
+            background: transparent;
             border-radius: 50%;
             animation: twinkle 2s ease-in-out infinite;
         }
@@ -326,10 +327,10 @@
 </head>
 <body>
 <div class="stars">
-<div class="star" style="top: 10%; left: 20%; animation-delay: 0s;"></div>
-<div class="star" style="top: 15%; left: 80%; animation-delay: 0.5s;"></div>
-<div class="star" style="top: 5%; left: 50%; animation-delay: 1s;"></div>
-<div class="star" style="top: 25%; left: 30%; animation-delay: 1.5s;"></div>
+<div class="star" style="top: 10%; left: 20%; animation-delay: 0s;">🎭</div>
+<div class="star" style="top: 15%; left: 80%; animation-delay: 0.5s;">🎨</div>
+<div class="star" style="top: 5%; left: 50%; animation-delay: 1s;">📜</div>
+<div class="star" style="top: 25%; left: 30%; animation-delay: 1.5s;">🖼️</div>
 <div class="star" style="top: 8%; left: 70%; animation-delay: 2s;"></div>
 <div class="star" style="top: 60%; left: 10%; animation-delay: 0.3s;"></div>
 <div class="star" style="top: 80%; left: 90%; animation-delay: 0.8s;"></div>
@@ -337,7 +338,7 @@
 <div class="star" style="top: 70%; left: 75%; animation-delay: 0.6s;"></div>
 </div>
 <div class="container">
-<h1 class="title">🎯 Date Guesser 📅</h1>
+<h1 class="title">🎭 Date Guesser - Renaissance Edition 🎨</h1>
 <div class="score-panel">
 <div class="score-box">
 <div class="score-label">TOTAL SCORE</div>
@@ -349,19 +350,19 @@
 </div>
 </div>
 <div class="game-area" id="game-area">
-<div class="event-label">📜 WHEN DID THIS HAPPEN?</div>
+<div class="event-label">📜 HARK! WHEN DID THIS OCCURETH? 🎭</div>
 <div class="event-text" id="event-text">Loading...</div>
 <div class="input-section">
 <input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Year" type="number"/>
-<span class="hint-text">Enter the year (e.g., 1969)</span>
-<button class="submit-btn" id="submit-btn">Guess!</button>
+<span class="hint-text">🎭 Pray tell, enter the year (e.g., 1503) 🎨</span>
+<button class="submit-btn" id="submit-btn">🎭 Make Thy Guess!</button>
 </div>
 <div class="result-panel" id="result-panel">
 <div class="result-emoji" id="result-emoji">🎉</div>
 <div class="result-text" id="result-text"></div>
 <div class="result-details" id="result-details"></div>
 <div class="points-earned" id="points-earned">+0 points</div>
-<button class="next-btn" id="next-btn">Next Event →</button>
+<button class="next-btn" id="next-btn">🎨 Onward, Noble Scholar →</button>
 </div>
 <div class="progress-bar">
 <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
@@ -369,10 +370,10 @@
 <div class="question-counter" id="question-counter">Question 1 / 10</div>
 </div>
 <div class="final-score" id="final-score">
-<div class="final-title">🏆 Game Complete! 🏆</div>
+<div class="final-title">🎭 Huzzah! Thy Quest is Complete! 🏆</div>
 <div class="final-points" id="final-points">0</div>
 <div style="color: #aaa; margin-top: 10px;">Total Points</div>
-<button class="restart-btn" id="restart-btn">Play Again 🔄</button>
+<button class="restart-btn" id="restart-btn">🎭 Embark Anew 🔄</button>
 </div>
 </div>
 <script>
@@ -401,7 +402,12 @@
             { event: "Assassination of Julius Caesar", year: -44 },
             { event: "Construction of Eiffel Tower completed", year: 1889 },
             { event: "Russian Revolution", year: 1917 },
-            { event: "Discovery of Penicillin", year: 1928 }
+            { event: "Discovery of Penicillin", year: 1928 },
+            { event: "Star Wars: A New Hope released in theaters", year: 1977 },
+            { event: "Leonardo da Vinci paints the Mona Lisa", year: 1503 },
+            { event: "Michelangelo completes the Sistine Chapel ceiling", year: 1512 },
+            { event: "Shakespeare writes Romeo and Juliet", year: 1597 },
+            { event: "The Renaissance begins in Florence", year: 1400 }
         ];
         
         let currentEvent = null;
