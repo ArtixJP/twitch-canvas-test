@@ -5,13 +5,13 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🎯 Devinette de Dates - Édition Renaissance 🎭</title>
+<title>🚀 Devinette de Dates - Édition Spatiale 🛸</title>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Segoe UI', system-ui, sans-serif; 
             min-height: 100vh; 
-            background: radial-gradient(ellipse at center, #2d1810 0%, #1a0f0a 100%);
+            background: radial-gradient(ellipse at center, #0a0a2e 0%, #000010 100%);
             color: white;
             overflow-x: hidden;
         }
@@ -70,7 +70,7 @@
         }
         
         .game-area {
-            background: linear-gradient(135deg, #1a1a4a 0%, #2a2a6a 100%);
+            background: linear-gradient(135deg, #0d0d3d 0%, #1a0a4a 100%);
             border: 3px solid #ffd700;
             border-radius: 25px;
             padding: 40px;
@@ -460,10 +460,10 @@
 </head>
 <body>
 <div class="stars">
-<div class="star" style="top: 10%; left: 20%; animation-delay: 0s;">🎭</div>
-<div class="star" style="top: 15%; left: 80%; animation-delay: 0.5s;">🎨</div>
-<div class="star" style="top: 5%; left: 50%; animation-delay: 1s;">📜</div>
-<div class="star" style="top: 25%; left: 30%; animation-delay: 1.5s;">🖼️</div>
+<div class="star" style="top: 10%; left: 20%; animation-delay: 0s;">🚀</div>
+<div class="star" style="top: 15%; left: 80%; animation-delay: 0.5s;">🛸</div>
+<div class="star" style="top: 5%; left: 50%; animation-delay: 1s;">🌟</div>
+<div class="star" style="top: 25%; left: 30%; animation-delay: 1.5s;">🌙</div>
 <div class="star" style="top: 8%; left: 70%; animation-delay: 2s;"></div>
 <div class="star" style="top: 60%; left: 10%; animation-delay: 0.3s;"></div>
 <div class="star" style="top: 80%; left: 90%; animation-delay: 0.8s;"></div>
@@ -471,7 +471,7 @@
 <div class="star" style="top: 70%; left: 75%; animation-delay: 0.6s;"></div>
 </div>
 <div class="container">
-<h1 class="title">🎭 Devinette de Dates - Édition Renaissance 🎨</h1>
+<h1 class="title">🚀 Devinette de Dates - Édition Spatiale 🛸</h1>
 <div class="score-panel">
 <div class="score-box">
 <div class="score-label">SCORE TOTAL</div>
@@ -483,7 +483,7 @@
 </div>
 </div>
 <div class="game-area" id="game-area">
-<div class="event-label">📜 OYEZ! QUAND CELA S'EST-IL PRODUIT? 🎭</div>
+<div class="event-label">🛸 EXPLORATEUR TEMPOREL! QUAND CELA S'EST-IL PRODUIT? 🚀</div>
 <div class="timer-container">
 <span>⏳</span>
 <span class="timer" id="timer">30</span>
@@ -495,15 +495,15 @@
 <div class="event-text" id="event-text">Loading...</div>
 <div class="input-section">
 <input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Année" type="number" value="1930"/>
-<span class="hint-text">🎭 Veuillez entrer l'année (ex: 1503) 🎨</span>
-<button class="submit-btn" id="submit-btn">🎭 Faire ta Supposition!</button>
+<span class="hint-text">🌟 Entrez l'année (ex: 1969) 🛸</span>
+<button class="submit-btn" id="submit-btn">🚀 Lancer l'Hypothèse!</button>
 </div>
 <div class="result-panel" id="result-panel">
 <div class="result-emoji" id="result-emoji">🎉</div>
 <div class="result-text" id="result-text"></div>
 <div class="result-details" id="result-details"></div>
 <div class="points-earned" id="points-earned">+0 points</div>
-<button class="next-btn" id="next-btn">🎨 En Avant, Noble Érudit →</button>
+<button class="next-btn" id="next-btn">🛸 Prochaine Mission →</button>
 </div>
 <div class="progress-bar">
 <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
@@ -511,44 +511,44 @@
 <div class="question-counter" id="question-counter">Question 1 / 10</div>
 </div>
 <div class="final-score" id="final-score">
-<div class="final-title">🎭 Hourra! Ta Quête est Accomplie! 🏆</div>
+<div class="final-title">🚀 Mission Accomplie, Explorateur! 🏆</div>
 <div class="final-points" id="final-points">0</div>
 <div style="color: #aaa; margin-top: 10px;">Points Totaux</div>
-<button class="restart-btn" id="restart-btn">🎭 Recommencer 🔄</button>
+<button class="restart-btn" id="restart-btn">🚀 Nouvelle Mission 🔄</button>
 </div>
 </div>
 <script>
         const historicalEvents = [
-            { event: "Premier Alunissage (Apollo 11)", year: 1969 },
-            { event: "Chute du Mur de Berlin", year: 1989 },
-            { event: "Christophe Colomb atteint l'Amérique", year: 1492 },
-            { event: "Début de la Révolution Française", year: 1789 },
-            { event: "Début de la Première Guerre Mondiale", year: 1914 },
-            { event: "Fin de la Seconde Guerre Mondiale", year: 1945 },
-            { event: "Déclaration d'Indépendance (USA)", year: 1776 },
-            { event: "Naufrage du Titanic", year: 1912 },
-            { event: "Sortie du premier iPhone", year: 2007 },
-            { event: "Discours 'I Have a Dream' de Martin Luther King", year: 1963 },
-            { event: "Début de la construction de la Grande Muraille de Chine", year: -221 },
-            { event: "Gutenberg invente l'imprimerie", year: 1440 },
-            { event: "Défaite de Napoléon à Waterloo", year: 1815 },
-            { event: "Premier vol motorisé des Frères Wright", year: 1903 },
-            { event: "La Peste Noire atteint l'Europe", year: 1347 },
-            { event: "Signature de la Magna Carta", year: 1215 },
-            { event: "Chute de l'Empire Romain", year: 476 },
-            { event: "Einstein publie la Théorie de la Relativité", year: 1905 },
-            { event: "Catastrophe de Tchernobyl", year: 1986 },
-            { event: "Libération de Nelson Mandela", year: 1990 },
-            { event: "Premiers Jeux Olympiques modernes (Athènes)", year: 1896 },
-            { event: "Assassinat de Jules César", year: -44 },
-            { event: "Achèvement de la Tour Eiffel", year: 1889 },
-            { event: "Révolution Russe", year: 1917 },
-            { event: "Découverte de la Pénicilline", year: 1928 },
-            { event: "Star Wars: Un Nouvel Espoir sort au cinéma", year: 1977 },
-            { event: "Léonard de Vinci peint la Joconde", year: 1503 },
-            { event: "Michel-Ange achève le plafond de la Chapelle Sixtine", year: 1512 },
-            { event: "Shakespeare écrit Roméo et Juliette", year: 1597 },
-            { event: "La Renaissance commence à Florence", year: 1400 }
+            { event: "🚀 Premier Alunissage (Apollo 11)", year: 1969 },
+            { event: "🛰️ Lancement de Spoutnik 1", year: 1957 },
+            { event: "🌍 Youri Gagarine premier homme dans l'espace", year: 1961 },
+            { event: "🔭 Lancement du télescope Hubble", year: 1990 },
+            { event: "🛸 Voyager 1 quitte le système solaire", year: 2012 },
+            { event: "🚀 Premier vol de la navette spatiale Columbia", year: 1981 },
+            { event: "🌙 Neil Armstrong marche sur la Lune", year: 1969 },
+            { event: "🛰️ Lancement de la Station Spatiale Internationale", year: 1998 },
+            { event: "🔴 Rover Curiosity atterrit sur Mars", year: 2012 },
+            { event: "🚀 SpaceX réutilise une fusée Falcon 9", year: 2017 },
+            { event: "🌟 Découverte des exoplanètes TRAPPIST-1", year: 2017 },
+            { event: "🛰️ Première photo d'un trou noir", year: 2019 },
+            { event: "🚀 Lancement du télescope James Webb", year: 2021 },
+            { event: "👨‍🚀 Premier touriste spatial (Dennis Tito)", year: 2001 },
+            { event: "🛸 Sonde New Horizons survole Pluton", year: 2015 },
+            { event: "🌙 Mission Apollo 13 'Houston, we have a problem'", year: 1970 },
+            { event: "🔭 Découverte de l'expansion de l'univers (Hubble)", year: 1929 },
+            { event: "🛰️ Lancement du satellite GPS", year: 1978 },
+            { event: "🚀 Premier atterrissage sur une comète (Rosetta)", year: 2014 },
+            { event: "🌍 Création de la NASA", year: 1958 },
+            { event: "🛸 Première sortie dans l'espace (Alexei Leonov)", year: 1965 },
+            { event: "🔴 Viking 1 atterrit sur Mars", year: 1976 },
+            { event: "🌟 Détection des ondes gravitationnelles", year: 2015 },
+            { event: "🚀 Blue Origin premier vol habité", year: 2021 },
+            { event: "🛰️ Lancement de Starlink", year: 2019 },
+            { event: "🌙 Programme Artemis annoncé", year: 2017 },
+            { event: "🔭 Premier pulsar découvert", year: 1967 },
+            { event: "🛸 Cassini entre en orbite de Saturne", year: 2004 },
+            { event: "🚀 Crew Dragon premier vol habité", year: 2020 },
+            { event: "🌍 Perseverance atterrit sur Mars", year: 2021 }
         ];
         
         let currentEvent = null;
