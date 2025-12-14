@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🎯 Date Guesser - Renaissance Edition 🎭</title>
+<title>🎯 Devinette de Dates - Édition Renaissance 🎭</title>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -427,39 +427,39 @@
 <div class="star" style="top: 70%; left: 75%; animation-delay: 0.6s;"></div>
 </div>
 <div class="container">
-<h1 class="title">🎭 Date Guesser - Renaissance Edition 🎨</h1>
+<h1 class="title">🎭 Devinette de Dates - Édition Renaissance 🎨</h1>
 <div class="score-panel">
 <div class="score-box">
-<div class="score-label">TOTAL SCORE</div>
+<div class="score-label">SCORE TOTAL</div>
 <div class="score-value" id="total-score">0</div>
 </div>
 <div class="score-box">
-<div class="score-label">BEST GUESS</div>
+<div class="score-label">MEILLEUR SCORE</div>
 <div class="score-value" id="best-score">0</div>
 </div>
 </div>
 <div class="game-area" id="game-area">
-<div class="event-label">📜 HARK! WHEN DID THIS OCCURETH? 🎭</div>
+<div class="event-label">📜 OYEZ! QUAND CELA S'EST-IL PRODUIT? 🎭</div>
 <div class="timer-container">
 <span>⏳</span>
 <span class="timer" id="timer">30</span>
-<span>seconds</span>
+<span>secondes</span>
 </div>
 <div class="timer-bar">
 <div class="timer-fill" id="timer-fill" style="width: 100%"></div>
 </div>
 <div class="event-text" id="event-text">Loading...</div>
 <div class="input-section">
-<input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Year" type="number" value="1930"/>
-<span class="hint-text">🎭 Pray tell, enter the year (e.g., 1503) 🎨</span>
-<button class="submit-btn" id="submit-btn">🎭 Make Thy Guess!</button>
+<input class="date-input" id="date-input" max="2024" min="-3000" placeholder="Année" type="number" value="1930"/>
+<span class="hint-text">🎭 Veuillez entrer l'année (ex: 1503) 🎨</span>
+<button class="submit-btn" id="submit-btn">🎭 Faire ta Supposition!</button>
 </div>
 <div class="result-panel" id="result-panel">
 <div class="result-emoji" id="result-emoji">🎉</div>
 <div class="result-text" id="result-text"></div>
 <div class="result-details" id="result-details"></div>
 <div class="points-earned" id="points-earned">+0 points</div>
-<button class="next-btn" id="next-btn">🎨 Onward, Noble Scholar →</button>
+<button class="next-btn" id="next-btn">🎨 En Avant, Noble Érudit →</button>
 </div>
 <div class="progress-bar">
 <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
@@ -467,44 +467,44 @@
 <div class="question-counter" id="question-counter">Question 1 / 10</div>
 </div>
 <div class="final-score" id="final-score">
-<div class="final-title">🎭 Huzzah! Thy Quest is Complete! 🏆</div>
+<div class="final-title">🎭 Hourra! Ta Quête est Accomplie! 🏆</div>
 <div class="final-points" id="final-points">0</div>
-<div style="color: #aaa; margin-top: 10px;">Total Points</div>
-<button class="restart-btn" id="restart-btn">🎭 Embark Anew 🔄</button>
+<div style="color: #aaa; margin-top: 10px;">Points Totaux</div>
+<button class="restart-btn" id="restart-btn">🎭 Recommencer 🔄</button>
 </div>
 </div>
 <script>
         const historicalEvents = [
-            { event: "First Moon Landing (Apollo 11)", year: 1969 },
-            { event: "Fall of the Berlin Wall", year: 1989 },
-            { event: "Christopher Columbus reaches America", year: 1492 },
-            { event: "French Revolution begins", year: 1789 },
-            { event: "World War I starts", year: 1914 },
-            { event: "World War II ends", year: 1945 },
-            { event: "Declaration of Independence (USA)", year: 1776 },
-            { event: "Titanic sinks", year: 1912 },
-            { event: "First iPhone released", year: 2007 },
-            { event: "Martin Luther King Jr.'s 'I Have a Dream' speech", year: 1963 },
-            { event: "Construction of the Great Wall of China begins", year: -221 },
-            { event: "Gutenberg invents the printing press", year: 1440 },
-            { event: "Napoleon's defeat at Waterloo", year: 1815 },
-            { event: "First powered flight by Wright Brothers", year: 1903 },
-            { event: "Black Death reaches Europe", year: 1347 },
-            { event: "Signing of Magna Carta", year: 1215 },
-            { event: "Fall of the Roman Empire", year: 476 },
-            { event: "Einstein publishes Theory of Relativity", year: 1905 },
-            { event: "Chernobyl disaster", year: 1986 },
-            { event: "Nelson Mandela released from prison", year: 1990 },
-            { event: "First Olympic Games in modern era (Athens)", year: 1896 },
-            { event: "Assassination of Julius Caesar", year: -44 },
-            { event: "Construction of Eiffel Tower completed", year: 1889 },
-            { event: "Russian Revolution", year: 1917 },
-            { event: "Discovery of Penicillin", year: 1928 },
-            { event: "Star Wars: A New Hope released in theaters", year: 1977 },
-            { event: "Leonardo da Vinci paints the Mona Lisa", year: 1503 },
-            { event: "Michelangelo completes the Sistine Chapel ceiling", year: 1512 },
-            { event: "Shakespeare writes Romeo and Juliet", year: 1597 },
-            { event: "The Renaissance begins in Florence", year: 1400 }
+            { event: "Premier Alunissage (Apollo 11)", year: 1969 },
+            { event: "Chute du Mur de Berlin", year: 1989 },
+            { event: "Christophe Colomb atteint l'Amérique", year: 1492 },
+            { event: "Début de la Révolution Française", year: 1789 },
+            { event: "Début de la Première Guerre Mondiale", year: 1914 },
+            { event: "Fin de la Seconde Guerre Mondiale", year: 1945 },
+            { event: "Déclaration d'Indépendance (USA)", year: 1776 },
+            { event: "Naufrage du Titanic", year: 1912 },
+            { event: "Sortie du premier iPhone", year: 2007 },
+            { event: "Discours 'I Have a Dream' de Martin Luther King", year: 1963 },
+            { event: "Début de la construction de la Grande Muraille de Chine", year: -221 },
+            { event: "Gutenberg invente l'imprimerie", year: 1440 },
+            { event: "Défaite de Napoléon à Waterloo", year: 1815 },
+            { event: "Premier vol motorisé des Frères Wright", year: 1903 },
+            { event: "La Peste Noire atteint l'Europe", year: 1347 },
+            { event: "Signature de la Magna Carta", year: 1215 },
+            { event: "Chute de l'Empire Romain", year: 476 },
+            { event: "Einstein publie la Théorie de la Relativité", year: 1905 },
+            { event: "Catastrophe de Tchernobyl", year: 1986 },
+            { event: "Libération de Nelson Mandela", year: 1990 },
+            { event: "Premiers Jeux Olympiques modernes (Athènes)", year: 1896 },
+            { event: "Assassinat de Jules César", year: -44 },
+            { event: "Achèvement de la Tour Eiffel", year: 1889 },
+            { event: "Révolution Russe", year: 1917 },
+            { event: "Découverte de la Pénicilline", year: 1928 },
+            { event: "Star Wars: Un Nouvel Espoir sort au cinéma", year: 1977 },
+            { event: "Léonard de Vinci peint la Joconde", year: 1503 },
+            { event: "Michel-Ange achève le plafond de la Chapelle Sixtine", year: 1512 },
+            { event: "Shakespeare écrit Roméo et Juliette", year: 1597 },
+            { event: "La Renaissance commence à Florence", year: 1400 }
         ];
         
         let currentEvent = null;
@@ -576,12 +576,12 @@
         }
         
         function getResultMessage(points, difference) {
-            if (points === 1000) return 'PERFECT! Exact year!';
-            if (points >= 900) return 'INCREDIBLE! So close!';
-            if (points >= 700) return 'EXCELLENT! Great guess!';
-            if (points >= 400) return 'GOOD! Not bad at all!';
-            if (points >= 150) return 'OK! You were in the ballpark';
-            return 'Keep trying! History is tricky!';
+            if (points === 1000) return 'PARFAIT! Année exacte!';
+            if (points >= 900) return 'INCROYABLE! Si proche!';
+            if (points >= 700) return 'EXCELLENT! Super devinette!';
+            if (points >= 400) return 'BIEN! Pas mal du tout!';
+            if (points >= 150) return 'OK! Tu étais dans la bonne zone';
+            return 'Continue! L\'histoire est compliquée!';
         }
         
         function createFireworks() {
@@ -636,7 +636,7 @@
         }
         
         function formatYear(year) {
-            if (year < 0) return Math.abs(year) + ' BC';
+            if (year < 0) return Math.abs(year) + ' av. J.-C.';
             return year.toString();
         }
         
@@ -711,7 +711,7 @@
             
             // Show suspense message
             resultEmoji.textContent = '🤔';
-            resultText.textContent = 'Calculating thy wisdom...';
+            resultText.textContent = 'Calcul de ta sagesse...';
             resultDetails.textContent = '';
             pointsEarned.textContent = '';
             resultPanel.className = 'result-panel show';
@@ -730,7 +730,7 @@
                 
                 resultEmoji.textContent = getResultEmoji(points);
                 resultText.textContent = getResultMessage(points, difference);
-                resultDetails.textContent = `Correct answer: ${formatYear(actual)} | Your guess: ${formatYear(guess)} | Off by ${difference} year${difference !== 1 ? 's' : ''}`;
+                resultDetails.textContent = `Réponse correcte: ${formatYear(actual)} | Ta réponse: ${formatYear(guess)} | Écart de ${difference} an${difference !== 1 ? 's' : ''}`;
                 pointsEarned.textContent = `+${points} points`;
                 
                 resultPanel.className = 'result-panel show ' + getResultClass(points);
