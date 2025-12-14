@@ -55,12 +55,53 @@
             animation-delay: -4s;
             font-size: 2.5rem;
         }
+        
+        .montgolfiere {
+            position: fixed;
+            font-size: 6rem;
+            animation: float-balloon 15s ease-in-out infinite;
+            filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.3));
+            z-index: 50;
+        }
+        
+        @keyframes float-balloon {
+            0% {
+                transform: translate(-150px, 60vh) rotate(-3deg);
+            }
+            20% {
+                transform: translate(20vw, 40vh) rotate(2deg);
+            }
+            40% {
+                transform: translate(40vw, 55vh) rotate(-2deg);
+            }
+            60% {
+                transform: translate(60vw, 35vh) rotate(3deg);
+            }
+            80% {
+                transform: translate(80vw, 50vh) rotate(-1deg);
+            }
+            100% {
+                transform: translate(110vw, 40vh) rotate(2deg);
+            }
+        }
+        
+        .montgolfiere::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 15px;
+            background: #8B4513;
+        }
     </style>
 </head>
 <body>
 <div class="panini">🥪</div>
 <div class="panini">🥪</div>
 <div class="panini">🥪</div>
+<div class="montgolfiere">🎈</div>
 <h1>Hello World</h1>
 </body>
 </html>
