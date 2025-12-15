@@ -159,6 +159,32 @@
             opacity: 0;
         }
     }
+    .test-badge {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #2ecc71, #27ae60);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: bold;
+        animation: testPop 0.5s ease-out, testFloat 2s ease-in-out infinite, testGlow 1.5s ease-in-out infinite;
+        box-shadow: 0 5px 20px rgba(46, 204, 113, 0.4);
+        z-index: 1000;
+    }
+    @keyframes testPop {
+        0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+        70% { transform: scale(1.2) rotate(5deg); }
+        100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes testGlow {
+        0%, 100% { box-shadow: 0 5px 20px rgba(46, 204, 113, 0.4); }
+        50% { box-shadow: 0 5px 30px rgba(46, 204, 113, 0.8), 0 0 40px rgba(241, 196, 15, 0.5); }
+    }
+    @keyframes testFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+    }
     .sparkle {
         position: fixed;
         width: 4px;
@@ -183,6 +209,7 @@
 </head>
 <body>
 <h1>🎮 Othello</h1>
+<div class="test-badge">🎉 Test #4 Passed! 🎉</div>
 <div class="score-board">
 <div class="score" id="black-score">
 <div class="disc-preview black"></div>
@@ -195,7 +222,11 @@
 </div>
 <div class="board" id="board"></div>
 <div class="message" id="message">Black's turn</div>
+<div style="display: flex; gap: 15px; margin-top: 15px;">
 <button class="restart-btn" onclick="initGame()">🔄 New Game</button>
+<button class="restart-btn" onclick="passTurn()" style="background: linear-gradient(135deg, #9b59b6, #8e44ad);">⏭️ Pass Turn</button>
+<button class="restart-btn" onclick="showHint()" style="background: linear-gradient(135deg, #e74c3c, #c0392b);">💡 Hint</button>
+</div>
 <script>
 const DIRECTIONS = [
     [-1, -1], [-1, 0], [-1, 1],
@@ -410,6 +441,45 @@ function updateMessage() {
     } else {
         msg.textContent = `${currentPlayer === 'black' ? '⚫' : '⚪'} ${currentPlayer.charAt(0).toUpperCase() + currentPlayer.slice(1)}'s turn`;
     }
+}
+
+function passTurn() {
+    if (gameOver) return;
+    const opponent = currentPlayer === 'black' ? 'white' : 'black';
+    if (getValidMoves(opponent).length > 0) {
+        currentPlayer = opponent;
+        renderBoard();
+        updateScore();
+        updateMessage();
+    }
+}
+
+function showHint() {
+    if (gameOver) return;
+    const validMoves = getValidMoves(currentPlayer);
+    if (validMoves.length === 0) return;
+    
+    // Find the move that flips the most pieces
+    let bestMove = validMoves[0];
+    let maxFlips = 0;
+    
+    for (const move of validMoves) {
+        const flips = getFlips(move.row, move.col, currentPlayer);
+        if (flips.length > maxFlips) {
+            maxFlips = flips.length;
+            bestMove = move;
+        }
+    }
+    
+    // Highlight the best move
+    const cell = document.querySelector(`[data-row="${bestMove.row}"][data-col="${bestMove.col}"]`);
+    cell.style.background = '#f1c40f';
+    cell.style.boxShadow = '0 0 20px #f1c40f, inset 0 0 10px rgba(255,255,255,0.5)';
+    
+    setTimeout(() => {
+        cell.style.background = '';
+        cell.style.boxShadow = '';
+    }, 1500);
 }
 
 initGame();
