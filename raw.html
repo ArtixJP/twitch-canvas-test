@@ -142,6 +142,7 @@
 <body>
 <div id="start-screen">
 <h1>⛏️ MINECRAFT JS</h1>
+<p style="color: #66aaff; font-size: 1.2rem; margin-bottom: 10px;">🍌 Mario's Blue Banana Edition 🍌</p>
 <p>Click to Play</p>
 </div>
 <div id="crosshair"></div>
@@ -583,6 +584,8 @@
             blockColors['brown'] = 0x8b4513;
             blockColors['skin'] = 0xffcc99;
             blockColors['blue'] = 0x0000ff;
+            blockColors['banana_blue'] = 0x0066ff;
+            blockColors['banana_yellow'] = 0x1155cc;
             
             const colorNames = {
                 'R': 'red',
@@ -636,6 +639,50 @@
             }
             
             placeNextBlock();
+            
+            // Build blue banana after Mario
+            setTimeout(() => {
+                buildBlueBanana(startX + 12, startY + 5, startZ);
+            }, totalBlocks.length * 50 + 500);
+        }
+        
+        function buildBlueBanana(bx, by, bz) {
+            showAIMessage('Mario is eating a blue banana! 🍌💙');
+            
+            // Blue banana pixel art (curved shape)
+            const bananaBlocks = [
+                {dx: 0, dy: 4, dz: 0},
+                {dx: 0, dy: 3, dz: 0},
+                {dx: 1, dy: 2, dz: 0},
+                {dx: 1, dy: 1, dz: 0},
+                {dx: 2, dy: 0, dz: 0},
+                {dx: 2, dy: -1, dz: 0},
+                // Banana tip (darker blue)
+                {dx: 0, dy: 5, dz: 0, type: 'banana_yellow'},
+                {dx: 2, dy: -2, dz: 0, type: 'banana_yellow'}
+            ];
+            
+            let i = 0;
+            bananaBlocks.forEach((b, idx) => {
+                setTimeout(() => {
+                    createBlock(bx + b.dx, by + b.dy, bz, b.type || 'banana_blue');
+                }, idx * 100);
+            });
+            
+            // Add eating animation - make banana disappear piece by piece
+            setTimeout(() => {
+                showAIMessage('NOM NOM NOM! 🍌😋');
+                bananaBlocks.reverse().forEach((b, idx) => {
+                    setTimeout(() => {
+                        const key = `${bx + b.dx},${by + b.dy},${bz}`;
+                        removeBlock(key);
+                    }, idx * 300);
+                });
+                
+                setTimeout(() => {
+                    showAIMessage('Delicious blue banana! Mario feels POWERED UP! 💪');
+                }, bananaBlocks.length * 300 + 500);
+            }, bananaBlocks.length * 100 + 2000);
         }
         
         function doRandomFunStuff() {
