@@ -305,10 +305,27 @@
     .status-message.error { background: rgba(255,0,0,0.3); color: #ff6b6b; }
     .status-message.success { background: rgba(0,255,0,0.3); color: #7fc97f; }
     .status-message.info { background: rgba(46, 204, 113, 0.3); color: #2ecc71; }
+    
+    .test-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 0.9rem;
+        animation: float 3s ease-in-out infinite;
+        box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+    }
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+    }
 </style>
 </head>
 <body>
-<h1 id="title">⚫ Othello - Reversi ⚪ <span class="test-badge">✨ TEST MODE ✨</span></h1>
+<h1 id="title">⚫ Othello - Reversi ⚪ <span class="test-badge">✨ TEST MODE ACTIVE ✨ 🧪</span></h1>
 <div class="game-container">
 <div class="board-container">
 <div class="board" id="board"></div>
@@ -569,5 +586,6 @@ function playRandomMove() {
 
 initBoard();
 </script>
+<div class="test-indicator">🧪 Test successful! Everything works! ✅</div>
 </body>
 </html>
