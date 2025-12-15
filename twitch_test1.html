@@ -23,18 +23,18 @@
             background: #0e0e10;
         }
         
-        /* Site fills the full stream area */
+        /* Site positioned in the content area (between header, sidebar, mode bar) */
         .layer-site {
             position: absolute;
-            top: 0;
+            top: 64px;       /* Below header (64px) */
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 360px;    /* Left of side panel (360px) */
+            bottom: 56px;    /* Above mode bar (56px) */
             border: none;
             z-index: 1;
         }
         
-        /* Frame overlay covers everything (transparent except UI elements) */
+        /* Frame overlay covers full screen (has transparent areas) */
         .layer-frame {
             position: absolute;
             top: 0;
@@ -46,13 +46,13 @@
             pointer-events: none;
         }
         
-        /* Vote overlay - positioned in main content area */
+        /* Vote overlay covers full screen (internal CSS handles positioning) */
         .layer-vote {
             position: absolute;
-            bottom: 56px;    /* Above mode bar (56px) */
+            top: 0;
             left: 0;
-            right: 360px;    /* Space for side panel (360px) */
-            height: 300px;
+            width: 100%;
+            height: 100%;
             border: none;
             z-index: 20;
             pointer-events: none;
@@ -143,26 +143,27 @@
         
         @media (max-width: 1200px) {
             .chat-panel { width: 300px; }
+            .layer-site { right: 300px; }
         }
         @media (max-width: 900px) {
             .container { flex-direction: column; }
             .stream { height: 60%; }
             .chat-panel { width: 100%; height: 40%; }
             .chat-panel.collapsed { width: 100%; height: 44px; }
-            .layer-vote { right: 0; }
+            .layer-site { right: 0; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="stream">
-            <!-- Layer 1: Site content (fills full area) -->
+            <!-- Layer 1: Site content (positioned in content area) -->
             <iframe class="layer-site" src="https://artix.tech/twitch_plays_code/live_for_twitch"></iframe>
             
-            <!-- Layer 2: Frame overlay (header 64px, sidebar 360px, mode bar 56px) -->
+            <!-- Layer 2: Frame overlay (full screen, transparent areas) -->
             <iframe class="layer-frame" src="https://artix.tech/twitch_plays_code/overlay/frame"></iframe>
             
-            <!-- Layer 3: Vote overlay (above mode bar, left of sidebar) -->
+            <!-- Layer 3: Vote overlay (full screen, internal CSS positions it) -->
             <iframe class="layer-vote" src="https://artix.tech/twitch_plays_code/overlay/vote"></iframe>
         </div>
         

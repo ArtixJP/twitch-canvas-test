@@ -14,18 +14,18 @@
             height: 100%;
         }
         
-        /* Site fills the full area */
+        /* Site positioned in the content area (between header, sidebar, mode bar) */
         .layer-site {
             position: absolute;
-            top: 0;
+            top: 64px;       /* Below header (64px) */
             left: 0;
-            width: 100%;
-            height: 100%;
+            right: 360px;    /* Left of side panel (360px) */
+            bottom: 56px;    /* Above mode bar (56px) */
             border: none;
             z-index: 1;
         }
         
-        /* Frame overlay covers everything */
+        /* Frame overlay covers full screen */
         .layer-frame {
             position: absolute;
             top: 0;
@@ -37,13 +37,13 @@
             pointer-events: none;
         }
         
-        /* Vote overlay - positioned in main content area */
+        /* Vote overlay covers full screen (internal CSS handles positioning) */
         .layer-vote {
             position: absolute;
-            bottom: 56px;    /* Above mode bar (56px) */
+            top: 0;
             left: 0;
-            right: 360px;    /* Space for side panel (360px) */
-            height: 300px;
+            width: 100%;
+            height: 100%;
             border: none;
             z-index: 20;
             pointer-events: none;
@@ -51,19 +51,18 @@
         
         /* 
          * Twitch chat positioned over the LIVE feed area in sidebar
-         * Sidebar dimensions from stream_frame.html:
-         * - Sidebar: width 360px, right 0, top 64px, bottom 56px
-         * - panel-intro: ~100px
-         * - status-badge: ~53px  
-         * - right-now: ~122px
-         * Total: 64 + 100 + 53 + 122 = ~339px from top
+         * Sidebar: right: 0, width: 360px, top: 64px, bottom: 56px
+         * - panel-intro: ~80px
+         * - status-badge: ~50px  
+         * - right-now: ~110px
+         * Total from top: 64 + 80 + 50 + 110 = ~304px
          */
         .chat-in-sidebar {
             position: absolute;
-            top: 340px;      /* Below RIGHT NOW section */
-            right: 12px;     /* Inside sidebar (sidebar padding) */
-            width: 336px;    /* Sidebar width (360px) - padding (24px) */
-            bottom: 68px;    /* Above mode bar + some padding */
+            top: 310px;      /* Below RIGHT NOW section */
+            right: 12px;     /* Inside sidebar */
+            width: 336px;    /* Sidebar (360px) - padding */
+            bottom: 68px;    /* Above mode bar + padding */
             z-index: 30;
             border-radius: 12px;
             overflow: hidden;
@@ -144,6 +143,7 @@
         .info a:hover { text-decoration: underline; }
         
         @media (max-width: 900px) {
+            .layer-site { right: 0; }
             .chat-in-sidebar {
                 top: auto;
                 bottom: 62px;
@@ -155,25 +155,21 @@
             .chat-in-sidebar.collapsed {
                 height: 40px;
             }
-            .layer-vote { 
-                right: 0; 
-                bottom: 290px; 
-            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Layer 1: Site content (fills full area) -->
+        <!-- Layer 1: Site content (positioned in content area) -->
         <iframe class="layer-site" src="https://artix.tech/twitch_plays_code/live_for_twitch"></iframe>
         
-        <!-- Layer 2: Frame overlay (header 64px, sidebar 360px, mode bar 56px) -->
+        <!-- Layer 2: Frame overlay (full screen) -->
         <iframe class="layer-frame" src="https://artix.tech/twitch_plays_code/overlay/frame"></iframe>
         
-        <!-- Layer 3: Vote overlay (above mode bar, left of sidebar) -->
+        <!-- Layer 3: Vote overlay (full screen, internal CSS positions it) -->
         <iframe class="layer-vote" src="https://artix.tech/twitch_plays_code/overlay/vote"></iframe>
         
-        <!-- Twitch chat replacing LIVE feed in sidebar -->
+        <!-- Twitch chat in sidebar area -->
         <div class="chat-in-sidebar" id="chatSidebar">
             <div class="chat-header" onclick="toggleChat()">
                 <span class="chat-title">💬 Chat du stream</span>
