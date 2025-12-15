@@ -6,7 +6,7 @@
     <title>Twitch Versus Code - Full Stream + Chat</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; font-family: system-ui, sans-serif; }
         
         .container {
             display: flex;
@@ -46,53 +46,105 @@
             pointer-events: none;
         }
         
-        /* Vote overlay */
+        /* Vote overlay - positioned at bottom center of main content area */
         .layer-vote {
             position: absolute;
             bottom: 70px;
             left: 0;
-            right: 340px; /* Account for side panel */
+            right: 0;
             height: 280px;
             border: none;
             z-index: 20;
             pointer-events: none;
         }
         
-        /* Chat panel - separate from stream */
-        .chat {
+        /* Chat panel - collapsible */
+        .chat-panel {
             width: 350px;
             height: 100%;
             flex-shrink: 0;
             background: #18181b;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
         }
-        .chat iframe {
+        
+        .chat-panel.collapsed {
+            width: 40px;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #0e0e10;
+            border-bottom: 1px solid #2f2f35;
+            cursor: pointer;
+        }
+        
+        .chat-header:hover {
+            background: #1f1f23;
+        }
+        
+        .chat-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #efeff1;
+        }
+        
+        .chat-panel.collapsed .chat-title {
+            display: none;
+        }
+        
+        .chat-toggle {
+            font-size: 18px;
+            color: #adadb8;
+            transition: transform 0.3s ease;
+        }
+        
+        .chat-panel.collapsed .chat-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .chat-content {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .chat-panel.collapsed .chat-content {
+            display: none;
+        }
+        
+        .chat-content iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
         
+        /* Info bar at bottom */
         .info {
             position: fixed;
-            top: 10px;
+            bottom: 10px;
             left: 10px;
             background: rgba(0,0,0,0.9);
             color: #888;
             padding: 8px 12px;
             border-radius: 8px;
-            font-family: system-ui, sans-serif;
             font-size: 12px;
             z-index: 1000;
         }
         .info a { color: #6cf; text-decoration: none; }
+        .info a:hover { text-decoration: underline; }
         
         @media (max-width: 1200px) {
-            .chat { width: 300px; }
+            .chat-panel { width: 300px; }
         }
         @media (max-width: 900px) {
             .container { flex-direction: column; }
             .stream { height: 65%; }
-            .chat { width: 100%; height: 35%; }
-            .layer-vote { right: 0; }
+            .chat-panel { width: 100%; height: 35%; }
+            .chat-panel.collapsed { width: 100%; height: 40px; }
         }
     </style>
 </head>
@@ -109,15 +161,28 @@
             <iframe class="layer-vote" src="https://artix.tech/twitch_plays_code/overlay/vote"></iframe>
         </div>
         
-        <!-- Separate Twitch chat panel -->
-        <div class="chat">
-            <iframe src="https://www.twitch.tv/embed/artix187/chat?parent=artixjp.github.io&darkpopout"></iframe>
+        <!-- Collapsible Twitch chat panel -->
+        <div class="chat-panel" id="chatPanel">
+            <div class="chat-header" onclick="toggleChat()">
+                <span class="chat-title">💬 Twitch Chat</span>
+                <span class="chat-toggle">◀</span>
+            </div>
+            <div class="chat-content">
+                <iframe src="https://www.twitch.tv/embed/artix187/chat?parent=artixjp.github.io&darkpopout"></iframe>
+            </div>
         </div>
     </div>
+    
     <div class="info">
         🎮 Full stream + chat - 
         <a href="twitch_test2.html">Chat in sidebar</a> | 
         <a href="twitch.html">Simple</a>
     </div>
+    
+    <script>
+        function toggleChat() {
+            document.getElementById('chatPanel').classList.toggle('collapsed');
+        }
+    </script>
 </body>
 </html>

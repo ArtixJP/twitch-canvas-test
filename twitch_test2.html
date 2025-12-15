@@ -6,7 +6,7 @@
     <title>Twitch Versus Code - Chat in Sidebar</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; }
+        html, body { width: 100%; height: 100%; overflow: hidden; background: #0f0f0f; font-family: system-ui, sans-serif; }
         
         .container {
             position: relative;
@@ -37,12 +37,12 @@
             pointer-events: none;
         }
         
-        /* Vote overlay */
+        /* Vote overlay - positioned at bottom of main content (left of sidebar) */
         .layer-vote {
             position: absolute;
             bottom: 70px;
             left: 0;
-            right: 340px;
+            right: 340px; /* Leave space for sidebar */
             height: 280px;
             border: none;
             z-index: 20;
@@ -52,7 +52,7 @@
         /* Twitch chat positioned over the live feed area in the sidebar */
         .chat-in-sidebar {
             position: absolute;
-            top: 280px;      /* Below the status/command sections */
+            top: 290px;      /* Below status/command sections */
             right: 12px;     /* Sidebar padding */
             width: 316px;    /* Sidebar width minus padding */
             bottom: 70px;    /* Above mode bar */
@@ -60,37 +60,98 @@
             border-radius: 12px;
             overflow: hidden;
             background: #18181b;
+            display: flex;
+            flex-direction: column;
+            transition: height 0.3s ease;
         }
-        .chat-in-sidebar iframe {
+        
+        .chat-in-sidebar.collapsed {
+            height: 40px;
+            bottom: auto;
+            top: auto;
+            bottom: 70px;
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            background: linear-gradient(135deg, #1f1f23, #18181b);
+            border-bottom: 1px solid #2f2f35;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .chat-header:hover {
+            background: linear-gradient(135deg, #2a2a2e, #1f1f23);
+        }
+        
+        .chat-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #efeff1;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .chat-toggle {
+            font-size: 14px;
+            color: #adadb8;
+            transition: transform 0.3s ease;
+        }
+        
+        .chat-in-sidebar.collapsed .chat-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .chat-content {
+            flex: 1;
+            overflow: hidden;
+        }
+        
+        .chat-in-sidebar.collapsed .chat-content {
+            display: none;
+        }
+        
+        .chat-content iframe {
             width: 100%;
             height: 100%;
             border: none;
         }
         
+        /* Info bar at bottom left */
         .info {
             position: fixed;
-            top: 10px;
+            bottom: 75px;
             left: 10px;
             background: rgba(0,0,0,0.9);
             color: #888;
             padding: 8px 12px;
             border-radius: 8px;
-            font-family: system-ui, sans-serif;
             font-size: 12px;
             z-index: 1000;
         }
         .info a { color: #6cf; text-decoration: none; }
+        .info a:hover { text-decoration: underline; }
         
         @media (max-width: 900px) {
             .chat-in-sidebar {
                 top: auto;
-                bottom: 60px;
+                bottom: 70px;
                 left: 10px;
                 right: 10px;
                 width: auto;
-                height: 200px;
+                height: 250px;
             }
-            .layer-vote { right: 0; bottom: 270px; }
+            .chat-in-sidebar.collapsed {
+                height: 40px;
+            }
+            .layer-vote { 
+                right: 0; 
+                bottom: 330px; 
+            }
         }
     </style>
 </head>
@@ -106,14 +167,29 @@
         <iframe class="layer-vote" src="https://artix.tech/twitch_plays_code/overlay/vote"></iframe>
         
         <!-- Twitch chat replacing the live feed in sidebar -->
-        <div class="chat-in-sidebar">
-            <iframe src="https://www.twitch.tv/embed/artix187/chat?parent=artixjp.github.io&darkpopout"></iframe>
+        <div class="chat-in-sidebar" id="chatSidebar">
+            <div class="chat-header" onclick="toggleChat()">
+                <span class="chat-title">💬 Chat du stream</span>
+                <span class="chat-toggle">▼</span>
+            </div>
+            <div class="chat-content">
+                <iframe src="https://www.twitch.tv/embed/artix187/chat?parent=artixjp.github.io&darkpopout"></iframe>
+            </div>
         </div>
     </div>
+    
     <div class="info">
         🎮 Chat in sidebar - 
         <a href="twitch_test1.html">Full + chat</a> | 
         <a href="twitch.html">Simple</a>
     </div>
+    
+    <script>
+        function toggleChat() {
+            document.getElementById('chatSidebar').classList.toggle('collapsed');
+            const toggle = document.querySelector('.chat-toggle');
+            toggle.textContent = document.getElementById('chatSidebar').classList.contains('collapsed') ? '▲' : '▼';
+        }
+    </script>
 </body>
 </html>
