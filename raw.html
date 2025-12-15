@@ -124,6 +124,29 @@
         text-shadow: 1px 1px 2px black;
         z-index: 100;
     }
+    #peach-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 100;
+        text-align: center;
+        animation: peachFloat 2s ease-in-out infinite;
+    }
+    #peach {
+        font-size: 80px;
+        filter: drop-shadow(0 4px 8px rgba(255,105,180,0.5));
+    }
+    #peach-name {
+        color: #FFB6C1;
+        font-size: 16px;
+        font-weight: bold;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5), 0 0 10px #FF69B4;
+        margin-top: 5px;
+    }
+    @keyframes peachFloat {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-15px); }
+    }
 </style>
 </head>
 <body>
@@ -138,7 +161,7 @@
 <div class="block-slot" data-block="5"><span>💎</span></div>
 </div>
 <div id="instructions">
-<h1>🎮 VoxelCraft</h1>
+<h1>🎮 VoxelCraft 👸</h1>
 <p><strong>WASD</strong> - Move around</p>
 <p><strong>SPACE</strong> - Jump</p>
 <p><strong>Mouse</strong> - Look around</p>
@@ -148,6 +171,10 @@
 <button id="start-btn">Click to Play!</button>
 </div>
 <div id="info">FPS: <span id="fps">0</span></div>
+<div id="peach-container">
+<div id="peach">👸</div>
+<div id="peach-name">Princess Peach</div>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/simplex-noise@3.0.1/dist/simplex-noise.min.js"></script>
 <script>
@@ -158,12 +185,12 @@ const RENDER_DISTANCE = 3;
 
 // Block types with colors
 const BLOCK_TYPES = [
-    { name: 'dirt', color: 0x8B4513 },
-    { name: 'grass', color: 0x228B22 },
-    { name: 'stone', color: 0x808080 },
-    { name: 'wood', color: 0xDEB887 },
-    { name: 'leaves', color: 0x32CD32 },
-    { name: 'diamond', color: 0x00CED1 }
+    { name: 'dirt', color: 0x964B00 },
+    { name: 'grass', color: 0x4CAF50 },
+    { name: 'stone', color: 0x9E9E9E },
+    { name: 'wood', color: 0x8D6E63 },
+    { name: 'leaves', color: 0x81C784 },
+    { name: 'diamond', color: 0x4FC3F7 }
 ];
 
 let scene, camera, renderer;
@@ -202,7 +229,7 @@ function noise2D(x, z) {
 function init() {
     scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87CEEB);
-    scene.fog = new THREE.Fog(0x87CEEB, 20, 80);
+    scene.fog = new THREE.Fog(0x87CEEB, 50, 150);
     
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(player.x, player.y, player.z);
@@ -332,18 +359,18 @@ function buildChunkMesh(cx, cz) {
         
         // Check each face
         if (!getBlock(worldX, y + 1, worldZ)) addFace(worldX, y, worldZ, 'top', color);
-        if (!getBlock(worldX, y - 1, worldZ)) addFace(worldX, y, worldZ, 'bottom', color * 0.7);
-        if (!getBlock(worldX, y, worldZ + 1)) addFace(worldX, y, worldZ, 'front', color * 0.9);
-        if (!getBlock(worldX, y, worldZ - 1)) addFace(worldX, y, worldZ, 'back', color * 0.9);
-        if (!getBlock(worldX + 1, y, worldZ)) addFace(worldX, y, worldZ, 'right', color * 0.8);
-        if (!getBlock(worldX - 1, y, worldZ)) addFace(worldX, y, worldZ, 'left', color * 0.8);
+        if (!getBlock(worldX, y - 1, worldZ)) addFace(worldX, y, worldZ, 'bottom', color);
+        if (!getBlock(worldX, y, worldZ + 1)) addFace(worldX, y, worldZ, 'front', color);
+        if (!getBlock(worldX, y, worldZ - 1)) addFace(worldX, y, worldZ, 'back', color);
+        if (!getBlock(worldX + 1, y, worldZ)) addFace(worldX, y, worldZ, 'right', color);
+        if (!getBlock(worldX - 1, y, worldZ)) addFace(worldX, y, worldZ, 'left', color);
     }
     
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
     geometry.setAttribute('normal', new THREE.Float32BufferAttribute(normals, 3));
     
-    const material = new THREE.MeshLambertMaterial({ vertexColors: true });
+    const material = new THREE.MeshBasicMaterial({ vertexColors: true });
     chunk.mesh = new THREE.Mesh(geometry, material);
     scene.add(chunk.mesh);
 }
