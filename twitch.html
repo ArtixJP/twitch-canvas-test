@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>♟️ Chess Game - Jeu d'Échecs</title>
+<title>🔴 Checkers - Jeu de Dames 🔴</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
@@ -22,7 +22,7 @@
     h1 {
         font-size: 2.5rem;
         margin-bottom: 20px;
-        background: linear-gradient(90deg, #ffd700, #ff6b6b, #ffd700);
+        background: linear-gradient(90deg, #ff6b6b, #ffd700, #ff6b6b);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
@@ -62,10 +62,11 @@
         cursor: pointer;
         transition: all 0.2s;
         user-select: none;
+        position: relative;
     }
     
     .square.light { background: #f0d9b5; }
-    .square.dark { background: #b58863; }
+    .square.dark { background: #769656; }
     .square.selected { background: #7fc97f !important; box-shadow: inset 0 0 10px rgba(0,255,0,0.5); }
     .square.valid-move { background: #aaffaa !important; }
     .square.valid-move::after {
@@ -78,11 +79,39 @@
     }
     .square:hover { filter: brightness(1.1); }
     .square.last-move { box-shadow: inset 0 0 15px rgba(255,215,0,0.6); }
-    .square.check { background: #ff6b6b !important; animation: pulse-check 1s infinite; }
     
-    @keyframes pulse-check {
-        0%, 100% { box-shadow: inset 0 0 20px rgba(255,0,0,0.8); }
-        50% { box-shadow: inset 0 0 30px rgba(255,0,0,1); }
+    .piece {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        font-weight: bold;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+        transition: transform 0.2s;
+    }
+    
+    .piece:hover {
+        transform: scale(1.1);
+    }
+    
+    .piece.white {
+        background: linear-gradient(135deg, #fff, #ddd);
+        border: 3px solid #bbb;
+        color: #333;
+    }
+    
+    .piece.black {
+        background: linear-gradient(135deg, #c0392b, #8B0000);
+        border: 3px solid #600;
+        color: #fff;
+    }
+    
+    .piece.king::after {
+        content: '👑';
+        font-size: 18px;
     }
     
     .labels {
@@ -130,28 +159,24 @@
         font-size: 1.2rem;
     }
     
-    .turn-indicator .piece {
-        font-size: 2rem;
+    .turn-indicator .indicator-piece {
+        display: inline-block;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        vertical-align: middle;
+        margin-right: 10px;
     }
     
-    .command-input {
-        width: 100%;
-        padding: 15px;
-        font-size: 1.2rem;
-        background: rgba(0,0,0,0.3);
-        border: 2px solid rgba(255,215,0,0.5);
-        border-radius: 10px;
-        color: white;
-        margin-bottom: 10px;
+    .turn-indicator .indicator-piece.white {
+        background: linear-gradient(135deg, #fff, #ddd);
+        border: 2px solid #bbb;
     }
     
-    .command-input:focus {
-        outline: none;
-        border-color: #ffd700;
-        box-shadow: 0 0 15px rgba(255,215,0,0.3);
+    .turn-indicator .indicator-piece.black {
+        background: linear-gradient(135deg, #c0392b, #8B0000);
+        border: 2px solid #600;
     }
-    
-    .command-input::placeholder { color: #888; }
     
     .btn {
         width: 100%;
@@ -194,13 +219,6 @@
     .help-section p {
         color: #aaa;
         margin: 5px 0;
-    }
-    
-    .help-section code {
-        background: rgba(255,215,0,0.2);
-        padding: 2px 6px;
-        border-radius: 4px;
-        color: #ffd700;
     }
     
     .move-history {
@@ -246,13 +264,37 @@
         background: rgba(0,0,0,0.2);
         border-radius: 8px;
         margin-top: 10px;
+        align-items: center;
     }
     
-    .captured-pieces span { font-size: 1.5rem; }
+    .captured-pieces .mini-piece {
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+    }
+    
+    .captured-pieces .mini-piece.white {
+        background: linear-gradient(135deg, #fff, #ddd);
+        border: 2px solid #bbb;
+    }
+    
+    .captured-pieces .mini-piece.black {
+        background: linear-gradient(135deg, #c0392b, #8B0000);
+        border: 2px solid #600;
+    }
+    
+    .score {
+        text-align: center;
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        padding: 10px;
+        background: rgba(0,0,0,0.2);
+        border-radius: 10px;
+    }
 </style>
 </head>
 <body>
-<h1>♟️ Chess Game - Jeu d'Échecs ♟️</h1>
+<h1>🔴 Checkers - Jeu de Dames ⚪</h1>
 <div class="game-container">
 <div class="board-container">
 <div class="board-wrapper">
@@ -269,76 +311,67 @@
 </div>
 <div class="controls">
 <div class="turn-indicator" id="turn-indicator">
-<span class="piece">♔</span> White's Turn
-        </div>
-<input autocomplete="off" class="command-input" id="command-input" placeholder="e.g., e4, Nf3, bishop to h4, queen to b2" type="text"/>
-<button class="btn btn-primary" id="submit-move">🎯 Make Move</button>
-<button class="btn btn-secondary" id="reset-game">🔄 New Game</button>
+<span class="indicator-piece white"></span> White's Turn
+</div>
+<div class="score" id="score">⚪ 12 - 12 🔴</div>
+<button class="btn btn-primary" id="reset-game">🔄 New Game</button>
 <div class="status-message" id="status-message" style="display:none;"></div>
 <div class="help-section">
-<h3>📖 How to Play</h3>
-<p><code>e4</code> - Move pawn to e4</p>
-<p><code>h5</code> - Move pawn to h5</p>
-<p><code>Nf3</code> - Knight to f3</p>
-<p><code>Bb5</code> - Bishop to b5</p>
-<p><code>Qh4</code> - Queen to h4</p>
-<p><code>bishop to h4</code> - Bishop to h4</p>
-<p><code>queen to b2</code> - Queen to b2</p>
-<p><code>e2 e4</code> - Move from e2 to e4</p>
-<p>Or click pieces to select and move!</p>
+<h3>📖 How to Play Checkers</h3>
+<p>🖱️ Click a piece to select it</p>
+<p>🖱️ Click a valid square to move</p>
+<p>↗️ Pieces move diagonally forward</p>
+<p>⚔️ Jump over enemies to capture</p>
+<p>👑 Reach the end to become a King!</p>
+<p>👑 Kings can move backwards too</p>
 </div>
 <div class="move-history" id="move-history">
 <h3>📜 Move History</h3>
 </div>
 <div class="captured-pieces" id="captured-white">
-<strong style="color:#ffd700;">⚪:</strong>
+<strong style="color:#ffd700;">Captured ⚪:</strong>
 </div>
 <div class="captured-pieces" id="captured-black">
-<strong style="color:#ffd700;">⚫:</strong>
+<strong style="color:#ffd700;">Captured 🔴:</strong>
 </div>
 </div>
 </div>
 <script>
-const PIECES = {
-    'K': '♔', 'Q': '♕', 'R': '♖', 'B': '♗', 'N': '♘', 'P': '♙',
-    'k': '♚', 'q': '♛', 'r': '♜', 'b': '♝', 'n': '♞', 'p': '♟'
-};
-
-const PIECE_NAMES = {
-    'roi': 'K', 'dame': 'Q', 'tour': 'R', 'fou': 'B', 'cavalier': 'N', 'pion': 'P',
-    'king': 'K', 'queen': 'Q', 'rook': 'R', 'bishop': 'B', 'knight': 'N', 'pawn': 'P'
-};
-
-const PIECE_LETTERS = {
-    'K': 'K', 'Q': 'Q', 'R': 'R', 'B': 'B', 'N': 'N',
-    'k': 'K', 'q': 'Q', 'r': 'R', 'b': 'B', 'n': 'N'
-};
-
 let board = [];
 let currentTurn = 'white';
 let selectedSquare = null;
 let moveHistory = [];
-let capturedWhite = [];
-let capturedBlack = [];
+let capturedWhite = 0;
+let capturedBlack = 0;
+let mustContinueCapture = null;
 
 function initBoard() {
-    board = [
-        ['r','n','b','q','k','b','n','r'],
-        ['p','p','p','p','p','p','p','p'],
-        ['','','','','','','',''],
-        ['','','','','','','',''],
-        ['','','','','','','',''],
-        ['','','','','','','',''],
-        ['P','P','P','P','P','P','P','P'],
-        ['R','N','B','Q','K','B','N','R']
-    ];
+    board = [];
+    for (let row = 0; row < 8; row++) {
+        board[row] = [];
+        for (let col = 0; col < 8; col++) {
+            if ((row + col) % 2 === 1) {
+                if (row < 3) {
+                    board[row][col] = { color: 'black', king: false };
+                } else if (row > 4) {
+                    board[row][col] = { color: 'white', king: false };
+                } else {
+                    board[row][col] = null;
+                }
+            } else {
+                board[row][col] = null;
+            }
+        }
+    }
     currentTurn = 'white';
     selectedSquare = null;
     moveHistory = [];
-    capturedWhite = [];
-    capturedBlack = [];
+    capturedWhite = 0;
+    capturedBlack = 0;
+    mustContinueCapture = null;
     renderBoard();
     updateTurnIndicator();
+    updateScore();
     updateCaptured();
     document.getElementById('move-history').innerHTML = '<h3>📜 Move History</h3>';
 }
@@ -357,11 +390,20 @@ function renderBoard() {
             
             const piece = board[row][col];
             if (piece) {
-                square.textContent = PIECES[piece];
+                const pieceEl = document.createElement('div');
+                pieceEl.className = `piece ${piece.color}${piece.king ? ' king' : ''}`;
+                square.appendChild(pieceEl);
             }
             
             if (selectedSquare && selectedSquare.row === row && selectedSquare.col === col) {
                 square.classList.add('selected');
+            }
+            
+            if (selectedSquare) {
+                const validMoves = getValidMoves(selectedSquare.row, selectedSquare.col);
+                if (validMoves.some(m => m.toRow === row && m.toCol === col)) {
+                    square.classList.add('valid-move');
+                }
             }
             
             square.addEventListener('click', () => handleSquareClick(row, col));
@@ -372,144 +414,231 @@ function renderBoard() {
 
 function handleSquareClick(row, col) {
     const piece = board[row][col];
-    const isWhitePiece = piece && piece === piece.toUpperCase();
-    const isBlackPiece = piece && piece === piece.toLowerCase();
-    const isCurrentPlayerPiece = (currentTurn === 'white' && isWhitePiece) || 
-                                  (currentTurn === 'black' && isBlackPiece);
+    
+    if (mustContinueCapture) {
+        if (row === mustContinueCapture.row && col === mustContinueCapture.col) {
+            selectedSquare = { row, col };
+            renderBoard();
+            return;
+        }
+        const validMoves = getValidMoves(mustContinueCapture.row, mustContinueCapture.col);
+        const captureMove = validMoves.find(m => m.toRow === row && m.toCol === col && m.capture);
+        if (captureMove) {
+            executeMove(mustContinueCapture.row, mustContinueCapture.col, row, col, captureMove);
+        }
+        return;
+    }
     
     if (selectedSquare) {
         if (selectedSquare.row === row && selectedSquare.col === col) {
             selectedSquare = null;
-        } else if (isCurrentPlayerPiece) {
-            selectedSquare = { row, col };
-        } else {
-            const fromRow = selectedSquare.row;
-            const fromCol = selectedSquare.col;
-            if (isValidMove(fromRow, fromCol, row, col)) {
-                makeMove(fromRow, fromCol, row, col);
-            } else {
-                showStatus('Invalid move!', 'error');
-            }
-            selectedSquare = null;
+            renderBoard();
+            return;
         }
-    } else if (isCurrentPlayerPiece) {
+        
+        const validMoves = getValidMoves(selectedSquare.row, selectedSquare.col);
+        const move = validMoves.find(m => m.toRow === row && m.toCol === col);
+        
+        if (move) {
+            executeMove(selectedSquare.row, selectedSquare.col, row, col, move);
+        } else if (piece && piece.color === currentTurn) {
+            selectedSquare = { row, col };
+            renderBoard();
+        } else {
+            selectedSquare = null;
+            renderBoard();
+        }
+    } else if (piece && piece.color === currentTurn) {
         selectedSquare = { row, col };
+        renderBoard();
     }
+}
+
+function getValidMoves(row, col) {
+    const piece = board[row][col];
+    if (!piece || piece.color !== currentTurn) return [];
+    
+    const moves = [];
+    const directions = piece.king ? 
+        [[-1, -1], [-1, 1], [1, -1], [1, 1]] : 
+        piece.color === 'white' ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]];
+    
+    // Check for captures first (mandatory in checkers)
+    const allCaptures = getAllCaptures();
+    const hasCaptures = allCaptures.length > 0;
+    
+    for (const [dRow, dCol] of directions) {
+        const newRow = row + dRow;
+        const newCol = col + dCol;
+        
+        // Simple move
+        if (!hasCaptures && isValidSquare(newRow, newCol) && !board[newRow][newCol]) {
+            moves.push({ toRow: newRow, toCol: newCol, capture: false });
+        }
+        
+        // Capture move
+        const jumpRow = row + dRow * 2;
+        const jumpCol = col + dCol * 2;
+        if (isValidSquare(jumpRow, jumpCol) && 
+            board[newRow][newCol] && 
+            board[newRow][newCol].color !== piece.color &&
+            !board[jumpRow][jumpCol]) {
+            moves.push({ 
+                toRow: jumpRow, 
+                toCol: jumpCol, 
+                capture: true, 
+                capturedRow: newRow, 
+                capturedCol: newCol 
+            });
+        }
+    }
+    
+    // If there are captures available, only return capture moves
+    if (hasCaptures) {
+        return moves.filter(m => m.capture);
+    }
+    
+    return moves;
+}
+
+function getAllCaptures() {
+    const captures = [];
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const piece = board[row][col];
+            if (piece && piece.color === currentTurn) {
+                const directions = piece.king ? 
+                    [[-1, -1], [-1, 1], [1, -1], [1, 1]] : 
+                    piece.color === 'white' ? [[-1, -1], [-1, 1]] : [[1, -1], [1, 1]];
+                
+                for (const [dRow, dCol] of directions) {
+                    const newRow = row + dRow;
+                    const newCol = col + dCol;
+                    const jumpRow = row + dRow * 2;
+                    const jumpCol = col + dCol * 2;
+                    
+                    if (isValidSquare(jumpRow, jumpCol) && 
+                        board[newRow][newCol] && 
+                        board[newRow][newCol].color !== piece.color &&
+                        !board[jumpRow][jumpCol]) {
+                        captures.push({ fromRow: row, fromCol: col, toRow: jumpRow, toCol: jumpCol });
+                    }
+                }
+            }
+        }
+    }
+    return captures;
+}
+
+function isValidSquare(row, col) {
+    return row >= 0 && row < 8 && col >= 0 && col < 8;
+}
+
+function executeMove(fromRow, fromCol, toRow, toCol, move) {
+    const piece = board[fromRow][fromCol];
+    board[toRow][toCol] = piece;
+    board[fromRow][fromCol] = null;
+    
+    if (move.capture) {
+        const captured = board[move.capturedRow][move.capturedCol];
+        board[move.capturedRow][move.capturedCol] = null;
+        if (captured.color === 'white') {
+            capturedWhite++;
+        } else {
+            capturedBlack++;
+        }
+        updateCaptured();
+        updateScore();
+    }
+    
+    // Check for king promotion
+    if ((piece.color === 'white' && toRow === 0) || (piece.color === 'black' && toRow === 7)) {
+        piece.king = true;
+        showStatus('👑 Crowned! Your piece is now a King!', 'success');
+    }
+    
+    // Record move
+    const fromSquare = String.fromCharCode(97 + fromCol) + (8 - fromRow);
+    const toSquare = String.fromCharCode(97 + toCol) + (8 - toRow);
+    const moveNum = Math.floor(moveHistory.length / 2) + 1;
+    const moveText = `${fromSquare} → ${toSquare}${move.capture ? ' ⚔️' : ''}`;
+    moveHistory.push(moveText);
+    addMoveToHistory(moveNum, moveText, currentTurn);
+    
+    selectedSquare = null;
+    
+    // Check for additional captures
+    if (move.capture) {
+        const additionalCaptures = getValidMoves(toRow, toCol).filter(m => m.capture);
+        if (additionalCaptures.length > 0) {
+            mustContinueCapture = { row: toRow, col: toCol };
+            selectedSquare = { row: toRow, col: toCol };
+            showStatus('Must continue capturing!', 'info');
+            renderBoard();
+            return;
+        }
+    }
+    
+    mustContinueCapture = null;
+    currentTurn = currentTurn === 'white' ? 'black' : 'white';
+    updateTurnIndicator();
+    
+    // Check for win
+    checkWin();
     
     renderBoard();
 }
 
-function isValidMove(fromRow, fromCol, toRow, toCol) {
-    const piece = board[fromRow][fromCol];
-    if (!piece) return false;
+function checkWin() {
+    let whiteCount = 0;
+    let blackCount = 0;
+    let whiteMoves = false;
+    let blackMoves = false;
     
-    const isWhite = piece === piece.toUpperCase();
-    const targetPiece = board[toRow][toCol];
-    
-    if (targetPiece) {
-        const targetIsWhite = targetPiece === targetPiece.toUpperCase();
-        if (isWhite === targetIsWhite) return false;
-    }
-    
-    const pieceType = piece.toUpperCase();
-    const rowDiff = toRow - fromRow;
-    const colDiff = toCol - fromCol;
-    const absRowDiff = Math.abs(rowDiff);
-    const absColDiff = Math.abs(colDiff);
-    
-    switch (pieceType) {
-        case 'P':
-            const direction = isWhite ? -1 : 1;
-            const startRow = isWhite ? 6 : 1;
-            
-            if (colDiff === 0 && !targetPiece) {
-                if (rowDiff === direction) return true;
-                if (fromRow === startRow && rowDiff === 2 * direction && !board[fromRow + direction][fromCol]) return true;
+    for (let row = 0; row < 8; row++) {
+        for (let col = 0; col < 8; col++) {
+            const piece = board[row][col];
+            if (piece) {
+                if (piece.color === 'white') whiteCount++;
+                else blackCount++;
             }
-            if (absColDiff === 1 && rowDiff === direction && targetPiece) return true;
-            return false;
-            
-        case 'R':
-            if (rowDiff !== 0 && colDiff !== 0) return false;
-            return isPathClear(fromRow, fromCol, toRow, toCol);
-            
-        case 'N':
-            return (absRowDiff === 2 && absColDiff === 1) || (absRowDiff === 1 && absColDiff === 2);
-            
-        case 'B':
-            if (absRowDiff !== absColDiff) return false;
-            return isPathClear(fromRow, fromCol, toRow, toCol);
-            
-        case 'Q':
-            if (rowDiff !== 0 && colDiff !== 0 && absRowDiff !== absColDiff) return false;
-            return isPathClear(fromRow, fromCol, toRow, toCol);
-            
-        case 'K':
-            return absRowDiff <= 1 && absColDiff <= 1;
-    }
-    
-    return false;
-}
-
-function isPathClear(fromRow, fromCol, toRow, toCol) {
-    const rowStep = Math.sign(toRow - fromRow);
-    const colStep = Math.sign(toCol - fromCol);
-    
-    let row = fromRow + rowStep;
-    let col = fromCol + colStep;
-    
-    while (row !== toRow || col !== toCol) {
-        if (board[row][col]) return false;
-        row += rowStep;
-        col += colStep;
-    }
-    
-    return true;
-}
-
-function makeMove(fromRow, fromCol, toRow, toCol) {
-    const piece = board[fromRow][fromCol];
-    const captured = board[toRow][toCol];
-    
-    if (captured) {
-        if (captured === captured.toUpperCase()) {
-            capturedWhite.push(PIECES[captured]);
-        } else {
-            capturedBlack.push(PIECES[captured]);
         }
-        updateCaptured();
     }
     
-    board[toRow][toCol] = piece;
-    board[fromRow][fromCol] = '';
-    
-    const fromSquare = String.fromCharCode(97 + fromCol) + (8 - fromRow);
-    const toSquare = String.fromCharCode(97 + toCol) + (8 - toRow);
-    const moveNum = Math.floor(moveHistory.length / 2) + 1;
-    const moveText = `${PIECES[piece]} ${fromSquare} → ${toSquare}`;
-    moveHistory.push(moveText);
-    
-    addMoveToHistory(moveNum, moveText, currentTurn);
-    
-    currentTurn = currentTurn === 'white' ? 'black' : 'white';
-    updateTurnIndicator();
-    showStatus(`Move: ${moveText}`, 'success');
+    if (whiteCount === 0) {
+        showStatus('🔴 Red wins! Game over!', 'info');
+    } else if (blackCount === 0) {
+        showStatus('⚪ White wins! Game over!', 'info');
+    }
 }
 
 function updateTurnIndicator() {
     const indicator = document.getElementById('turn-indicator');
     if (currentTurn === 'white') {
-        indicator.innerHTML = '<span class="piece">♔</span> White\'s Turn';
+        indicator.innerHTML = '<span class="indicator-piece white"></span> White\'s Turn';
     } else {
-        indicator.innerHTML = '<span class="piece">♚</span> Black\'s Turn';
+        indicator.innerHTML = '<span class="indicator-piece black"></span> Red\'s Turn';
     }
 }
 
+function updateScore() {
+    const whiteRemaining = 12 - capturedWhite;
+    const blackRemaining = 12 - capturedBlack;
+    document.getElementById('score').textContent = `⚪ ${whiteRemaining} - ${blackRemaining} 🔴`;
+}
+
 function updateCaptured() {
-    document.getElementById('captured-white').innerHTML = 
-        '<strong style="color:#ffd700;">⚪:</strong> ' + capturedWhite.map(p => `<span>${p}</span>`).join('');
-    document.getElementById('captured-black').innerHTML = 
-        '<strong style="color:#ffd700;">⚫:</strong> ' + capturedBlack.map(p => `<span>${p}</span>`).join('');
+    let whiteHtml = '<strong style="color:#ffd700;">Captured ⚪:</strong> ';
+    for (let i = 0; i < capturedWhite; i++) {
+        whiteHtml += '<span class="mini-piece white"></span>';
+    }
+    document.getElementById('captured-white').innerHTML = whiteHtml;
+    
+    let blackHtml = '<strong style="color:#ffd700;">Captured 🔴:</strong> ';
+    for (let i = 0; i < capturedBlack; i++) {
+        blackHtml += '<span class="mini-piece black"></span>';
+    }
+    document.getElementById('captured-black').innerHTML = blackHtml;
 }
 
 function addMoveToHistory(num, move, color) {
@@ -529,121 +658,6 @@ function showStatus(message, type) {
     setTimeout(() => status.style.display = 'none', 3000);
 }
 
-function parseCommand(cmd) {
-    const originalCmd = cmd.trim();
-    cmd = cmd.toLowerCase().trim();
-    
-    // Format: "e2 e4" (from-to)
-    const fromToMatch = cmd.match(/^([a-h])([1-8])\s+([a-h])([1-8])$/);
-    if (fromToMatch) {
-        const fromCol = fromToMatch[1].charCodeAt(0) - 97;
-        const fromRow = 8 - parseInt(fromToMatch[2]);
-        const toCol = fromToMatch[3].charCodeAt(0) - 97;
-        const toRow = 8 - parseInt(fromToMatch[4]);
-        return { type: 'fromTo', fromRow, fromCol, toRow, toCol };
-    }
-    
-    // Format: Short algebraic notation "e4", "h5" (pawn moves)
-    const pawnShortMatch = cmd.match(/^([a-h])([1-8])$/);
-    if (pawnShortMatch) {
-        const toCol = pawnShortMatch[1].charCodeAt(0) - 97;
-        const toRow = 8 - parseInt(pawnShortMatch[2]);
-        return { type: 'pieceToSquare', pieceCode: 'P', toRow, toCol };
-    }
-    
-    // Format: Short algebraic "Nf3", "Bb5", "Qh4" (piece letter + square)
-    const pieceShortMatch = originalCmd.match(/^([KQRBN])([a-h])([1-8])$/i);
-    if (pieceShortMatch) {
-        const pieceLetter = pieceShortMatch[1].toUpperCase();
-        const toCol = pieceShortMatch[2].toLowerCase().charCodeAt(0) - 97;
-        const toRow = 8 - parseInt(pieceShortMatch[3]);
-        return { type: 'pieceToSquare', pieceCode: pieceLetter, toRow, toCol };
-    }
-    
-    // Format: "bishop to h4", "queen to b2" (piece name + to + square)
-    const pieceToMatch = cmd.match(/^(king|queen|rook|bishop|knight|pawn)\s+to\s+([a-h])([1-8])$/);
-    if (pieceToMatch) {
-        const pieceCode = PIECE_NAMES[pieceToMatch[1]];
-        const toCol = pieceToMatch[2].charCodeAt(0) - 97;
-        const toRow = 8 - parseInt(pieceToMatch[3]);
-        return { type: 'pieceToSquare', pieceCode, toRow, toCol };
-    }
-    
-    // Format: "dame b2" (piece name + square, French/English)
-    for (const [name, pieceCode] of Object.entries(PIECE_NAMES)) {
-        const regex = new RegExp(`^${name}\\s+([a-h])([1-8])$`);
-        const match = cmd.match(regex);
-        if (match) {
-            const toCol = match[1].charCodeAt(0) - 97;
-            const toRow = 8 - parseInt(match[2]);
-            return { type: 'pieceToSquare', pieceCode, toRow, toCol };
-        }
-    }
-    
-    return null;
-}
-
-function findPieceAndMove(pieceCode, toRow, toCol) {
-    const targetPiece = currentTurn === 'white' ? pieceCode.toUpperCase() : pieceCode.toLowerCase();
-    
-    for (let row = 0; row < 8; row++) {
-        for (let col = 0; col < 8; col++) {
-            if (board[row][col] === targetPiece) {
-                if (isValidMove(row, col, toRow, toCol)) {
-                    return { fromRow: row, fromCol: col };
-                }
-            }
-        }
-    }
-    return null;
-}
-
-function executeCommand() {
-    const input = document.getElementById('command-input');
-    const cmd = input.value;
-    const parsed = parseCommand(cmd);
-    
-    if (!parsed) {
-        showStatus('Invalid command format!', 'error');
-        return;
-    }
-    
-    if (parsed.type === 'fromTo') {
-        const piece = board[parsed.fromRow][parsed.fromCol];
-        if (!piece) {
-            showStatus('No piece at that square!', 'error');
-            return;
-        }
-        
-        const isWhite = piece === piece.toUpperCase();
-        if ((currentTurn === 'white' && !isWhite) || (currentTurn === 'black' && isWhite)) {
-            showStatus('Not your piece!', 'error');
-            return;
-        }
-        
-        if (isValidMove(parsed.fromRow, parsed.fromCol, parsed.toRow, parsed.toCol)) {
-            makeMove(parsed.fromRow, parsed.fromCol, parsed.toRow, parsed.toCol);
-            renderBoard();
-        } else {
-            showStatus('Invalid move!', 'error');
-        }
-    } else if (parsed.type === 'pieceToSquare') {
-        const found = findPieceAndMove(parsed.pieceCode, parsed.toRow, parsed.toCol);
-        if (found) {
-            makeMove(found.fromRow, found.fromCol, parsed.toRow, parsed.toCol);
-            renderBoard();
-        } else {
-            showStatus('No valid move found for that piece!', 'error');
-        }
-    }
-    
-    input.value = '';
-}
-
-document.getElementById('submit-move').addEventListener('click', executeCommand);
-document.getElementById('command-input').addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') executeCommand();
-});
 document.getElementById('reset-game').addEventListener('click', initBoard);
 
 initBoard();
