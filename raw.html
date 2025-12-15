@@ -142,7 +142,7 @@
         P - New Block<br/>
         Mouse - Look<br/>
         Left Click - Break<br/>
-        M - Place Block<br/>
+        Right Click - Place Block<br/>
         1-9 - Select Block
     </div>
 <div id="ui">
@@ -219,7 +219,10 @@
             document.addEventListener('keyup', (e) => keys[e.code] = false);
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('click', onClick);
-            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            document.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                if (isLocked) placeBlock();
+            });
             
             // Block selection
             document.querySelectorAll('.block-slot').forEach((slot, i) => {
