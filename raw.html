@@ -307,6 +307,13 @@
                 renderer.domElement.requestPointerLock();
             });
             
+            // Auto-start the game after 1 second
+            setTimeout(() => {
+                document.getElementById('start-screen').style.display = 'none';
+                isLocked = true;
+                startAIPlayer();
+            }, 1000);
+            
             document.addEventListener('pointerlockchange', () => {
                 isLocked = document.pointerLockElement === renderer.domElement;
             });
@@ -498,6 +505,234 @@
         }
         
         init();
+        
+        // AI Player System
+        let aiActive = false;
+        let aiTask = null;
+        let aiTargetPos = null;
+        let buildQueue = [];
+        
+        function startAIPlayer() {
+            aiActive = true;
+            showAIMessage('AI PLAYER ACTIVATED! Building Mario...');
+            
+            // Position camera for building
+            camera.position.set(WORLD_SIZE/2, 15, WORLD_SIZE/2 + 10);
+            camera.rotation.set(-0.3, 0, 0);
+            
+            setTimeout(() => {
+                buildMario();
+            }, 2000);
+        }
+        
+        function showAIMessage(msg) {
+            let msgDiv = document.getElementById('ai-message');
+            if (!msgDiv) {
+                msgDiv = document.createElement('div');
+                msgDiv.id = 'ai-message';
+                msgDiv.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#5f5;padding:15px 30px;border-radius:10px;font-family:monospace;font-size:18px;z-index:300;animation:fadeIn 0.5s;';
+                document.body.appendChild(msgDiv);
+            }
+            msgDiv.textContent = '🤖 ' + msg;
+            msgDiv.style.display = 'block';
+        }
+        
+        function buildMario() {
+            // Mario pixel art (16x16 simplified)
+            const mario = [
+                '...RRRRR...',
+                '..RRRRRRRRR',
+                '..BBBSSBS..',
+                '.BSBSSSBS..',
+                '.BSBBSSSBB.',
+                '.BBSSSSSBBB',
+                '...SSSSSS..',
+                '..RRBRRB...',
+                '.RRRBRRRB..',
+                'RRRRBRRRRB.',
+                'SSRBYYBRS..',
+                'SSSYYYYSSS.',
+                'SSYYYYYYY..',
+                '.YYYY.YYYY.',
+                '.BBB...BBB.',
+                'BBBB...BBBB'
+            ];
+            
+            const colors = {
+                'R': 0xff0000,  // Red (hat/shirt)
+                'B': 0x8b4513,  // Brown (shoes/hair)
+                'S': 0xffcc99,  // Skin
+                'Y': 0x0000ff,  // Blue (overalls)
+                '.': null       // Empty
+            };
+            
+            // Add colors to blockColors
+            blockColors['red'] = 0xff0000;
+            blockColors['brown'] = 0x8b4513;
+            blockColors['skin'] = 0xffcc99;
+            blockColors['blue'] = 0x0000ff;
+            
+            const colorNames = {
+                'R': 'red',
+                'B': 'brown', 
+                'S': 'skin',
+                'Y': 'blue'
+            };
+            
+            const startX = Math.floor(WORLD_SIZE/2) - 5;
+            const startY = 12;
+            const startZ = Math.floor(WORLD_SIZE/2);
+            
+            let blockIndex = 0;
+            const totalBlocks = [];
+            
+            // Build from bottom to top
+            for (let row = mario.length - 1; row >= 0; row--) {
+                for (let col = 0; col < mario[row].length; col++) {
+                    const char = mario[row][col];
+                    if (char !== '.') {
+                        totalBlocks.push({
+                            x: startX + col,
+                            y: startY + (mario.length - 1 - row),
+                            z: startZ,
+                            type: colorNames[char]
+                        });
+                    }
+                }
+            }
+            
+            showAIMessage('Building Mario: 0/' + totalBlocks.length + ' blocks');
+            
+            // Place blocks with animation
+            function placeNextBlock() {
+                if (blockIndex < totalBlocks.length) {
+                    const block = totalBlocks[blockIndex];
+                    createBlock(block.x, block.y, block.z, block.type);
+                    
+                    // Move camera to watch
+                    const targetY = block.y + 5;
+                    camera.position.y += (targetY - camera.position.y) * 0.1;
+                    
+                    blockIndex++;
+                    showAIMessage('Building Mario: ' + blockIndex + '/' + totalBlocks.length + ' blocks');
+                    
+                    setTimeout(placeNextBlock, 50);
+                } else {
+                    showAIMessage('Mario complete! Now doing fun stuff...');
+                    setTimeout(doRandomFunStuff, 2000);
+                }
+            }
+            
+            placeNextBlock();
+        }
+        
+        function doRandomFunStuff() {
+            const activities = [
+                () => {
+                    showAIMessage('Flying around to admire the creation!');
+                    isFlying = true;
+                    document.getElementById('fly-indicator').style.display = 'block';
+                    flyAround();
+                },
+                () => {
+                    showAIMessage('Building a rainbow!');
+                    buildRainbow();
+                },
+                () => {
+                    showAIMessage('Creating fireworks effect!');
+                    createFireworks();
+                }
+            ];
+            
+            let actIndex = 0;
+            function nextActivity() {
+                if (actIndex < activities.length) {
+                    activities[actIndex]();
+                    actIndex++;
+                    setTimeout(nextActivity, 8000);
+                } else {
+                    actIndex = 0;
+                    setTimeout(nextActivity, 8000);
+                }
+            }
+            nextActivity();
+        }
+        
+        function flyAround() {
+            let angle = 0;
+            const centerX = WORLD_SIZE/2;
+            const centerZ = WORLD_SIZE/2;
+            const radius = 20;
+            
+            function flyStep() {
+                if (!isFlying) return;
+                angle += 0.02;
+                camera.position.x = centerX + Math.cos(angle) * radius;
+                camera.position.z = centerZ + Math.sin(angle) * radius;
+                camera.position.y = 20 + Math.sin(angle * 2) * 5;
+                camera.lookAt(centerX, 15, centerZ);
+                
+                if (angle < Math.PI * 4) {
+                    requestAnimationFrame(flyStep);
+                }
+            }
+            flyStep();
+        }
+        
+        function buildRainbow() {
+            const rainbowColors = [
+                0xff0000, 0xff7f00, 0xffff00, 0x00ff00, 0x0000ff, 0x4b0082, 0x9400d3
+            ];
+            rainbowColors.forEach((color, i) => {
+                blockColors['rainbow' + i] = color;
+            });
+            
+            const startX = 5;
+            const startZ = WORLD_SIZE/2 + 10;
+            
+            let blockIndex = 0;
+            for (let i = 0; i < 7; i++) {
+                const radius = 8 + i;
+                for (let angle = 0; angle <= Math.PI; angle += 0.2) {
+                    setTimeout(() => {
+                        const x = startX + Math.cos(angle) * radius;
+                        const y = 5 + Math.sin(angle) * radius;
+                        createBlock(Math.round(x), Math.round(y), startZ, 'rainbow' + i);
+                    }, blockIndex * 30);
+                    blockIndex++;
+                }
+            }
+        }
+        
+        function createFireworks() {
+            for (let burst = 0; burst < 5; burst++) {
+                setTimeout(() => {
+                    const centerX = 10 + Math.random() * (WORLD_SIZE - 20);
+                    const centerY = 25 + Math.random() * 10;
+                    const centerZ = 10 + Math.random() * (WORLD_SIZE - 20);
+                    const color = Math.random() * 0xffffff;
+                    blockColors['firework' + burst] = color;
+                    
+                    for (let i = 0; i < 30; i++) {
+                        setTimeout(() => {
+                            const theta = Math.random() * Math.PI * 2;
+                            const phi = Math.random() * Math.PI;
+                            const r = 2 + Math.random() * 3;
+                            const x = centerX + r * Math.sin(phi) * Math.cos(theta);
+                            const y = centerY + r * Math.cos(phi);
+                            const z = centerZ + r * Math.sin(phi) * Math.sin(theta);
+                            createBlock(Math.round(x), Math.round(y), Math.round(z), 'firework' + burst);
+                            
+                            // Remove after delay
+                            setTimeout(() => {
+                                const key = `${Math.round(x)},${Math.round(y)},${Math.round(z)}`;
+                                removeBlock(key);
+                            }, 2000);
+                        }, i * 20);
+                    }
+                }, burst * 1500);
+            }
+        }
     </script>
 </body>
 </html>
