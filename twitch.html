@@ -662,15 +662,27 @@ document.getElementById('reset-game').addEventListener('click', initBoard);
 
 initBoard();
 
-// Auto-play move requested by community: move white piece
+// Auto-play move requested by community: move black piece from b6
 setTimeout(() => {
-    // Select the piece at e3 (row 5, col 4) and move to d4 (row 4, col 3)
-    if (board[5][4] && board[5][4].color === 'white') {
-        selectedSquare = { row: 5, col: 4 };
+    // First, white's turn - let's make a simple move
+    if (currentTurn === 'white' && board[5][0] && board[5][0].color === 'white') {
+        selectedSquare = { row: 5, col: 0 };
         renderBoard();
         setTimeout(() => {
-            handleSquareClick(4, 3);
-            showStatus('Community move: e3 → d4 played!', 'success');
+            handleSquareClick(4, 1);
+            showStatus('White plays: a3 → b4', 'info');
+            
+            // Now black's turn - play b6 (row 2, col 1) to a5 (row 3, col 0) or c5 (row 3, col 2)
+            setTimeout(() => {
+                if (board[2][1] && board[2][1].color === 'black') {
+                    selectedSquare = { row: 2, col: 1 };
+                    renderBoard();
+                    setTimeout(() => {
+                        handleSquareClick(3, 0);
+                        showStatus('🎮 Community move: b6 → a5 played!', 'success');
+                    }, 500);
+                }
+            }, 800);
         }, 500);
     }
 }, 1000);
