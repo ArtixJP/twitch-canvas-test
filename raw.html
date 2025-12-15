@@ -185,6 +185,34 @@
         0%, 100% { transform: translateY(0); }
         50% { transform: translateY(-5px); }
     }
+    .potato {
+        position: fixed;
+        top: 50px;
+        left: 20px;
+        font-size: 3rem;
+        cursor: pointer;
+        transition: transform 0.2s;
+        animation: potatoFloat 3s ease-in-out infinite;
+        z-index: 1000;
+        filter: drop-shadow(0 0 10px rgba(255,200,100,0.5));
+    }
+    .potato:hover {
+        transform: scale(1.2) rotate(10deg);
+    }
+    .potato.bounce {
+        animation: potatoBounce 0.5s ease-out;
+    }
+    @keyframes potatoFloat {
+        0%, 100% { transform: translateY(0) rotate(-5deg); }
+        50% { transform: translateY(-10px) rotate(5deg); }
+    }
+    @keyframes potatoBounce {
+        0% { transform: scale(1); }
+        25% { transform: scale(1.5) rotate(20deg); }
+        50% { transform: scale(0.8) rotate(-20deg); }
+        75% { transform: scale(1.2) rotate(10deg); }
+        100% { transform: scale(1) rotate(0deg); }
+    }
     .sparkle {
         position: fixed;
         width: 4px;
@@ -209,6 +237,7 @@
 </head>
 <body>
 <h1>🎮 Othello</h1>
+<div class="potato" onclick="bouncePotato(this)">🥔</div>
 <div class="test-badge">🧪 Test #4 Active! 🧪</div>
 <div class="score-board">
 <div class="score" id="black-score">
@@ -483,6 +512,36 @@ function showHint() {
 }
 
 initGame();
+
+function bouncePotato(el) {
+    el.classList.remove('bounce');
+    void el.offsetWidth; // Trigger reflow
+    el.classList.add('bounce');
+    
+    // Spawn mini potatoes
+    for (let i = 0; i < 8; i++) {
+        const mini = document.createElement('div');
+        mini.textContent = '🥔';
+        mini.style.cssText = `
+            position: fixed;
+            left: ${el.getBoundingClientRect().left + 20}px;
+            top: ${el.getBoundingClientRect().top + 20}px;
+            font-size: 1.5rem;
+            pointer-events: none;
+            z-index: 999;
+            transition: all 0.8s ease-out;
+        `;
+        document.body.appendChild(mini);
+        
+        setTimeout(() => {
+            const angle = (i / 8) * Math.PI * 2;
+            mini.style.transform = `translate(${Math.cos(angle) * 100}px, ${Math.sin(angle) * 100}px) rotate(${360}deg)`;
+            mini.style.opacity = '0';
+        }, 10);
+        
+        setTimeout(() => mini.remove(), 800);
+    }
+}
 </script>
 </body>
 </html>
