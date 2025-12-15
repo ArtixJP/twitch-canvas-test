@@ -14,7 +14,19 @@
         }
         body {
             overflow: hidden;
-            background: #87CEEB;
+            background: linear-gradient(180deg, 
+                #1a0533 0%, 
+                #4a1259 20%, 
+                #ff6b6b 45%, 
+                #feca57 60%, 
+                #48dbfb 80%, 
+                #1dd1a1 100%);
+            background-size: 100% 400%;
+            animation: gradientShift 20s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 0%; }
+            50% { background-position: 0% 100%; }
         }
         #crosshair {
             position: fixed;
@@ -189,8 +201,8 @@
         function init() {
             // Scene
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.Fog(0x87CEEB, 20, 60);
+            scene.background = new THREE.Color(0x4a1259);
+            scene.fog = new THREE.Fog(0x4a1259, 20, 80);
             
             // Camera
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
