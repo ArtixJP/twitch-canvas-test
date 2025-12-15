@@ -265,8 +265,91 @@
                     if (Math.random() < 0.03 && height > 2) {
                         createTree(x, height + 1, z);
                     }
+            }
+            
+            // Create a beautiful tower
+            createTower(WORLD_SIZE/2, 4, WORLD_SIZE/2)
                 }
             }
+        }
+        
+        function createTower(x, baseY, z) {
+            const towerHeight = 15;
+            const towerRadius = 3;
+            
+            // Build circular tower walls
+            for (let h = 0; h < towerHeight; h++) {
+                for (let dx = -towerRadius; dx <= towerRadius; dx++) {
+                    for (let dz = -towerRadius; dz <= towerRadius; dz++) {
+                        const dist = Math.sqrt(dx*dx + dz*dz);
+                        // Create hollow cylinder
+                        if (dist <= towerRadius && dist >= towerRadius - 1) {
+                            // Windows every 4 blocks, starting at height 3
+                            const isWindow = (h > 2 && h < towerHeight - 2) && (h % 4 === 0) && 
+                                           (Math.abs(dx) === towerRadius || Math.abs(dz) === towerRadius) &&
+                                           (dx === 0 || dz === 0);
+                            
+                            if (isWindow) {
+                                createBlock(x + dx, baseY + h, z + dz, 'glass');
+                            } else {
+                                createBlock(x + dx, baseY + h, z + dz, 'stone');
+                            }
+                        }
+                        // Floor every 4 levels
+                        if (dist < towerRadius - 0.5 && (h === 0 || h % 5 === 0)) {
+                            createBlock(x + dx, baseY + h, z + dz, 'wood');
+                        }
+                    }
+                }
+            }
+            
+            // Battlements at top
+            for (let dx = -towerRadius - 1; dx <= towerRadius + 1; dx++) {
+                for (let dz = -towerRadius - 1; dz <= towerRadius + 1; dz++) {
+                    const dist = Math.sqrt(dx*dx + dz*dz);
+                    if (dist <= towerRadius + 1 && dist >= towerRadius - 0.5) {
+                        // Crenellations
+                        if ((dx + dz) % 2 === 0) {
+                            createBlock(x + dx, baseY + towerHeight, z + dz, 'stone');
+                            createBlock(x + dx, baseY + towerHeight + 1, z + dz, 'stone');
+                        } else {
+                            createBlock(x + dx, baseY + towerHeight, z + dz, 'stone');
+                        }
+                    }
+                }
+            }
+            
+            // Pointed roof
+            for (let level = 0; level < 5; level++) {
+                const roofRadius = towerRadius - level * 0.6;
+                for (let dx = -Math.ceil(roofRadius); dx <= Math.ceil(roofRadius); dx++) {
+                    for (let dz = -Math.ceil(roofRadius); dz <= Math.ceil(roofRadius); dz++) {
+                        const dist = Math.sqrt(dx*dx + dz*dz);
+                        if (dist <= roofRadius + 0.5) {
+                            createBlock(x + dx, baseY + towerHeight + 2 + level, z + dz, 'brick');
+                        }
+                    }
+                }
+            }
+            
+            // Flag pole at top
+            for (let i = 0; i < 3; i++) {
+                createBlock(x, baseY + towerHeight + 7 + i, z, 'wood');
+            }
+            // Flag
+            createBlock(x + 1, baseY + towerHeight + 9, z, 'brick');
+            createBlock(x + 2, baseY + towerHeight + 9, z, 'brick');
+            createBlock(x + 1, baseY + towerHeight + 8, z, 'brick');
+            
+            // Entrance arch
+            removeBlock(x, baseY + 1, z + towerRadius);
+            removeBlock(x, baseY + 2, z + towerRadius);
+            createBlock(x - 1, baseY + 3, z + towerRadius, 'stone');
+            createBlock(x + 1, baseY + 3, z + towerRadius, 'stone');
+            
+            // Torch holders (represented as sand for glow effect)
+            createBlock(x - 2, baseY + 2, z + towerRadius + 1, 'sand');
+            createBlock(x + 2, baseY + 2, z + towerRadius + 1, 'sand');
         }
         
         function createTree(x, y, z) {
