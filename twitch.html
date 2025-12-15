@@ -280,6 +280,7 @@
 </div>
 <button class="btn btn-primary" id="reset-game">🔄 New Game</button>
 <button class="btn btn-secondary" id="pass-turn">⏭️ Pass Turn</button>
+<button class="btn btn-secondary" id="random-move">🎲 Random Move</button>
 <div class="status-message" id="status-message" style="display:none;"></div>
 <div class="help-section">
 <h3>📖 How to Play Othello</h3>
@@ -499,6 +500,22 @@ function showStatus(message, type) {
 
 document.getElementById('reset-game').addEventListener('click', initBoard);
 document.getElementById('pass-turn').addEventListener('click', passTurn);
+document.getElementById('random-move').addEventListener('click', playRandomMove);
+
+function playRandomMove() {
+    if (gameOver) return;
+    
+    const validMoves = getValidMoves(currentPlayer);
+    if (validMoves.length === 0) {
+        showStatus('No valid moves available!', 'error');
+        return;
+    }
+    
+    const randomIndex = Math.floor(Math.random() * validMoves.length);
+    const move = validMoves[randomIndex];
+    showStatus(`🎲 Random move: row ${move.row + 1}, col ${move.col + 1}`, 'info');
+    makeMove(move.row, move.col, currentPlayer);
+}
 
 initBoard();
 </script>
