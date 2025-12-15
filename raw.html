@@ -270,6 +270,9 @@
             
             // Create a beautiful tower
             createTower(WORLD_SIZE/2, 4, WORLD_SIZE/2);
+            
+            // Create Mario!
+            createMario(WORLD_SIZE/2 + 8, 5, WORLD_SIZE/2);
         }
         
         function createTower(x, baseY, z) {
@@ -349,6 +352,67 @@
             // Torch holders (represented as sand for glow effect)
             createBlock(x - 2, baseY + 2, z + towerRadius + 1, 'sand');
             createBlock(x + 2, baseY + 2, z + towerRadius + 1, 'sand');
+        }
+        
+        function createMario(x, baseY, z) {
+            // Mario colors
+            const red = 'brick';      // Red for hat and shirt
+            const blue = 'water';     // Blue for overalls (using water's blue)
+            const skin = 'sand';      // Skin tone
+            const brown = 'dirt';     // Brown for hair and shoes
+            
+            // Layer 0 - Feet (y = baseY)
+            createBlock(x - 1, baseY, z, brown);  // Left shoe
+            createBlock(x + 1, baseY, z, brown);  // Right shoe
+            
+            // Layer 1 - Legs
+            createBlock(x - 1, baseY + 1, z, blue);
+            createBlock(x + 1, baseY + 1, z, blue);
+            
+            // Layer 2 - Lower body
+            createBlock(x - 1, baseY + 2, z, blue);
+            createBlock(x, baseY + 2, z, blue);
+            createBlock(x + 1, baseY + 2, z, blue);
+            
+            // Layer 3 - Upper body / overalls
+            createBlock(x - 1, baseY + 3, z, blue);
+            createBlock(x, baseY + 3, z, red);
+            createBlock(x + 1, baseY + 3, z, blue);
+            
+            // Layer 4 - Chest and arms
+            createBlock(x - 2, baseY + 4, z, skin);  // Left hand
+            createBlock(x - 1, baseY + 4, z, red);
+            createBlock(x, baseY + 4, z, red);
+            createBlock(x + 1, baseY + 4, z, red);
+            createBlock(x + 2, baseY + 4, z, skin);  // Right hand
+            
+            // Layer 5 - Neck/chin area
+            createBlock(x, baseY + 5, z, skin);
+            
+            // Layer 6 - Face
+            createBlock(x - 1, baseY + 6, z, skin);
+            createBlock(x, baseY + 6, z, skin);
+            createBlock(x + 1, baseY + 6, z, skin);
+            createBlock(x, baseY + 6, z - 1, skin);  // Nose!
+            
+            // Layer 7 - Upper face and mustache
+            createBlock(x - 1, baseY + 7, z, skin);
+            createBlock(x, baseY + 7, z, brown);     // Mustache
+            createBlock(x + 1, baseY + 7, z, skin);
+            
+            // Layer 8 - Hair and hat brim
+            createBlock(x - 1, baseY + 8, z, brown);  // Hair
+            createBlock(x, baseY + 8, z, red);        // Hat
+            createBlock(x + 1, baseY + 8, z, brown);  // Hair
+            createBlock(x, baseY + 8, z - 1, red);    // Hat brim
+            
+            // Layer 9 - Hat top
+            createBlock(x - 1, baseY + 9, z, red);
+            createBlock(x, baseY + 9, z, red);
+            createBlock(x + 1, baseY + 9, z, red);
+            
+            // Layer 10 - Hat tip
+            createBlock(x, baseY + 10, z, red);
         }
         
         function createTree(x, y, z) {
