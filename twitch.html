@@ -26,6 +26,31 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
+        animation: titleGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes titleGlow {
+        0%, 100% { filter: drop-shadow(0 0 5px #2ecc71); }
+        50% { filter: drop-shadow(0 0 20px #2ecc71); }
+    }
+    
+    .test-badge {
+        font-size: 0.8rem;
+        background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: rainbow 2s linear infinite, bounce 0.5s ease-in-out infinite;
+        display: inline-block;
+    }
+    
+    @keyframes rainbow {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
     }
     
     .game-container {
@@ -176,6 +201,31 @@
     
     .score {
         text-align: center;
+        animation: titleGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes titleGlow {
+        0%, 100% { filter: drop-shadow(0 0 5px #2ecc71); }
+        50% { filter: drop-shadow(0 0 20px #2ecc71); }
+    }
+    
+    .test-badge {
+        font-size: 0.8rem;
+        background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: rainbow 2s linear infinite, bounce 0.5s ease-in-out infinite;
+        display: inline-block;
+    }
+    
+    @keyframes rainbow {
+        0% { filter: hue-rotate(0deg); }
+        100% { filter: hue-rotate(360deg); }
+    }
+    
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
     }
     
     .score-disc {
@@ -258,7 +308,7 @@
 </style>
 </head>
 <body>
-<h1>⚫ Othello - Reversi ⚪</h1>
+<h1 id="title">⚫ Othello - Reversi ⚪ <span class="test-badge">✨ TEST MODE ✨</span></h1>
 <div class="game-container">
 <div class="board-container">
 <div class="board" id="board"></div>
