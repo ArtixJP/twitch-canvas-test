@@ -46,10 +46,11 @@
         }
         #ui {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
+            top: 50%;
+            left: 20px;
+            transform: translateY(-50%);
             display: flex;
+            flex-direction: column;
             gap: 5px;
             z-index: 100;
         }
@@ -71,7 +72,7 @@
         #instructions {
             position: fixed;
             top: 20px;
-            left: 20px;
+            right: 20px;
             background: rgba(0,0,0,0.7);
             padding: 15px;
             border-radius: 10px;
@@ -79,6 +80,20 @@
             color: white;
             font-size: 14px;
             z-index: 100;
+        }
+        #fly-indicator {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #5c5;
+            font-size: 16px;
+            z-index: 100;
+            display: none;
         }
         #start-screen {
             position: fixed;
@@ -118,14 +133,17 @@
 <p>Click to Play</p>
 </div>
 <div id="crosshair"></div>
+<div id="fly-indicator">FLYING</div>
 <div id="instructions">
         WASD - Move<br/>
-        SPACE - Jump<br/>
+        SPACE - Jump/Fly Up<br/>
         SHIFT - Descend<br/>
+        F - Toggle Fly<br/>
+        P - New Block<br/>
         Mouse - Look<br/>
         Left Click - Break<br/>
         Right Click - Place<br/>
-        1-5 - Select Block
+        1-9 - Select Block
     </div>
 <div id="ui">
 <div class="block-slot selected" data-block="grass">🟩</div>
@@ -143,6 +161,8 @@
         let selectedBlock = 'grass';
         let velocity = new THREE.Vector3();
         let onGround = false;
+        let isFlying = false;
+        let customBlockCount = 0;
         const WORLD_SIZE = 32;
         const BLOCK_SIZE = 1;
         
@@ -213,13 +233,66 @@
             
             // Number keys for block selection
             document.addEventListener('keydown', (e) => {
-                if (e.key >= '1' && e.key <= '5') {
+                if (e.key >= '1' && e.key <= '9') {
                     const slots = document.querySelectorAll('.block-slot');
-                    slots.forEach(s => s.classList.remove('selected'));
-                    slots[parseInt(e.key) - 1].classList.add('selected');
-                    selectedBlock = slots[parseInt(e.key) - 1].dataset.block;
+                    const index = parseInt(e.key) - 1;
+                    if (index < slots.length) {
+                        slots.forEach(s => s.classList.remove('selected'));
+                        slots[index].classList.add('selected');
+                        selectedBlock = slots[index].dataset.block;
+                    }
+                }
+                // Toggle fly mode
+                if (e.code === 'KeyF' && isLocked) {
+                    isFlying = !isFlying;
+                    velocity.y = 0;
+                    document.getElementById('fly-indicator').style.display = isFlying ? 'block' : 'none';
+                }
+                // Create new block type
+                if (e.code === 'KeyP' && isLocked) {
+                    createNewBlockType();
                 }
             });
+            
+            function createNewBlockType() {
+                customBlockCount++;
+                const hue = (customBlockCount * 47) % 360;
+                const color = `hsl(${hue}, 70%, 50%)`;
+                const blockName = `custom${customBlockCount}`;
+                const hexColor = hslToHex(hue, 70, 50);
+                blockColors[blockName] = hexColor;
+                
+                const ui = document.getElementById('ui');
+                const slot = document.createElement('div');
+                slot.className = 'block-slot';
+                slot.dataset.block = blockName;
+                slot.innerHTML = '🔲';
+                slot.style.backgroundColor = color;
+                slot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.block-slot').forEach(s => s.classList.remove('selected'));
+                    slot.classList.add('selected');
+                    selectedBlock = slot.dataset.block;
+                });
+                ui.appendChild(slot);
+                
+                // Select new block
+                document.querySelectorAll('.block-slot').forEach(s => s.classList.remove('selected'));
+                slot.classList.add('selected');
+                selectedBlock = blockName;
+            }
+            
+            function hslToHex(h, s, l) {
+                s /= 100;
+                l /= 100;
+                const a = s * Math.min(l, 1 - l);
+                const f = n => {
+                    const k = (n + h / 30) % 12;
+                    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+                    return Math.round(255 * color).toString(16).padStart(2, '0');
+                };
+                return parseInt(`${f(0)}${f(8)}${f(4)}`, 16);
+            }
             
             // Start screen
             document.getElementById('start-screen').addEventListener('click', () => {
@@ -367,29 +440,45 @@
                 direction.normalize();
                 direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), camera.rotation.y);
                 
-                camera.position.x += direction.x * speed;
-                camera.position.z += direction.z * speed;
-                
-                // Gravity & Jump
-                velocity.y -= 0.02;
-                
-                if (keys['Space'] && onGround) {
-                    velocity.y = 0.3;
-                    onGround = false;
+                // Only move if there's actual input to prevent shaking
+                if (direction.length() > 0.01) {
+                    camera.position.x += direction.x * speed;
+                    camera.position.z += direction.z * speed;
                 }
                 
-                if (keys['ShiftLeft']) {
-                    velocity.y -= 0.05;
-                }
-                
-                camera.position.y += velocity.y;
-                
-                // Ground check
-                const feetPos = new THREE.Vector3(camera.position.x, camera.position.y - 1.8, camera.position.z);
-                if (checkCollision(feetPos)) {
-                    camera.position.y = Math.round(feetPos.y) + 2.5;
-                    velocity.y = 0;
-                    onGround = true;
+                if (isFlying) {
+                    // Flying mode
+                    velocity.y *= 0.9; // Smooth deceleration
+                    if (keys['Space']) {
+                        velocity.y = 0.2;
+                    } else if (keys['ShiftLeft']) {
+                        velocity.y = -0.2;
+                    } else if (Math.abs(velocity.y) < 0.01) {
+                        velocity.y = 0;
+                    }
+                    camera.position.y += velocity.y;
+                } else {
+                    // Normal gravity mode
+                    velocity.y -= 0.02;
+                    
+                    if (keys['Space'] && onGround) {
+                        velocity.y = 0.3;
+                        onGround = false;
+                    }
+                    
+                    if (keys['ShiftLeft']) {
+                        velocity.y -= 0.05;
+                    }
+                    
+                    camera.position.y += velocity.y;
+                    
+                    // Ground check
+                    const feetPos = new THREE.Vector3(camera.position.x, camera.position.y - 1.8, camera.position.z);
+                    if (checkCollision(feetPos)) {
+                        camera.position.y = Math.round(feetPos.y) + 2.5;
+                        velocity.y = 0;
+                        onGround = true;
+                    }
                 }
                 
                 // Don't fall through world
