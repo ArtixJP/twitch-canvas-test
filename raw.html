@@ -5,53 +5,8 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Blank Canvas</title>
+<title>Othello - Collaborative Game</title>
 <style>
-        .sun-container {
-            position: fixed;
-            top: -50px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-        }
-        .sun {
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, #fff700 0%, #ffcc00 40%, #ff9500 100%);
-            border-radius: 50%;
-            box-shadow: 
-                0 0 60px #ffcc00,
-                0 0 100px #ff9500,
-                0 0 150px #ff6600;
-            animation: pulse 3s ease-in-out infinite;
-        }
-        .sun-rays {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 200px;
-            height: 200px;
-            animation: rotate 20s linear infinite;
-        }
-        .ray {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 4px;
-            height: 100px;
-            background: linear-gradient(to top, transparent, #ffcc0080);
-            transform-origin: bottom center;
-            border-radius: 2px;
-        }
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.9; }
-        }
-        @keyframes rotate {
-            from { transform: translate(-50%, -50%) rotate(0deg); }
-            to { transform: translate(-50%, -50%) rotate(360deg); }
-        }
         * {
             margin: 0;
             padding: 0;
@@ -60,37 +15,444 @@
         body {
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             font-family: 'Segoe UI', system-ui, sans-serif;
+            padding: 20px;
         }
         h1 {
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
             text-align: center;
-            opacity: 0.7;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255,255,255,0.3);
+        }
+        .game-info {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1.2rem;
+        }
+        .score {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .score-disc {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #444;
+        }
+        .score-disc.black { background: radial-gradient(circle at 30% 30%, #444, #000); }
+        .score-disc.white { background: radial-gradient(circle at 30% 30%, #fff, #ccc); }
+        .current-turn {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            background: #1a5f1a;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5), inset 0 0 20px rgba(0,0,0,0.3);
+        }
+        .cell {
+            width: 60px;
+            height: 60px;
+            background: #2d8a2d;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: background 0.2s;
+            position: relative;
+        }
+        .cell:hover {
+            background: #3a9a3a;
+        }
+        .cell.valid-move::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.3; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+        .disc {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            transition: transform 0.5s;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.4);
+        }
+        .disc.black {
+            background: radial-gradient(circle at 30% 30%, #444, #000);
+        }
+        .disc.white {
+            background: radial-gradient(circle at 30% 30%, #fff, #ccc);
+        }
+        .disc.flip {
+            animation: flipDisc 0.5s ease-in-out;
+        }
+        @keyframes flipDisc {
+            0% { transform: rotateY(0deg); }
+            50% { transform: rotateY(90deg); }
+            100% { transform: rotateY(180deg); }
+        }
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .btn {
+            padding: 12px 24px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+        .game-id-section {
+            margin-top: 20px;
+            color: white;
+            text-align: center;
+        }
+        .game-id-display {
+            font-family: monospace;
+            font-size: 1.5rem;
+            background: rgba(255,255,255,0.1);
+            padding: 10px 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+        .load-section {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .load-section input {
+            padding: 10px 15px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1rem;
+            width: 200px;
+        }
+        .load-section input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+        .message {
+            color: #ffd700;
+            font-size: 1.2rem;
+            margin-top: 15px;
+            min-height: 30px;
         }
     </style>
 </head>
 <body>
-<div class="sun-container">
-<div class="sun-rays">
-<div class="ray" style="transform: rotate(0deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(30deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(60deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(90deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(120deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(150deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(180deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(210deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(240deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(270deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(300deg) translateY(-50px);"></div>
-<div class="ray" style="transform: rotate(330deg) translateY(-50px);"></div>
+<h1>🎮 Othello</h1>
+<div class="game-info">
+<div class="score">
+<div class="score-disc black"></div>
+<span id="black-score">2</span>
 </div>
-<div class="sun"></div>
+<div class="current-turn">
+            Turn: <div class="score-disc" id="turn-indicator"></div>
 </div>
-<h1>✨ Blank Canvas - What shall we create? ✨</h1>
+<div class="score">
+<div class="score-disc white"></div>
+<span id="white-score">2</span>
+</div>
+</div>
+<div class="board" id="board"></div>
+<div class="message" id="message"></div>
+<div class="controls">
+<button class="btn btn-primary" onclick="newGame()">New Game</button>
+<button class="btn btn-secondary" onclick="saveGame()">Save Position</button>
+<button class="btn btn-secondary" onclick="copyGameId()">Copy ID</button>
+</div>
+<div class="game-id-section">
+<p>Game ID:</p>
+<div class="game-id-display" id="game-id">NEW-GAME</div>
+<div class="load-section">
+<input id="load-id" placeholder="Enter Game ID..." type="text"/>
+<button class="btn btn-secondary" onclick="loadGame()">Load</button>
+</div>
+</div>
+<script>
+        const BOARD_SIZE = 8;
+        let board = [];
+        let currentPlayer = 'black';
+        let gameId = 'NEW-GAME';
+        
+        // Saved games storage (in-memory for demo, could use localStorage)
+        const savedGames = {};
+        
+        function initBoard() {
+            board = Array(BOARD_SIZE).fill(null).map(() => Array(BOARD_SIZE).fill(null));
+            // Initial 4 pieces
+            board[3][3] = 'white';
+            board[3][4] = 'black';
+            board[4][3] = 'black';
+            board[4][4] = 'white';
+            currentPlayer = 'black';
+            gameId = generateGameId();
+            updateDisplay();
+        }
+        
+        function generateGameId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = '';
+            for (let i = 0; i < 8; i++) {
+                id += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return id;
+        }
+        
+        function renderBoard() {
+            const boardEl = document.getElementById('board');
+            boardEl.innerHTML = '';
+            
+            const validMoves = getValidMoves(currentPlayer);
+            
+            for (let row = 0; row < BOARD_SIZE; row++) {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.dataset.row = row;
+                    cell.dataset.col = col;
+                    
+                    if (validMoves.some(m => m.row === row && m.col === col)) {
+                        cell.classList.add('valid-move');
+                    }
+                    
+                    if (board[row][col]) {
+                        const disc = document.createElement('div');
+                        disc.className = `disc ${board[row][col]}`;
+                        cell.appendChild(disc);
+                    }
+                    
+                    cell.addEventListener('click', () => makeMove(row, col));
+                    boardEl.appendChild(cell);
+                }
+            }
+        }
+        
+        function getValidMoves(player) {
+            const moves = [];
+            for (let row = 0; row < BOARD_SIZE; row++) {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    if (isValidMove(row, col, player)) {
+                        moves.push({ row, col });
+                    }
+                }
+            }
+            return moves;
+        }
+        
+        function isValidMove(row, col, player) {
+            if (board[row][col] !== null) return false;
+            
+            const opponent = player === 'black' ? 'white' : 'black';
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],           [0, 1],
+                [1, -1],  [1, 0],  [1, 1]
+            ];
+            
+            for (const [dr, dc] of directions) {
+                let r = row + dr;
+                let c = col + dc;
+                let foundOpponent = false;
+                
+                while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE) {
+                    if (board[r][c] === opponent) {
+                        foundOpponent = true;
+                    } else if (board[r][c] === player && foundOpponent) {
+                        return true;
+                    } else {
+                        break;
+                    }
+                    r += dr;
+                    c += dc;
+                }
+            }
+            return false;
+        }
+        
+        function makeMove(row, col) {
+            if (!isValidMove(row, col, currentPlayer)) return;
+            
+            const opponent = currentPlayer === 'black' ? 'white' : 'black';
+            const directions = [
+                [-1, -1], [-1, 0], [-1, 1],
+                [0, -1],           [0, 1],
+                [1, -1],  [1, 0],  [1, 1]
+            ];
+            
+            board[row][col] = currentPlayer;
+            
+            for (const [dr, dc] of directions) {
+                const toFlip = [];
+                let r = row + dr;
+                let c = col + dc;
+                
+                while (r >= 0 && r < BOARD_SIZE && c >= 0 && c < BOARD_SIZE) {
+                    if (board[r][c] === opponent) {
+                        toFlip.push([r, c]);
+                    } else if (board[r][c] === currentPlayer) {
+                        toFlip.forEach(([fr, fc]) => {
+                            board[fr][fc] = currentPlayer;
+                        });
+                        break;
+                    } else {
+                        break;
+                    }
+                    r += dr;
+                    c += dc;
+                }
+            }
+            
+            currentPlayer = opponent;
+            
+            // Check if next player has moves
+            if (getValidMoves(currentPlayer).length === 0) {
+                currentPlayer = currentPlayer === 'black' ? 'white' : 'black';
+                if (getValidMoves(currentPlayer).length === 0) {
+                    endGame();
+                    return;
+                }
+                showMessage(`${opponent} has no moves! ${currentPlayer}'s turn again.`);
+            }
+            
+            updateDisplay();
+        }
+        
+        function updateDisplay() {
+            renderBoard();
+            updateScores();
+            document.getElementById('turn-indicator').className = `score-disc ${currentPlayer}`;
+            document.getElementById('game-id').textContent = gameId;
+        }
+        
+        function updateScores() {
+            let black = 0, white = 0;
+            for (let row = 0; row < BOARD_SIZE; row++) {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    if (board[row][col] === 'black') black++;
+                    if (board[row][col] === 'white') white++;
+                }
+            }
+            document.getElementById('black-score').textContent = black;
+            document.getElementById('white-score').textContent = white;
+        }
+        
+        function endGame() {
+            const blackScore = parseInt(document.getElementById('black-score').textContent);
+            const whiteScore = parseInt(document.getElementById('white-score').textContent);
+            
+            let winner;
+            if (blackScore > whiteScore) winner = 'Black wins! 🎉';
+            else if (whiteScore > blackScore) winner = 'White wins! 🎉';
+            else winner = "It's a tie! 🤝";
+            
+            showMessage(`Game Over! ${winner}`);
+        }
+        
+        function showMessage(msg) {
+            document.getElementById('message').textContent = msg;
+            setTimeout(() => {
+                document.getElementById('message').textContent = '';
+            }, 3000);
+        }
+        
+        function newGame() {
+            initBoard();
+            showMessage('New game started!');
+        }
+        
+        function saveGame() {
+            const gameState = {
+                board: JSON.parse(JSON.stringify(board)),
+                currentPlayer: currentPlayer,
+                timestamp: Date.now()
+            };
+            savedGames[gameId] = gameState;
+            // Also save to localStorage
+            localStorage.setItem(`othello_${gameId}`, JSON.stringify(gameState));
+            showMessage(`Game saved with ID: ${gameId}`);
+        }
+        
+        function loadGame() {
+            const loadId = document.getElementById('load-id').value.toUpperCase().trim();
+            if (!loadId) {
+                showMessage('Please enter a Game ID');
+                return;
+            }
+            
+            // Try memory first, then localStorage
+            let gameState = savedGames[loadId];
+            if (!gameState) {
+                const stored = localStorage.getItem(`othello_${loadId}`);
+                if (stored) {
+                    gameState = JSON.parse(stored);
+                }
+            }
+            
+            if (gameState) {
+                board = gameState.board;
+                currentPlayer = gameState.currentPlayer;
+                gameId = loadId;
+                updateDisplay();
+                showMessage(`Game ${loadId} loaded!`);
+                document.getElementById('load-id').value = '';
+            } else {
+                showMessage('Game ID not found!');
+            }
+        }
+        
+        function copyGameId() {
+            navigator.clipboard.writeText(gameId).then(() => {
+                showMessage('Game ID copied to clipboard!');
+            });
+        }
+        
+        // Initialize on load
+        initBoard();
+    </script>
 </body>
 </html>
