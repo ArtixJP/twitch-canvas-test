@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Collaborative Canvas</title>
+<title>Minecraft in Browser</title>
 <style>
         * {
             margin: 0;
@@ -13,47 +13,396 @@
             box-sizing: border-box;
         }
         body {
-            min-height: 100vh;
+            overflow: hidden;
+            background: #87CEEB;
+        }
+        #crosshair {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            pointer-events: none;
+            z-index: 100;
+        }
+        #crosshair::before, #crosshair::after {
+            content: '';
+            position: absolute;
+            background: white;
+            mix-blend-mode: difference;
+        }
+        #crosshair::before {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        #crosshair::after {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        #ui {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            z-index: 100;
+        }
+        .block-slot {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #555;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .block-slot.selected {
+            border-color: white;
+            box-shadow: 0 0 10px white;
+        }
+        #instructions {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.7);
+            padding: 15px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            color: white;
+            font-size: 14px;
+            z-index: 100;
+        }
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: white;
+            z-index: 200;
+            cursor: pointer;
         }
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradient 3s ease infinite;
-            background-size: 200% 200%;
-        }
-        @keyframes gradient {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        p {
-            font-size: 1.2rem;
-            opacity: 0.8;
-            margin-bottom: 2rem;
-        }
-        .emoji {
+        #start-screen h1 {
+            font-family: 'Courier New', monospace;
             font-size: 4rem;
-            animation: bounce 2s ease-in-out infinite;
+            color: #5c5;
+            text-shadow: 4px 4px 0 #333;
+            margin-bottom: 20px;
         }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
+        #start-screen p {
+            color: white;
+            font-size: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
     </style>
 </head>
 <body>
-<div class="emoji">✨</div>
-<h1>Blank Canvas</h1>
-<p>What shall we create together?</p>
+<div id="start-screen">
+<h1>⛏️ MINECRAFT JS</h1>
+<p>Click to Play</p>
+</div>
+<div id="crosshair"></div>
+<div id="instructions">
+        WASD - Move<br/>
+        SPACE - Jump<br/>
+        SHIFT - Descend<br/>
+        Mouse - Look<br/>
+        Left Click - Break<br/>
+        Right Click - Place<br/>
+        1-5 - Select Block
+    </div>
+<div id="ui">
+<div class="block-slot selected" data-block="grass">🟩</div>
+<div class="block-slot" data-block="dirt">🟫</div>
+<div class="block-slot" data-block="stone">⬜</div>
+<div class="block-slot" data-block="wood">🪵</div>
+<div class="block-slot" data-block="leaves">🌿</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/simplex-noise@3.0.1/dist/simplex-noise.min.js"></script>
+<script>
+        // Game state
+        let scene, camera, renderer;
+        let blocks = new Map();
+        let selectedBlock = 'grass';
+        let velocity = new THREE.Vector3();
+        let onGround = false;
+        const WORLD_SIZE = 32;
+        const BLOCK_SIZE = 1;
+        
+        // Controls
+        const keys = {};
+        let isLocked = false;
+        
+        // Block colors
+        const blockColors = {
+            grass: 0x4a7c23,
+            dirt: 0x8b5a2b,
+            stone: 0x808080,
+            wood: 0x8b4513,
+            leaves: 0x228b22
+        };
+        
+        // Simple noise function
+        function noise2D(x, z) {
+            return Math.sin(x * 0.1) * Math.cos(z * 0.1) * 0.5 + 
+                   Math.sin(x * 0.05 + z * 0.05) * 2 +
+                   Math.sin(x * 0.02) * Math.cos(z * 0.03) * 4;
+        }
+        
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.Fog(0x87CEEB, 20, 60);
+            
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(WORLD_SIZE/2, 20, WORLD_SIZE/2);
+            
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.body.appendChild(renderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
+            
+            const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            sunLight.position.set(50, 100, 50);
+            sunLight.castShadow = true;
+            scene.add(sunLight);
+            
+            // Generate terrain
+            generateTerrain();
+            
+            // Event listeners
+            document.addEventListener('keydown', (e) => keys[e.code] = true);
+            document.addEventListener('keyup', (e) => keys[e.code] = false);
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('click', onClick);
+            document.addEventListener('contextmenu', onRightClick);
+            
+            // Block selection
+            document.querySelectorAll('.block-slot').forEach((slot, i) => {
+                slot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    document.querySelectorAll('.block-slot').forEach(s => s.classList.remove('selected'));
+                    slot.classList.add('selected');
+                    selectedBlock = slot.dataset.block;
+                });
+            });
+            
+            // Number keys for block selection
+            document.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '5') {
+                    const slots = document.querySelectorAll('.block-slot');
+                    slots.forEach(s => s.classList.remove('selected'));
+                    slots[parseInt(e.key) - 1].classList.add('selected');
+                    selectedBlock = slots[parseInt(e.key) - 1].dataset.block;
+                }
+            });
+            
+            // Start screen
+            document.getElementById('start-screen').addEventListener('click', () => {
+                document.getElementById('start-screen').style.display = 'none';
+                renderer.domElement.requestPointerLock();
+            });
+            
+            document.addEventListener('pointerlockchange', () => {
+                isLocked = document.pointerLockElement === renderer.domElement;
+            });
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+            
+            animate();
+        }
+        
+        function generateTerrain() {
+            for (let x = 0; x < WORLD_SIZE; x++) {
+                for (let z = 0; z < WORLD_SIZE; z++) {
+                    const height = Math.floor(noise2D(x, z) + 8);
+                    
+                    for (let y = 0; y <= height; y++) {
+                        let type = 'stone';
+                        if (y === height) type = 'grass';
+                        else if (y > height - 3) type = 'dirt';
+                        
+                        createBlock(x, y, z, type);
+                    }
+                    
+                    // Random trees
+                    if (Math.random() < 0.02 && height > 5) {
+                        createTree(x, height + 1, z);
+                    }
+                }
+            }
+        }
+        
+        function createTree(x, y, z) {
+            // Trunk
+            for (let i = 0; i < 4; i++) {
+                createBlock(x, y + i, z, 'wood');
+            }
+            // Leaves
+            for (let dx = -2; dx <= 2; dx++) {
+                for (let dz = -2; dz <= 2; dz++) {
+                    for (let dy = 3; dy <= 5; dy++) {
+                        if (Math.abs(dx) + Math.abs(dz) + Math.abs(dy - 4) < 4) {
+                            if (dx !== 0 || dz !== 0 || dy > 3) {
+                                createBlock(x + dx, y + dy, z + dz, 'leaves');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        function createBlock(x, y, z, type) {
+            const key = `${x},${y},${z}`;
+            if (blocks.has(key)) return;
+            
+            const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+            const material = new THREE.MeshLambertMaterial({ color: blockColors[type] });
+            const mesh = new THREE.Mesh(geometry, material);
+            mesh.position.set(x, y, z);
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+            mesh.userData = { type, key };
+            scene.add(mesh);
+            blocks.set(key, mesh);
+        }
+        
+        function removeBlock(key) {
+            const mesh = blocks.get(key);
+            if (mesh) {
+                scene.remove(mesh);
+                blocks.delete(key);
+            }
+        }
+        
+        function onMouseMove(e) {
+            if (!isLocked) return;
+            
+            camera.rotation.y -= e.movementX * 0.002;
+            camera.rotation.x -= e.movementY * 0.002;
+            camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
+        }
+        
+        function raycast() {
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+            raycaster.far = 6;
+            
+            const meshes = Array.from(blocks.values());
+            const intersects = raycaster.intersectObjects(meshes);
+            
+            return intersects.length > 0 ? intersects[0] : null;
+        }
+        
+        function onClick(e) {
+            if (!isLocked) {
+                renderer.domElement.requestPointerLock();
+                return;
+            }
+            
+            const hit = raycast();
+            if (hit) {
+                removeBlock(hit.object.userData.key);
+            }
+        }
+        
+        function onRightClick(e) {
+            e.preventDefault();
+            if (!isLocked) return;
+            
+            const hit = raycast();
+            if (hit) {
+                const pos = hit.object.position.clone();
+                pos.add(hit.face.normal);
+                createBlock(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z), selectedBlock);
+            }
+        }
+        
+        function checkCollision(pos) {
+            const key = `${Math.round(pos.x)},${Math.round(pos.y)},${Math.round(pos.z)}`;
+            return blocks.has(key);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            if (isLocked) {
+                // Movement
+                const speed = 0.15;
+                const direction = new THREE.Vector3();
+                
+                if (keys['KeyW']) direction.z -= 1;
+                if (keys['KeyS']) direction.z += 1;
+                if (keys['KeyA']) direction.x -= 1;
+                if (keys['KeyD']) direction.x += 1;
+                
+                direction.normalize();
+                direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), camera.rotation.y);
+                
+                camera.position.x += direction.x * speed;
+                camera.position.z += direction.z * speed;
+                
+                // Gravity & Jump
+                velocity.y -= 0.02;
+                
+                if (keys['Space'] && onGround) {
+                    velocity.y = 0.3;
+                    onGround = false;
+                }
+                
+                if (keys['ShiftLeft']) {
+                    velocity.y -= 0.05;
+                }
+                
+                camera.position.y += velocity.y;
+                
+                // Ground check
+                const feetPos = new THREE.Vector3(camera.position.x, camera.position.y - 1.8, camera.position.z);
+                if (checkCollision(feetPos)) {
+                    camera.position.y = Math.round(feetPos.y) + 2.5;
+                    velocity.y = 0;
+                    onGround = true;
+                }
+                
+                // Don't fall through world
+                if (camera.position.y < -10) {
+                    camera.position.y = 30;
+                    velocity.y = 0;
+                }
+            }
+            
+            renderer.render(scene, camera);
+        }
+        
+        init();
+    </script>
 </body>
 </html>
