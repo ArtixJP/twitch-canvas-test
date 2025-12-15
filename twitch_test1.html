@@ -14,16 +14,16 @@
             height: 100%;
         }
         
-        /* Main stream area */
+        /* Main stream area (contains site + overlays) */
         .stream {
             flex: 1;
             height: 100%;
             min-width: 0;
             position: relative;
-            background: #1a1a2e;
+            background: #0e0e10;
         }
         
-        /* Base layer: the actual site content */
+        /* Site fills the full stream area */
         .layer-site {
             position: absolute;
             top: 0;
@@ -34,7 +34,7 @@
             z-index: 1;
         }
         
-        /* Frame overlay (transparent, shows header/sidebar/modebar) */
+        /* Frame overlay covers everything (transparent except UI elements) */
         .layer-frame {
             position: absolute;
             top: 0;
@@ -46,19 +46,19 @@
             pointer-events: none;
         }
         
-        /* Vote overlay - positioned at bottom center of main content area */
+        /* Vote overlay - positioned in main content area */
         .layer-vote {
             position: absolute;
-            bottom: 70px;
+            bottom: 56px;    /* Above mode bar (56px) */
             left: 0;
-            right: 0;
-            height: 280px;
+            right: 360px;    /* Space for side panel (360px) */
+            height: 300px;
             border: none;
             z-index: 20;
             pointer-events: none;
         }
         
-        /* Chat panel - collapsible */
+        /* Collapsible Twitch chat panel on the right */
         .chat-panel {
             width: 350px;
             height: 100%;
@@ -77,10 +77,11 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 12px;
+            padding: 12px 14px;
             background: #0e0e10;
             border-bottom: 1px solid #2f2f35;
             cursor: pointer;
+            flex-shrink: 0;
         }
         
         .chat-header:hover {
@@ -91,6 +92,9 @@
             font-size: 14px;
             font-weight: 600;
             color: #efeff1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         .chat-panel.collapsed .chat-title {
@@ -122,16 +126,16 @@
             border: none;
         }
         
-        /* Info bar at bottom */
+        /* Info bar at bottom left, above mode bar */
         .info {
             position: fixed;
-            bottom: 10px;
-            left: 10px;
-            background: rgba(0,0,0,0.9);
+            bottom: 62px;
+            left: 8px;
+            background: rgba(0,0,0,0.85);
             color: #888;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 11px;
             z-index: 1000;
         }
         .info a { color: #6cf; text-decoration: none; }
@@ -142,22 +146,23 @@
         }
         @media (max-width: 900px) {
             .container { flex-direction: column; }
-            .stream { height: 65%; }
-            .chat-panel { width: 100%; height: 35%; }
-            .chat-panel.collapsed { width: 100%; height: 40px; }
+            .stream { height: 60%; }
+            .chat-panel { width: 100%; height: 40%; }
+            .chat-panel.collapsed { width: 100%; height: 44px; }
+            .layer-vote { right: 0; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="stream">
-            <!-- Layer 1: The actual site -->
+            <!-- Layer 1: Site content (fills full area) -->
             <iframe class="layer-site" src="https://artix.tech/twitch_plays_code/live_for_twitch"></iframe>
             
-            <!-- Layer 2: Frame overlay (header, side panel, mode bar - transparent background) -->
+            <!-- Layer 2: Frame overlay (header 64px, sidebar 360px, mode bar 56px) -->
             <iframe class="layer-frame" src="https://artix.tech/twitch_plays_code/overlay/frame"></iframe>
             
-            <!-- Layer 3: Vote overlay -->
+            <!-- Layer 3: Vote overlay (above mode bar, left of sidebar) -->
             <iframe class="layer-vote" src="https://artix.tech/twitch_plays_code/overlay/vote"></iframe>
         </div>
         
@@ -165,23 +170,25 @@
         <div class="chat-panel" id="chatPanel">
             <div class="chat-header" onclick="toggleChat()">
                 <span class="chat-title">💬 Twitch Chat</span>
-                <span class="chat-toggle">◀</span>
+                <span class="chat-toggle" id="chatToggle">◀</span>
             </div>
             <div class="chat-content">
-                <iframe src="https://www.twitch.tv/embed/artix187/chat?parent=artixjp.github.io&darkpopout"></iframe>
+                <iframe src="https://www.twitch.tv/embed/artix187/chat?parent=artix.tech&darkpopout"></iframe>
             </div>
         </div>
     </div>
     
     <div class="info">
-        🎮 Full stream + chat - 
-        <a href="twitch_test2.html">Chat in sidebar</a> | 
-        <a href="twitch.html">Simple</a>
+        🎮 Full + chat - 
+        <a href="live_test2">Sidebar chat</a> | 
+        <a href="live_for_twitch">Simple</a>
     </div>
     
     <script>
         function toggleChat() {
-            document.getElementById('chatPanel').classList.toggle('collapsed');
+            var panel = document.getElementById('chatPanel');
+            panel.classList.toggle('collapsed');
+            document.getElementById('chatToggle').textContent = panel.classList.contains('collapsed') ? '▶' : '◀';
         }
     </script>
 </body>
