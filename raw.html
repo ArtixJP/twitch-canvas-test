@@ -19,16 +19,53 @@
             align-items: center;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             font-family: 'Segoe UI', system-ui, sans-serif;
+            flex-direction: column;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         h1 {
             color: white;
             font-size: 2rem;
             text-align: center;
+            margin-bottom: 1rem;
             opacity: 0.7;
+        }
+        .magic-btn {
+            margin-top: 2rem;
+            padding: 1rem 2.5rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(45deg, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 300% 300%;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 10px 40px rgba(240, 147, 251, 0.4);
+            transition: all 0.3s ease;
+            animation: gradient-shift 3s ease infinite;
+        }
+        .magic-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(240, 147, 251, 0.6);
+        }
+        .magic-btn:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
     </style>
 </head>
 <body>
+<div class="container">
 <h1>Blank Canvas - What shall we create?</h1>
+<button class="magic-btn">✨ Click Me ✨</button>
+</div>
 </body>
 </html>
