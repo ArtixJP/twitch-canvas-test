@@ -142,7 +142,7 @@
         P - New Block<br/>
         Mouse - Look<br/>
         Left Click - Break<br/>
-        Right Click - Place<br/>
+        M - Place Block<br/>
         1-9 - Select Block
     </div>
 <div id="ui">
@@ -219,7 +219,7 @@
             document.addEventListener('keyup', (e) => keys[e.code] = false);
             document.addEventListener('mousemove', onMouseMove);
             document.addEventListener('click', onClick);
-            document.addEventListener('contextmenu', onRightClick);
+            document.addEventListener('contextmenu', (e) => e.preventDefault());
             
             // Block selection
             document.querySelectorAll('.block-slot').forEach((slot, i) => {
@@ -241,6 +241,10 @@
                         slots[index].classList.add('selected');
                         selectedBlock = slots[index].dataset.block;
                     }
+                }
+                // Place block with M key
+                if (e.code === 'KeyM' && isLocked) {
+                    placeBlock();
                 }
                 // Toggle fly mode
                 if (e.code === 'KeyF' && isLocked) {
@@ -407,8 +411,7 @@
             }
         }
         
-        function onRightClick(e) {
-            e.preventDefault();
+        function placeBlock() {
             if (!isLocked) return;
             
             const hit = raycast();
