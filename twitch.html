@@ -661,6 +661,19 @@ function showStatus(message, type) {
 document.getElementById('reset-game').addEventListener('click', initBoard);
 
 initBoard();
+
+// Auto-play move requested by community: move white piece
+setTimeout(() => {
+    // Select the piece at e3 (row 5, col 4) and move to d4 (row 4, col 3)
+    if (board[5][4] && board[5][4].color === 'white') {
+        selectedSquare = { row: 5, col: 4 };
+        renderBoard();
+        setTimeout(() => {
+            handleSquareClick(4, 3);
+            showStatus('Community move: e3 → d4 played!', 'success');
+        }, 500);
+    }
+}, 1000);
 </script>
 </body>
 </html>
