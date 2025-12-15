@@ -52,7 +52,7 @@
         /* Twitch chat positioned over the live feed area in the sidebar */
         .chat-in-sidebar {
             position: absolute;
-            top: 290px;      /* Below status/command sections */
+            top: 360px;      /* Lower to show RIGHT NOW section */
             right: 12px;     /* Sidebar padding */
             width: 316px;    /* Sidebar width minus padding */
             bottom: 70px;    /* Above mode bar */
@@ -62,13 +62,12 @@
             background: #18181b;
             display: flex;
             flex-direction: column;
-            transition: height 0.3s ease;
+            transition: height 0.3s ease, top 0.3s ease;
         }
         
         .chat-in-sidebar.collapsed {
-            height: 40px;
-            bottom: auto;
             top: auto;
+            height: 40px;
             bottom: 70px;
         }
         
@@ -158,7 +157,7 @@
 <body>
     <div class="container">
         <!-- Layer 1: The actual site -->
-        <iframe class="layer-site" src="https://artix.tech/twitch_plays_code/site"></iframe>
+        <iframe class="layer-site" src="https://artix.tech/twitch_plays_code/live_for_twitch"></iframe>
         
         <!-- Layer 2: Frame overlay -->
         <iframe class="layer-frame" src="https://artix.tech/twitch_plays_code/overlay/frame"></iframe>
