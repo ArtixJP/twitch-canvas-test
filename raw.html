@@ -158,12 +158,19 @@
         font-size: 18px;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        animation: gradient-shift 3s ease infinite, float 2s ease-in-out infinite, pulse-glow 2s ease-in-out infinite;
         z-index: 100;
     }
     @keyframes gradient-shift {
         0% { background-position: 0% 50%; }
         50% { background-position: 100% 50%; }
         100% { background-position: 0% 50%; }
+    }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px #ff6b6b, 0 0 40px #feca57; }
+        25% { box-shadow: 0 0 20px #48dbfb, 0 0 40px #ff6b6b; }
+        50% { box-shadow: 0 0 20px #ff9ff3, 0 0 40px #48dbfb; }
+        75% { box-shadow: 0 0 20px #feca57, 0 0 40px #ff9ff3; }
     }
     @keyframes float {
         0%, 100% { transform: translateX(-50%) translateY(0); }
@@ -210,9 +217,10 @@
 <body>
 <div id="game-container">
 <div id="ui">
-<div id="test-banner">✨ Welcome Mathilde! ✨</div>
+<div id="test-banner">🧪 TEST MODE ACTIVATED! 🧪</div>
 <div id="info">
 <div>🎮 Mathilde's Minecraft World 🏰</div>
+<div style="color: #00ff00; font-size: 12px;">✅ TEST SUCCESSFUL!</div>
 <div id="mode-display">Mode: BUILD</div>
 <div id="coords">Pos: 0, 0, 0</div>
 </div>
