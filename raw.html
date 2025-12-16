@@ -5,21 +5,20 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Minecraft Simulation</title>
+<title>Minecraft 3D Simulation</title>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Courier New', monospace; 
             overflow: hidden;
-            background: linear-gradient(180deg, #87CEEB 0%, #98D8E8 50%, #7EC850 50%, #5A8F3E 100%);
-            min-height: 100vh;
-            image-rendering: pixelated;
+            background: #1a1a2e;
         }
-        .game-container {
-            position: relative;
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            overflow: hidden;
         }
         .title {
             position: absolute;
@@ -27,187 +26,12 @@
             left: 50%;
             transform: translateX(-50%);
             font-size: 2rem;
-            color: #3D2817;
-            text-shadow: 4px 4px 0 #5D4037, -2px -2px 0 #8D6E63;
+            color: #4CAF50;
+            text-shadow: 4px 4px 0 #2E7D32, -2px -2px 0 #81C784;
             z-index: 100;
             letter-spacing: 4px;
-        }
-        .ground {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 40%;
-            background: repeating-linear-gradient(
-                0deg,
-                #5D4037 0px, #5D4037 20px,
-                #4E342E 20px, #4E342E 40px
-            );
-        }
-        .grass-layer {
-            position: absolute;
-            bottom: 40%;
-            width: 100%;
-            height: 30px;
-            background: #4CAF50;
-            box-shadow: 0 -5px 0 #66BB6A;
-        }
-        .block {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: #8D6E63;
-            border: 3px solid #5D4037;
-            box-shadow: inset 3px 3px 0 #A1887F, inset -3px -3px 0 #6D4C41;
-        }
-        .grass-block {
-            background: linear-gradient(180deg, #4CAF50 0%, #4CAF50 20%, #8D6E63 20%);
-        }
-        /* Flying Hamburger */
-        .hamburger {
-            position: absolute;
-            font-size: 60px;
-            animation: flyHamburger 8s ease-in-out infinite;
-            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
-            z-index: 50;
-        }
-        @keyframes flyHamburger {
-            0% { top: 20%; left: -10%; transform: rotate(0deg); }
-            25% { top: 15%; transform: rotate(15deg); }
-            50% { top: 25%; left: 110%; transform: rotate(-10deg); }
-            75% { top: 10%; transform: rotate(20deg); }
-            100% { top: 20%; left: -10%; transform: rotate(0deg); }
-        }
-        /* Hungry Dog */
-        .dog {
-            position: absolute;
-            bottom: 42%;
-            font-size: 50px;
-            animation: dogWalk 6s ease-in-out infinite;
-            z-index: 60;
-        }
-        .dog::after {
-            content: '🍖?';
-            position: absolute;
-            top: -40px;
-            left: 20px;
-            font-size: 25px;
-            animation: thoughtBubble 1s ease-in-out infinite;
-        }
-        @keyframes dogWalk {
-            0% { left: 10%; transform: scaleX(1); }
-            45% { left: 80%; transform: scaleX(1); }
-            50% { left: 80%; transform: scaleX(-1); }
-            95% { left: 10%; transform: scaleX(-1); }
-            100% { left: 10%; transform: scaleX(1); }
-        }
-        @keyframes thoughtBubble {
-            0%, 100% { opacity: 1; transform: translateY(0); }
-            50% { opacity: 0.7; transform: translateY(-5px); }
-        }
-        /* Space Croissant */
-        .space-croissant {
-            position: absolute;
-            font-size: 80px;
-            animation: spaceCroissant 12s linear infinite;
-            filter: drop-shadow(0 0 20px #FFD700) drop-shadow(0 0 40px #FF6B00);
-            z-index: 70;
-        }
-        .croissant-trail {
-            position: absolute;
-            width: 100px;
-            height: 5px;
-            background: linear-gradient(90deg, transparent, #FFD700, #FF6B00);
-            animation: spaceCroissant 12s linear infinite;
-            transform-origin: right center;
-        }
-        @keyframes spaceCroissant {
-            0% { top: -10%; right: -10%; transform: rotate(0deg); }
-            100% { top: 110%; right: 110%; transform: rotate(720deg); }
-        }
-        /* Clouds */
-        .cloud {
-            position: absolute;
-            font-size: 40px;
-            opacity: 0.9;
-            animation: cloudFloat 20s linear infinite;
-        }
-        .cloud:nth-child(1) { top: 10%; animation-delay: 0s; }
-        .cloud:nth-child(2) { top: 20%; animation-delay: -7s; font-size: 30px; }
-        .cloud:nth-child(3) { top: 5%; animation-delay: -14s; font-size: 50px; }
-        @keyframes cloudFloat {
-            0% { left: -10%; }
-            100% { left: 110%; }
-        }
-        /* Pixel Trees */
-        .tree {
-            position: absolute;
-            bottom: 42%;
-            width: 40px;
-            height: 80px;
-            z-index: 30;
-        }
-        .tree-trunk {
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 15px;
-            height: 30px;
-            background: #5D4037;
-            border: 2px solid #4E342E;
-        }
-        .tree-leaves {
-            position: absolute;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 40px;
-            height: 50px;
-            background: #2E7D32;
-            border: 3px solid #1B5E20;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-        }
-        /* Stars */
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 50%;
             pointer-events: none;
         }
-        .star {
-            position: absolute;
-            font-size: 15px;
-            animation: twinkle 2s ease-in-out infinite;
-        }
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 1; }
-        }
-        /* Sun */
-        .sun {
-            position: absolute;
-            top: 50px;
-            right: 100px;
-            font-size: 70px;
-            animation: sunPulse 3s ease-in-out infinite;
-        }
-        @keyframes sunPulse {
-            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px #FFD700); }
-            50% { transform: scale(1.1); filter: drop-shadow(0 0 40px #FFD700); }
-        }
-        /* Food items scattered */
-        .food-item {
-            position: absolute;
-            font-size: 25px;
-            animation: foodBounce 2s ease-in-out infinite;
-        }
-        @keyframes foodBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-        /* Warning text */
         .warning {
             position: absolute;
             top: 80px;
@@ -217,59 +41,318 @@
             font-size: 1.2rem;
             animation: warningPulse 0.5s ease-in-out infinite;
             text-shadow: 2px 2px 0 #000;
+            z-index: 100;
+            pointer-events: none;
         }
         @keyframes warningPulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
         }
+        .controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 0.9rem;
+            text-shadow: 1px 1px 2px #000;
+            z-index: 100;
+            text-align: center;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
-<div class="game-container">
-<h1 class="title">MINECRAFT SIMULATION</h1>
+<div id="canvas-container"></div>
+<h1 class="title">MINECRAFT 3D SIMULATION</h1>
 <p class="warning">⚠️ SPACE CROISSANT INCOMING! ⚠️</p>
+<p class="controls">🖱️ Drag to rotate | 🔄 Auto-rotating world</p>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87CEEB);
+        scene.fog = new THREE.Fog(0x87CEEB, 20, 80);
 
-<div class="sun">☀️</div>
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(15, 12, 15);
+        camera.lookAt(0, 0, 0);
 
-<div class="cloud">☁️</div>
-<div class="cloud">☁️</div>
-<div class="cloud">☁️</div>
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-<div class="stars">
-<span class="star" style="top: 5%; left: 10%;">✨</span>
-<span class="star" style="top: 15%; left: 30%; animation-delay: 0.5s;">⭐</span>
-<span class="star" style="top: 8%; left: 60%; animation-delay: 1s;">✨</span>
-<span class="star" style="top: 20%; left: 85%; animation-delay: 1.5s;">⭐</span>
-</div>
+        // Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
 
-<div class="hamburger">🍔</div>
+        const sunLight = new THREE.DirectionalLight(0xFFD700, 1);
+        sunLight.position.set(10, 20, 10);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        scene.add(sunLight);
 
-<div class="space-croissant">🥐</div>
+        // Texture loader for pixelated look
+        function createPixelTexture(color1, color2) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 16;
+            canvas.height = 16;
+            const ctx = canvas.getContext('2d');
+            
+            for (let x = 0; x < 16; x++) {
+                for (let y = 0; y < 16; y++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? color1 : color2;
+                    ctx.fillRect(x, y, 1, 1);
+                }
+            }
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            texture.magFilter = THREE.NearestFilter;
+            texture.minFilter = THREE.NearestFilter;
+            return texture;
+        }
 
-<div class="dog">🐕</div>
+        // Materials
+        const grassTopMaterial = new THREE.MeshLambertMaterial({ 
+            map: createPixelTexture('#4CAF50', '#66BB6A')
+        });
+        const grassSideMaterial = new THREE.MeshLambertMaterial({ 
+            map: createPixelTexture('#8D6E63', '#6D4C41')
+        });
+        const dirtMaterial = new THREE.MeshLambertMaterial({ 
+            map: createPixelTexture('#8D6E63', '#5D4037')
+        });
+        const stoneMaterial = new THREE.MeshLambertMaterial({ 
+            map: createPixelTexture('#9E9E9E', '#757575')
+        });
+        const woodMaterial = new THREE.MeshLambertMaterial({ 
+            map: createPixelTexture('#5D4037', '#4E342E')
+        });
+        const leavesMaterial = new THREE.MeshLambertMaterial({ 
+            map: createPixelTexture('#2E7D32', '#388E3C'),
+            transparent: true,
+            opacity: 0.9
+        });
 
-<div class="tree" style="left: 15%;">
-<div class="tree-leaves"></div>
-<div class="tree-trunk"></div>
-</div>
-<div class="tree" style="left: 70%;">
-<div class="tree-leaves"></div>
-<div class="tree-trunk"></div>
-</div>
-<div class="tree" style="left: 45%;">
-<div class="tree-leaves"></div>
-<div class="tree-trunk"></div>
-</div>
+        // Create grass block with different top
+        function createGrassBlock(x, y, z) {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const materials = [
+                grassSideMaterial, grassSideMaterial,
+                grassTopMaterial, dirtMaterial,
+                grassSideMaterial, grassSideMaterial
+            ];
+            const block = new THREE.Mesh(geometry, materials);
+            block.position.set(x, y, z);
+            block.castShadow = true;
+            block.receiveShadow = true;
+            return block;
+        }
 
-<span class="food-item" style="bottom: 45%; left: 25%; animation-delay: 0.3s;">🍖</span>
-<span class="food-item" style="bottom: 43%; left: 55%; animation-delay: 0.7s;">🦴</span>
-<span class="food-item" style="bottom: 44%; left: 85%; animation-delay: 1.1s;">🥩</span>
+        function createBlock(x, y, z, material) {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const block = new THREE.Mesh(geometry, material);
+            block.position.set(x, y, z);
+            block.castShadow = true;
+            block.receiveShadow = true;
+            return block;
+        }
 
-<div class="grass-layer"></div>
+        // Generate terrain
+        const worldSize = 16;
+        for (let x = -worldSize/2; x < worldSize/2; x++) {
+            for (let z = -worldSize/2; z < worldSize/2; z++) {
+                // Grass top layer
+                scene.add(createGrassBlock(x, 0, z));
+                // Dirt layers
+                for (let y = -1; y > -3; y--) {
+                    scene.add(createBlock(x, y, z, dirtMaterial));
+                }
+                // Stone base
+                scene.add(createBlock(x, -3, z, stoneMaterial));
+            }
+        }
 
-<div class="ground">
+        // Create trees
+        function createTree(x, z) {
+            // Trunk
+            for (let y = 1; y <= 4; y++) {
+                scene.add(createBlock(x, y, z, woodMaterial));
+            }
+            // Leaves
+            for (let lx = -2; lx <= 2; lx++) {
+                for (let lz = -2; lz <= 2; lz++) {
+                    for (let ly = 4; ly <= 6; ly++) {
+                        if (Math.abs(lx) + Math.abs(lz) + Math.abs(ly - 5) < 4) {
+                            scene.add(createBlock(x + lx, ly, z + lz, leavesMaterial));
+                        }
+                    }
+                }
+            }
+        }
 
-</div>
-</div>
+        createTree(-4, -4);
+        createTree(5, 3);
+        createTree(-2, 5);
+
+        // Sun
+        const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
+        const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
+        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+        sun.position.set(20, 25, -20);
+        scene.add(sun);
+
+        // Clouds
+        function createCloud(x, y, z) {
+            const cloudGroup = new THREE.Group();
+            const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
+            
+            for (let i = 0; i < 5; i++) {
+                const cloudPart = new THREE.Mesh(
+                    new THREE.BoxGeometry(2, 1, 2),
+                    cloudMaterial
+                );
+                cloudPart.position.set(i * 1.5 - 3, Math.random() * 0.5, Math.random() * 2 - 1);
+                cloudGroup.add(cloudPart);
+            }
+            cloudGroup.position.set(x, y, z);
+            return cloudGroup;
+        }
+
+        const clouds = [];
+        for (let i = 0; i < 5; i++) {
+            const cloud = createCloud(
+                Math.random() * 40 - 20,
+                15 + Math.random() * 5,
+                Math.random() * 40 - 20
+            );
+            clouds.push(cloud);
+            scene.add(cloud);
+        }
+
+        // Flying hamburger (represented as a bouncing cube)
+        const hamburgerGroup = new THREE.Group();
+        const bunTop = new THREE.Mesh(
+            new THREE.BoxGeometry(1.5, 0.5, 1.5),
+            new THREE.MeshLambertMaterial({ color: 0xD4A574 })
+        );
+        bunTop.position.y = 0.5;
+        const patty = new THREE.Mesh(
+            new THREE.BoxGeometry(1.3, 0.3, 1.3),
+            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
+        );
+        const bunBottom = new THREE.Mesh(
+            new THREE.BoxGeometry(1.5, 0.4, 1.5),
+            new THREE.MeshLambertMaterial({ color: 0xD4A574 })
+        );
+        bunBottom.position.y = -0.35;
+        hamburgerGroup.add(bunTop, patty, bunBottom);
+        hamburgerGroup.position.set(0, 10, 0);
+        scene.add(hamburgerGroup);
+
+        // Space Croissant
+        const croissantGroup = new THREE.Group();
+        const croissantBody = new THREE.Mesh(
+            new THREE.TorusGeometry(1, 0.4, 8, 16, Math.PI),
+            new THREE.MeshLambertMaterial({ color: 0xE6B87D })
+        );
+        croissantGroup.add(croissantBody);
+        croissantGroup.position.set(-15, 20, -15);
+        scene.add(croissantGroup);
+
+        // Dog (simple blocky representation)
+        const dogGroup = new THREE.Group();
+        const dogBody = new THREE.Mesh(
+            new THREE.BoxGeometry(1.5, 1, 2),
+            new THREE.MeshLambertMaterial({ color: 0xD2691E })
+        );
+        const dogHead = new THREE.Mesh(
+            new THREE.BoxGeometry(0.8, 0.8, 0.8),
+            new THREE.MeshLambertMaterial({ color: 0xD2691E })
+        );
+        dogHead.position.set(0, 0.3, 1.2);
+        dogGroup.add(dogBody, dogHead);
+        dogGroup.position.set(-5, 1.5, 0);
+        scene.add(dogGroup);
+
+        // Mouse controls
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let autoRotate = true;
+
+        renderer.domElement.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            autoRotate = false;
+        });
+
+        renderer.domElement.addEventListener('mouseup', () => {
+            isDragging = false;
+            setTimeout(() => autoRotate = true, 3000);
+        });
+
+        renderer.domElement.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const deltaX = e.clientX - previousMousePosition.x;
+                const deltaY = e.clientY - previousMousePosition.y;
+                
+                const rotationSpeed = 0.005;
+                camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), deltaX * rotationSpeed);
+                camera.lookAt(0, 0, 0);
+            }
+            previousMousePosition = { x: e.clientX, y: e.clientY };
+        });
+
+        // Animation
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.016;
+
+            // Auto-rotate camera
+            if (autoRotate) {
+                camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.002);
+                camera.lookAt(0, 0, 0);
+            }
+
+            // Animate hamburger
+            hamburgerGroup.position.x = Math.sin(time) * 8;
+            hamburgerGroup.position.y = 8 + Math.sin(time * 2) * 2;
+            hamburgerGroup.position.z = Math.cos(time) * 8;
+            hamburgerGroup.rotation.y += 0.02;
+
+            // Animate croissant
+            croissantGroup.position.x = Math.sin(time * 0.5) * 15;
+            croissantGroup.position.z = Math.cos(time * 0.5) * 15;
+            croissantGroup.rotation.x += 0.03;
+            croissantGroup.rotation.z += 0.02;
+
+            // Animate dog
+            dogGroup.position.x = Math.sin(time * 0.8) * 6;
+            dogGroup.rotation.y = Math.sin(time * 0.8) > 0 ? 0 : Math.PI;
+
+            // Animate clouds
+            clouds.forEach((cloud, i) => {
+                cloud.position.x += 0.02;
+                if (cloud.position.x > 25) cloud.position.x = -25;
+            });
+
+            // Sun pulse
+            sun.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+
+            renderer.render(scene, camera);
+        }
+
+        // Handle resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+    </script>
 </body>
 </html>
