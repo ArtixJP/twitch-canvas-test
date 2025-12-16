@@ -220,14 +220,14 @@
         right: 150px;
         width: 100px;
         height: 100px;
-        background: radial-gradient(circle at 30% 30%, #ff6b6b, #dc143c, #8b0000);
+        background: radial-gradient(circle at 30% 30%, #fff9c4, #ffeb3b, #ffc107);
         border-radius: 50%;
         box-shadow: 
-            0 0 60px #ff4500,
-            0 0 120px #ff6347,
-            0 0 180px rgba(255,69,0,0.5),
-            inset -10px -10px 30px rgba(139,0,0,0.6),
-            inset 10px 10px 20px rgba(255,107,107,0.4);
+            0 0 60px #ffeb3b,
+            0 0 120px #ffc107,
+            0 0 180px rgba(255,235,59,0.5),
+            inset -10px -10px 30px rgba(255,193,7,0.6),
+            inset 10px 10px 20px rgba(255,249,196,0.4);
         animation: sun-pulse 4s ease-in-out infinite, sun-glow 2s ease-in-out infinite alternate;
         z-index: 50;
         pointer-events: none;
@@ -263,8 +263,8 @@
     }
     
     @keyframes sun-glow {
-        0% { box-shadow: 0 0 60px #ff4500, 0 0 120px #ff6347, 0 0 180px rgba(255,69,0,0.5); }
-        100% { box-shadow: 0 0 80px #ff6347, 0 0 150px #ff4500, 0 0 220px rgba(255,99,71,0.6); }
+        0% { box-shadow: 0 0 60px #ffeb3b, 0 0 120px #ffc107, 0 0 180px rgba(255,235,59,0.5); }
+        100% { box-shadow: 0 0 80px #fff59d, 0 0 150px #ffeb3b, 0 0 220px rgba(255,241,118,0.6); }
     }
     
     @keyframes corona-flare {
@@ -445,8 +445,8 @@ function init() {
     // Add 3D Red Sun
     const sunGeometry = new THREE.SphereGeometry(5, 32, 32);
     const sunMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0xff2200,
-        emissive: 0xff4400
+        color: 0xffeb3b,
+        emissive: 0xffc107
     });
     const sun3D = new THREE.Mesh(sunGeometry, sunMaterial);
     sun3D.position.set(50, 40, -30);
@@ -455,7 +455,7 @@ function init() {
     // Sun glow
     const glowGeometry = new THREE.SphereGeometry(7, 32, 32);
     const glowMaterial = new THREE.MeshBasicMaterial({ 
-        color: 0xff4400,
+        color: 0xffeb3b,
         transparent: true,
         opacity: 0.3
     });
@@ -464,7 +464,7 @@ function init() {
     scene.add(sunGlow);
     
     // Red ambient light from sun
-    const redLight = new THREE.PointLight(0xff4400, 0.5, 100);
+    const redLight = new THREE.PointLight(0xffeb3b, 0.5, 100);
     redLight.position.copy(sun3D.position);
     scene.add(redLight);
     
