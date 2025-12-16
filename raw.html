@@ -152,6 +152,10 @@
             font-size: 1.5rem;
             animation: pulse 2s infinite;
         }
+        @keyframes testPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -161,6 +165,7 @@
 <body>
 <div id="start-screen">
 <h1>⛏️ MINECRAFT JS</h1>
+<div style="background: #00ff00; color: black; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px; animation: testPulse 0.5s infinite;">✅ TEST MODE ACTIVE</div>
 <p style="color: #66aaff; font-size: 1.2rem; margin-bottom: 10px;">🍌 Mario's Blue Banana Edition 🍌</p>
 <p style="color: #ffd700; font-size: 1rem; margin-bottom: 10px; text-shadow: 0 0 10px #ffd700;">👑 Sponsored by JULIUS 👑</p>
 <p>Click to Play</p>
@@ -179,6 +184,7 @@
         1-9 - Select Block
     </div>
 <div id="julius-badge">👑 JULIUS VIP DONATOR 👑</div>
+<div id="test-badge" onclick="alert('🎮 Test successful! Everything is working perfectly! 🚀')" style="position:fixed;top:20px;left:20px;background:linear-gradient(135deg,#00ff00,#00cc00);padding:10px 20px;border-radius:20px;font-family:'Courier New',monospace;color:#000;font-size:14px;font-weight:bold;z-index:100;box-shadow:0 0 20px rgba(0,255,0,0.6);cursor:pointer;">🧪 TEST PASSED - CLICK ME!</div>
 <div id="ui">
 <div class="block-slot selected" data-block="grass">🟩</div>
 <div class="block-slot" data-block="dirt">🟫</div>
