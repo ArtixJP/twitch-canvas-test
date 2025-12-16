@@ -145,7 +145,7 @@
 <div class="hotbar-slot" data-block="leaves">🌿</div>
 <div class="hotbar-slot" data-block="burger">🍔</div>
 </div>
-<p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | RIGHT CLICK: Place | 1-5: Select Block</p>
+<p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | SHIFT+LEFT CLICK: Place | 1-6: Select Block</p>
 <div class="start-screen" id="startScreen">
 <h1 style="font-size: 3rem; color: #4CAF50; text-shadow: 4px 4px 0 #2E7D32;">MINECRAFT</h1>
 <p style="margin-top: 10px; font-size: 1.2rem;">Click to play!</p>
@@ -361,8 +361,19 @@
         renderer.domElement.requestPointerLock();
     });
 
+    // Also start on clicking the canvas
+    renderer.domElement.addEventListener('click', () => {
+        if (!isPlaying) {
+            document.getElementById('startScreen').style.display = 'none';
+            renderer.domElement.requestPointerLock();
+        }
+    });
+
     document.addEventListener('pointerlockchange', () => {
         isPlaying = document.pointerLockElement === renderer.domElement;
+        if (isPlaying) {
+            console.log('Game started - controls active!');
+        }
     });
 
     // Mouse look
@@ -376,6 +387,7 @@
     // Keyboard
     document.addEventListener('keydown', (e) => {
         keys[e.code] = true;
+        keys[e.key.toLowerCase()] = true;
         if (e.code >= 'Digit1' && e.code <= 'Digit6') {
             const idx = parseInt(e.code.replace('Digit', '')) - 1;
             document.querySelectorAll('.hotbar-slot').forEach((slot, i) => {
@@ -383,8 +395,15 @@
                 if (i === idx) selectedBlock = slot.dataset.block;
             });
         }
+        // Prevent default for game keys
+        if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space'].includes(e.code)) {
+            e.preventDefault();
+        }
     });
-    document.addEventListener('keyup', (e) => keys[e.code] = false);
+    document.addEventListener('keyup', (e) => {
+        keys[e.code] = false;
+        keys[e.key.toLowerCase()] = false;
+    });
 
     // Mouse click for blocks
     document.addEventListener('mousedown', (e) => {
@@ -393,15 +412,17 @@
         const intersects = raycaster.intersectObjects(blocks);
         
         if (e.button === 0 && intersects.length > 0) {
-            // Break block
-            removeBlock(intersects[0].object);
-        } else if (e.button === 2 && intersects.length > 0) {
-            // Place block
-            const hit = intersects[0];
-            const normal = hit.face.normal;
-            const pos = hit.object.position.clone().add(normal);
-            if (!blockMap.has(getBlockKey(pos.x, pos.y, pos.z))) {
-                createBlock(pos.x, pos.y, pos.z, selectedBlock);
+            if (e.shiftKey) {
+                // Place block (Shift + Left Click)
+                const hit = intersects[0];
+                const normal = hit.face.normal;
+                const pos = hit.object.position.clone().add(normal);
+                if (!blockMap.has(getBlockKey(pos.x, pos.y, pos.z))) {
+                    createBlock(pos.x, pos.y, pos.z, selectedBlock);
+                }
+            } else {
+                // Break block (Left Click)
+                removeBlock(intersects[0].object);
             }
         }
     });
@@ -450,10 +471,10 @@
             const right = new THREE.Vector3(1, 0, 0).applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0)));
 
             const moveDir = new THREE.Vector3();
-            if (keys['KeyW']) moveDir.add(forward);
-            if (keys['KeyS']) moveDir.sub(forward);
-            if (keys['KeyD']) moveDir.add(right);
-            if (keys['KeyA']) moveDir.sub(right);
+            if (keys['KeyW'] || keys['w']) moveDir.add(forward);
+            if (keys['KeyS'] || keys['s']) moveDir.sub(forward);
+            if (keys['KeyD'] || keys['d']) moveDir.add(right);
+            if (keys['KeyA'] || keys['a']) moveDir.sub(right);
             moveDir.normalize().multiplyScalar(player.speed);
 
             // Apply horizontal movement with collision
@@ -468,7 +489,7 @@
             // Gravity and jumping
             player.onGround = checkGround(camera.position);
             
-            if (keys['Space'] && player.onGround) {
+            if ((keys['Space'] || keys[' ']) && player.onGround) {
                 player.velocity.y = player.jumpForce;
             }
 
