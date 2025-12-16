@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Playable Minecraft</title>
+<title>Mario's Rescue - A Love Story</title>
 <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
@@ -26,11 +26,32 @@
         left: 50%;
         transform: translateX(-50%);
         font-size: 2rem;
-        color: #4CAF50;
-        text-shadow: 4px 4px 0 #2E7D32, -2px -2px 0 #81C784;
+        color: #E52521;
+        text-shadow: 4px 4px 0 #FFD700, -2px -2px 0 #fff;
         z-index: 100;
         letter-spacing: 4px;
         pointer-events: none;
+        animation: titlePulse 2s ease-in-out infinite;
+    }
+    @keyframes titlePulse {
+        0%, 100% { transform: translateX(-50%) scale(1); }
+        50% { transform: translateX(-50%) scale(1.05); }
+    }
+    .story-text {
+        position: fixed;
+        bottom: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #fff;
+        font-size: 1.5rem;
+        text-shadow: 2px 2px 4px #000;
+        z-index: 100;
+        text-align: center;
+        background: rgba(0,0,0,0.7);
+        padding: 20px 40px;
+        border-radius: 15px;
+        max-width: 80%;
+        transition: opacity 0.5s;
     }
     .controls {
         position: absolute;
@@ -39,606 +60,514 @@
         transform: translateX(-50%);
         color: #fff;
         font-size: 0.9rem;
-        text-shadow: 1px 1px 2px #000;
         z-index: 100;
         text-align: center;
-        pointer-events: none;
         background: rgba(0,0,0,0.5);
         padding: 10px 20px;
         border-radius: 10px;
     }
-    .crosshair {
+    .heart {
         position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 20px;
-        height: 20px;
-        z-index: 200;
+        font-size: 3rem;
+        z-index: 50;
+        animation: floatHeart 3s ease-in-out infinite;
         pointer-events: none;
+        opacity: 0;
     }
-    .crosshair::before, .crosshair::after {
-        content: '';
-        position: absolute;
-        background: white;
-        mix-blend-mode: difference;
-    }
-    .crosshair::before {
-        width: 2px;
-        height: 20px;
-        left: 9px;
-        top: 0;
-    }
-    .crosshair::after {
-        width: 20px;
-        height: 2px;
-        top: 9px;
-        left: 0;
-    }
-    .hotbar {
-        position: fixed;
-        bottom: 60px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 4px;
-        z-index: 100;
-        background: rgba(0,0,0,0.7);
-        padding: 8px;
-        border-radius: 8px;
-    }
-    .hotbar-slot {
-        width: 50px;
-        height: 50px;
-        background: rgba(139,139,139,0.5);
-        border: 3px solid #555;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 24px;
-        cursor: pointer;
-    }
-    .hotbar-slot.selected {
-        border-color: #fff;
-        background: rgba(255,255,255,0.3);
-    }
-    .start-screen {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background: rgba(0,0,0,0.8);
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-        color: white;
-    }
-    .start-btn {
-        padding: 20px 60px;
-        font-size: 24px;
-        background: #4CAF50;
-        border: none;
-        color: white;
-        cursor: pointer;
-        font-family: 'Courier New', monospace;
-        margin-top: 20px;
-        transition: transform 0.2s;
-    }
-    .start-btn:hover {
-        transform: scale(1.1);
-        background: #66BB6A;
+    @keyframes floatHeart {
+        0%, 100% { transform: translateY(0) scale(1); }
+        50% { transform: translateY(-20px) scale(1.2); }
     }
 </style>
 </head>
 <body>
 <div id="canvas-container"></div>
-<div class="crosshair"></div>
-<h1 class="title">PLAYABLE MINECRAFT</h1>
-<div class="hotbar">
-<div class="hotbar-slot selected" data-block="grass">🟩</div>
-<div class="hotbar-slot" data-block="dirt">🟫</div>
-<div class="hotbar-slot" data-block="stone">⬜</div>
-<div class="hotbar-slot" data-block="wood">🪵</div>
-<div class="hotbar-slot" data-block="leaves">🌿</div>
-<div class="hotbar-slot" data-block="burger">🍔</div>
-<div class="hotbar-slot" data-block="mario">🍄</div>
-</div>
-<p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | SHIFT+LEFT CLICK: Place | 1-7: Select Block</p>
-<div class="start-screen" id="startScreen">
-<h1 style="font-size: 3rem; color: #4CAF50; text-shadow: 4px 4px 0 #2E7D32;">MINECRAFT</h1>
-<p style="margin-top: 10px; font-size: 1.2rem;">Click to play!</p>
-<button class="start-btn" id="startBtn">PLAY</button>
-</div>
+<h1 class="title">MARIO'S RESCUE</h1>
+<div class="story-text" id="storyText">Once upon a time in the Mushroom Kingdom...</div>
+<p class="controls">Watch the story unfold! | Press SPACE to skip</p>
+<div class="heart" id="heart1" style="top: 30%; left: 45%;">❤️</div>
+<div class="heart" id="heart2" style="top: 25%; left: 55%;">💕</div>
+<div class="heart" id="heart3" style="top: 35%; left: 50%;">💖</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-    // Game state
-    let isPlaying = false;
-    let selectedBlock = 'grass';
-    const blocks = [];
-    const blockMap = new Map();
-    
     // Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87CEEB);
-    scene.fog = new THREE.Fog(0x87CEEB, 30, 100);
+    scene.fog = new THREE.Fog(0x87CEEB, 50, 150);
 
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 3, 5);
+    const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 40, 50);
+    camera.lookAt(0, 5, 0);
 
     const renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    // Player physics
-    const player = {
-        velocity: new THREE.Vector3(),
-        onGround: false,
-        height: 1.8,
-        speed: 0.15,
-        jumpForce: 0.25
-    };
-
-    // Controls
-    const keys = {};
-    let yaw = 0;
-    let pitch = 0;
-
     // Lighting
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
     scene.add(ambientLight);
 
     const sunLight = new THREE.DirectionalLight(0xFFD700, 1);
-    sunLight.position.set(10, 20, 10);
+    sunLight.position.set(10, 30, 10);
     sunLight.castShadow = true;
     scene.add(sunLight);
 
-    // Texture creator
-    function createPixelTexture(color1, color2) {
-        const canvas = document.createElement('canvas');
-        canvas.width = 16;
-        canvas.height = 16;
-        const ctx = canvas.getContext('2d');
-        for (let x = 0; x < 16; x++) {
-            for (let y = 0; y < 16; y++) {
-                ctx.fillStyle = Math.random() > 0.5 ? color1 : color2;
-                ctx.fillRect(x, y, 1, 1);
-            }
-        }
-        const texture = new THREE.CanvasTexture(canvas);
-        texture.magFilter = THREE.NearestFilter;
-        texture.minFilter = THREE.NearestFilter;
-        return texture;
-    }
-
     // Materials
-    const materials = {
-        grass: [
-            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') }),
-            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') }),
-            new THREE.MeshLambertMaterial({ map: createPixelTexture('#4CAF50', '#66BB6A') }),
-            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#5D4037') }),
-            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') }),
-            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') })
-        ],
-        dirt: new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#5D4037') }),
-        stone: new THREE.MeshLambertMaterial({ map: createPixelTexture('#9E9E9E', '#757575') }),
-        wood: new THREE.MeshLambertMaterial({ map: createPixelTexture('#5D4037', '#4E342E') }),
-        leaves: new THREE.MeshLambertMaterial({ map: createPixelTexture('#2E7D32', '#388E3C'), transparent: true, opacity: 0.9 }),
-        burger: new THREE.MeshLambertMaterial({ map: createPixelTexture('#D4A574', '#8B4513') }),
-        mario: new THREE.MeshLambertMaterial({ map: createPixelTexture('#E52521', '#B71C1C') })
-    };
-
-    function getBlockKey(x, y, z) {
-        return `${Math.round(x)},${Math.round(y)},${Math.round(z)}`;
-    }
-
-    function createBlock(x, y, z, type) {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
-        const mat = type === 'grass' ? materials.grass : materials[type];
-        const block = new THREE.Mesh(geometry, mat);
-        block.position.set(Math.round(x), Math.round(y), Math.round(z));
-        block.castShadow = true;
-        block.receiveShadow = true;
-        block.userData.type = type;
-        scene.add(block);
-        blocks.push(block);
-        blockMap.set(getBlockKey(x, y, z), block);
-        return block;
-    }
-
-    function removeBlock(block) {
-        const key = getBlockKey(block.position.x, block.position.y, block.position.z);
-        blockMap.delete(key);
-        const index = blocks.indexOf(block);
-        if (index > -1) blocks.splice(index, 1);
-        scene.remove(block);
-    }
-
-    // Generate terrain
-    const worldSize = 20;
-    for (let x = -worldSize/2; x < worldSize/2; x++) {
-        for (let z = -worldSize/2; z < worldSize/2; z++) {
-            createBlock(x, 0, z, 'grass');
-            for (let y = -1; y > -3; y--) {
-                createBlock(x, y, z, 'dirt');
-            }
-            createBlock(x, -3, z, 'stone');
-        }
-    }
-
-    // Trees
-    function createTree(x, z) {
-        for (let y = 1; y <= 4; y++) createBlock(x, y, z, 'wood');
-        for (let lx = -2; lx <= 2; lx++) {
-            for (let lz = -2; lz <= 2; lz++) {
-                for (let ly = 4; ly <= 6; ly++) {
-                    if (Math.abs(lx) + Math.abs(lz) + Math.abs(ly - 5) < 4) {
-                        createBlock(x + lx, ly, z + lz, 'leaves');
-                    }
-                }
-            }
-        }
-    }
-    createTree(-4, -4);
-    createTree(5, 3);
-    createTree(-2, 5);
-
-    // Giant floating cheeseburger!
-    const burgerGroup = new THREE.Group();
-    
-    // Bottom bun
-    const bunGeom = new THREE.CylinderGeometry(1.5, 1.8, 0.5, 32);
-    const bunMat = new THREE.MeshLambertMaterial({ color: 0xD4A574 });
-    const bottomBun = new THREE.Mesh(bunGeom, bunMat);
-    bottomBun.position.y = 0;
-    burgerGroup.add(bottomBun);
-    
-    // Patty
-    const pattyGeom = new THREE.CylinderGeometry(1.4, 1.4, 0.4, 32);
-    const pattyMat = new THREE.MeshLambertMaterial({ color: 0x4A2C2A });
-    const patty = new THREE.Mesh(pattyGeom, pattyMat);
-    patty.position.y = 0.45;
-    burgerGroup.add(patty);
-    
-    // Cheese
-    const cheeseGeom = new THREE.BoxGeometry(2.2, 0.1, 2.2);
-    const cheeseMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-    const cheese = new THREE.Mesh(cheeseGeom, cheeseMat);
-    cheese.position.y = 0.7;
-    cheese.rotation.y = Math.PI / 4;
-    burgerGroup.add(cheese);
-    
-    // Lettuce
-    const lettuceGeom = new THREE.CylinderGeometry(1.6, 1.6, 0.15, 32);
-    const lettuceMat = new THREE.MeshLambertMaterial({ color: 0x66BB6A });
-    const lettuce = new THREE.Mesh(lettuceGeom, lettuceMat);
-    lettuce.position.y = 0.85;
-    burgerGroup.add(lettuce);
-    
-    // Top bun
-    const topBunGeom = new THREE.SphereGeometry(1.5, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-    const topBun = new THREE.Mesh(topBunGeom, bunMat);
-    topBun.position.y = 1;
-    burgerGroup.add(topBun);
-    
-    // Sesame seeds
-    const seedGeom = new THREE.SphereGeometry(0.08, 8, 8);
-    const seedMat = new THREE.MeshLambertMaterial({ color: 0xFFF8DC });
-    for (let i = 0; i < 12; i++) {
-        const seed = new THREE.Mesh(seedGeom, seedMat);
-        const angle = (i / 12) * Math.PI * 2;
-        const radius = 0.8 + Math.random() * 0.5;
-        seed.position.set(Math.cos(angle) * radius, 1.3 + Math.random() * 0.2, Math.sin(angle) * radius);
-        burgerGroup.add(seed);
-    }
-    
-    burgerGroup.position.set(8, 6, -5);
-    scene.add(burgerGroup);
-
-    // GIANT MARIO!
-    const marioGroup = new THREE.Group();
-    
-    // Mario colors
     const redMat = new THREE.MeshLambertMaterial({ color: 0xE52521 });
     const blueMat = new THREE.MeshLambertMaterial({ color: 0x2B5DF5 });
     const skinMat = new THREE.MeshLambertMaterial({ color: 0xFEBB9E });
     const brownMat = new THREE.MeshLambertMaterial({ color: 0x6B3E08 });
     const yellowMat = new THREE.MeshLambertMaterial({ color: 0xFBD000 });
     const whiteMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-    
-    const voxelSize = 0.5;
-    
-    function addVoxel(x, y, z, material) {
+    const pinkMat = new THREE.MeshLambertMaterial({ color: 0xFFB6C1 });
+    const pinkDarkMat = new THREE.MeshLambertMaterial({ color: 0xFF69B4 });
+    const greenMat = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+    const orangeMat = new THREE.MeshLambertMaterial({ color: 0xFF8C00 });
+    const blackMat = new THREE.MeshLambertMaterial({ color: 0x222222 });
+    const grassMat = new THREE.MeshLambertMaterial({ color: 0x4CAF50 });
+    const stoneMat = new THREE.MeshLambertMaterial({ color: 0x666666 });
+
+    const voxelSize = 0.8;
+
+    function addVoxel(group, x, y, z, material) {
         const geom = new THREE.BoxGeometry(voxelSize, voxelSize, voxelSize);
         const voxel = new THREE.Mesh(geom, material);
         voxel.position.set(x * voxelSize, y * voxelSize, z * voxelSize);
         voxel.castShadow = true;
-        marioGroup.add(voxel);
+        group.add(voxel);
     }
-    
-    // Hat (red cap)
-    for (let x = -2; x <= 2; x++) {
-        for (let z = -1; z <= 1; z++) {
-            addVoxel(x, 12, z, redMat);
-        }
-    }
-    for (let x = -3; x <= 3; x++) {
-        for (let z = -1; z <= 1; z++) {
-            addVoxel(x, 11, z, redMat);
-        }
-    }
-    // Cap brim
-    for (let x = -3; x <= 3; x++) {
-        addVoxel(x, 10, 2, redMat);
-    }
-    
-    // Face (skin color)
-    for (let x = -2; x <= 2; x++) {
-        for (let y = 7; y <= 10; y++) {
-            addVoxel(x, y, 1, skinMat);
-        }
-    }
-    
-    // Eyes (white with black pupils)
-    addVoxel(-1, 9, 2, whiteMat);
-    addVoxel(1, 9, 2, whiteMat);
-    
-    // Mustache (brown)
-    for (let x = -2; x <= 2; x++) {
-        addVoxel(x, 8, 2, brownMat);
-    }
-    addVoxel(-2, 7, 2, brownMat);
-    addVoxel(2, 7, 2, brownMat);
-    
-    // Nose (skin, protruding)
-    addVoxel(0, 8, 2, skinMat);
-    addVoxel(0, 8, 3, skinMat);
-    
-    // Hair/sideburns (brown)
-    for (let y = 8; y <= 10; y++) {
-        addVoxel(-3, y, 0, brownMat);
-        addVoxel(3, y, 0, brownMat);
-    }
-    
-    // Body - red shirt
-    for (let x = -2; x <= 2; x++) {
-        for (let y = 4; y <= 6; y++) {
+
+    // Create Mario
+    function createMario() {
+        const marioGroup = new THREE.Group();
+        
+        // Hat
+        for (let x = -2; x <= 2; x++) {
             for (let z = -1; z <= 1; z++) {
-                addVoxel(x, y, z, redMat);
+                addVoxel(marioGroup, x, 12, z, redMat);
             }
         }
-    }
-    
-    // Overalls (blue)
-    for (let x = -2; x <= 2; x++) {
-        for (let y = 0; y <= 3; y++) {
-            for (let z = -1; z <= 1; z++) {
-                addVoxel(x, y, z, blueMat);
+        for (let x = -3; x <= 3; x++) {
+            addVoxel(marioGroup, x, 11, 0, redMat);
+        }
+        for (let x = -3; x <= 3; x++) {
+            addVoxel(marioGroup, x, 10, 2, redMat);
+        }
+        
+        // Face
+        for (let x = -2; x <= 2; x++) {
+            for (let y = 7; y <= 10; y++) {
+                addVoxel(marioGroup, x, y, 1, skinMat);
             }
         }
+        
+        // Eyes
+        addVoxel(marioGroup, -1, 9, 2, whiteMat);
+        addVoxel(marioGroup, 1, 9, 2, whiteMat);
+        
+        // Mustache
+        for (let x = -2; x <= 2; x++) {
+            addVoxel(marioGroup, x, 8, 2, brownMat);
+        }
+        
+        // Body - red shirt
+        for (let x = -2; x <= 2; x++) {
+            for (let y = 4; y <= 6; y++) {
+                addVoxel(marioGroup, x, y, 0, redMat);
+            }
+        }
+        
+        // Overalls
+        for (let x = -2; x <= 2; x++) {
+            for (let y = 0; y <= 3; y++) {
+                addVoxel(marioGroup, x, y, 0, blueMat);
+            }
+        }
+        
+        // Arms
+        for (let y = 3; y <= 6; y++) {
+            addVoxel(marioGroup, -3, y, 0, redMat);
+            addVoxel(marioGroup, 3, y, 0, redMat);
+        }
+        addVoxel(marioGroup, -4, 3, 0, whiteMat);
+        addVoxel(marioGroup, 4, 3, 0, whiteMat);
+        
+        // Shoes
+        addVoxel(marioGroup, -1, -1, 0, brownMat);
+        addVoxel(marioGroup, -2, -1, 0, brownMat);
+        addVoxel(marioGroup, 1, -1, 0, brownMat);
+        addVoxel(marioGroup, 2, -1, 0, brownMat);
+        
+        return marioGroup;
     }
-    // Overall straps
-    addVoxel(-1, 5, 1, blueMat);
-    addVoxel(1, 5, 1, blueMat);
-    
-    // Yellow buttons on overalls
-    addVoxel(-1, 4, 2, yellowMat);
-    addVoxel(1, 4, 2, yellowMat);
-    
-    // Arms (skin + red sleeves)
-    for (let y = 4; y <= 6; y++) {
-        addVoxel(-3, y, 0, redMat);
-        addVoxel(3, y, 0, redMat);
+
+    // Create Princess Peach
+    function createPeach() {
+        const peachGroup = new THREE.Group();
+        
+        // Crown
+        addVoxel(peachGroup, 0, 14, 0, yellowMat);
+        addVoxel(peachGroup, -1, 13, 0, yellowMat);
+        addVoxel(peachGroup, 0, 13, 0, yellowMat);
+        addVoxel(peachGroup, 1, 13, 0, yellowMat);
+        
+        // Hair (blonde)
+        for (let x = -2; x <= 2; x++) {
+            for (let y = 9; y <= 12; y++) {
+                addVoxel(peachGroup, x, y, 0, yellowMat);
+            }
+        }
+        for (let y = 5; y <= 10; y++) {
+            addVoxel(peachGroup, -3, y, 0, yellowMat);
+            addVoxel(peachGroup, 3, y, 0, yellowMat);
+        }
+        
+        // Face
+        for (let x = -1; x <= 1; x++) {
+            for (let y = 8; y <= 11; y++) {
+                addVoxel(peachGroup, x, y, 1, skinMat);
+            }
+        }
+        
+        // Eyes
+        addVoxel(peachGroup, -1, 10, 2, new THREE.MeshLambertMaterial({ color: 0x4169E1 }));
+        addVoxel(peachGroup, 1, 10, 2, new THREE.MeshLambertMaterial({ color: 0x4169E1 }));
+        
+        // Lips
+        addVoxel(peachGroup, 0, 8, 2, pinkDarkMat);
+        
+        // Dress (pink)
+        for (let x = -3; x <= 3; x++) {
+            for (let y = 0; y <= 7; y++) {
+                const radius = Math.abs(y - 7) * 0.5 + 2;
+                if (Math.abs(x) <= radius) {
+                    addVoxel(peachGroup, x, y, 0, pinkMat);
+                }
+            }
+        }
+        
+        // Dress details
+        addVoxel(peachGroup, 0, 6, 1, new THREE.MeshLambertMaterial({ color: 0x0000FF }));
+        
+        return peachGroup;
     }
-    // Hands
-    addVoxel(-4, 4, 0, whiteMat);
-    addVoxel(-4, 3, 0, whiteMat);
-    addVoxel(4, 4, 0, whiteMat);
-    addVoxel(4, 3, 0, whiteMat);
-    
-    // Shoes (brown)
-    for (let x = -2; x <= -1; x++) {
-        addVoxel(x, -1, 0, brownMat);
-        addVoxel(x, -1, 1, brownMat);
+
+    // Create Bowser
+    function createBowser() {
+        const bowserGroup = new THREE.Group();
+        
+        // Horns
+        addVoxel(bowserGroup, -3, 14, 0, whiteMat);
+        addVoxel(bowserGroup, -3, 15, 0, whiteMat);
+        addVoxel(bowserGroup, 3, 14, 0, whiteMat);
+        addVoxel(bowserGroup, 3, 15, 0, whiteMat);
+        
+        // Head (green)
+        for (let x = -2; x <= 2; x++) {
+            for (let y = 10; y <= 13; y++) {
+                addVoxel(bowserGroup, x, y, 0, greenMat);
+            }
+        }
+        
+        // Face/snout (orange)
+        for (let x = -1; x <= 1; x++) {
+            for (let y = 10; y <= 12; y++) {
+                addVoxel(bowserGroup, x, y, 1, orangeMat);
+            }
+        }
+        addVoxel(bowserGroup, 0, 10, 2, orangeMat);
+        
+        // Eyes (red angry)
+        addVoxel(bowserGroup, -1, 12, 2, redMat);
+        addVoxel(bowserGroup, 1, 12, 2, redMat);
+        
+        // Eyebrows
+        addVoxel(bowserGroup, -2, 13, 1, blackMat);
+        addVoxel(bowserGroup, 2, 13, 1, blackMat);
+        
+        // Body (green with shell)
+        for (let x = -3; x <= 3; x++) {
+            for (let y = 3; y <= 9; y++) {
+                addVoxel(bowserGroup, x, y, 0, greenMat);
+            }
+        }
+        
+        // Shell (brown with spikes)
+        for (let x = -3; x <= 3; x++) {
+            for (let y = 4; y <= 8; y++) {
+                addVoxel(bowserGroup, x, y, -1, brownMat);
+            }
+        }
+        // Spikes on shell
+        addVoxel(bowserGroup, -2, 9, -1, whiteMat);
+        addVoxel(bowserGroup, 0, 9, -1, whiteMat);
+        addVoxel(bowserGroup, 2, 9, -1, whiteMat);
+        addVoxel(bowserGroup, -1, 10, -1, whiteMat);
+        addVoxel(bowserGroup, 1, 10, -1, whiteMat);
+        
+        // Belly (yellow)
+        for (let x = -2; x <= 2; x++) {
+            for (let y = 4; y <= 7; y++) {
+                addVoxel(bowserGroup, x, y, 1, yellowMat);
+            }
+        }
+        
+        // Arms
+        for (let y = 5; y <= 8; y++) {
+            addVoxel(bowserGroup, -4, y, 0, greenMat);
+            addVoxel(bowserGroup, 4, y, 0, greenMat);
+        }
+        addVoxel(bowserGroup, -5, 5, 0, whiteMat);
+        addVoxel(bowserGroup, 5, 5, 0, whiteMat);
+        
+        // Legs
+        for (let y = 0; y <= 2; y++) {
+            addVoxel(bowserGroup, -2, y, 0, greenMat);
+            addVoxel(bowserGroup, 2, y, 0, greenMat);
+        }
+        
+        return bowserGroup;
     }
-    for (let x = 1; x <= 2; x++) {
-        addVoxel(x, -1, 0, brownMat);
-        addVoxel(x, -1, 1, brownMat);
+
+    // Create ground
+    const groundGeom = new THREE.BoxGeometry(100, 2, 100);
+    const ground = new THREE.Mesh(groundGeom, grassMat);
+    ground.position.y = -2;
+    ground.receiveShadow = true;
+    scene.add(ground);
+
+    // Create castle
+    function createCastle(x, z, color) {
+        const castleGroup = new THREE.Group();
+        const mat = new THREE.MeshLambertMaterial({ color: color });
+        
+        // Main tower
+        const tower = new THREE.Mesh(new THREE.BoxGeometry(10, 20, 10), mat);
+        tower.position.y = 10;
+        castleGroup.add(tower);
+        
+        // Battlements
+        for (let i = -2; i <= 2; i++) {
+            for (let j = -2; j <= 2; j++) {
+                if (Math.abs(i) === 2 || Math.abs(j) === 2) {
+                    const battlement = new THREE.Mesh(new THREE.BoxGeometry(2, 3, 2), mat);
+                    battlement.position.set(i * 2, 22, j * 2);
+                    castleGroup.add(battlement);
+                }
+            }
+        }
+        
+        // Door
+        const door = new THREE.Mesh(new THREE.BoxGeometry(3, 5, 1), brownMat);
+        door.position.set(0, 2.5, 5.5);
+        castleGroup.add(door);
+        
+        castleGroup.position.set(x, 0, z);
+        return castleGroup;
     }
-    
-    marioGroup.position.set(-10, 8, -8);
-    marioGroup.scale.set(1.5, 1.5, 1.5);
-    scene.add(marioGroup);
-    
-    // Animate Mario
-    function animateMario() {
-        marioGroup.rotation.y += 0.008;
-        marioGroup.position.y = 8 + Math.sin(Date.now() * 0.0015) * 0.8;
-    }
-    
-    // Animate the burger
-    function animateBurger() {
-        burgerGroup.rotation.y += 0.01;
-        burgerGroup.position.y = 6 + Math.sin(Date.now() * 0.002) * 0.5;
-    }
+
+    // Peach's castle (pink)
+    const peachCastle = createCastle(-30, -20, 0xFFB6C1);
+    scene.add(peachCastle);
+
+    // Bowser's castle (dark)
+    const bowserCastle = createCastle(30, -20, 0x444444);
+    scene.add(bowserCastle);
+
+    // Add lava around Bowser's castle
+    const lavaGeom = new THREE.PlaneGeometry(20, 20);
+    const lavaMat = new THREE.MeshBasicMaterial({ color: 0xFF4500 });
+    const lava = new THREE.Mesh(lavaGeom, lavaMat);
+    lava.rotation.x = -Math.PI / 2;
+    lava.position.set(30, 0.1, -5);
+    scene.add(lava);
+
+    // Create characters
+    const mario = createMario();
+    mario.scale.set(0.4, 0.4, 0.4);
+    mario.position.set(-30, 0, 0);
+    scene.add(mario);
+
+    const peach = createPeach();
+    peach.scale.set(0.4, 0.4, 0.4);
+    peach.position.set(30, 0, -15);
+    scene.add(peach);
+
+    const bowser = createBowser();
+    bowser.scale.set(0.5, 0.5, 0.5);
+    bowser.position.set(25, 0, -15);
+    scene.add(bowser);
 
     // Sun
     const sun = new THREE.Mesh(
-        new THREE.SphereGeometry(2, 32, 32),
+        new THREE.SphereGeometry(5, 32, 32),
         new THREE.MeshBasicMaterial({ color: 0xFFD700 })
     );
-    sun.position.set(20, 25, -20);
+    sun.position.set(40, 50, -50);
     scene.add(sun);
 
-    // Raycaster for block interaction
-    const raycaster = new THREE.Raycaster();
-    raycaster.far = 6;
-
-    // Start game
-    document.getElementById('startBtn').addEventListener('click', () => {
-        document.getElementById('startScreen').style.display = 'none';
-        renderer.domElement.requestPointerLock();
-    });
-
-    // Also start on clicking the canvas
-    renderer.domElement.addEventListener('click', () => {
-        if (!isPlaying) {
-            document.getElementById('startScreen').style.display = 'none';
-            renderer.domElement.requestPointerLock();
+    // Clouds
+    function createCloud(x, y, z) {
+        const cloudGroup = new THREE.Group();
+        const cloudMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        for (let i = 0; i < 5; i++) {
+            const sphere = new THREE.Mesh(new THREE.SphereGeometry(2 + Math.random() * 2, 16, 16), cloudMat);
+            sphere.position.set(i * 3 - 6, Math.random() * 2, Math.random() * 2);
+            cloudGroup.add(sphere);
         }
-    });
+        cloudGroup.position.set(x, y, z);
+        return cloudGroup;
+    }
+    scene.add(createCloud(-20, 30, -30));
+    scene.add(createCloud(20, 35, -40));
+    scene.add(createCloud(0, 28, -20));
 
-    document.addEventListener('pointerlockchange', () => {
-        isPlaying = document.pointerLockElement === renderer.domElement;
-        if (isPlaying) {
-            console.log('Game started - controls active!');
-        }
-    });
+    // Story phases
+    const storyPhases = [
+        { text: "Once upon a time in the Mushroom Kingdom...", duration: 3000 },
+        { text: "Princess Peach was captured by the evil Bowser!", duration: 3000 },
+        { text: "Mario heard about this and rushed to save her!", duration: 3000 },
+        { text: "He ran as fast as he could towards Bowser's castle...", duration: 4000 },
+        { text: "Mario confronted the mighty Bowser!", duration: 3000 },
+        { text: "'Let her go, Bowser!' shouted Mario", duration: 3000 },
+        { text: "An epic battle began!", duration: 3000 },
+        { text: "Mario jumped and defeated Bowser with a mighty stomp!", duration: 4000 },
+        { text: "Bowser was defeated and fled!", duration: 3000 },
+        { text: "'My hero!' said Princess Peach", duration: 3000 },
+        { text: "And they lived happily ever after! ❤️", duration: 5000 }
+    ];
 
-    // Mouse look
-    document.addEventListener('mousemove', (e) => {
-        if (!isPlaying) return;
-        yaw -= e.movementX * 0.002;
-        pitch -= e.movementY * 0.002;
-        pitch = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, pitch));
-    });
+    let currentPhase = 0;
+    let phaseStartTime = Date.now();
+    let animationTime = 0;
 
-    // Keyboard
-    document.addEventListener('keydown', (e) => {
-        keys[e.code] = true;
-        keys[e.key.toLowerCase()] = true;
-        if (e.code >= 'Digit1' && e.code <= 'Digit6') {
-            const idx = parseInt(e.code.replace('Digit', '')) - 1;
-            document.querySelectorAll('.hotbar-slot').forEach((slot, i) => {
-                slot.classList.toggle('selected', i === idx);
-                if (i === idx) selectedBlock = slot.dataset.block;
-            });
-        }
-        // Prevent default for game keys
-        if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'Space'].includes(e.code)) {
-            e.preventDefault();
-        }
-    });
-    document.addEventListener('keyup', (e) => {
-        keys[e.code] = false;
-        keys[e.key.toLowerCase()] = false;
-    });
-
-    // Mouse click for blocks
-    document.addEventListener('mousedown', (e) => {
-        if (!isPlaying) return;
-        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-        const intersects = raycaster.intersectObjects(blocks);
+    function updateStory() {
+        const storyText = document.getElementById('storyText');
+        const elapsed = Date.now() - phaseStartTime;
         
-        if (e.button === 0 && intersects.length > 0) {
-            if (e.shiftKey) {
-                // Place block (Shift + Left Click)
-                const hit = intersects[0];
-                const normal = hit.face.normal;
-                const pos = hit.object.position.clone().add(normal);
-                if (!blockMap.has(getBlockKey(pos.x, pos.y, pos.z))) {
-                    createBlock(pos.x, pos.y, pos.z, selectedBlock);
-                }
-            } else {
-                // Break block (Left Click)
-                removeBlock(intersects[0].object);
+        if (elapsed > storyPhases[currentPhase].duration) {
+            currentPhase++;
+            phaseStartTime = Date.now();
+            if (currentPhase >= storyPhases.length) {
+                currentPhase = 0; // Loop the story
+                mario.position.set(-30, 0, 0);
+                bowser.position.set(25, 0, -15);
+                bowser.visible = true;
+            }
+        }
+        
+        storyText.textContent = storyPhases[currentPhase].text;
+    }
+
+    function animateCharacters() {
+        animationTime += 0.016;
+        
+        // Phase-based animations
+        switch(currentPhase) {
+            case 0: // Introduction
+                camera.position.set(0, 40, 50);
+                camera.lookAt(0, 5, 0);
+                break;
+            case 1: // Peach captured
+                camera.position.set(30, 20, 10);
+                camera.lookAt(30, 5, -15);
+                peach.position.y = Math.sin(animationTime * 3) * 0.5;
+                break;
+            case 2: // Mario hears
+                camera.position.set(-30, 15, 15);
+                camera.lookAt(-30, 5, 0);
+                mario.rotation.y = Math.sin(animationTime * 5) * 0.3;
+                break;
+            case 3: // Mario running
+                camera.position.set(mario.position.x, 20, mario.position.z + 20);
+                camera.lookAt(mario.position);
+                mario.position.x += 0.3;
+                mario.position.y = Math.abs(Math.sin(animationTime * 10)) * 2;
+                mario.rotation.y = 0;
+                break;
+            case 4: // Confrontation
+                camera.position.set(20, 15, 10);
+                camera.lookAt(25, 5, -10);
+                mario.position.set(15, 0, -10);
+                mario.lookAt(bowser.position);
+                bowser.lookAt(mario.position);
+                break;
+            case 5: // Mario speaks
+                mario.position.y = Math.sin(animationTime * 5) * 0.5;
+                break;
+            case 6: // Battle
+                camera.position.set(20, 25, 15);
+                camera.lookAt(20, 5, -12);
+                mario.position.x = 15 + Math.sin(animationTime * 3) * 5;
+                mario.position.y = Math.abs(Math.sin(animationTime * 8)) * 3;
+                bowser.position.x = 25 + Math.cos(animationTime * 2) * 2;
+                bowser.rotation.y = animationTime * 2;
+                break;
+            case 7: // Mario stomps
+                mario.position.set(25, 8 - (animationTime % 1) * 8, -15);
+                if (mario.position.y < 0) mario.position.y = 0;
+                break;
+            case 8: // Bowser flees
+                bowser.position.x += 0.5;
+                bowser.position.z -= 0.3;
+                bowser.rotation.y += 0.1;
+                if (bowser.position.x > 60) bowser.visible = false;
+                camera.position.set(35, 15, 0);
+                camera.lookAt(bowser.position);
+                break;
+            case 9: // Peach thanks
+                camera.position.set(30, 12, 5);
+                camera.lookAt(28, 5, -12);
+                mario.position.set(25, 0, -12);
+                peach.position.set(30, 0, -12);
+                mario.lookAt(peach.position);
+                peach.lookAt(mario.position);
+                break;
+            case 10: // Happy ending
+                camera.position.set(27, 15, 10);
+                camera.lookAt(27, 5, -12);
+                mario.position.y = Math.sin(animationTime * 2) * 0.3;
+                peach.position.y = Math.sin(animationTime * 2 + 1) * 0.3;
+                // Show hearts
+                document.querySelectorAll('.heart').forEach((h, i) => {
+                    h.style.opacity = '1';
+                    h.style.top = (25 + Math.sin(animationTime + i) * 5) + '%';
+                });
+                break;
+            default:
+                document.querySelectorAll('.heart').forEach(h => h.style.opacity = '0');
+        }
+        
+        // Character idle animations
+        mario.children.forEach((v, i) => {
+            if (v.material === redMat) {
+                v.position.y += Math.sin(animationTime * 5 + i * 0.1) * 0.002;
+            }
+        });
+    }
+
+    // Skip with space
+    document.addEventListener('keydown', (e) => {
+        if (e.code === 'Space') {
+            currentPhase++;
+            phaseStartTime = Date.now();
+            if (currentPhase >= storyPhases.length) {
+                currentPhase = 0;
+                mario.position.set(-30, 0, 0);
+                bowser.position.set(25, 0, -15);
+                bowser.visible = true;
             }
         }
     });
 
-    document.addEventListener('contextmenu', (e) => e.preventDefault());
-
-    // Hotbar clicks
-    document.querySelectorAll('.hotbar-slot').forEach(slot => {
-        slot.addEventListener('click', () => {
-            document.querySelectorAll('.hotbar-slot').forEach(s => s.classList.remove('selected'));
-            slot.classList.add('selected');
-            selectedBlock = slot.dataset.block;
-        });
-    });
-
-    // Collision detection
-    function checkCollision(pos) {
-        const checkPoints = [
-            [0.3, 0, 0.3], [-0.3, 0, 0.3], [0.3, 0, -0.3], [-0.3, 0, -0.3],
-            [0.3, -1, 0.3], [-0.3, -1, 0.3], [0.3, -1, -0.3], [-0.3, -1, -0.3]
-        ];
-        for (const [dx, dy, dz] of checkPoints) {
-            const key = getBlockKey(pos.x + dx, pos.y + dy, pos.z + dz);
-            if (blockMap.has(key)) return true;
-        }
-        return false;
-    }
-
-    function checkGround(pos) {
-        const key = getBlockKey(pos.x, pos.y - 1.6, pos.z);
-        return blockMap.has(key);
-    }
-
-    // Game loop
+    // Animation loop
     function animate() {
         requestAnimationFrame(animate);
-
-        if (isPlaying) {
-            // Camera rotation
-            camera.rotation.order = 'YXZ';
-            camera.rotation.y = yaw;
-            camera.rotation.x = pitch;
-
-            // Movement
-            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0)));
-            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0)));
-
-            const moveDir = new THREE.Vector3();
-            if (keys['KeyW'] || keys['w']) moveDir.add(forward);
-            if (keys['KeyS'] || keys['s']) moveDir.sub(forward);
-            if (keys['KeyD'] || keys['d']) moveDir.add(right);
-            if (keys['KeyA'] || keys['a']) moveDir.sub(right);
-            moveDir.normalize().multiplyScalar(player.speed);
-
-            // Apply horizontal movement with collision
-            const newPosX = camera.position.clone();
-            newPosX.x += moveDir.x;
-            if (!checkCollision(newPosX)) camera.position.x = newPosX.x;
-
-            const newPosZ = camera.position.clone();
-            newPosZ.z += moveDir.z;
-            if (!checkCollision(newPosZ)) camera.position.z = newPosZ.z;
-
-            // Gravity and jumping
-            player.onGround = checkGround(camera.position);
-            
-            if ((keys['Space'] || keys[' ']) && player.onGround) {
-                player.velocity.y = player.jumpForce;
-            }
-
-            if (!player.onGround) {
-                player.velocity.y -= 0.015; // Gravity
-            } else {
-                player.velocity.y = Math.max(0, player.velocity.y);
-            }
-
-            const newPosY = camera.position.clone();
-            newPosY.y += player.velocity.y;
-            if (newPosY.y > 1.5 || !checkCollision(newPosY)) {
-                camera.position.y += player.velocity.y;
-            } else {
-                player.velocity.y = 0;
-            }
-
-            // Prevent falling below world
-            if (camera.position.y < -10) {
-                camera.position.set(0, 5, 5);
-                player.velocity.set(0, 0, 0);
-            }
-        }
-
-        if (typeof animateBurger === 'function') animateBurger();
-        if (typeof animateMario === 'function') animateMario();
+        
+        updateStory();
+        animateCharacters();
+        
         renderer.render(scene, camera);
     }
 
