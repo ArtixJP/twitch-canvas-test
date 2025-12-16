@@ -66,7 +66,7 @@
 <div id="canvas-container"></div>
 <h1 class="title">MINECRAFT 3D SIMULATION</h1>
 <p class="warning">⚠️ SPACE CROISSANT INCOMING! ⚠️</p>
-<p class="controls">🖱️ Drag to rotate | 🔄 Auto-rotating world</p>
+<p class="controls">🖱️ Drag to rotate | 🔄 Auto-rotating world | 🐕 Dog &amp; 🐱 Cat roaming!</p>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
         // Scene setup
@@ -274,9 +274,59 @@
             new THREE.MeshLambertMaterial({ color: 0xD2691E })
         );
         dogHead.position.set(0, 0.3, 1.2);
-        dogGroup.add(dogBody, dogHead);
+        // Dog tail
+        const dogTail = new THREE.Mesh(
+            new THREE.BoxGeometry(0.2, 0.2, 0.6),
+            new THREE.MeshLambertMaterial({ color: 0xD2691E })
+        );
+        dogTail.position.set(0, 0.3, -1.2);
+        dogGroup.add(dogBody, dogHead, dogTail);
         dogGroup.position.set(-5, 1.5, 0);
         scene.add(dogGroup);
+
+        // Minecraft Cat
+        const catGroup = new THREE.Group();
+        const catBody = new THREE.Mesh(
+            new THREE.BoxGeometry(1, 0.8, 1.8),
+            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
+        );
+        const catHead = new THREE.Mesh(
+            new THREE.BoxGeometry(0.7, 0.7, 0.7),
+            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
+        );
+        catHead.position.set(0, 0.2, 1);
+        // Cat ears
+        const catEarLeft = new THREE.Mesh(
+            new THREE.BoxGeometry(0.2, 0.3, 0.1),
+            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
+        );
+        catEarLeft.position.set(-0.2, 0.6, 1);
+        const catEarRight = new THREE.Mesh(
+            new THREE.BoxGeometry(0.2, 0.3, 0.1),
+            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
+        );
+        catEarRight.position.set(0.2, 0.6, 1);
+        // Cat tail (long and curved up)
+        const catTail = new THREE.Mesh(
+            new THREE.BoxGeometry(0.15, 0.15, 1),
+            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
+        );
+        catTail.position.set(0, 0.3, -1.2);
+        catTail.rotation.x = -0.5;
+        // Cat stripes
+        const stripe1 = new THREE.Mesh(
+            new THREE.BoxGeometry(1.02, 0.1, 0.2),
+            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
+        );
+        stripe1.position.set(0, 0.35, 0.3);
+        const stripe2 = new THREE.Mesh(
+            new THREE.BoxGeometry(1.02, 0.1, 0.2),
+            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
+        );
+        stripe2.position.set(0, 0.35, -0.3);
+        catGroup.add(catBody, catHead, catEarLeft, catEarRight, catTail, stripe1, stripe2);
+        catGroup.position.set(4, 1.4, 2);
+        scene.add(catGroup);
 
         // Mouse controls
         let isDragging = false;
@@ -332,6 +382,19 @@
             // Animate dog
             dogGroup.position.x = Math.sin(time * 0.8) * 6;
             dogGroup.rotation.y = Math.sin(time * 0.8) > 0 ? 0 : Math.PI;
+            // Wag dog tail
+            if (dogGroup.children[2]) {
+                dogGroup.children[2].rotation.y = Math.sin(time * 8) * 0.5;
+            }
+
+            // Animate cat - follows a different path
+            catGroup.position.x = Math.cos(time * 0.6) * 5;
+            catGroup.position.z = Math.sin(time * 0.6) * 5;
+            catGroup.rotation.y = -time * 0.6 + Math.PI/2;
+            // Cat tail sway
+            if (catGroup.children[4]) {
+                catGroup.children[4].rotation.z = Math.sin(time * 3) * 0.3;
+            }
 
             // Animate clouds
             clouds.forEach((cloud, i) => {
