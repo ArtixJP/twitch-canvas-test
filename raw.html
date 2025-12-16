@@ -5,61 +5,513 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Blank Canvas</title>
+<title>Mini Minecraft - Click Edition</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            font-family: 'Segoe UI', sans-serif;
-        }
-        .welcome {
-            text-align: center;
-            color: #fff;
-            animation: fadeIn 1s ease-out;
-        }
-        .welcome h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #00d2ff, #3a7bd5, #00d2ff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 3s linear infinite;
-        }
-        .welcome p {
-            font-size: 1.2rem;
-            opacity: 0.7;
-        }
-        .cursor {
-            display: inline-block;
-            width: 3px;
-            height: 1.2em;
-            background: #00d2ff;
-            margin-left: 5px;
-            animation: blink 1s infinite;
-            vertical-align: text-bottom;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes shimmer {
-            to { background-position: 200% center; }
-        }
-        @keyframes blink {
-            0%, 50% { opacity: 1; }
-            51%, 100% { opacity: 0; }
-        }
-    </style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+        min-height: 100vh;
+        background: #1a1a2e;
+        font-family: 'Segoe UI', sans-serif;
+        overflow: hidden;
+    }
+    #game-container {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+    canvas { display: block; }
+    
+    /* UI Overlay */
+    #ui {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+    }
+    
+    /* Movement Controls */
+    #movement-controls {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        display: grid;
+        grid-template-columns: repeat(3, 60px);
+        grid-template-rows: repeat(3, 60px);
+        gap: 5px;
+        pointer-events: auto;
+    }
+    
+    .move-btn {
+        width: 60px;
+        height: 60px;
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 10px;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .move-btn:hover {
+        background: rgba(255,255,255,0.4);
+        transform: scale(1.1);
+    }
+    .move-btn:active {
+        background: rgba(0,210,255,0.6);
+    }
+    .empty { background: transparent; border: none; pointer-events: none; }
+    
+    /* Action Controls */
+    #action-controls {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: auto;
+    }
+    
+    .action-btn {
+        padding: 15px 25px;
+        background: rgba(255,255,255,0.2);
+        border: 2px solid rgba(255,255,255,0.5);
+        border-radius: 10px;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .action-btn:hover {
+        background: rgba(255,255,255,0.4);
+    }
+    .action-btn.active {
+        background: rgba(0,210,255,0.6);
+        border-color: #00d2ff;
+    }
+    
+    /* Block Selector */
+    #block-selector {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        pointer-events: auto;
+    }
+    
+    .block-btn {
+        width: 50px;
+        height: 50px;
+        border: 3px solid rgba(255,255,255,0.3);
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .block-btn:hover {
+        transform: scale(1.1);
+    }
+    .block-btn.selected {
+        border-color: #00d2ff;
+        box-shadow: 0 0 15px #00d2ff;
+    }
+    
+    #grass-btn { background: linear-gradient(to bottom, #4a7c23 0%, #4a7c23 30%, #8B4513 30%, #8B4513 100%); }
+    #dirt-btn { background: #8B4513; }
+    #stone-btn { background: #808080; }
+    #wood-btn { background: #654321; }
+    #leaves-btn { background: #228B22; }
+    #water-btn { background: linear-gradient(135deg, #1e90ff, #00bfff); }
+    #sand-btn { background: #f4d03f; }
+    
+    /* Camera Controls */
+    #camera-controls {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: auto;
+    }
+    
+    /* Info Panel */
+    #info {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        color: white;
+        font-size: 14px;
+        background: rgba(0,0,0,0.5);
+        padding: 10px;
+        border-radius: 8px;
+    }
+    
+    /* Crosshair */
+    #crosshair {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+    }
+    #crosshair::before, #crosshair::after {
+        content: '';
+        position: absolute;
+        background: white;
+    }
+    #crosshair::before {
+        width: 2px;
+        height: 20px;
+        left: 9px;
+    }
+    #crosshair::after {
+        width: 20px;
+        height: 2px;
+        top: 9px;
+    }
+</style>
 </head>
 <body>
-<div class="welcome">
-<h1>Blank Canvas</h1>
-<p>Ready for your next creation<span class="cursor"></span></p>
+<div id="game-container">
+<div id="ui">
+<div id="info">
+<div>🎮 Mini Minecraft - Click Edition</div>
+<div id="mode-display">Mode: BUILD</div>
+<div id="coords">Pos: 0, 0, 0</div>
 </div>
+<div id="block-selector">
+<div class="block-btn selected" data-block="grass" id="grass-btn" title="Grass"></div>
+<div class="block-btn" data-block="dirt" id="dirt-btn" title="Dirt"></div>
+<div class="block-btn" data-block="stone" id="stone-btn" title="Stone"></div>
+<div class="block-btn" data-block="wood" id="wood-btn" title="Wood"></div>
+<div class="block-btn" data-block="leaves" id="leaves-btn" title="Leaves"></div>
+<div class="block-btn" data-block="water" id="water-btn" title="Water"></div>
+<div class="block-btn" data-block="sand" id="sand-btn" title="Sand"></div>
+</div>
+<div id="camera-controls">
+<button class="action-btn" id="rotate-left">⟲ Rotate Left</button>
+<button class="action-btn" id="rotate-right">⟳ Rotate Right</button>
+<button class="action-btn" id="zoom-in">🔍+ Zoom In</button>
+<button class="action-btn" id="zoom-out">🔍- Zoom Out</button>
+</div>
+<div id="movement-controls">
+<div class="move-btn empty"></div>
+<button class="move-btn" id="move-forward">⬆️</button>
+<div class="move-btn empty"></div>
+<button class="move-btn" id="move-left">⬅️</button>
+<button class="move-btn" id="move-up">⬆</button>
+<button class="move-btn" id="move-right">➡️</button>
+<div class="move-btn empty"></div>
+<button class="move-btn" id="move-backward">⬇️</button>
+<button class="move-btn" id="move-down">⬇</button>
+</div>
+<div id="action-controls">
+<button class="action-btn active" id="build-mode">🔨 BUILD</button>
+<button class="action-btn" id="destroy-mode">💥 DESTROY</button>
+</div>
+<div id="crosshair"></div>
+</div>
+</div>
+<script>
+// Game State
+let scene, camera, renderer, raycaster, mouse;
+let blocks = [];
+let playerPos = { x: 8, y: 5, z: 8 };
+let cameraAngle = 0;
+let cameraDistance = 20;
+let currentBlock = 'grass';
+let mode = 'build'; // 'build' or 'destroy'
+
+// Block colors
+const blockColors = {
+    grass: { top: 0x4a7c23, side: 0x8B4513, bottom: 0x8B4513 },
+    dirt: { top: 0x8B4513, side: 0x8B4513, bottom: 0x8B4513 },
+    stone: { top: 0x808080, side: 0x808080, bottom: 0x808080 },
+    wood: { top: 0x654321, side: 0x8B6914, bottom: 0x654321 },
+    leaves: { top: 0x228B22, side: 0x228B22, bottom: 0x228B22 },
+    water: { top: 0x1e90ff, side: 0x1e90ff, bottom: 0x1e90ff },
+    sand: { top: 0xf4d03f, side: 0xf4d03f, bottom: 0xf4d03f }
+};
+
+// Initialize Three.js
+function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    
+    // Add fog for atmosphere
+    scene.fog = new THREE.Fog(0x87ceeb, 30, 80);
+    
+    camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+    updateCamera();
+    
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.getElementById('game-container').insertBefore(renderer.domElement, document.getElementById('ui'));
+    
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+    
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    
+    const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    directionalLight.position.set(10, 20, 10);
+    directionalLight.castShadow = true;
+    scene.add(directionalLight);
+    
+    // Generate terrain
+    generateTerrain();
+    
+    // Add player indicator
+    createPlayerIndicator();
+    
+    // Event listeners
+    setupControls();
+    
+    // Start render loop
+    animate();
+}
+
+function createBlock(x, y, z, type) {
+    const geometry = new THREE.BoxGeometry(1, 1, 1);
+    const colors = blockColors[type];
+    
+    const materials = [
+        new THREE.MeshLambertMaterial({ color: colors.side }), // right
+        new THREE.MeshLambertMaterial({ color: colors.side }), // left
+        new THREE.MeshLambertMaterial({ color: colors.top }),  // top
+        new THREE.MeshLambertMaterial({ color: colors.bottom }), // bottom
+        new THREE.MeshLambertMaterial({ color: colors.side }), // front
+        new THREE.MeshLambertMaterial({ color: colors.side })  // back
+    ];
+    
+    if (type === 'water') {
+        materials.forEach(m => { m.transparent = true; m.opacity = 0.7; });
+    }
+    if (type === 'leaves') {
+        materials.forEach(m => { m.transparent = true; m.opacity = 0.9; });
+    }
+    
+    const mesh = new THREE.Mesh(geometry, materials);
+    mesh.position.set(x, y, z);
+    mesh.castShadow = true;
+    mesh.receiveShadow = true;
+    mesh.userData = { type, x, y, z };
+    
+    scene.add(mesh);
+    blocks.push(mesh);
+    return mesh;
+}
+
+function generateTerrain() {
+    // Create a 16x16 terrain
+    for (let x = 0; x < 16; x++) {
+        for (let z = 0; z < 16; z++) {
+            // Simple height variation
+            const height = Math.floor(Math.sin(x * 0.3) * Math.cos(z * 0.3) * 2) + 2;
+            
+            for (let y = 0; y <= height; y++) {
+                if (y === height) {
+                    createBlock(x, y, z, 'grass');
+                } else if (y > height - 3) {
+                    createBlock(x, y, z, 'dirt');
+                } else {
+                    createBlock(x, y, z, 'stone');
+                }
+            }
+        }
+    }
+    
+    // Add a tree
+    createTree(5, 4, 5);
+    createTree(12, 3, 10);
+}
+
+function createTree(x, baseY, z) {
+    // Trunk
+    for (let y = baseY; y < baseY + 4; y++) {
+        createBlock(x, y, z, 'wood');
+    }
+    // Leaves
+    for (let dx = -2; dx <= 2; dx++) {
+        for (let dz = -2; dz <= 2; dz++) {
+            for (let dy = 0; dy <= 2; dy++) {
+                if (Math.abs(dx) + Math.abs(dz) + dy < 4) {
+                    if (!(dx === 0 && dz === 0 && dy < 2)) {
+                        createBlock(x + dx, baseY + 3 + dy, z + dz, 'leaves');
+                    }
+                }
+            }
+        }
+    }
+}
+
+let playerIndicator;
+function createPlayerIndicator() {
+    const geometry = new THREE.ConeGeometry(0.3, 0.6, 4);
+    const material = new THREE.MeshLambertMaterial({ color: 0xff0000 });
+    playerIndicator = new THREE.Mesh(geometry, material);
+    playerIndicator.rotation.x = Math.PI;
+    scene.add(playerIndicator);
+    updatePlayerIndicator();
+}
+
+function updatePlayerIndicator() {
+    playerIndicator.position.set(playerPos.x, playerPos.y + 1.5, playerPos.z);
+    document.getElementById('coords').textContent = `Pos: ${playerPos.x}, ${playerPos.y}, ${playerPos.z}`;
+}
+
+function updateCamera() {
+    const x = playerPos.x + Math.sin(cameraAngle) * cameraDistance;
+    const z = playerPos.z + Math.cos(cameraAngle) * cameraDistance;
+    camera.position.set(x, playerPos.y + 10, z);
+    camera.lookAt(playerPos.x, playerPos.y, playerPos.z);
+}
+
+function setupControls() {
+    // Movement
+    document.getElementById('move-forward').addEventListener('click', () => movePlayer(0, 0, -1));
+    document.getElementById('move-backward').addEventListener('click', () => movePlayer(0, 0, 1));
+    document.getElementById('move-left').addEventListener('click', () => movePlayer(-1, 0, 0));
+    document.getElementById('move-right').addEventListener('click', () => movePlayer(1, 0, 0));
+    document.getElementById('move-up').addEventListener('click', () => movePlayer(0, 1, 0));
+    document.getElementById('move-down').addEventListener('click', () => movePlayer(0, -1, 0));
+    
+    // Camera
+    document.getElementById('rotate-left').addEventListener('click', () => {
+        cameraAngle -= Math.PI / 4;
+        updateCamera();
+    });
+    document.getElementById('rotate-right').addEventListener('click', () => {
+        cameraAngle += Math.PI / 4;
+        updateCamera();
+    });
+    document.getElementById('zoom-in').addEventListener('click', () => {
+        cameraDistance = Math.max(5, cameraDistance - 3);
+        updateCamera();
+    });
+    document.getElementById('zoom-out').addEventListener('click', () => {
+        cameraDistance = Math.min(40, cameraDistance + 3);
+        updateCamera();
+    });
+    
+    // Mode
+    document.getElementById('build-mode').addEventListener('click', () => {
+        mode = 'build';
+        document.getElementById('build-mode').classList.add('active');
+        document.getElementById('destroy-mode').classList.remove('active');
+        document.getElementById('mode-display').textContent = 'Mode: BUILD';
+    });
+    document.getElementById('destroy-mode').addEventListener('click', () => {
+        mode = 'destroy';
+        document.getElementById('destroy-mode').classList.add('active');
+        document.getElementById('build-mode').classList.remove('active');
+        document.getElementById('mode-display').textContent = 'Mode: DESTROY';
+    });
+    
+    // Block selector
+    document.querySelectorAll('.block-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.block-btn').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+            currentBlock = btn.dataset.block;
+        });
+    });
+    
+    // Click on canvas to place/destroy blocks
+    renderer.domElement.addEventListener('click', onCanvasClick);
+    
+    // Window resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+}
+
+function movePlayer(dx, dy, dz) {
+    // Rotate movement based on camera angle
+    const sin = Math.sin(cameraAngle);
+    const cos = Math.cos(cameraAngle);
+    
+    const newX = playerPos.x + Math.round(dx * cos - dz * sin);
+    const newY = playerPos.y + dy;
+    const newZ = playerPos.z + Math.round(dx * sin + dz * cos);
+    
+    // Bounds check
+    if (newX >= -5 && newX <= 20 && newZ >= -5 && newZ <= 20 && newY >= 0 && newY <= 20) {
+        playerPos.x = newX;
+        playerPos.y = newY;
+        playerPos.z = newZ;
+        updatePlayerIndicator();
+        updateCamera();
+    }
+}
+
+function onCanvasClick(event) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+    
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(blocks);
+    
+    if (mode === 'destroy' && intersects.length > 0) {
+        const block = intersects[0].object;
+        scene.remove(block);
+        blocks = blocks.filter(b => b !== block);
+    } else if (mode === 'build' && intersects.length > 0) {
+        const intersect = intersects[0];
+        const normal = intersect.face.normal;
+        const pos = intersect.object.position.clone();
+        
+        const newX = Math.round(pos.x + normal.x);
+        const newY = Math.round(pos.y + normal.y);
+        const newZ = Math.round(pos.z + normal.z);
+        
+        // Check if block already exists at this position
+        const exists = blocks.some(b => 
+            Math.round(b.position.x) === newX && 
+            Math.round(b.position.y) === newY && 
+            Math.round(b.position.z) === newZ
+        );
+        
+        if (!exists && newY >= 0) {
+            createBlock(newX, newY, newZ, currentBlock);
+        }
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Animate water blocks
+    blocks.forEach(block => {
+        if (block.userData.type === 'water') {
+            block.position.y = block.userData.y + Math.sin(Date.now() * 0.002 + block.userData.x) * 0.05;
+        }
+    });
+    
+    // Rotate player indicator
+    playerIndicator.rotation.y += 0.02;
+    
+    renderer.render(scene, camera);
+}
+
+// Start the game
+init();
+</script>
 </body>
 </html>
