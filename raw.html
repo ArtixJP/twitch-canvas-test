@@ -192,6 +192,7 @@
 <div class="block-slot" data-block="wood">🪵</div>
 <div class="block-slot" data-block="leaves">🌿</div>
 <div class="block-slot" data-block="julius_crown" style="background: linear-gradient(135deg, #ffd700, #ffaa00);">👑</div>
+<div class="block-slot" data-block="bun_top" style="background: #d4a056;">🍔</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/simplex-noise@3.0.1/dist/simplex-noise.min.js"></script>
@@ -615,6 +616,13 @@
             blockColors['banana_blue'] = 0x0066ff;
             blockColors['banana_yellow'] = 0x1155cc;
             blockColors['julius_crown'] = 0xffd700;
+            blockColors['bun_top'] = 0xd4a056;
+            blockColors['bun_bottom'] = 0xc49346;
+            blockColors['patty'] = 0x5c3317;
+            blockColors['cheese'] = 0xffc107;
+            blockColors['lettuce'] = 0x4caf50;
+            blockColors['tomato'] = 0xe53935;
+            blockColors['sesame'] = 0xfff8e1;
             
             const colorNames = {
                 'R': 'red',
@@ -673,6 +681,11 @@
             setTimeout(() => {
                 buildBlueBanana(startX + 12, startY + 5, startZ);
             }, totalBlocks.length * 50 + 500);
+            
+            // Build hamburger after banana
+            setTimeout(() => {
+                buildHamburger(startX - 8, startY + 2, startZ);
+            }, totalBlocks.length * 50 + 5000);
         }
         
         function buildBlueBanana(bx, by, bz) {
@@ -790,6 +803,43 @@
                     blockIndex++;
                 }
             }
+        }
+        
+        function buildHamburger(hx, hy, hz) {
+            showAIMessage('Building a DELICIOUS HAMBURGER! 🍔');
+            
+            const hamburgerLayers = [
+                // Bottom bun (layer 0)
+                {blocks: [{dx:1,dz:0},{dx:2,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:1,dz:2},{dx:2,dz:2}], type: 'bun_bottom', y: 0},
+                // Patty (layer 1)
+                {blocks: [{dx:0,dz:0},{dx:1,dz:0},{dx:2,dz:0},{dx:3,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:0,dz:2},{dx:1,dz:2},{dx:2,dz:2},{dx:3,dz:2}], type: 'patty', y: 1},
+                // Cheese (layer 2)
+                {blocks: [{dx:0,dz:0},{dx:1,dz:0},{dx:2,dz:0},{dx:3,dz:0},{dx:-1,dz:1},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:4,dz:1},{dx:0,dz:2},{dx:1,dz:2},{dx:2,dz:2},{dx:3,dz:2}], type: 'cheese', y: 2},
+                // Lettuce (layer 3)
+                {blocks: [{dx:0,dz:0},{dx:1,dz:0},{dx:2,dz:0},{dx:3,dz:0},{dx:-1,dz:1},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:4,dz:1},{dx:0,dz:2},{dx:1,dz:2},{dx:2,dz:2},{dx:3,dz:2}], type: 'lettuce', y: 3},
+                // Tomato (layer 4)
+                {blocks: [{dx:1,dz:0},{dx:2,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:1,dz:2},{dx:2,dz:2}], type: 'tomato', y: 4},
+                // Top bun (layer 5)
+                {blocks: [{dx:1,dz:0},{dx:2,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:1,dz:2},{dx:2,dz:2}], type: 'bun_top', y: 5},
+                // Top bun dome (layer 6)
+                {blocks: [{dx:1,dz:1},{dx:2,dz:1}], type: 'bun_top', y: 6},
+                // Sesame seeds
+                {blocks: [{dx:1,dz:0},{dx:2,dz:1},{dx:1,dz:2}], type: 'sesame', y: 6}
+            ];
+            
+            let blockIdx = 0;
+            hamburgerLayers.forEach((layer) => {
+                layer.blocks.forEach((b) => {
+                    setTimeout(() => {
+                        createBlock(hx + b.dx, hy + layer.y, hz + b.dz, layer.type);
+                    }, blockIdx * 60);
+                    blockIdx++;
+                });
+            });
+            
+            setTimeout(() => {
+                showAIMessage('🍔 HAMBURGER COMPLETE! Looks delicious! 😋');
+            }, blockIdx * 60 + 500);
         }
         
         function buildJuliusTribute() {
