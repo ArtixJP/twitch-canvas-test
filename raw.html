@@ -81,6 +81,25 @@
             border-color: white;
             box-shadow: 0 0 10px white;
         }
+        #julius-badge {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-family: 'Courier New', monospace;
+            color: #000;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            animation: juliusGlow 2s ease-in-out infinite;
+        }
+        @keyframes juliusGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
+        }
         #instructions {
             position: fixed;
             top: 20px;
@@ -143,6 +162,7 @@
 <div id="start-screen">
 <h1>⛏️ MINECRAFT JS</h1>
 <p style="color: #66aaff; font-size: 1.2rem; margin-bottom: 10px;">🍌 Mario's Blue Banana Edition 🍌</p>
+<p style="color: #ffd700; font-size: 1rem; margin-bottom: 10px; text-shadow: 0 0 10px #ffd700;">👑 Sponsored by JULIUS 👑</p>
 <p>Click to Play</p>
 </div>
 <div id="crosshair"></div>
@@ -158,12 +178,14 @@
         Right Click / M - Place Block<br/>
         1-9 - Select Block
     </div>
+<div id="julius-badge">👑 JULIUS VIP DONATOR 👑</div>
 <div id="ui">
 <div class="block-slot selected" data-block="grass">🟩</div>
 <div class="block-slot" data-block="dirt">🟫</div>
 <div class="block-slot" data-block="stone">⬜</div>
 <div class="block-slot" data-block="wood">🪵</div>
 <div class="block-slot" data-block="leaves">🌿</div>
+<div class="block-slot" data-block="julius_crown" style="background: linear-gradient(135deg, #ffd700, #ffaa00);">👑</div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/simplex-noise@3.0.1/dist/simplex-noise.min.js"></script>
@@ -586,6 +608,7 @@
             blockColors['blue'] = 0x0000ff;
             blockColors['banana_blue'] = 0x0066ff;
             blockColors['banana_yellow'] = 0x1155cc;
+            blockColors['julius_crown'] = 0xffd700;
             
             const colorNames = {
                 'R': 'red',
@@ -761,6 +784,35 @@
                     blockIndex++;
                 }
             }
+        }
+        
+        function buildJuliusTribute() {
+            showAIMessage('🎉 Special thanks to JULIUS! Building golden crown! 👑');
+            
+            const crownX = Math.floor(WORLD_SIZE/2) + 8;
+            const crownY = 20;
+            const crownZ = Math.floor(WORLD_SIZE/2) - 5;
+            
+            // Golden crown shape
+            const crownBlocks = [
+                // Base
+                {dx: 0, dy: 0, dz: 0}, {dx: 1, dy: 0, dz: 0}, {dx: 2, dy: 0, dz: 0}, {dx: 3, dy: 0, dz: 0}, {dx: 4, dy: 0, dz: 0},
+                // Middle
+                {dx: 0, dy: 1, dz: 0}, {dx: 4, dy: 1, dz: 0},
+                // Points
+                {dx: 0, dy: 2, dz: 0}, {dx: 2, dy: 2, dz: 0}, {dx: 4, dy: 2, dz: 0},
+                {dx: 0, dy: 3, dz: 0}, {dx: 2, dy: 3, dz: 0}, {dx: 4, dy: 3, dz: 0},
+            ];
+            
+            crownBlocks.forEach((b, idx) => {
+                setTimeout(() => {
+                    createBlock(crownX + b.dx, crownY + b.dy, crownZ, 'julius_crown');
+                }, idx * 80);
+            });
+            
+            setTimeout(() => {
+                showAIMessage('👑 JULIUS CROWN COMPLETE! Thank you for your support! 💛');
+            }, crownBlocks.length * 80 + 500);
         }
         
         function createFireworks() {
