@@ -143,6 +143,32 @@
     }
     
     /* Info Panel */
+    #test-banner {
+        position: absolute;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3);
+        background-size: 400% 400%;
+        animation: gradient-shift 3s ease infinite, float 2s ease-in-out infinite;
+        padding: 10px 30px;
+        border-radius: 20px;
+        color: white;
+        font-weight: bold;
+        font-size: 18px;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        z-index: 100;
+    }
+    @keyframes gradient-shift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes float {
+        0%, 100% { transform: translateX(-50%) translateY(0); }
+        50% { transform: translateX(-50%) translateY(-10px); }
+    }
     #info {
         position: absolute;
         top: 20px;
@@ -184,6 +210,7 @@
 <body>
 <div id="game-container">
 <div id="ui">
+<div id="test-banner">✨ TEST MODE ACTIVE ✨</div>
 <div id="info">
 <div>🎮 Mini Minecraft - Click Edition</div>
 <div id="mode-display">Mode: BUILD</div>
