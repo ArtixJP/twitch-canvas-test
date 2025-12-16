@@ -5,417 +5,444 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Minecraft 3D Simulation</title>
+<title>Playable Minecraft</title>
 <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Courier New', monospace; 
-            overflow: hidden;
-            background: #1a1a2e;
-        }
-        #canvas-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-        }
-        .title {
-            position: absolute;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 2rem;
-            color: #4CAF50;
-            text-shadow: 4px 4px 0 #2E7D32, -2px -2px 0 #81C784;
-            z-index: 100;
-            letter-spacing: 4px;
-            pointer-events: none;
-        }
-        .warning {
-            position: absolute;
-            top: 80px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #FF5722;
-            font-size: 1.2rem;
-            animation: warningPulse 0.5s ease-in-out infinite;
-            text-shadow: 2px 2px 0 #000;
-            z-index: 100;
-            pointer-events: none;
-        }
-        @keyframes warningPulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-        .controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            color: #fff;
-            font-size: 0.9rem;
-            text-shadow: 1px 1px 2px #000;
-            z-index: 100;
-            text-align: center;
-            pointer-events: none;
-        }
-    </style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+        font-family: 'Courier New', monospace; 
+        overflow: hidden;
+        background: #1a1a2e;
+    }
+    #canvas-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+    }
+    .title {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 2rem;
+        color: #4CAF50;
+        text-shadow: 4px 4px 0 #2E7D32, -2px -2px 0 #81C784;
+        z-index: 100;
+        letter-spacing: 4px;
+        pointer-events: none;
+    }
+    .controls {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: #fff;
+        font-size: 0.9rem;
+        text-shadow: 1px 1px 2px #000;
+        z-index: 100;
+        text-align: center;
+        pointer-events: none;
+        background: rgba(0,0,0,0.5);
+        padding: 10px 20px;
+        border-radius: 10px;
+    }
+    .crosshair {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        z-index: 200;
+        pointer-events: none;
+    }
+    .crosshair::before, .crosshair::after {
+        content: '';
+        position: absolute;
+        background: white;
+        mix-blend-mode: difference;
+    }
+    .crosshair::before {
+        width: 2px;
+        height: 20px;
+        left: 9px;
+        top: 0;
+    }
+    .crosshair::after {
+        width: 20px;
+        height: 2px;
+        top: 9px;
+        left: 0;
+    }
+    .hotbar {
+        position: fixed;
+        bottom: 60px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 4px;
+        z-index: 100;
+        background: rgba(0,0,0,0.7);
+        padding: 8px;
+        border-radius: 8px;
+    }
+    .hotbar-slot {
+        width: 50px;
+        height: 50px;
+        background: rgba(139,139,139,0.5);
+        border: 3px solid #555;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+    }
+    .hotbar-slot.selected {
+        border-color: #fff;
+        background: rgba(255,255,255,0.3);
+    }
+    .start-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(0,0,0,0.8);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        color: white;
+    }
+    .start-btn {
+        padding: 20px 60px;
+        font-size: 24px;
+        background: #4CAF50;
+        border: none;
+        color: white;
+        cursor: pointer;
+        font-family: 'Courier New', monospace;
+        margin-top: 20px;
+        transition: transform 0.2s;
+    }
+    .start-btn:hover {
+        transform: scale(1.1);
+        background: #66BB6A;
+    }
+</style>
 </head>
 <body>
 <div id="canvas-container"></div>
-<h1 class="title">MINECRAFT 3D SIMULATION</h1>
-<p class="warning">⚠️ SPACE CROISSANT INCOMING! ⚠️</p>
-<p class="controls">🖱️ Drag to rotate | 🔄 Auto-rotating world | 🐕 Dog &amp; 🐱 Cat roaming!</p>
+<div class="crosshair"></div>
+<h1 class="title">PLAYABLE MINECRAFT</h1>
+<div class="hotbar">
+<div class="hotbar-slot selected" data-block="grass">🟩</div>
+<div class="hotbar-slot" data-block="dirt">🟫</div>
+<div class="hotbar-slot" data-block="stone">⬜</div>
+<div class="hotbar-slot" data-block="wood">🪵</div>
+<div class="hotbar-slot" data-block="leaves">🌿</div>
+</div>
+<p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | RIGHT CLICK: Place | 1-5: Select Block</p>
+<div class="start-screen" id="startScreen">
+<h1 style="font-size: 3rem; color: #4CAF50; text-shadow: 4px 4px 0 #2E7D32;">MINECRAFT</h1>
+<p style="margin-top: 10px; font-size: 1.2rem;">Click to play!</p>
+<button class="start-btn" id="startBtn">PLAY</button>
+</div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-        // Scene setup
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB);
-        scene.fog = new THREE.Fog(0x87CEEB, 20, 80);
+    // Game state
+    let isPlaying = false;
+    let selectedBlock = 'grass';
+    const blocks = [];
+    const blockMap = new Map();
+    
+    // Scene setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.Fog(0x87CEEB, 30, 100);
 
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(15, 12, 15);
-        camera.lookAt(0, 0, 0);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 3, 5);
 
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-        document.getElementById('canvas-container').appendChild(renderer.domElement);
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-        scene.add(ambientLight);
+    // Player physics
+    const player = {
+        velocity: new THREE.Vector3(),
+        onGround: false,
+        height: 1.8,
+        speed: 0.15,
+        jumpForce: 0.25
+    };
 
-        const sunLight = new THREE.DirectionalLight(0xFFD700, 1);
-        sunLight.position.set(10, 20, 10);
-        sunLight.castShadow = true;
-        sunLight.shadow.mapSize.width = 2048;
-        sunLight.shadow.mapSize.height = 2048;
-        scene.add(sunLight);
+    // Controls
+    const keys = {};
+    let yaw = 0;
+    let pitch = 0;
 
-        // Texture loader for pixelated look
-        function createPixelTexture(color1, color2) {
-            const canvas = document.createElement('canvas');
-            canvas.width = 16;
-            canvas.height = 16;
-            const ctx = canvas.getContext('2d');
-            
-            for (let x = 0; x < 16; x++) {
-                for (let y = 0; y < 16; y++) {
-                    ctx.fillStyle = Math.random() > 0.5 ? color1 : color2;
-                    ctx.fillRect(x, y, 1, 1);
-                }
-            }
-            
-            const texture = new THREE.CanvasTexture(canvas);
-            texture.magFilter = THREE.NearestFilter;
-            texture.minFilter = THREE.NearestFilter;
-            return texture;
-        }
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
 
-        // Materials
-        const grassTopMaterial = new THREE.MeshLambertMaterial({ 
-            map: createPixelTexture('#4CAF50', '#66BB6A')
-        });
-        const grassSideMaterial = new THREE.MeshLambertMaterial({ 
-            map: createPixelTexture('#8D6E63', '#6D4C41')
-        });
-        const dirtMaterial = new THREE.MeshLambertMaterial({ 
-            map: createPixelTexture('#8D6E63', '#5D4037')
-        });
-        const stoneMaterial = new THREE.MeshLambertMaterial({ 
-            map: createPixelTexture('#9E9E9E', '#757575')
-        });
-        const woodMaterial = new THREE.MeshLambertMaterial({ 
-            map: createPixelTexture('#5D4037', '#4E342E')
-        });
-        const leavesMaterial = new THREE.MeshLambertMaterial({ 
-            map: createPixelTexture('#2E7D32', '#388E3C'),
-            transparent: true,
-            opacity: 0.9
-        });
+    const sunLight = new THREE.DirectionalLight(0xFFD700, 1);
+    sunLight.position.set(10, 20, 10);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
 
-        // Create grass block with different top
-        function createGrassBlock(x, y, z) {
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const materials = [
-                grassSideMaterial, grassSideMaterial,
-                grassTopMaterial, dirtMaterial,
-                grassSideMaterial, grassSideMaterial
-            ];
-            const block = new THREE.Mesh(geometry, materials);
-            block.position.set(x, y, z);
-            block.castShadow = true;
-            block.receiveShadow = true;
-            return block;
-        }
-
-        function createBlock(x, y, z, material) {
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const block = new THREE.Mesh(geometry, material);
-            block.position.set(x, y, z);
-            block.castShadow = true;
-            block.receiveShadow = true;
-            return block;
-        }
-
-        // Generate terrain
-        const worldSize = 16;
-        for (let x = -worldSize/2; x < worldSize/2; x++) {
-            for (let z = -worldSize/2; z < worldSize/2; z++) {
-                // Grass top layer
-                scene.add(createGrassBlock(x, 0, z));
-                // Dirt layers
-                for (let y = -1; y > -3; y--) {
-                    scene.add(createBlock(x, y, z, dirtMaterial));
-                }
-                // Stone base
-                scene.add(createBlock(x, -3, z, stoneMaterial));
+    // Texture creator
+    function createPixelTexture(color1, color2) {
+        const canvas = document.createElement('canvas');
+        canvas.width = 16;
+        canvas.height = 16;
+        const ctx = canvas.getContext('2d');
+        for (let x = 0; x < 16; x++) {
+            for (let y = 0; y < 16; y++) {
+                ctx.fillStyle = Math.random() > 0.5 ? color1 : color2;
+                ctx.fillRect(x, y, 1, 1);
             }
         }
+        const texture = new THREE.CanvasTexture(canvas);
+        texture.magFilter = THREE.NearestFilter;
+        texture.minFilter = THREE.NearestFilter;
+        return texture;
+    }
 
-        // Create trees
-        function createTree(x, z) {
-            // Trunk
-            for (let y = 1; y <= 4; y++) {
-                scene.add(createBlock(x, y, z, woodMaterial));
+    // Materials
+    const materials = {
+        grass: [
+            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') }),
+            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') }),
+            new THREE.MeshLambertMaterial({ map: createPixelTexture('#4CAF50', '#66BB6A') }),
+            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#5D4037') }),
+            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') }),
+            new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#6D4C41') })
+        ],
+        dirt: new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#5D4037') }),
+        stone: new THREE.MeshLambertMaterial({ map: createPixelTexture('#9E9E9E', '#757575') }),
+        wood: new THREE.MeshLambertMaterial({ map: createPixelTexture('#5D4037', '#4E342E') }),
+        leaves: new THREE.MeshLambertMaterial({ map: createPixelTexture('#2E7D32', '#388E3C'), transparent: true, opacity: 0.9 })
+    };
+
+    function getBlockKey(x, y, z) {
+        return `${Math.round(x)},${Math.round(y)},${Math.round(z)}`;
+    }
+
+    function createBlock(x, y, z, type) {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const mat = type === 'grass' ? materials.grass : materials[type];
+        const block = new THREE.Mesh(geometry, mat);
+        block.position.set(Math.round(x), Math.round(y), Math.round(z));
+        block.castShadow = true;
+        block.receiveShadow = true;
+        block.userData.type = type;
+        scene.add(block);
+        blocks.push(block);
+        blockMap.set(getBlockKey(x, y, z), block);
+        return block;
+    }
+
+    function removeBlock(block) {
+        const key = getBlockKey(block.position.x, block.position.y, block.position.z);
+        blockMap.delete(key);
+        const index = blocks.indexOf(block);
+        if (index > -1) blocks.splice(index, 1);
+        scene.remove(block);
+    }
+
+    // Generate terrain
+    const worldSize = 20;
+    for (let x = -worldSize/2; x < worldSize/2; x++) {
+        for (let z = -worldSize/2; z < worldSize/2; z++) {
+            createBlock(x, 0, z, 'grass');
+            for (let y = -1; y > -3; y--) {
+                createBlock(x, y, z, 'dirt');
             }
-            // Leaves
-            for (let lx = -2; lx <= 2; lx++) {
-                for (let lz = -2; lz <= 2; lz++) {
-                    for (let ly = 4; ly <= 6; ly++) {
-                        if (Math.abs(lx) + Math.abs(lz) + Math.abs(ly - 5) < 4) {
-                            scene.add(createBlock(x + lx, ly, z + lz, leavesMaterial));
-                        }
+            createBlock(x, -3, z, 'stone');
+        }
+    }
+
+    // Trees
+    function createTree(x, z) {
+        for (let y = 1; y <= 4; y++) createBlock(x, y, z, 'wood');
+        for (let lx = -2; lx <= 2; lx++) {
+            for (let lz = -2; lz <= 2; lz++) {
+                for (let ly = 4; ly <= 6; ly++) {
+                    if (Math.abs(lx) + Math.abs(lz) + Math.abs(ly - 5) < 4) {
+                        createBlock(x + lx, ly, z + lz, 'leaves');
                     }
                 }
             }
         }
+    }
+    createTree(-4, -4);
+    createTree(5, 3);
+    createTree(-2, 5);
 
-        createTree(-4, -4);
-        createTree(5, 3);
-        createTree(-2, 5);
+    // Sun
+    const sun = new THREE.Mesh(
+        new THREE.SphereGeometry(2, 32, 32),
+        new THREE.MeshBasicMaterial({ color: 0xFFD700 })
+    );
+    sun.position.set(20, 25, -20);
+    scene.add(sun);
 
-        // Sun
-        const sunGeometry = new THREE.SphereGeometry(2, 32, 32);
-        const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
-        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.position.set(20, 25, -20);
-        scene.add(sun);
+    // Raycaster for block interaction
+    const raycaster = new THREE.Raycaster();
+    raycaster.far = 6;
 
-        // Clouds
-        function createCloud(x, y, z) {
-            const cloudGroup = new THREE.Group();
-            const cloudMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff });
-            
-            for (let i = 0; i < 5; i++) {
-                const cloudPart = new THREE.Mesh(
-                    new THREE.BoxGeometry(2, 1, 2),
-                    cloudMaterial
-                );
-                cloudPart.position.set(i * 1.5 - 3, Math.random() * 0.5, Math.random() * 2 - 1);
-                cloudGroup.add(cloudPart);
-            }
-            cloudGroup.position.set(x, y, z);
-            return cloudGroup;
-        }
+    // Start game
+    document.getElementById('startBtn').addEventListener('click', () => {
+        document.getElementById('startScreen').style.display = 'none';
+        renderer.domElement.requestPointerLock();
+    });
 
-        const clouds = [];
-        for (let i = 0; i < 5; i++) {
-            const cloud = createCloud(
-                Math.random() * 40 - 20,
-                15 + Math.random() * 5,
-                Math.random() * 40 - 20
-            );
-            clouds.push(cloud);
-            scene.add(cloud);
-        }
+    document.addEventListener('pointerlockchange', () => {
+        isPlaying = document.pointerLockElement === renderer.domElement;
+    });
 
-        // Flying hamburger (represented as a bouncing cube)
-        const hamburgerGroup = new THREE.Group();
-        const bunTop = new THREE.Mesh(
-            new THREE.BoxGeometry(1.5, 0.5, 1.5),
-            new THREE.MeshLambertMaterial({ color: 0xD4A574 })
-        );
-        bunTop.position.y = 0.5;
-        const patty = new THREE.Mesh(
-            new THREE.BoxGeometry(1.3, 0.3, 1.3),
-            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
-        );
-        const bunBottom = new THREE.Mesh(
-            new THREE.BoxGeometry(1.5, 0.4, 1.5),
-            new THREE.MeshLambertMaterial({ color: 0xD4A574 })
-        );
-        bunBottom.position.y = -0.35;
-        hamburgerGroup.add(bunTop, patty, bunBottom);
-        hamburgerGroup.position.set(0, 10, 0);
-        scene.add(hamburgerGroup);
+    // Mouse look
+    document.addEventListener('mousemove', (e) => {
+        if (!isPlaying) return;
+        yaw -= e.movementX * 0.002;
+        pitch -= e.movementY * 0.002;
+        pitch = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, pitch));
+    });
 
-        // Space Croissant
-        const croissantGroup = new THREE.Group();
-        const croissantBody = new THREE.Mesh(
-            new THREE.TorusGeometry(1, 0.4, 8, 16, Math.PI),
-            new THREE.MeshLambertMaterial({ color: 0xE6B87D })
-        );
-        croissantGroup.add(croissantBody);
-        croissantGroup.position.set(-15, 20, -15);
-        scene.add(croissantGroup);
-
-        // Dog (simple blocky representation)
-        const dogGroup = new THREE.Group();
-        const dogBody = new THREE.Mesh(
-            new THREE.BoxGeometry(1.5, 1, 2),
-            new THREE.MeshLambertMaterial({ color: 0xD2691E })
-        );
-        const dogHead = new THREE.Mesh(
-            new THREE.BoxGeometry(0.8, 0.8, 0.8),
-            new THREE.MeshLambertMaterial({ color: 0xD2691E })
-        );
-        dogHead.position.set(0, 0.3, 1.2);
-        // Dog tail
-        const dogTail = new THREE.Mesh(
-            new THREE.BoxGeometry(0.2, 0.2, 0.6),
-            new THREE.MeshLambertMaterial({ color: 0xD2691E })
-        );
-        dogTail.position.set(0, 0.3, -1.2);
-        dogGroup.add(dogBody, dogHead, dogTail);
-        dogGroup.position.set(-5, 1.5, 0);
-        scene.add(dogGroup);
-
-        // Minecraft Cat
-        const catGroup = new THREE.Group();
-        const catBody = new THREE.Mesh(
-            new THREE.BoxGeometry(1, 0.8, 1.8),
-            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
-        );
-        const catHead = new THREE.Mesh(
-            new THREE.BoxGeometry(0.7, 0.7, 0.7),
-            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
-        );
-        catHead.position.set(0, 0.2, 1);
-        // Cat ears
-        const catEarLeft = new THREE.Mesh(
-            new THREE.BoxGeometry(0.2, 0.3, 0.1),
-            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
-        );
-        catEarLeft.position.set(-0.2, 0.6, 1);
-        const catEarRight = new THREE.Mesh(
-            new THREE.BoxGeometry(0.2, 0.3, 0.1),
-            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
-        );
-        catEarRight.position.set(0.2, 0.6, 1);
-        // Cat tail (long and curved up)
-        const catTail = new THREE.Mesh(
-            new THREE.BoxGeometry(0.15, 0.15, 1),
-            new THREE.MeshLambertMaterial({ color: 0xFF8C00 })
-        );
-        catTail.position.set(0, 0.3, -1.2);
-        catTail.rotation.x = -0.5;
-        // Cat stripes
-        const stripe1 = new THREE.Mesh(
-            new THREE.BoxGeometry(1.02, 0.1, 0.2),
-            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
-        );
-        stripe1.position.set(0, 0.35, 0.3);
-        const stripe2 = new THREE.Mesh(
-            new THREE.BoxGeometry(1.02, 0.1, 0.2),
-            new THREE.MeshLambertMaterial({ color: 0x8B4513 })
-        );
-        stripe2.position.set(0, 0.35, -0.3);
-        catGroup.add(catBody, catHead, catEarLeft, catEarRight, catTail, stripe1, stripe2);
-        catGroup.position.set(4, 1.4, 2);
-        scene.add(catGroup);
-
-        // Mouse controls
-        let isDragging = false;
-        let previousMousePosition = { x: 0, y: 0 };
-        let autoRotate = true;
-
-        renderer.domElement.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            autoRotate = false;
-        });
-
-        renderer.domElement.addEventListener('mouseup', () => {
-            isDragging = false;
-            setTimeout(() => autoRotate = true, 3000);
-        });
-
-        renderer.domElement.addEventListener('mousemove', (e) => {
-            if (isDragging) {
-                const deltaX = e.clientX - previousMousePosition.x;
-                const deltaY = e.clientY - previousMousePosition.y;
-                
-                const rotationSpeed = 0.005;
-                camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), deltaX * rotationSpeed);
-                camera.lookAt(0, 0, 0);
-            }
-            previousMousePosition = { x: e.clientX, y: e.clientY };
-        });
-
-        // Animation
-        let time = 0;
-        function animate() {
-            requestAnimationFrame(animate);
-            time += 0.016;
-
-            // Auto-rotate camera
-            if (autoRotate) {
-                camera.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.002);
-                camera.lookAt(0, 0, 0);
-            }
-
-            // Animate hamburger
-            hamburgerGroup.position.x = Math.sin(time) * 8;
-            hamburgerGroup.position.y = 8 + Math.sin(time * 2) * 2;
-            hamburgerGroup.position.z = Math.cos(time) * 8;
-            hamburgerGroup.rotation.y += 0.02;
-
-            // Animate croissant
-            croissantGroup.position.x = Math.sin(time * 0.5) * 15;
-            croissantGroup.position.z = Math.cos(time * 0.5) * 15;
-            croissantGroup.rotation.x += 0.03;
-            croissantGroup.rotation.z += 0.02;
-
-            // Animate dog
-            dogGroup.position.x = Math.sin(time * 0.8) * 6;
-            dogGroup.rotation.y = Math.sin(time * 0.8) > 0 ? 0 : Math.PI;
-            // Wag dog tail
-            if (dogGroup.children[2]) {
-                dogGroup.children[2].rotation.y = Math.sin(time * 8) * 0.5;
-            }
-
-            // Animate cat - follows a different path
-            catGroup.position.x = Math.cos(time * 0.6) * 5;
-            catGroup.position.z = Math.sin(time * 0.6) * 5;
-            catGroup.rotation.y = -time * 0.6 + Math.PI/2;
-            // Cat tail sway
-            if (catGroup.children[4]) {
-                catGroup.children[4].rotation.z = Math.sin(time * 3) * 0.3;
-            }
-
-            // Animate clouds
-            clouds.forEach((cloud, i) => {
-                cloud.position.x += 0.02;
-                if (cloud.position.x > 25) cloud.position.x = -25;
+    // Keyboard
+    document.addEventListener('keydown', (e) => {
+        keys[e.code] = true;
+        if (e.code >= 'Digit1' && e.code <= 'Digit5') {
+            const idx = parseInt(e.code.replace('Digit', '')) - 1;
+            document.querySelectorAll('.hotbar-slot').forEach((slot, i) => {
+                slot.classList.toggle('selected', i === idx);
+                if (i === idx) selectedBlock = slot.dataset.block;
             });
+        }
+    });
+    document.addEventListener('keyup', (e) => keys[e.code] = false);
 
-            // Sun pulse
-            sun.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+    // Mouse click for blocks
+    document.addEventListener('mousedown', (e) => {
+        if (!isPlaying) return;
+        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+        const intersects = raycaster.intersectObjects(blocks);
+        
+        if (e.button === 0 && intersects.length > 0) {
+            // Break block
+            removeBlock(intersects[0].object);
+        } else if (e.button === 2 && intersects.length > 0) {
+            // Place block
+            const hit = intersects[0];
+            const normal = hit.face.normal;
+            const pos = hit.object.position.clone().add(normal);
+            if (!blockMap.has(getBlockKey(pos.x, pos.y, pos.z))) {
+                createBlock(pos.x, pos.y, pos.z, selectedBlock);
+            }
+        }
+    });
 
-            renderer.render(scene, camera);
+    document.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // Hotbar clicks
+    document.querySelectorAll('.hotbar-slot').forEach(slot => {
+        slot.addEventListener('click', () => {
+            document.querySelectorAll('.hotbar-slot').forEach(s => s.classList.remove('selected'));
+            slot.classList.add('selected');
+            selectedBlock = slot.dataset.block;
+        });
+    });
+
+    // Collision detection
+    function checkCollision(pos) {
+        const checkPoints = [
+            [0.3, 0, 0.3], [-0.3, 0, 0.3], [0.3, 0, -0.3], [-0.3, 0, -0.3],
+            [0.3, -1, 0.3], [-0.3, -1, 0.3], [0.3, -1, -0.3], [-0.3, -1, -0.3]
+        ];
+        for (const [dx, dy, dz] of checkPoints) {
+            const key = getBlockKey(pos.x + dx, pos.y + dy, pos.z + dz);
+            if (blockMap.has(key)) return true;
+        }
+        return false;
+    }
+
+    function checkGround(pos) {
+        const key = getBlockKey(pos.x, pos.y - 1.6, pos.z);
+        return blockMap.has(key);
+    }
+
+    // Game loop
+    function animate() {
+        requestAnimationFrame(animate);
+
+        if (isPlaying) {
+            // Camera rotation
+            camera.rotation.order = 'YXZ';
+            camera.rotation.y = yaw;
+            camera.rotation.x = pitch;
+
+            // Movement
+            const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0)));
+            const right = new THREE.Vector3(1, 0, 0).applyQuaternion(new THREE.Quaternion().setFromEuler(new THREE.Euler(0, yaw, 0)));
+
+            const moveDir = new THREE.Vector3();
+            if (keys['KeyW']) moveDir.add(forward);
+            if (keys['KeyS']) moveDir.sub(forward);
+            if (keys['KeyD']) moveDir.add(right);
+            if (keys['KeyA']) moveDir.sub(right);
+            moveDir.normalize().multiplyScalar(player.speed);
+
+            // Apply horizontal movement with collision
+            const newPosX = camera.position.clone();
+            newPosX.x += moveDir.x;
+            if (!checkCollision(newPosX)) camera.position.x = newPosX.x;
+
+            const newPosZ = camera.position.clone();
+            newPosZ.z += moveDir.z;
+            if (!checkCollision(newPosZ)) camera.position.z = newPosZ.z;
+
+            // Gravity and jumping
+            player.onGround = checkGround(camera.position);
+            
+            if (keys['Space'] && player.onGround) {
+                player.velocity.y = player.jumpForce;
+            }
+
+            if (!player.onGround) {
+                player.velocity.y -= 0.015; // Gravity
+            } else {
+                player.velocity.y = Math.max(0, player.velocity.y);
+            }
+
+            const newPosY = camera.position.clone();
+            newPosY.y += player.velocity.y;
+            if (newPosY.y > 1.5 || !checkCollision(newPosY)) {
+                camera.position.y += player.velocity.y;
+            } else {
+                player.velocity.y = 0;
+            }
+
+            // Prevent falling below world
+            if (camera.position.y < -10) {
+                camera.position.set(0, 5, 5);
+                player.velocity.set(0, 0, 0);
+            }
         }
 
-        // Handle resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        renderer.render(scene, camera);
+    }
 
-        animate();
-    </script>
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+
+    animate();
+</script>
 </body>
 </html>
