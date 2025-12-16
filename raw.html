@@ -1,25 +1,275 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Minecraft Simulation</title>
+<style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
+            font-family: 'Courier New', monospace; 
+            overflow: hidden;
+            background: linear-gradient(180deg, #87CEEB 0%, #98D8E8 50%, #7EC850 50%, #5A8F3E 100%);
+            min-height: 100vh;
+            image-rendering: pixelated;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        .game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            color: #3D2817;
+            text-shadow: 4px 4px 0 #5D4037, -2px -2px 0 #8D6E63;
+            z-index: 100;
+            letter-spacing: 4px;
+        }
+        .ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 40%;
+            background: repeating-linear-gradient(
+                0deg,
+                #5D4037 0px, #5D4037 20px,
+                #4E342E 20px, #4E342E 40px
+            );
+        }
+        .grass-layer {
+            position: absolute;
+            bottom: 40%;
+            width: 100%;
+            height: 30px;
+            background: #4CAF50;
+            box-shadow: 0 -5px 0 #66BB6A;
+        }
+        .block {
+            position: absolute;
+            width: 50px;
+            height: 50px;
+            background: #8D6E63;
+            border: 3px solid #5D4037;
+            box-shadow: inset 3px 3px 0 #A1887F, inset -3px -3px 0 #6D4C41;
+        }
+        .grass-block {
+            background: linear-gradient(180deg, #4CAF50 0%, #4CAF50 20%, #8D6E63 20%);
+        }
+        /* Flying Hamburger */
+        .hamburger {
+            position: absolute;
+            font-size: 60px;
+            animation: flyHamburger 8s ease-in-out infinite;
+            filter: drop-shadow(0 5px 10px rgba(0,0,0,0.3));
+            z-index: 50;
+        }
+        @keyframes flyHamburger {
+            0% { top: 20%; left: -10%; transform: rotate(0deg); }
+            25% { top: 15%; transform: rotate(15deg); }
+            50% { top: 25%; left: 110%; transform: rotate(-10deg); }
+            75% { top: 10%; transform: rotate(20deg); }
+            100% { top: 20%; left: -10%; transform: rotate(0deg); }
+        }
+        /* Hungry Dog */
+        .dog {
+            position: absolute;
+            bottom: 42%;
+            font-size: 50px;
+            animation: dogWalk 6s ease-in-out infinite;
+            z-index: 60;
+        }
+        .dog::after {
+            content: '🍖?';
+            position: absolute;
+            top: -40px;
+            left: 20px;
+            font-size: 25px;
+            animation: thoughtBubble 1s ease-in-out infinite;
+        }
+        @keyframes dogWalk {
+            0% { left: 10%; transform: scaleX(1); }
+            45% { left: 80%; transform: scaleX(1); }
+            50% { left: 80%; transform: scaleX(-1); }
+            95% { left: 10%; transform: scaleX(-1); }
+            100% { left: 10%; transform: scaleX(1); }
+        }
+        @keyframes thoughtBubble {
+            0%, 100% { opacity: 1; transform: translateY(0); }
+            50% { opacity: 0.7; transform: translateY(-5px); }
+        }
+        /* Space Croissant */
+        .space-croissant {
+            position: absolute;
+            font-size: 80px;
+            animation: spaceCroissant 12s linear infinite;
+            filter: drop-shadow(0 0 20px #FFD700) drop-shadow(0 0 40px #FF6B00);
+            z-index: 70;
+        }
+        .croissant-trail {
+            position: absolute;
+            width: 100px;
+            height: 5px;
+            background: linear-gradient(90deg, transparent, #FFD700, #FF6B00);
+            animation: spaceCroissant 12s linear infinite;
+            transform-origin: right center;
+        }
+        @keyframes spaceCroissant {
+            0% { top: -10%; right: -10%; transform: rotate(0deg); }
+            100% { top: 110%; right: 110%; transform: rotate(720deg); }
+        }
+        /* Clouds */
+        .cloud {
+            position: absolute;
+            font-size: 40px;
+            opacity: 0.9;
+            animation: cloudFloat 20s linear infinite;
+        }
+        .cloud:nth-child(1) { top: 10%; animation-delay: 0s; }
+        .cloud:nth-child(2) { top: 20%; animation-delay: -7s; font-size: 30px; }
+        .cloud:nth-child(3) { top: 5%; animation-delay: -14s; font-size: 50px; }
+        @keyframes cloudFloat {
+            0% { left: -10%; }
+            100% { left: 110%; }
+        }
+        /* Pixel Trees */
+        .tree {
+            position: absolute;
+            bottom: 42%;
+            width: 40px;
+            height: 80px;
+            z-index: 30;
+        }
+        .tree-trunk {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 15px;
+            height: 30px;
+            background: #5D4037;
+            border: 2px solid #4E342E;
+        }
+        .tree-leaves {
+            position: absolute;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 50px;
+            background: #2E7D32;
+            border: 3px solid #1B5E20;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+        /* Stars */
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            font-size: 15px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+        /* Sun */
+        .sun {
+            position: absolute;
+            top: 50px;
+            right: 100px;
+            font-size: 70px;
+            animation: sunPulse 3s ease-in-out infinite;
+        }
+        @keyframes sunPulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px #FFD700); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 0 40px #FFD700); }
+        }
+        /* Food items scattered */
+        .food-item {
+            position: absolute;
+            font-size: 25px;
+            animation: foodBounce 2s ease-in-out infinite;
+        }
+        @keyframes foodBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        /* Warning text */
+        .warning {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #FF5722;
+            font-size: 1.2rem;
+            animation: warningPulse 0.5s ease-in-out infinite;
+            text-shadow: 2px 2px 0 #000;
+        }
+        @keyframes warningPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="game-container">
+<h1 class="title">MINECRAFT SIMULATION</h1>
+<p class="warning">⚠️ SPACE CROISSANT INCOMING! ⚠️</p>
+
+<div class="sun">☀️</div>
+
+<div class="cloud">☁️</div>
+<div class="cloud">☁️</div>
+<div class="cloud">☁️</div>
+
+<div class="stars">
+<span class="star" style="top: 5%; left: 10%;">✨</span>
+<span class="star" style="top: 15%; left: 30%; animation-delay: 0.5s;">⭐</span>
+<span class="star" style="top: 8%; left: 60%; animation-delay: 1s;">✨</span>
+<span class="star" style="top: 20%; left: 85%; animation-delay: 1.5s;">⭐</span>
+</div>
+
+<div class="hamburger">🍔</div>
+
+<div class="space-croissant">🥐</div>
+
+<div class="dog">🐕</div>
+
+<div class="tree" style="left: 15%;">
+<div class="tree-leaves"></div>
+<div class="tree-trunk"></div>
+</div>
+<div class="tree" style="left: 70%;">
+<div class="tree-leaves"></div>
+<div class="tree-trunk"></div>
+</div>
+<div class="tree" style="left: 45%;">
+<div class="tree-leaves"></div>
+<div class="tree-trunk"></div>
+</div>
+
+<span class="food-item" style="bottom: 45%; left: 25%; animation-delay: 0.3s;">🍖</span>
+<span class="food-item" style="bottom: 43%; left: 55%; animation-delay: 0.7s;">🦴</span>
+<span class="food-item" style="bottom: 44%; left: 85%; animation-delay: 1.1s;">🥩</span>
+
+<div class="grass-layer"></div>
+
+<div class="ground">
+
+</div>
+</div>
 </body>
 </html>
