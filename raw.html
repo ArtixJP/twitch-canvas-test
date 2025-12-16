@@ -143,6 +143,7 @@
 <div class="hotbar-slot" data-block="stone">⬜</div>
 <div class="hotbar-slot" data-block="wood">🪵</div>
 <div class="hotbar-slot" data-block="leaves">🌿</div>
+<div class="hotbar-slot" data-block="burger">🍔</div>
 </div>
 <p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | RIGHT CLICK: Place | 1-5: Select Block</p>
 <div class="start-screen" id="startScreen">
@@ -225,7 +226,8 @@
         dirt: new THREE.MeshLambertMaterial({ map: createPixelTexture('#8D6E63', '#5D4037') }),
         stone: new THREE.MeshLambertMaterial({ map: createPixelTexture('#9E9E9E', '#757575') }),
         wood: new THREE.MeshLambertMaterial({ map: createPixelTexture('#5D4037', '#4E342E') }),
-        leaves: new THREE.MeshLambertMaterial({ map: createPixelTexture('#2E7D32', '#388E3C'), transparent: true, opacity: 0.9 })
+        leaves: new THREE.MeshLambertMaterial({ map: createPixelTexture('#2E7D32', '#388E3C'), transparent: true, opacity: 0.9 }),
+        burger: new THREE.MeshLambertMaterial({ map: createPixelTexture('#D4A574', '#8B4513') })
     };
 
     function getBlockKey(x, y, z) {
@@ -283,6 +285,64 @@
     createTree(5, 3);
     createTree(-2, 5);
 
+    // Giant floating cheeseburger!
+    const burgerGroup = new THREE.Group();
+    
+    // Bottom bun
+    const bunGeom = new THREE.CylinderGeometry(1.5, 1.8, 0.5, 32);
+    const bunMat = new THREE.MeshLambertMaterial({ color: 0xD4A574 });
+    const bottomBun = new THREE.Mesh(bunGeom, bunMat);
+    bottomBun.position.y = 0;
+    burgerGroup.add(bottomBun);
+    
+    // Patty
+    const pattyGeom = new THREE.CylinderGeometry(1.4, 1.4, 0.4, 32);
+    const pattyMat = new THREE.MeshLambertMaterial({ color: 0x4A2C2A });
+    const patty = new THREE.Mesh(pattyGeom, pattyMat);
+    patty.position.y = 0.45;
+    burgerGroup.add(patty);
+    
+    // Cheese
+    const cheeseGeom = new THREE.BoxGeometry(2.2, 0.1, 2.2);
+    const cheeseMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
+    const cheese = new THREE.Mesh(cheeseGeom, cheeseMat);
+    cheese.position.y = 0.7;
+    cheese.rotation.y = Math.PI / 4;
+    burgerGroup.add(cheese);
+    
+    // Lettuce
+    const lettuceGeom = new THREE.CylinderGeometry(1.6, 1.6, 0.15, 32);
+    const lettuceMat = new THREE.MeshLambertMaterial({ color: 0x66BB6A });
+    const lettuce = new THREE.Mesh(lettuceGeom, lettuceMat);
+    lettuce.position.y = 0.85;
+    burgerGroup.add(lettuce);
+    
+    // Top bun
+    const topBunGeom = new THREE.SphereGeometry(1.5, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    const topBun = new THREE.Mesh(topBunGeom, bunMat);
+    topBun.position.y = 1;
+    burgerGroup.add(topBun);
+    
+    // Sesame seeds
+    const seedGeom = new THREE.SphereGeometry(0.08, 8, 8);
+    const seedMat = new THREE.MeshLambertMaterial({ color: 0xFFF8DC });
+    for (let i = 0; i < 12; i++) {
+        const seed = new THREE.Mesh(seedGeom, seedMat);
+        const angle = (i / 12) * Math.PI * 2;
+        const radius = 0.8 + Math.random() * 0.5;
+        seed.position.set(Math.cos(angle) * radius, 1.3 + Math.random() * 0.2, Math.sin(angle) * radius);
+        burgerGroup.add(seed);
+    }
+    
+    burgerGroup.position.set(8, 6, -5);
+    scene.add(burgerGroup);
+    
+    // Animate the burger
+    function animateBurger() {
+        burgerGroup.rotation.y += 0.01;
+        burgerGroup.position.y = 6 + Math.sin(Date.now() * 0.002) * 0.5;
+    }
+
     // Sun
     const sun = new THREE.Mesh(
         new THREE.SphereGeometry(2, 32, 32),
@@ -316,7 +376,7 @@
     // Keyboard
     document.addEventListener('keydown', (e) => {
         keys[e.code] = true;
-        if (e.code >= 'Digit1' && e.code <= 'Digit5') {
+        if (e.code >= 'Digit1' && e.code <= 'Digit6') {
             const idx = parseInt(e.code.replace('Digit', '')) - 1;
             document.querySelectorAll('.hotbar-slot').forEach((slot, i) => {
                 slot.classList.toggle('selected', i === idx);
@@ -433,6 +493,7 @@
             }
         }
 
+        if (typeof animateBurger === 'function') animateBurger();
         renderer.render(scene, camera);
     }
 
