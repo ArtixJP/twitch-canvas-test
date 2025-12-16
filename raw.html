@@ -144,8 +144,9 @@
 <div class="hotbar-slot" data-block="wood">🪵</div>
 <div class="hotbar-slot" data-block="leaves">🌿</div>
 <div class="hotbar-slot" data-block="burger">🍔</div>
+<div class="hotbar-slot" data-block="mario">🍄</div>
 </div>
-<p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | SHIFT+LEFT CLICK: Place | 1-6: Select Block</p>
+<p class="controls">WASD: Move | SPACE: Jump | MOUSE: Look | LEFT CLICK: Break | SHIFT+LEFT CLICK: Place | 1-7: Select Block</p>
 <div class="start-screen" id="startScreen">
 <h1 style="font-size: 3rem; color: #4CAF50; text-shadow: 4px 4px 0 #2E7D32;">MINECRAFT</h1>
 <p style="margin-top: 10px; font-size: 1.2rem;">Click to play!</p>
@@ -227,7 +228,8 @@
         stone: new THREE.MeshLambertMaterial({ map: createPixelTexture('#9E9E9E', '#757575') }),
         wood: new THREE.MeshLambertMaterial({ map: createPixelTexture('#5D4037', '#4E342E') }),
         leaves: new THREE.MeshLambertMaterial({ map: createPixelTexture('#2E7D32', '#388E3C'), transparent: true, opacity: 0.9 }),
-        burger: new THREE.MeshLambertMaterial({ map: createPixelTexture('#D4A574', '#8B4513') })
+        burger: new THREE.MeshLambertMaterial({ map: createPixelTexture('#D4A574', '#8B4513') }),
+        mario: new THREE.MeshLambertMaterial({ map: createPixelTexture('#E52521', '#B71C1C') })
     };
 
     function getBlockKey(x, y, z) {
@@ -336,6 +338,127 @@
     
     burgerGroup.position.set(8, 6, -5);
     scene.add(burgerGroup);
+
+    // GIANT MARIO!
+    const marioGroup = new THREE.Group();
+    
+    // Mario colors
+    const redMat = new THREE.MeshLambertMaterial({ color: 0xE52521 });
+    const blueMat = new THREE.MeshLambertMaterial({ color: 0x2B5DF5 });
+    const skinMat = new THREE.MeshLambertMaterial({ color: 0xFEBB9E });
+    const brownMat = new THREE.MeshLambertMaterial({ color: 0x6B3E08 });
+    const yellowMat = new THREE.MeshLambertMaterial({ color: 0xFBD000 });
+    const whiteMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+    
+    const voxelSize = 0.5;
+    
+    function addVoxel(x, y, z, material) {
+        const geom = new THREE.BoxGeometry(voxelSize, voxelSize, voxelSize);
+        const voxel = new THREE.Mesh(geom, material);
+        voxel.position.set(x * voxelSize, y * voxelSize, z * voxelSize);
+        voxel.castShadow = true;
+        marioGroup.add(voxel);
+    }
+    
+    // Hat (red cap)
+    for (let x = -2; x <= 2; x++) {
+        for (let z = -1; z <= 1; z++) {
+            addVoxel(x, 12, z, redMat);
+        }
+    }
+    for (let x = -3; x <= 3; x++) {
+        for (let z = -1; z <= 1; z++) {
+            addVoxel(x, 11, z, redMat);
+        }
+    }
+    // Cap brim
+    for (let x = -3; x <= 3; x++) {
+        addVoxel(x, 10, 2, redMat);
+    }
+    
+    // Face (skin color)
+    for (let x = -2; x <= 2; x++) {
+        for (let y = 7; y <= 10; y++) {
+            addVoxel(x, y, 1, skinMat);
+        }
+    }
+    
+    // Eyes (white with black pupils)
+    addVoxel(-1, 9, 2, whiteMat);
+    addVoxel(1, 9, 2, whiteMat);
+    
+    // Mustache (brown)
+    for (let x = -2; x <= 2; x++) {
+        addVoxel(x, 8, 2, brownMat);
+    }
+    addVoxel(-2, 7, 2, brownMat);
+    addVoxel(2, 7, 2, brownMat);
+    
+    // Nose (skin, protruding)
+    addVoxel(0, 8, 2, skinMat);
+    addVoxel(0, 8, 3, skinMat);
+    
+    // Hair/sideburns (brown)
+    for (let y = 8; y <= 10; y++) {
+        addVoxel(-3, y, 0, brownMat);
+        addVoxel(3, y, 0, brownMat);
+    }
+    
+    // Body - red shirt
+    for (let x = -2; x <= 2; x++) {
+        for (let y = 4; y <= 6; y++) {
+            for (let z = -1; z <= 1; z++) {
+                addVoxel(x, y, z, redMat);
+            }
+        }
+    }
+    
+    // Overalls (blue)
+    for (let x = -2; x <= 2; x++) {
+        for (let y = 0; y <= 3; y++) {
+            for (let z = -1; z <= 1; z++) {
+                addVoxel(x, y, z, blueMat);
+            }
+        }
+    }
+    // Overall straps
+    addVoxel(-1, 5, 1, blueMat);
+    addVoxel(1, 5, 1, blueMat);
+    
+    // Yellow buttons on overalls
+    addVoxel(-1, 4, 2, yellowMat);
+    addVoxel(1, 4, 2, yellowMat);
+    
+    // Arms (skin + red sleeves)
+    for (let y = 4; y <= 6; y++) {
+        addVoxel(-3, y, 0, redMat);
+        addVoxel(3, y, 0, redMat);
+    }
+    // Hands
+    addVoxel(-4, 4, 0, whiteMat);
+    addVoxel(-4, 3, 0, whiteMat);
+    addVoxel(4, 4, 0, whiteMat);
+    addVoxel(4, 3, 0, whiteMat);
+    
+    // Shoes (brown)
+    for (let x = -2; x <= -1; x++) {
+        addVoxel(x, -1, 0, brownMat);
+        addVoxel(x, -1, 1, brownMat);
+    }
+    for (let x = 1; x <= 2; x++) {
+        addVoxel(x, -1, 0, brownMat);
+        addVoxel(x, -1, 1, brownMat);
+    }
+    
+    marioGroup.position.set(-10, 8, -8);
+    marioGroup.scale.set(1.5, 1.5, 1.5);
+    scene.add(marioGroup);
+    
+    // Animate Mario
+    function animateMario() {
+        marioGroup.rotation.y += 0.008;
+        marioGroup.position.y = 8 + Math.sin(Date.now() * 0.0015) * 0.8;
+    }
     
     // Animate the burger
     function animateBurger() {
@@ -515,6 +638,7 @@
         }
 
         if (typeof animateBurger === 'function') animateBurger();
+        if (typeof animateMario === 'function') animateMario();
         renderer.render(scene, camera);
     }
 
