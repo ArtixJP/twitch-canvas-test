@@ -272,6 +272,91 @@
         50% { opacity: 0.8; transform: scale(1.1); }
     }
     
+    /* Cloud covering the sun */
+    #cloud {
+        position: absolute;
+        top: 40px;
+        width: 180px;
+        height: 80px;
+        z-index: 60;
+        animation: cloud-drift 15s ease-in-out infinite;
+        pointer-events: none;
+        filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2));
+    }
+    
+    #cloud::before, #cloud::after, #cloud .puff1, #cloud .puff2, #cloud .puff3 {
+        content: '';
+        position: absolute;
+        background: linear-gradient(180deg, #f0f0f0 0%, #d4d4d4 50%, #b8b8b8 100%);
+        border-radius: 50%;
+    }
+    
+    #cloud::before {
+        width: 80px;
+        height: 80px;
+        top: 20px;
+        left: 20px;
+    }
+    
+    #cloud::after {
+        width: 100px;
+        height: 70px;
+        top: 30px;
+        left: 60px;
+    }
+    
+    #cloud .puff1 {
+        width: 60px;
+        height: 60px;
+        top: 35px;
+        left: 0;
+    }
+    
+    #cloud .puff2 {
+        width: 70px;
+        height: 55px;
+        top: 10px;
+        left: 50px;
+    }
+    
+    #cloud .puff3 {
+        width: 50px;
+        height: 50px;
+        top: 40px;
+        left: 130px;
+    }
+    
+    @keyframes cloud-drift {
+        0% {
+            right: 300px;
+            opacity: 0.3;
+        }
+        20% {
+            opacity: 0.9;
+        }
+        50% {
+            right: 120px;
+            opacity: 1;
+        }
+        80% {
+            opacity: 0.9;
+        }
+        100% {
+            right: 300px;
+            opacity: 0.3;
+        }
+    }
+    
+    /* Sun dimming effect when cloud passes */
+    #red-sun {
+        animation: sun-pulse 4s ease-in-out infinite, sun-glow 2s ease-in-out infinite alternate, sun-dim 15s ease-in-out infinite;
+    }
+    
+    @keyframes sun-dim {
+        0%, 100% { filter: brightness(1); }
+        40%, 60% { filter: brightness(0.6); }
+    }
+    
     /* Asteroid */
     #asteroid {
         position: absolute;
@@ -410,6 +495,11 @@
 </div>
 <div id="crosshair"></div>
 <div id="red-sun"></div>
+<div id="cloud">
+<div class="puff1"></div>
+<div class="puff2"></div>
+<div class="puff3"></div>
+</div>
 <div id="asteroid"></div>
 </div>
 </div>
