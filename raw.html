@@ -210,9 +210,9 @@
 <body>
 <div id="game-container">
 <div id="ui">
-<div id="test-banner">✨ TEST MODE ACTIVE ✨</div>
+<div id="test-banner">✨ Welcome Mathilde! ✨</div>
 <div id="info">
-<div>🎮 Mini Minecraft - Click Edition</div>
+<div>🎮 Mathilde's Minecraft World 🏰</div>
 <div id="mode-display">Mode: BUILD</div>
 <div id="coords">Pos: 0, 0, 0</div>
 </div>
@@ -364,6 +364,9 @@ function generateTerrain() {
     // Add a tree
     createTree(5, 4, 5);
     createTree(12, 3, 10);
+    
+    // Mathilde's special flower garden 🌸
+    createFlowerPatch(8, 3, 3);
 }
 
 function createTree(x, baseY, z) {
@@ -535,6 +538,24 @@ function animate() {
     playerIndicator.rotation.y += 0.02;
     
     renderer.render(scene, camera);
+}
+
+function createFlowerPatch(x, baseY, z) {
+    // Create a cute flower patch for Mathilde
+    const flowerColors = [0xff69b4, 0xff1493, 0xda70d6, 0xee82ee, 0xffb6c1];
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dz = -1; dz <= 1; dz++) {
+            if (Math.random() > 0.3) {
+                const color = flowerColors[Math.floor(Math.random() * flowerColors.length)];
+                const geometry = new THREE.ConeGeometry(0.15, 0.3, 6);
+                const material = new THREE.MeshLambertMaterial({ color: color });
+                const flower = new THREE.Mesh(geometry, material);
+                flower.position.set(x + dx + Math.random() * 0.5, baseY + 0.65, z + dz + Math.random() * 0.5);
+                flower.rotation.x = Math.PI;
+                scene.add(flower);
+            }
+        }
+    }
 }
 
 // Start the game
