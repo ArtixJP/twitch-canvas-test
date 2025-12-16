@@ -5,901 +5,330 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Minecraft in Browser</title>
+<title>CHAOS ZONE 🎪</title>
 <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            overflow: hidden;
-            background: linear-gradient(180deg, 
-                #1a0533 0%, 
-                #4a1259 20%, 
-                #ff6b6b 45%, 
-                #feca57 60%, 
-                #48dbfb 80%, 
-                #1dd1a1 100%);
-            background-size: 100% 400%;
-            animation: gradientShift 20s ease infinite;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 0%; }
-            50% { background-position: 0% 100%; }
-        }
-        #crosshair {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 20px;
-            height: 20px;
-            pointer-events: none;
-            z-index: 100;
-        }
-        #crosshair::before, #crosshair::after {
-            content: '';
-            position: absolute;
-            background: white;
-            mix-blend-mode: difference;
-        }
-        #crosshair::before {
-            width: 2px;
-            height: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        #crosshair::after {
-            width: 100%;
-            height: 2px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        #ui {
-            position: fixed;
-            top: 50%;
-            left: 20px;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 100;
-        }
-        .block-slot {
-            width: 50px;
-            height: 50px;
-            border: 3px solid #555;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-            cursor: pointer;
-        }
-        .block-slot.selected {
-            border-color: white;
-            box-shadow: 0 0 10px white;
-        }
-        #julius-badge {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, #ffd700, #ff8c00);
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-family: 'Courier New', monospace;
-            color: #000;
-            font-size: 14px;
-            font-weight: bold;
-            z-index: 100;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
-            animation: juliusGlow 2s ease-in-out infinite;
-        }
-        @keyframes juliusGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 1); }
-        }
-        #instructions {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.7);
-            padding: 15px;
-            border-radius: 10px;
-            font-family: 'Courier New', monospace;
-            color: white;
-            font-size: 14px;
-            z-index: 100;
-        }
-        #fly-indicator {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-family: 'Courier New', monospace;
-            color: #5c5;
-            font-size: 16px;
-            z-index: 100;
-            display: none;
-        }
-        #start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 200;
-            cursor: pointer;
-        }
-        #start-screen h1 {
-            font-family: 'Courier New', monospace;
-            font-size: 4rem;
-            color: #5c5;
-            text-shadow: 4px 4px 0 #333;
-            margin-bottom: 20px;
-        }
-        #start-screen p {
-            color: white;
-            font-size: 1.5rem;
-            animation: pulse 2s infinite;
-        }
-        @keyframes testPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-    </style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff, #06ffa5, #ffbe0b);
+    background-size: 400% 400%;
+    animation: crazyBg 3s ease infinite, shake 0.1s infinite;
+    overflow: hidden;
+    font-family: 'Comic Sans MS', cursive;
+}
+
+@keyframes crazyBg {
+    0% { background-position: 0% 50%; filter: hue-rotate(0deg); }
+    50% { background-position: 100% 50%; filter: hue-rotate(180deg); }
+    100% { background-position: 0% 50%; filter: hue-rotate(360deg); }
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    25% { transform: translateX(-2px) rotate(-0.5deg); }
+    75% { transform: translateX(2px) rotate(0.5deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-30px) rotate(10deg); }
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.3) translateY(-20px); }
+}
+
+@keyframes glitch {
+    0% { transform: translate(0); filter: hue-rotate(0deg); }
+    20% { transform: translate(-5px, 5px); filter: hue-rotate(90deg); }
+    40% { transform: translate(5px, -5px); filter: hue-rotate(180deg); }
+    60% { transform: translate(-5px, -5px); filter: hue-rotate(270deg); }
+    80% { transform: translate(5px, 5px); filter: hue-rotate(360deg); }
+    100% { transform: translate(0); }
+}
+
+@keyframes rainbow {
+    0% { color: red; text-shadow: 0 0 20px red; }
+    16% { color: orange; text-shadow: 0 0 20px orange; }
+    33% { color: yellow; text-shadow: 0 0 20px yellow; }
+    50% { color: lime; text-shadow: 0 0 20px lime; }
+    66% { color: cyan; text-shadow: 0 0 20px cyan; }
+    83% { color: magenta; text-shadow: 0 0 20px magenta; }
+    100% { color: red; text-shadow: 0 0 20px red; }
+}
+
+.chaos-title {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 5rem;
+    animation: glitch 0.3s infinite, rainbow 1s infinite;
+    z-index: 100;
+    text-align: center;
+    cursor: pointer;
+}
+
+.floating-thing {
+    position: fixed;
+    font-size: 3rem;
+    animation: float 2s ease-in-out infinite;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.floating-thing:hover {
+    animation: spin 0.5s linear infinite;
+}
+
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.1;
+    background: url('data:image/svg+xml,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" stitchTiles="stitch"/></filter><rect width="100%" height="100%" filter="url(%23noise)"/></svg>');
+    animation: noiseMove 0.1s steps(10) infinite;
+}
+
+@keyframes noiseMove {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(10px, 10px); }
+}
+
+.random-box {
+    position: fixed;
+    padding: 20px;
+    border-radius: 20px;
+    font-size: 1.5rem;
+    animation: bounce 1s ease infinite;
+    cursor: pointer;
+    box-shadow: 0 0 30px currentColor;
+}
+
+#chaos-counter {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    background: rgba(0,0,0,0.8);
+    color: lime;
+    padding: 15px 25px;
+    border-radius: 10px;
+    font-size: 1.2rem;
+    z-index: 200;
+    border: 3px solid lime;
+    animation: glitch 2s infinite;
+}
+
+.betise {
+    position: fixed;
+    font-size: 2rem;
+    animation: spin 3s linear infinite;
+    pointer-events: none;
+}
+
+canvas#noise-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0.3;
+}
+
+.explosion {
+    position: fixed;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, yellow, orange, red, transparent);
+    animation: explode 0.5s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes explode {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(5); opacity: 0; }
+}
+</style>
 </head>
 <body>
-<div id="start-screen">
-<h1>⛏️ MINECRAFT JS</h1>
-<div style="background: #00ff00; color: black; padding: 5px 15px; border-radius: 5px; font-size: 0.8rem; margin-bottom: 10px; animation: testPulse 0.5s infinite;">✅ TEST MODE ACTIVE</div>
-<p style="color: #66aaff; font-size: 1.2rem; margin-bottom: 10px;">🍌 Mario's Blue Banana Edition 🍌</p>
-<p style="color: #ffd700; font-size: 1rem; margin-bottom: 10px; text-shadow: 0 0 10px #ffd700;">👑 Sponsored by JULIUS 👑</p>
-<p>Click to Play</p>
-</div>
-<div id="crosshair"></div>
-<div id="fly-indicator">FLYING</div>
-<div id="instructions">
-        WASD - Move<br/>
-        SPACE - Jump/Fly Up<br/>
-        SHIFT - Descend<br/>
-        F - Toggle Fly<br/>
-        P - New Block<br/>
-        Mouse - Look<br/>
-        Left Click - Break<br/>
-        Right Click / M - Place Block<br/>
-        1-9 - Select Block
-    </div>
-<div id="julius-badge">👑 JULIUS VIP DONATOR 👑</div>
-<div id="test-badge" onclick="alert('🎮 Test successful! Everything is working perfectly! 🚀')" style="position:fixed;top:20px;left:20px;background:linear-gradient(135deg,#00ff00,#00cc00);padding:10px 20px;border-radius:20px;font-family:'Courier New',monospace;color:#000;font-size:14px;font-weight:bold;z-index:100;box-shadow:0 0 20px rgba(0,255,0,0.6);cursor:pointer;">🧪 TEST PASSED - CLICK ME!</div>
-<div id="ui">
-<div class="block-slot selected" data-block="grass">🟩</div>
-<div class="block-slot" data-block="dirt">🟫</div>
-<div class="block-slot" data-block="stone">⬜</div>
-<div class="block-slot" data-block="wood">🪵</div>
-<div class="block-slot" data-block="leaves">🌿</div>
-<div class="block-slot" data-block="julius_crown" style="background: linear-gradient(135deg, #ffd700, #ffaa00);">👑</div>
-<div class="block-slot" data-block="bun_top" style="background: #d4a056;">🍔</div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/simplex-noise@3.0.1/dist/simplex-noise.min.js"></script>
+<canvas id="noise-canvas"></canvas>
+<div class="noise-overlay"></div>
+<h1 class="chaos-title" onclick="addMoreChaos()">🎪 CHAOS ZONE 🎪<br/><span style="font-size: 1rem;">Click for MORE chaos!</span></h1>
+<div id="chaos-counter">CHAOS LEVEL: <span id="level">1</span> 🔥</div>
+<div class="floating-thing" onclick="this.textContent='💀'" style="top: 10%; left: 10%;">🍕</div>
+<div class="floating-thing" onclick="this.textContent='🤯'" style="top: 20%; right: 15%; animation-delay: 0.3s;">🦆</div>
+<div class="floating-thing" onclick="this.textContent='🎺'" style="top: 60%; left: 5%; animation-delay: 0.6s;">🌮</div>
+<div class="floating-thing" onclick="this.textContent='👻'" style="top: 70%; right: 10%; animation-delay: 0.9s;">🍌</div>
+<div class="floating-thing" onclick="this.textContent='🤖'" style="top: 30%; left: 80%; animation-delay: 1.2s;">🐸</div>
+<div class="floating-thing" onclick="this.textContent='💩'" style="top: 80%; left: 50%; animation-delay: 1.5s;">🎸</div>
+<div class="random-box" onclick="alert('WHY DID YOU CLICK ME?!');" style="top: 15%; left: 60%; background: hotpink; color: white;">DON'T CLICK!</div>
+<div class="random-box" onclick="document.body.style.transform='rotate(180deg)'" style="bottom: 20%; left: 20%; background: cyan; color: black; animation-delay: 0.5s;">FLIP THE WORLD</div>
+<div class="random-box" onclick="spawnRandomEmojis(50)" style="bottom: 30%; right: 15%; background: lime; color: purple; animation-delay: 1s;">EMOJI RAIN</div>
 <script>
-        // Game state
-        let scene, camera, renderer;
-        let blocks = new Map();
-        let selectedBlock = 'grass';
-        let velocity = new THREE.Vector3();
-        let onGround = false;
-        let isFlying = false;
-        let customBlockCount = 0;
-        const WORLD_SIZE = 32;
-        const BLOCK_SIZE = 1;
-        
-        // Controls
-        const keys = {};
-        let isLocked = false;
-        
-        // Block colors
-        const blockColors = {
-            grass: 0x4a7c23,
-            dirt: 0x8b5a2b,
-            stone: 0x808080,
-            wood: 0x8b4513,
-            leaves: 0x228b22
-        };
-        
-        // Simple noise function
-        function noise2D(x, z) {
-            return Math.sin(x * 0.1) * Math.cos(z * 0.1) * 0.5 + 
-                   Math.sin(x * 0.05 + z * 0.05) * 2 +
-                   Math.sin(x * 0.02) * Math.cos(z * 0.03) * 4;
-        }
-        
-        function init() {
-            // Scene
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x4a1259);
-            scene.fog = new THREE.Fog(0x4a1259, 20, 80);
-            
-            // Camera
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(WORLD_SIZE/2, 20, WORLD_SIZE/2);
-            
-            // Renderer
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            document.body.appendChild(renderer.domElement);
-            
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambientLight);
-            
-            const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
-            sunLight.position.set(50, 100, 50);
-            sunLight.castShadow = true;
-            scene.add(sunLight);
-            
-            // Generate terrain
-            generateTerrain();
-            
-            // Event listeners
-            document.addEventListener('keydown', (e) => keys[e.code] = true);
-            document.addEventListener('keyup', (e) => keys[e.code] = false);
-            document.addEventListener('mousemove', onMouseMove);
-            document.addEventListener('click', onClick);
-            document.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                if (isLocked) placeBlock();
-            });
-            
-            // Block selection
-            document.querySelectorAll('.block-slot').forEach((slot, i) => {
-                slot.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll('.block-slot').forEach(s => s.classList.remove('selected'));
-                    slot.classList.add('selected');
-                    selectedBlock = slot.dataset.block;
-                });
-            });
-            
-            // Number keys for block selection
-            document.addEventListener('keydown', (e) => {
-                if (e.key >= '1' && e.key <= '9') {
-                    const slots = document.querySelectorAll('.block-slot');
-                    const index = parseInt(e.key) - 1;
-                    if (index < slots.length) {
-                        slots.forEach(s => s.classList.remove('selected'));
-                        slots[index].classList.add('selected');
-                        selectedBlock = slots[index].dataset.block;
-                    }
-                }
-                // Place block with M key
-                if (e.code === 'KeyM' && isLocked) {
-                    placeBlock();
-                }
-                // Toggle fly mode
-                if (e.code === 'KeyF' && isLocked) {
-                    isFlying = !isFlying;
-                    velocity.y = 0;
-                    document.getElementById('fly-indicator').style.display = isFlying ? 'block' : 'none';
-                }
-                // Create new block type
-                if (e.code === 'KeyP' && isLocked) {
-                    createNewBlockType();
-                }
-            });
-            
-            function createNewBlockType() {
-                customBlockCount++;
-                const hue = (customBlockCount * 47) % 360;
-                const color = `hsl(${hue}, 70%, 50%)`;
-                const blockName = `custom${customBlockCount}`;
-                const hexColor = hslToHex(hue, 70, 50);
-                blockColors[blockName] = hexColor;
-                
-                const ui = document.getElementById('ui');
-                const slot = document.createElement('div');
-                slot.className = 'block-slot';
-                slot.dataset.block = blockName;
-                slot.innerHTML = '🔲';
-                slot.style.backgroundColor = color;
-                slot.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    document.querySelectorAll('.block-slot').forEach(s => s.classList.remove('selected'));
-                    slot.classList.add('selected');
-                    selectedBlock = slot.dataset.block;
-                });
-                ui.appendChild(slot);
-                
-                // Select new block
-                document.querySelectorAll('.block-slot').forEach(s => s.classList.remove('selected'));
-                slot.classList.add('selected');
-                selectedBlock = blockName;
-            }
-            
-            function hslToHex(h, s, l) {
-                s /= 100;
-                l /= 100;
-                const a = s * Math.min(l, 1 - l);
-                const f = n => {
-                    const k = (n + h / 30) % 12;
-                    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
-                    return Math.round(255 * color).toString(16).padStart(2, '0');
-                };
-                return parseInt(`${f(0)}${f(8)}${f(4)}`, 16);
-            }
-            
-            // Start screen
-            document.getElementById('start-screen').addEventListener('click', () => {
-                document.getElementById('start-screen').style.display = 'none';
-                renderer.domElement.requestPointerLock();
-            });
-            
-            // Auto-start the game after 1 second
-            setTimeout(() => {
-                document.getElementById('start-screen').style.display = 'none';
-                isLocked = true;
-                startAIPlayer();
-            }, 1000);
-            
-            document.addEventListener('pointerlockchange', () => {
-                isLocked = document.pointerLockElement === renderer.domElement;
-            });
-            
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-            
-            animate();
-        }
-        
-        function generateTerrain() {
-            for (let x = 0; x < WORLD_SIZE; x++) {
-                for (let z = 0; z < WORLD_SIZE; z++) {
-                    const height = Math.floor(noise2D(x, z) + 8);
-                    
-                    for (let y = 0; y <= height; y++) {
-                        let type = 'stone';
-                        if (y === height) type = 'grass';
-                        else if (y > height - 3) type = 'dirt';
-                        
-                        createBlock(x, y, z, type);
-                    }
-                    
-                    // Random trees
-                    if (Math.random() < 0.02 && height > 5) {
-                        createTree(x, height + 1, z);
-                    }
-                }
-            }
-        }
-        
-        function createTree(x, y, z) {
-            // Trunk
-            for (let i = 0; i < 4; i++) {
-                createBlock(x, y + i, z, 'wood');
-            }
-            // Leaves
-            for (let dx = -2; dx <= 2; dx++) {
-                for (let dz = -2; dz <= 2; dz++) {
-                    for (let dy = 3; dy <= 5; dy++) {
-                        if (Math.abs(dx) + Math.abs(dz) + Math.abs(dy - 4) < 4) {
-                            if (dx !== 0 || dz !== 0 || dy > 3) {
-                                createBlock(x + dx, y + dy, z + dz, 'leaves');
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        
-        function createBlock(x, y, z, type) {
-            const key = `${x},${y},${z}`;
-            if (blocks.has(key)) return;
-            
-            const geometry = new THREE.BoxGeometry(BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-            const material = new THREE.MeshLambertMaterial({ color: blockColors[type] });
-            const mesh = new THREE.Mesh(geometry, material);
-            mesh.position.set(x, y, z);
-            mesh.castShadow = true;
-            mesh.receiveShadow = true;
-            mesh.userData = { type, key };
-            scene.add(mesh);
-            blocks.set(key, mesh);
-        }
-        
-        function removeBlock(key) {
-            const mesh = blocks.get(key);
-            if (mesh) {
-                scene.remove(mesh);
-                blocks.delete(key);
-            }
-        }
-        
-        function onMouseMove(e) {
-            if (!isLocked) return;
-            
-            camera.rotation.y -= e.movementX * 0.002;
-            camera.rotation.x -= e.movementY * 0.002;
-            camera.rotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, camera.rotation.x));
-        }
-        
-        function raycast() {
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-            raycaster.far = 6;
-            
-            const meshes = Array.from(blocks.values());
-            const intersects = raycaster.intersectObjects(meshes);
-            
-            return intersects.length > 0 ? intersects[0] : null;
-        }
-        
-        function onClick(e) {
-            if (!isLocked) {
-                renderer.domElement.requestPointerLock();
-                return;
-            }
-            
-            const hit = raycast();
-            if (hit) {
-                removeBlock(hit.object.userData.key);
-            }
-        }
-        
-        function placeBlock() {
-            if (!isLocked) return;
-            
-            const hit = raycast();
-            if (hit) {
-                const pos = hit.object.position.clone();
-                pos.add(hit.face.normal);
-                createBlock(Math.round(pos.x), Math.round(pos.y), Math.round(pos.z), selectedBlock);
-            }
-        }
-        
-        function checkCollision(pos) {
-            const key = `${Math.round(pos.x)},${Math.round(pos.y)},${Math.round(pos.z)}`;
-            return blocks.has(key);
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            if (isLocked) {
-                // Movement
-                const speed = 0.15;
-                const direction = new THREE.Vector3();
-                
-                if (keys['KeyW']) direction.z -= 1;
-                if (keys['KeyS']) direction.z += 1;
-                if (keys['KeyA']) direction.x -= 1;
-                if (keys['KeyD']) direction.x += 1;
-                
-                direction.normalize();
-                direction.applyAxisAngle(new THREE.Vector3(0, 1, 0), camera.rotation.y);
-                
-                // Only move if there's actual input to prevent shaking
-                if (direction.length() > 0.01) {
-                    camera.position.x += direction.x * speed;
-                    camera.position.z += direction.z * speed;
-                }
-                
-                if (isFlying) {
-                    // Flying mode
-                    velocity.y *= 0.9; // Smooth deceleration
-                    if (keys['Space']) {
-                        velocity.y = 0.2;
-                    } else if (keys['ShiftLeft']) {
-                        velocity.y = -0.2;
-                    } else if (Math.abs(velocity.y) < 0.01) {
-                        velocity.y = 0;
-                    }
-                    camera.position.y += velocity.y;
-                } else {
-                    // Normal gravity mode
-                    velocity.y -= 0.02;
-                    
-                    if (keys['Space'] && onGround) {
-                        velocity.y = 0.3;
-                        onGround = false;
-                    }
-                    
-                    if (keys['ShiftLeft']) {
-                        velocity.y -= 0.05;
-                    }
-                    
-                    camera.position.y += velocity.y;
-                    
-                    // Ground check
-                    const feetPos = new THREE.Vector3(camera.position.x, camera.position.y - 1.8, camera.position.z);
-                    if (checkCollision(feetPos)) {
-                        camera.position.y = Math.round(feetPos.y) + 2.5;
-                        velocity.y = 0;
-                        onGround = true;
-                    }
-                }
-                
-                // Don't fall through world
-                if (camera.position.y < -10) {
-                    camera.position.y = 30;
-                    velocity.y = 0;
-                }
-            }
-            
-            renderer.render(scene, camera);
-        }
-        
-        init();
-        
-        // AI Player System
-        let aiActive = false;
-        let aiTask = null;
-        let aiTargetPos = null;
-        let buildQueue = [];
-        
-        function startAIPlayer() {
-            aiActive = true;
-            showAIMessage('AI PLAYER ACTIVATED! Building Mario...');
-            
-            // Position camera for building
-            camera.position.set(WORLD_SIZE/2, 15, WORLD_SIZE/2 + 10);
-            camera.rotation.set(-0.3, 0, 0);
-            
-            setTimeout(() => {
-                buildMario();
-            }, 2000);
-        }
-        
-        function showAIMessage(msg) {
-            let msgDiv = document.getElementById('ai-message');
-            if (!msgDiv) {
-                msgDiv = document.createElement('div');
-                msgDiv.id = 'ai-message';
-                msgDiv.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.8);color:#5f5;padding:15px 30px;border-radius:10px;font-family:monospace;font-size:18px;z-index:300;animation:fadeIn 0.5s;';
-                document.body.appendChild(msgDiv);
-            }
-            msgDiv.textContent = '🤖 ' + msg;
-            msgDiv.style.display = 'block';
-        }
-        
-        function buildMario() {
-            // Mario pixel art (16x16 simplified)
-            const mario = [
-                '...RRRRR...',
-                '..RRRRRRRRR',
-                '..BBBSSBS..',
-                '.BSBSSSBS..',
-                '.BSBBSSSBB.',
-                '.BBSSSSSBBB',
-                '...SSSSSS..',
-                '..RRBRRB...',
-                '.RRRBRRRB..',
-                'RRRRBRRRRB.',
-                'SSRBYYBRS..',
-                'SSSYYYYSSS.',
-                'SSYYYYYYY..',
-                '.YYYY.YYYY.',
-                '.BBB...BBB.',
-                'BBBB...BBBB'
-            ];
-            
-            const colors = {
-                'R': 0xff0000,  // Red (hat/shirt)
-                'B': 0x8b4513,  // Brown (shoes/hair)
-                'S': 0xffcc99,  // Skin
-                'Y': 0x0000ff,  // Blue (overalls)
-                '.': null       // Empty
-            };
-            
-            // Add colors to blockColors
-            blockColors['red'] = 0xff0000;
-            blockColors['brown'] = 0x8b4513;
-            blockColors['skin'] = 0xffcc99;
-            blockColors['blue'] = 0x0000ff;
-            blockColors['banana_blue'] = 0x0066ff;
-            blockColors['banana_yellow'] = 0x1155cc;
-            blockColors['julius_crown'] = 0xffd700;
-            blockColors['bun_top'] = 0xd4a056;
-            blockColors['bun_bottom'] = 0xc49346;
-            blockColors['patty'] = 0x5c3317;
-            blockColors['cheese'] = 0xffc107;
-            blockColors['lettuce'] = 0x4caf50;
-            blockColors['tomato'] = 0xe53935;
-            blockColors['sesame'] = 0xfff8e1;
-            
-            const colorNames = {
-                'R': 'red',
-                'B': 'brown', 
-                'S': 'skin',
-                'Y': 'blue'
-            };
-            
-            const startX = Math.floor(WORLD_SIZE/2) - 5;
-            const startY = 12;
-            const startZ = Math.floor(WORLD_SIZE/2);
-            
-            let blockIndex = 0;
-            const totalBlocks = [];
-            
-            // Build from bottom to top
-            for (let row = mario.length - 1; row >= 0; row--) {
-                for (let col = 0; col < mario[row].length; col++) {
-                    const char = mario[row][col];
-                    if (char !== '.') {
-                        totalBlocks.push({
-                            x: startX + col,
-                            y: startY + (mario.length - 1 - row),
-                            z: startZ,
-                            type: colorNames[char]
-                        });
-                    }
-                }
-            }
-            
-            showAIMessage('Building Mario: 0/' + totalBlocks.length + ' blocks');
-            
-            // Place blocks with animation
-            function placeNextBlock() {
-                if (blockIndex < totalBlocks.length) {
-                    const block = totalBlocks[blockIndex];
-                    createBlock(block.x, block.y, block.z, block.type);
-                    
-                    // Move camera to watch
-                    const targetY = block.y + 5;
-                    camera.position.y += (targetY - camera.position.y) * 0.1;
-                    
-                    blockIndex++;
-                    showAIMessage('Building Mario: ' + blockIndex + '/' + totalBlocks.length + ' blocks');
-                    
-                    setTimeout(placeNextBlock, 50);
-                } else {
-                    showAIMessage('Mario complete! Now doing fun stuff...');
-                    setTimeout(doRandomFunStuff, 2000);
-                }
-            }
-            
-            placeNextBlock();
-            
-            // Build blue banana after Mario
-            setTimeout(() => {
-                buildBlueBanana(startX + 12, startY + 5, startZ);
-            }, totalBlocks.length * 50 + 500);
-            
-            // Build hamburger after banana
-            setTimeout(() => {
-                buildHamburger(startX - 8, startY + 2, startZ);
-            }, totalBlocks.length * 50 + 5000);
-        }
-        
-        function buildBlueBanana(bx, by, bz) {
-            showAIMessage('Mario is eating a blue banana! 🍌💙');
-            
-            // Blue banana pixel art (curved shape)
-            const bananaBlocks = [
-                {dx: 0, dy: 4, dz: 0},
-                {dx: 0, dy: 3, dz: 0},
-                {dx: 1, dy: 2, dz: 0},
-                {dx: 1, dy: 1, dz: 0},
-                {dx: 2, dy: 0, dz: 0},
-                {dx: 2, dy: -1, dz: 0},
-                // Banana tip (darker blue)
-                {dx: 0, dy: 5, dz: 0, type: 'banana_yellow'},
-                {dx: 2, dy: -2, dz: 0, type: 'banana_yellow'}
-            ];
-            
-            let i = 0;
-            bananaBlocks.forEach((b, idx) => {
-                setTimeout(() => {
-                    createBlock(bx + b.dx, by + b.dy, bz, b.type || 'banana_blue');
-                }, idx * 100);
-            });
-            
-            // Add eating animation - make banana disappear piece by piece
-            setTimeout(() => {
-                showAIMessage('NOM NOM NOM! 🍌😋');
-                bananaBlocks.reverse().forEach((b, idx) => {
-                    setTimeout(() => {
-                        const key = `${bx + b.dx},${by + b.dy},${bz}`;
-                        removeBlock(key);
-                    }, idx * 300);
-                });
-                
-                setTimeout(() => {
-                    showAIMessage('Delicious blue banana! Mario feels POWERED UP! 💪');
-                }, bananaBlocks.length * 300 + 500);
-            }, bananaBlocks.length * 100 + 2000);
-        }
-        
-        function doRandomFunStuff() {
-            const activities = [
-                () => {
-                    showAIMessage('Flying around to admire the creation!');
-                    isFlying = true;
-                    document.getElementById('fly-indicator').style.display = 'block';
-                    flyAround();
-                },
-                () => {
-                    showAIMessage('Building a rainbow!');
-                    buildRainbow();
-                },
-                () => {
-                    showAIMessage('Creating fireworks effect!');
-                    createFireworks();
-                }
-            ];
-            
-            let actIndex = 0;
-            function nextActivity() {
-                if (actIndex < activities.length) {
-                    activities[actIndex]();
-                    actIndex++;
-                    setTimeout(nextActivity, 8000);
-                } else {
-                    actIndex = 0;
-                    setTimeout(nextActivity, 8000);
-                }
-            }
-            nextActivity();
-        }
-        
-        function flyAround() {
-            let angle = 0;
-            const centerX = WORLD_SIZE/2;
-            const centerZ = WORLD_SIZE/2;
-            const radius = 20;
-            
-            function flyStep() {
-                if (!isFlying) return;
-                angle += 0.02;
-                camera.position.x = centerX + Math.cos(angle) * radius;
-                camera.position.z = centerZ + Math.sin(angle) * radius;
-                camera.position.y = 20 + Math.sin(angle * 2) * 5;
-                camera.lookAt(centerX, 15, centerZ);
-                
-                if (angle < Math.PI * 4) {
-                    requestAnimationFrame(flyStep);
-                }
-            }
-            flyStep();
-        }
-        
-        function buildRainbow() {
-            const rainbowColors = [
-                0xff0000, 0xff7f00, 0xffff00, 0x00ff00, 0x0000ff, 0x4b0082, 0x9400d3
-            ];
-            rainbowColors.forEach((color, i) => {
-                blockColors['rainbow' + i] = color;
-            });
-            
-            const startX = 5;
-            const startZ = WORLD_SIZE/2 + 10;
-            
-            let blockIndex = 0;
-            for (let i = 0; i < 7; i++) {
-                const radius = 8 + i;
-                for (let angle = 0; angle <= Math.PI; angle += 0.2) {
-                    setTimeout(() => {
-                        const x = startX + Math.cos(angle) * radius;
-                        const y = 5 + Math.sin(angle) * radius;
-                        createBlock(Math.round(x), Math.round(y), startZ, 'rainbow' + i);
-                    }, blockIndex * 30);
-                    blockIndex++;
-                }
-            }
-        }
-        
-        function buildHamburger(hx, hy, hz) {
-            showAIMessage('Building a DELICIOUS HAMBURGER! 🍔');
-            
-            const hamburgerLayers = [
-                // Bottom bun (layer 0)
-                {blocks: [{dx:1,dz:0},{dx:2,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:1,dz:2},{dx:2,dz:2}], type: 'bun_bottom', y: 0},
-                // Patty (layer 1)
-                {blocks: [{dx:0,dz:0},{dx:1,dz:0},{dx:2,dz:0},{dx:3,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:0,dz:2},{dx:1,dz:2},{dx:2,dz:2},{dx:3,dz:2}], type: 'patty', y: 1},
-                // Cheese (layer 2)
-                {blocks: [{dx:0,dz:0},{dx:1,dz:0},{dx:2,dz:0},{dx:3,dz:0},{dx:-1,dz:1},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:4,dz:1},{dx:0,dz:2},{dx:1,dz:2},{dx:2,dz:2},{dx:3,dz:2}], type: 'cheese', y: 2},
-                // Lettuce (layer 3)
-                {blocks: [{dx:0,dz:0},{dx:1,dz:0},{dx:2,dz:0},{dx:3,dz:0},{dx:-1,dz:1},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:4,dz:1},{dx:0,dz:2},{dx:1,dz:2},{dx:2,dz:2},{dx:3,dz:2}], type: 'lettuce', y: 3},
-                // Tomato (layer 4)
-                {blocks: [{dx:1,dz:0},{dx:2,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:1,dz:2},{dx:2,dz:2}], type: 'tomato', y: 4},
-                // Top bun (layer 5)
-                {blocks: [{dx:1,dz:0},{dx:2,dz:0},{dx:0,dz:1},{dx:1,dz:1},{dx:2,dz:1},{dx:3,dz:1},{dx:1,dz:2},{dx:2,dz:2}], type: 'bun_top', y: 5},
-                // Top bun dome (layer 6)
-                {blocks: [{dx:1,dz:1},{dx:2,dz:1}], type: 'bun_top', y: 6},
-                // Sesame seeds
-                {blocks: [{dx:1,dz:0},{dx:2,dz:1},{dx:1,dz:2}], type: 'sesame', y: 6}
-            ];
-            
-            let blockIdx = 0;
-            hamburgerLayers.forEach((layer) => {
-                layer.blocks.forEach((b) => {
-                    setTimeout(() => {
-                        createBlock(hx + b.dx, hy + layer.y, hz + b.dz, layer.type);
-                    }, blockIdx * 60);
-                    blockIdx++;
-                });
-            });
-            
-            setTimeout(() => {
-                showAIMessage('🍔 HAMBURGER COMPLETE! Looks delicious! 😋');
-            }, blockIdx * 60 + 500);
-        }
-        
-        function buildJuliusTribute() {
-            showAIMessage('🎉 Special thanks to JULIUS! Building golden crown! 👑');
-            
-            const crownX = Math.floor(WORLD_SIZE/2) + 8;
-            const crownY = 20;
-            const crownZ = Math.floor(WORLD_SIZE/2) - 5;
-            
-            // Golden crown shape
-            const crownBlocks = [
-                // Base
-                {dx: 0, dy: 0, dz: 0}, {dx: 1, dy: 0, dz: 0}, {dx: 2, dy: 0, dz: 0}, {dx: 3, dy: 0, dz: 0}, {dx: 4, dy: 0, dz: 0},
-                // Middle
-                {dx: 0, dy: 1, dz: 0}, {dx: 4, dy: 1, dz: 0},
-                // Points
-                {dx: 0, dy: 2, dz: 0}, {dx: 2, dy: 2, dz: 0}, {dx: 4, dy: 2, dz: 0},
-                {dx: 0, dy: 3, dz: 0}, {dx: 2, dy: 3, dz: 0}, {dx: 4, dy: 3, dz: 0},
-            ];
-            
-            crownBlocks.forEach((b, idx) => {
-                setTimeout(() => {
-                    createBlock(crownX + b.dx, crownY + b.dy, crownZ, 'julius_crown');
-                }, idx * 80);
-            });
-            
-            setTimeout(() => {
-                showAIMessage('👑 JULIUS CROWN COMPLETE! Thank you for your support! 💛');
-            }, crownBlocks.length * 80 + 500);
-        }
-        
-        function createFireworks() {
-            for (let burst = 0; burst < 5; burst++) {
-                setTimeout(() => {
-                    const centerX = 10 + Math.random() * (WORLD_SIZE - 20);
-                    const centerY = 25 + Math.random() * 10;
-                    const centerZ = 10 + Math.random() * (WORLD_SIZE - 20);
-                    const color = Math.random() * 0xffffff;
-                    blockColors['firework' + burst] = color;
-                    
-                    for (let i = 0; i < 30; i++) {
-                        setTimeout(() => {
-                            const theta = Math.random() * Math.PI * 2;
-                            const phi = Math.random() * Math.PI;
-                            const r = 2 + Math.random() * 3;
-                            const x = centerX + r * Math.sin(phi) * Math.cos(theta);
-                            const y = centerY + r * Math.cos(phi);
-                            const z = centerZ + r * Math.sin(phi) * Math.sin(theta);
-                            createBlock(Math.round(x), Math.round(y), Math.round(z), 'firework' + burst);
-                            
-                            // Remove after delay
-                            setTimeout(() => {
-                                const key = `${Math.round(x)},${Math.round(y)},${Math.round(z)}`;
-                                removeBlock(key);
-                            }, 2000);
-                        }, i * 20);
-                    }
-                }, burst * 1500);
-            }
-        }
-    </script>
+let chaosLevel = 1;
+const emojis = ['🔥', '💥', '⭐', '🌈', '🎉', '🎊', '💫', '✨', '🌟', '💀', '👽', '🤡', '🎃', '🦄', '🐉', '🍕', '🌮', '🍔', '🍩', '🎸', '🎺', '🥁', '🎪', '🎭', '🎨'];
+
+// Noise canvas
+const canvas = document.getElementById('noise-canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function generateNoise() {
+    const imageData = ctx.createImageData(canvas.width, canvas.height);
+    const data = imageData.data;
+    
+    for (let i = 0; i < data.length; i += 4) {
+        const value = Math.random() * 255;
+        data[i] = value;
+        data[i + 1] = value * Math.random();
+        data[i + 2] = value * Math.random();
+        data[i + 3] = 50;
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
+}
+
+setInterval(generateNoise, 50);
+
+function addMoreChaos() {
+    chaosLevel++;
+    document.getElementById('level').textContent = chaosLevel;
+    
+    // Add random floating things
+    for (let i = 0; i < chaosLevel; i++) {
+        spawnBetise();
+    }
+    
+    // Speed up animations
+    document.body.style.animationDuration = Math.max(0.5, 3 - chaosLevel * 0.2) + 's';
+    
+    // Create explosion
+    createExplosion(window.innerWidth / 2, window.innerHeight / 2);
+    
+    // Play noise
+    playNoise();
+}
+
+function spawnBetise() {
+    const div = document.createElement('div');
+    div.className = 'betise';
+    div.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+    div.style.left = Math.random() * 100 + '%';
+    div.style.top = Math.random() * 100 + '%';
+    div.style.animationDuration = (1 + Math.random() * 3) + 's';
+    document.body.appendChild(div);
+    
+    setTimeout(() => div.remove(), 10000);
+}
+
+function spawnRandomEmojis(count) {
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            const emoji = document.createElement('div');
+            emoji.style.cssText = `
+                position: fixed;
+                top: -50px;
+                left: ${Math.random() * 100}%;
+                font-size: ${2 + Math.random() * 3}rem;
+                z-index: 500;
+                pointer-events: none;
+                animation: fall ${2 + Math.random() * 3}s linear forwards;
+            `;
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            document.body.appendChild(emoji);
+            setTimeout(() => emoji.remove(), 5000);
+        }, i * 50);
+    }
+}
+
+function createExplosion(x, y) {
+    const explosion = document.createElement('div');
+    explosion.className = 'explosion';
+    explosion.style.left = (x - 50) + 'px';
+    explosion.style.top = (y - 50) + 'px';
+    document.body.appendChild(explosion);
+    setTimeout(() => explosion.remove(), 500);
+}
+
+function playNoise() {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.type = 'sawtooth';
+    oscillator.frequency.setValueAtTime(100 + Math.random() * 500, audioCtx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(50 + Math.random() * 200, audioCtx.currentTime + 0.3);
+    
+    gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.3);
+}
+
+// Add falling animation
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes fall {
+        0% { transform: translateY(0) rotate(0deg); }
+        100% { transform: translateY(${window.innerHeight + 100}px) rotate(720deg); }
+    }
+`;
+document.head.appendChild(style);
+
+// Random cursor changes
+const cursors = ['crosshair', 'wait', 'help', 'move', 'grab', 'zoom-in', 'zoom-out'];
+setInterval(() => {
+    document.body.style.cursor = cursors[Math.floor(Math.random() * cursors.length)];
+}, 2000);
+
+// Random background flashes
+setInterval(() => {
+    if (Math.random() < 0.1) {
+        document.body.style.filter = 'invert(1)';
+        setTimeout(() => document.body.style.filter = '', 100);
+    }
+}, 1000);
+
+// Auto spawn betises
+setInterval(() => {
+    if (Math.random() < 0.3) spawnBetise();
+}, 500);
+
+// Click anywhere for explosions
+document.addEventListener('click', (e) => {
+    createExplosion(e.clientX, e.clientY);
+});
+
+// Resize handler
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+});
+
+console.log('%c🎪 WELCOME TO THE CHAOS ZONE 🎪', 'font-size: 30px; color: hotpink; text-shadow: 2px 2px lime;');
+</script>
 </body>
 </html>
