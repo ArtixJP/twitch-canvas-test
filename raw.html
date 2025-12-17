@@ -29,7 +29,7 @@
 </head>
 <body>
 <h1>🍄 Mario Minecraft Builder 🧱⛏️ 🎬</h1>
-<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.7);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;">🎬 3D Mario vs Bowser Battle!<br/>Look at X:-25, Z:-40 for the action!</div>
+<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.7);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;">🎬 Mario: A Love Story<br/>Part 1: Peach Captured!<br/>Part 2: Hero's Battle<br/>Part 3: Wedding Day 💒<br/>Look at X:-25, Z:-40</div>
 <canvas id="game" tabindex="0"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
 <div id="hotbar">
@@ -211,6 +211,17 @@
     marioGroup.position.set(-30, 2, -40);
     theaterGroup.add(marioGroup);
     
+    // Princess Peach character (blocky)
+    const peachGroup = new THREE.Group();
+    const peachBody = new THREE.Mesh(new THREE.BoxGeometry(0.8, 1.4, 0.5), new THREE.MeshLambertMaterial({color: 0xff69b4}));
+    const peachHead = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.7), new THREE.MeshLambertMaterial({color: 0xffddcc}));
+    const peachHair = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.9, 0.6), new THREE.MeshLambertMaterial({color: 0xffdd00}));
+    const peachCrown = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.3, 0.3), new THREE.MeshLambertMaterial({color: 0xffd700}));
+    peachHead.position.y = 1.1; peachHair.position.y = 1.2; peachHair.position.z = 0.1; peachCrown.position.y = 1.6;
+    peachGroup.add(peachBody, peachHead, peachHair, peachCrown);
+    peachGroup.position.set(-22, 2, -40);
+    theaterGroup.add(peachGroup);
+    
     // 3D Bowser character (blocky)
     const bowserGroup = new THREE.Group();
     const bowserBody = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 1.2), new THREE.MeshLambertMaterial({color: 0x228B22}));
@@ -243,49 +254,68 @@
     scene.add(theaterGroup);
     
     let movieFrame = 0;
-    let battlePhase = 0;
+    let storyPart = 1;
     function updateMovie() {
         movieFrame++;
         const t = movieFrame * 0.02;
+        const cycle = movieFrame % 600;
         
-        // Phase-based battle animation
-        if(movieFrame % 300 < 100) {
-            // Phase 1: Mario approaches
-            marioGroup.position.x = -30 + (movieFrame % 300) * 0.08;
-            marioGroup.position.y = 2 + Math.abs(Math.sin(t * 3)) * 1.5;
+        // PART 1: Bowser captures Peach (frames 0-200)
+        if(cycle < 200) {
+            storyPart = 1;
+            marioGroup.position.set(-35, 2, -40);
+            bowserGroup.position.x = -25 + Math.sin(t) * 2;
+            peachGroup.position.x = -22 + (cycle > 100 ? (cycle-100) * 0.03 : 0);
+            if(cycle > 150) peachGroup.position.x = bowserGroup.position.x + 1.5;
+            peachGroup.rotation.y = cycle > 100 ? Math.sin(t*8)*0.3 : 0;
             fireball.visible = false;
-        } else if(movieFrame % 300 < 180) {
-            // Phase 2: Mario throws fireball
-            const firePhase = (movieFrame % 300) - 100;
-            fireball.visible = true;
-            fireball.position.x = marioGroup.position.x + firePhase * 0.15;
-            fireball.position.y = 2.5 + Math.sin(firePhase * 0.1) * 0.5;
-            fireball.position.z = -40;
-            marioGroup.rotation.y = Math.sin(t) * 0.2;
-        } else {
-            // Phase 3: Bowser hit, retreats
+        }
+        // PART 2: Mario defeats Bowser (frames 200-450)
+        else if(cycle < 450) {
+            storyPart = 2;
+            const battleFrame = cycle - 200;
+            marioGroup.position.x = -35 + battleFrame * 0.06;
+            marioGroup.position.y = 2 + Math.abs(Math.sin(t * 4)) * 1.5;
+            if(battleFrame > 100 && battleFrame < 180) {
+                fireball.visible = true;
+                fireball.position.x = marioGroup.position.x + (battleFrame-100) * 0.2;
+                fireball.position.y = 2.5;
+            } else { fireball.visible = false; }
+            if(battleFrame > 180) {
+                bowserGroup.rotation.z = Math.sin(t*6)*0.5;
+                bowserGroup.position.y = 2 - (battleFrame-180)*0.02;
+            }
+            peachGroup.position.set(-18, 2, -42);
+        }
+        // PART 3: Wedding! (frames 450-600)
+        else {
+            storyPart = 3;
             fireball.visible = false;
-            bowserGroup.position.x = -20 + ((movieFrame % 300) - 180) * 0.05;
-            bowserGroup.rotation.z = Math.sin(t * 5) * 0.3;
-            bowserGroup.position.y = 2 + Math.sin(t * 2) * 0.5;
+            bowserGroup.position.set(-35, 0, -45);
+            marioGroup.position.set(-24, 2, -40);
+            peachGroup.position.set(-22, 2, -40);
+            marioGroup.rotation.y = 0.3;
+            peachGroup.rotation.y = -0.3;
+            marioGroup.position.y = 2 + Math.sin(t*2)*0.1;
+            peachGroup.position.y = 2 + Math.sin(t*2+1)*0.1;
         }
         
-        // Bowser idle animation
-        bowserGroup.rotation.y = Math.sin(t * 0.5) * 0.3 + Math.PI;
+        // Bowser idle animation (varies by part)
+        if(storyPart < 3) bowserGroup.rotation.y = Math.sin(t * 0.5) * 0.3 + Math.PI;
+        else bowserGroup.rotation.y = Math.PI;
         
         // Mario jump animation
         marioGroup.children.forEach((part, i) => {
             if(i === 3) part.rotation.x = Math.sin(t * 4) * 0.3;
         });
         
-        // Dynamic camera following the action
-        const camTarget = new THREE.Vector3(
-            (marioGroup.position.x + bowserGroup.position.x) / 2,
-            3,
-            -40
-        );
+        // Dynamic camera following the action based on story part
+        let camTarget;
+        if(storyPart === 1) camTarget = new THREE.Vector3(-23, 3, -40);
+        else if(storyPart === 2) camTarget = new THREE.Vector3((marioGroup.position.x + bowserGroup.position.x)/2, 3, -40);
+        else camTarget = new THREE.Vector3(-23, 3, -40);
         movieCamera.x += (camTarget.x + 8 - movieCamera.x) * 0.02;
-        movieCamera.y = 5 + Math.sin(t * 0.3) * 2;
+        movieCamera.y = 5 + Math.sin(t * 0.3) * (storyPart === 3 ? 0.5 : 2);
         movieCamera.lookAt.copy(camTarget);
     }
     
