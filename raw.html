@@ -229,6 +229,58 @@
             animation: twinkle 2s infinite alternate;
             text-shadow: 0 0 5px pink;
         }
+        .pizza-monster {
+            position: absolute;
+            font-size: 80px;
+            z-index: 50;
+            filter: drop-shadow(0 0 20px rgba(255,0,100,0.8));
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .pizza-monster:hover {
+            transform: scale(1.2);
+        }
+        .pizza-monster.eating {
+            animation: chomp 0.3s ease-in-out;
+        }
+        @keyframes chomp {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.3) rotate(-10deg); }
+            50% { transform: scale(0.9) rotate(5deg); }
+            75% { transform: scale(1.2) rotate(-5deg); }
+        }
+        .monster-trail {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0;
+            animation: trail-fade 1s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes trail-fade {
+            0% { opacity: 0.8; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.3) rotate(180deg); }
+        }
+        .eaten-counter {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.5rem;
+            color: #ff6b9d;
+            text-shadow: 0 0 10px rgba(255,107,157,0.8);
+            z-index: 100;
+        }
+        .bonjour-maman {
+            position: absolute;
+            font-size: 12px;
+            color: rgba(255,200,220,0.9);
+            animation: float-message 3s ease-in-out infinite;
+            text-shadow: 0 0 8px pink;
+        }
+        @keyframes float-message {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-5px) rotate(2deg); }
+        }
         @keyframes pulse-sun {
             0%, 100% { transform: scale(1); box-shadow: 0 0 60px #ffcc00, 0 0 120px #ff9900; }
             50% { transform: scale(1.05); box-shadow: 0 0 80px #ffcc00, 0 0 160px #ff9900; }
@@ -376,6 +428,9 @@
 <div class="floating-pizza" style="top: 55%; left: 30%; animation-delay: 3.5s;">🍕</div>
 <div class="floating-pizza" style="top: 30%; left: 55%; animation-delay: 4.5s;">🍕</div>
 <div class="mama-star" style="top: 5%; left: 92%;">coucou maman ♥</div>
+<div class="bonjour-maman" style="top: 8%; left: 88%;">bonjour maman! 💕</div>
+<div class="eaten-counter">🍕 Pizzas Eaten: <span id="pizzasEaten">0</span> 👹</div>
+<div class="pizza-monster" id="pizzaMonster">👹</div>
 <div class="orbit">
 <div class="planet" title="Planet Twitch">
 <div class="moon-orbit">
@@ -488,6 +543,81 @@
         requestAnimationFrame(updateChase);
     }
     updateChase();
+    
+    // PIZZA MONSTER SYSTEM
+    const monster = document.getElementById('pizzaMonster');
+    const pizzasEatenEl = document.getElementById('pizzasEaten');
+    let pizzasEaten = 0;
+    let monsterX = window.innerWidth * 0.3;
+    let monsterY = window.innerHeight * 0.5;
+    let targetPizza = null;
+    const monsterSpeed = 3;
+    
+    function findNearestPizza() {
+        const pizzas = document.querySelectorAll('.floating-pizza');
+        let nearest = null;
+        let minDist = Infinity;
+        
+        pizzas.forEach(pizza => {
+            if (pizza.style.opacity === '0') return;
+            const rect = pizza.getBoundingClientRect();
+            const dist = Math.sqrt((rect.left - monsterX) ** 2 + (rect.top - monsterY) ** 2);
+            if (dist < minDist) {
+                minDist = dist;
+                nearest = pizza;
+            }
+        });
+        return { pizza: nearest, distance: minDist };
+    }
+    
+    function updateMonster() {
+        const { pizza, distance } = findNearestPizza();
+        
+        if (pizza) {
+            const rect = pizza.getBoundingClientRect();
+            const dx = rect.left - monsterX;
+            const dy = rect.top - monsterY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            if (dist > 5) {
+                monsterX += (dx / dist) * monsterSpeed;
+                monsterY += (dy / dist) * monsterSpeed;
+                monster.style.transform = dx < 0 ? 'scaleX(-1)' : 'scaleX(1)';
+            }
+            
+            // EAT THE PIZZA!
+            if (dist < 50) {
+                monster.classList.add('eating');
+                setTimeout(() => monster.classList.remove('eating'), 300);
+                
+                // Create crumb trail
+                const crumb = document.createElement('div');
+                crumb.className = 'monster-trail';
+                crumb.textContent = '🍕';
+                crumb.style.left = rect.left + 'px';
+                crumb.style.top = rect.top + 'px';
+                document.querySelector('.solar-system').appendChild(crumb);
+                setTimeout(() => crumb.remove(), 1000);
+                
+                // Hide pizza temporarily
+                pizza.style.opacity = '0';
+                setTimeout(() => pizza.style.opacity = '1', 3000 + Math.random() * 2000);
+                
+                pizzasEaten++;
+                pizzasEatenEl.textContent = pizzasEaten;
+                
+                // Monster grows slightly with each pizza
+                const newSize = 80 + Math.min(pizzasEaten * 2, 40);
+                monster.style.fontSize = newSize + 'px';
+            }
+        }
+        
+        monster.style.left = monsterX + 'px';
+        monster.style.top = monsterY + 'px';
+        
+        requestAnimationFrame(updateMonster);
+    }
+    updateMonster();
     
     // Section Navigation
     const sections = ['space', 'animals', 'games'];
