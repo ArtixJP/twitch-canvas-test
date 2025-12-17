@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch RPG - French Keyboard Edition</title>
+<title>Pokemon Adventure - French Keyboard Edition</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
         body { 
@@ -32,19 +32,20 @@
 <body>
 <div id="game-container"></div>
 <div id="ui">
-<h2>🗡️ Hero</h2>
+<h2>🎮 Trainer Ash</h2>
 <div class="health-bar"><div class="health-fill" id="health" style="width: 100%"></div></div>
 <div class="stats">HP: <span id="hp-text">100</span>/100</div>
 <div class="xp-bar"><div class="xp-fill" id="xp" style="width: 0%"></div></div>
 <div class="stats">Level: <span id="level">1</span> | XP: <span id="xp-text">0</span>/100</div>
-<div class="stats">Enemies: <span id="enemies">0</span> | Score: <span id="score">0</span></div>
+<div class="stats">Wild Pokémon: <span id="enemies">0</span> | Caught: <span id="score">0</span></div>
+<div class="stats">🔴 Pokéballs: <span id="pokeballs">∞</span></div>
 </div>
 <div id="controls">
 <strong>🎮 Controls (AZERTY)</strong><br/>
         Z - Forward | S - Back<br/>
         Q - Left | D - Right<br/>
-        SPACE - Attack<br/>
-        E - Special Attack
+        SPACE - Throw Pokéball<br/>
+        E - Pikachu Thunderbolt!
     </div>
 <h1 style="position:fixed;bottom:60px;right:20px;font-size:1rem;opacity:0.5">Hello World</h1>
 <script>
@@ -75,18 +76,25 @@
     
     // Player
     const playerGeo = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 8);
-    const playerMat = new THREE.MeshStandardMaterial({color: 0x4488ff});
+    const playerMat = new THREE.MeshStandardMaterial({color: 0xff0000}); // Red cap trainer
     const player = new THREE.Mesh(playerGeo, playerMat);
     player.position.y = 1;
     player.castShadow = true;
     scene.add(player);
     
-    // Sword
-    const swordGeo = new THREE.BoxGeometry(0.1, 1.5, 0.1);
-    const swordMat = new THREE.MeshStandardMaterial({color: 0xcccccc, metalness: 0.8});
-    const sword = new THREE.Mesh(swordGeo, swordMat);
-    sword.position.set(0.7, 0.5, 0);
-    player.add(sword);
+    // Pikachu companion
+    const pikachuBody = new THREE.SphereGeometry(0.4, 8, 8);
+    const pikachuMat = new THREE.MeshStandardMaterial({color: 0xffdd00});
+    const pikachu = new THREE.Mesh(pikachuBody, pikachuMat);
+    pikachu.position.set(1.2, -0.3, 0);
+    player.add(pikachu);
+    // Pikachu ears
+    const earGeo = new THREE.ConeGeometry(0.15, 0.4, 4);
+    const ear1 = new THREE.Mesh(earGeo, pikachuMat);
+    const ear2 = new THREE.Mesh(earGeo, pikachuMat);
+    ear1.position.set(-0.2, 0.35, 0);
+    ear2.position.set(0.2, 0.35, 0);
+    pikachu.add(ear1); pikachu.add(ear2);
     
     let hp = 100, xp = 0, level = 1, score = 0;
     const enemies = [];
@@ -95,7 +103,8 @@
     
     function spawnEnemy() {
         const enemyGeo = new THREE.SphereGeometry(0.6, 8, 8);
-        const enemyMat = new THREE.MeshStandardMaterial({color: 0xff4444});
+        const pokemonColors = [0x9b59b6, 0x3498db, 0xe74c3c, 0x2ecc71, 0xf39c12];
+        const enemyMat = new THREE.MeshStandardMaterial({color: pokemonColors[Math.floor(Math.random()*pokemonColors.length)]});
         const enemy = new THREE.Mesh(enemyGeo, enemyMat);
         const angle = Math.random() * Math.PI * 2;
         const dist = 15 + Math.random() * 10;
@@ -125,12 +134,20 @@
                 e.material.emissive.setHex(0xffffff);
                 setTimeout(() => e.material.emissive.setHex(0), 100);
                 if(e.userData.hp <= 0) {
-                    scene.remove(e);
+                    // Pokeball catch animation
+                    e.scale.set(0.1, 0.1, 0.1);
+                    setTimeout(() => { scene.remove(e); }, 300);
                     enemies.splice(i, 1);
                     xp += 25;
-                    score += 100;
+                    score += 1; // Pokemon caught!
                     if(xp >= 100) { level++; xp = 0; hp = Math.min(100, hp+20); }
                     updateUI();
+                    // Flash "GOTCHA!" effect
+                    const gotcha = document.createElement('div');
+                    gotcha.textContent = '✨ GOTCHA! ✨';
+                    gotcha.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:#ffd700;text-shadow:0 0 20px #ff0;z-index:999;animation:fadeOut 1s forwards;';
+                    document.body.appendChild(gotcha);
+                    setTimeout(() => gotcha.remove(), 1000);
                 }
             }
         });
