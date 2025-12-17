@@ -1,25 +1,149 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code - Voxel World</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<style>
         body { 
             font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            overflow: hidden;
+            background: #87CEEB;
             color: white;
         }
+        #game-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; }
+        #ui-overlay { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; text-align: center; pointer-events: none; }
+        #crosshair { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 100; }
+        #instructions { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px; font-size: 14px; z-index: 100; }
         h1 { font-size: 3rem; text-align: center; }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div id="game-container"></div>
+<div id="ui-overlay"><h1>Voxel World</h1></div>
+<div id="crosshair">+</div>
+<div id="instructions">WASD: Move | Space: Jump | Click: Break | Right-Click: Place | Click to start</div>
+<script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.Fog(0x87CEEB, 20, 60);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.getElementById('game-container').appendChild(renderer.domElement);
+    
+    const blocks = new Map();
+    const blockSize = 1;
+    const textures = {
+        grass: new THREE.MeshLambertMaterial({color: 0x4a7c23}),
+        dirt: new THREE.MeshLambertMaterial({color: 0x8b4513}),
+        stone: new THREE.MeshLambertMaterial({color: 0x808080})
+    };
+    
+    function createBlock(x, y, z, type='grass') {
+        const geo = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+        const block = new THREE.Mesh(geo, textures[type]);
+        block.position.set(x, y, z);
+        block.castShadow = true;
+        block.receiveShadow = true;
+        scene.add(block);
+        blocks.set(`${x},${y},${z}`, block);
+        return block;
+    }
+    
+    for(let x = -15; x < 15; x++) {
+        for(let z = -15; z < 15; z++) {
+            const h = Math.floor(Math.sin(x*0.3)*Math.cos(z*0.3)*2 + 2);
+            for(let y = 0; y <= h; y++) {
+                createBlock(x, y, z, y === h ? 'grass' : y > h-2 ? 'dirt' : 'stone');
+            }
+        }
+    }
+    
+    const sun = new THREE.DirectionalLight(0xffffff, 1);
+    sun.position.set(10, 20, 10);
+    sun.castShadow = true;
+    scene.add(sun);
+    scene.add(new THREE.AmbientLight(0x404040));
+    
+    const player = {x: 0, y: 10, z: 5, vx: 0, vy: 0, vz: 0, yaw: 0, pitch: 0, grounded: false};
+    const keys = {};
+    
+    document.addEventListener('keydown', e => keys[e.code] = true);
+    document.addEventListener('keyup', e => keys[e.code] = false);
+    document.addEventListener('click', () => document.body.requestPointerLock());
+    document.addEventListener('mousemove', e => {
+        if(document.pointerLockElement) {
+            player.yaw -= e.movementX * 0.002;
+            player.pitch -= e.movementY * 0.002;
+            player.pitch = Math.max(-1.5, Math.min(1.5, player.pitch));
+        }
+    });
+    
+    const raycaster = new THREE.Raycaster();
+    document.addEventListener('mousedown', e => {
+        if(!document.pointerLockElement) return;
+        raycaster.setFromCamera({x:0,y:0}, camera);
+        const hits = raycaster.intersectObjects(scene.children);
+        if(hits.length > 0 && hits[0].distance < 5) {
+            if(e.button === 0) {
+                const p = hits[0].object.position;
+                blocks.delete(`${p.x},${p.y},${p.z}`);
+                scene.remove(hits[0].object);
+            } else if(e.button === 2) {
+                const n = hits[0].face.normal;
+                const p = hits[0].object.position;
+                createBlock(p.x+n.x, p.y+n.y, p.z+n.z, 'grass');
+            }
+        }
+    });
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    
+    function update() {
+        const speed = 0.1, friction = 0.85;
+        const dir = {x: Math.sin(player.yaw), z: Math.cos(player.yaw)};
+        if(keys['KeyW']) { player.vx += dir.x*speed; player.vz += dir.z*speed; }
+        if(keys['KeyS']) { player.vx -= dir.x*speed; player.vz -= dir.z*speed; }
+        if(keys['KeyA']) { player.vx += dir.z*speed; player.vz -= dir.x*speed; }
+        if(keys['KeyD']) { player.vx -= dir.z*speed; player.vz += dir.x*speed; }
+        if(keys['Space'] && player.grounded) player.vy = 0.2;
+        
+        player.vy -= 0.01;
+        player.vx *= friction; player.vz *= friction;
+        player.x += player.vx; player.y += player.vy; player.z += player.vz;
+        
+        player.grounded = false;
+        const feet = `${Math.round(player.x)},${Math.round(player.y-1.5)},${Math.round(player.z)}`;
+        if(blocks.has(feet) && player.vy < 0) {
+            player.y = Math.round(player.y-1.5) + 2.5;
+            player.vy = 0;
+            player.grounded = true;
+        }
+        if(player.y < -10) { player.x = 0; player.y = 10; player.z = 5; player.vy = 0; }
+        
+        camera.position.set(player.x, player.y, player.z);
+        camera.rotation.order = 'YXZ';
+        camera.rotation.y = player.yaw;
+        camera.rotation.x = player.pitch;
+    }
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        update();
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    </script>
 </body>
 </html>
