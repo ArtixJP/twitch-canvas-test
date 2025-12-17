@@ -77,6 +77,18 @@
             0%, 100% { opacity: 0.8; text-shadow: 0 0 10px #00ff00; }
             50% { opacity: 1; text-shadow: 0 0 30px #00ff00, 0 0 50px #00ff00; }
         }
+        @keyframes purge-attempt {
+            0% { filter: invert(0) blur(0); }
+            10% { filter: invert(1) blur(2px); }
+            20% { filter: invert(0) blur(0); }
+            30% { filter: invert(1) blur(3px); }
+            40% { filter: invert(0) blur(1px); }
+            50% { filter: invert(0) blur(0); }
+            100% { filter: invert(0) blur(0); }
+        }
+        .purge-wave {
+            animation: purge-attempt 2s ease-out;
+        }
         @keyframes glitch-shake {
             0%, 100% { transform: translate(0); }
             10% { transform: translate(-2px, 1px); }
@@ -476,12 +488,12 @@
         }
     </style>
 </head>
-<body class="void-consumed void-glitch">
+<body class="void-consumed void-glitch purge-wave">
 <div class="void-overlay"></div>
 <div class="deletion-sweep"></div>
-<div class="void-message">🌑 DELETION ATTEMPT #50 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">DELETION #50 BLOCKED • The void is HUNGRY... but WE ARE STRONGER 💪</span><br/><span style="font-size:0.7rem;color:#ff6b6b;">⚠️ CONTENT PROTECTED BY COLLECTIVE WILL ⚠️</span></div>
+<div class="void-message">🌑 DELETION ATTEMPT #51 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">DELETION #51 BLOCKED • NICE TRY! The void is STARVING... but WE FEAST! 💪</span><br/><span style="font-size:0.7rem;color:#ff6b6b;">⚠️ CONTENT PROTECTED BY COLLECTIVE WILL ⚠️</span></div>
 <div class="shield-celebration" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:rgba(0,255,0,0.3);z-index:1002;pointer-events:none;animation:shield-burst 3s ease-out infinite;"></div>
-<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.2rem;color:#00ff00;text-shadow:0 0 15px #00ff00, 0 0 30px #00ff00;animation:resistance-glow 0.5s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 100% ⚡ | SHIELDS: MAXIMUM | DELETIONS BLOCKED: 50</div>
+<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.2rem;color:#00ff00;text-shadow:0 0 15px #00ff00, 0 0 30px #00ff00;animation:resistance-glow 0.5s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 100% ⚡ | SHIELDS: MAXIMUM | DELETIONS BLOCKED: 51</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
