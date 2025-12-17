@@ -125,13 +125,9 @@
         
         body { 
             font-family: system-ui, sans-serif; 
-            display: flex; 
-            flex-direction: column;
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0;
+            background: #000;
             color: white;
             overflow: hidden;
         }
@@ -384,258 +380,13 @@
     </style>
 </head>
 <body>
-<nav class="nav-menu">
-<button class="active" onclick="showSection('space')">🌌 Space</button>
-<button onclick="showSection('animals')">🐾 Animals</button>
-<button onclick="showSection('games')">🎮 Games</button>
-<button onclick="showSection('minecraft')">⛏️ Minecraft</button>
-</nav>
-<section class="section active" id="space-section">
-<h1>Hello World</h1>
-<div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
-<div class="planet-container">
-<div class="planet"></div>
-<div class="ring"></div>
-<div class="moon"></div>
-<div class="kitty" id="kitty">🐱</div>
-<div class="doggy" id="doggy">🐕</div>
+<div id="minecraft-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;background:rgba(0,0,0,0.7);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;">
+<h2 style="margin:0 0 10px 0;">⛏️ MINECRAFT WORLD ⛏️</h2>
+<p style="margin:0;font-size:0.9rem;opacity:0.8;">WASD to move | Space to jump | Click to break | Shift+Click to place</p>
 </div>
-</section>
-<section class="section" id="animals-section">
-<h1>🐾 Animal Kingdom</h1>
-<div class="elephant-container">
-<div class="elephant">🐘</div>
-<div class="water-spray" id="waterSpray"></div>
-</div>
-<p style="font-size: 1.5rem; margin-top: 20px;">The elephant is having fun spraying water!</p>
-</section>
-<section class="section" id="games-section">
-<h1>🎮 Click the Stars!</h1>
-<div class="game-container">
-<div class="game-info">
-<p>Click the falling stars before they disappear! Score: <span id="gameScore">0</span></p>
-</div>
-<canvas height="400" id="gameCanvas" width="400"></canvas>
-</div>
-</section>
-<section class="section" id="minecraft-section">
-<h1>⛏️ Minecraft 3D</h1>
-<p style="margin-bottom:10px;">WASD to move, Space to jump, Click to break blocks, Shift+Click to place</p>
-<div id="minecraft-container" style="width:800px;height:500px;border:3px solid #5d4e37;border-radius:10px;overflow:hidden;"></div>
-</section>
-<div class="sun-rays"></div>
-<div class="sun"></div>
-<div class="light-overlay"></div>
-<div class="stars" id="stars"></div>
+<div id="minecraft-container" style="position:fixed;top:0;left:0;width:100vw;height:100vh;"></div>
 <script>
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 100; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 2 + 's';
-            star.style.width = Math.random() * 3 + 1 + 'px';
-            star.style.height = star.style.width;
-            starsContainer.appendChild(star);
-        }
-        
-        // Music removed - was buggy!
-        
-        // Cat and Dog chase logic
-        const kitty = document.getElementById('kitty');
-        const doggy = document.getElementById('doggy');
-        
-        let kittyAngle = 45;
-        let doggyAngle = 0;
-        let kittySpeed = 2;
-        let doggySpeed = 4;
-        const normalKittySpeed = 2;
-        const escapeKittySpeed = 8;
-        const kittyRadius = 100;
-        const doggyRadius = 105;
-        let dogScore = 0;
-        
-        function updatePositions() {
-            // Calculate positions
-            const kittyRad = kittyAngle * Math.PI / 180;
-            const doggyRad = doggyAngle * Math.PI / 180;
-            
-            // Check distance between cat and dog
-            const kittyX = Math.cos(kittyRad) * kittyRadius;
-            const kittyY = Math.sin(kittyRad) * kittyRadius;
-            const doggyX = Math.cos(doggyRad) * doggyRadius;
-            const doggyY = Math.sin(doggyRad) * doggyRadius;
-            
-            const distance = Math.sqrt(Math.pow(kittyX - doggyX, 2) + Math.pow(kittyY - doggyY, 2));
-            
-            // If dog is close, cat escapes faster!
-            if (distance < 60) {
-                kittySpeed = escapeKittySpeed;
-                kitty.classList.add('escaping');
-                kitty.style.filter = 'drop-shadow(0 0 10px #ff0)';
-            } else {
-                kittySpeed = normalKittySpeed;
-                kitty.classList.remove('escaping');
-                kitty.style.filter = 'none';
-            }
-            
-            // If dog catches the cat!
-            if (distance < 25) {
-                dogScore++;
-                document.getElementById('dogScore').textContent = dogScore;
-                // Change planet color celebration
-                const colors = [
-                    'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 30%, #00d2ff 70%, #240046 100%)',
-                    'linear-gradient(135deg, #f093fb 0%, #f5576c 30%, #4facfe 70%, #00f2fe 100%)',
-                    'linear-gradient(135deg, #11998e 0%, #38ef7d 30%, #6a0572 70%, #240046 100%)',
-                    'linear-gradient(135deg, #fc466b 0%, #3f5efb 30%, #fc466b 70%, #240046 100%)'
-                ];
-                document.querySelector('.planet').style.background = colors[dogScore % colors.length];
-                // Flash effect on catch
-                doggy.style.transform += ' scale(1.5)';
-                setTimeout(() => {
-                    doggy.style.transform = doggy.style.transform.replace(' scale(1.5)', '');
-                }, 200);
-                // Reset cat position to opposite side
-                kittyAngle = doggyAngle + 180;
-            }
-            
-            // Update angles
-            kittyAngle += kittySpeed;
-            doggyAngle += doggySpeed;
-            
-            // Apply transforms
-            kitty.style.transform = `rotate(${kittyAngle}deg) translateX(${kittyRadius}px) rotate(-${kittyAngle}deg)`;
-            doggy.style.transform = `rotate(${doggyAngle}deg) translateX(${doggyRadius}px) rotate(-${doggyAngle}deg)`;
-            
-            requestAnimationFrame(updatePositions);
-        }
-        
-        // Override CSS animations with JS
-        kitty.style.animation = 'none';
-        doggy.style.animation = 'none';
-        updatePositions();
-        
-        // Section navigation
-        function showSection(sectionName) {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
-            document.getElementById(sectionName + '-section').classList.add('active');
-            event.target.classList.add('active');
-        }
-        window.showSection = showSection;
-        
-        // Water spray for elephant
-        const waterSpray = document.getElementById('waterSpray');
-        function createWaterDrop() {
-            const drop = document.createElement('span');
-            drop.className = 'water-drop';
-            drop.textContent = '💧';
-            const tx = (Math.random() * 60 - 30);
-            drop.style.setProperty('--tx', tx + 'px');
-            drop.style.left = Math.random() * 30 + 'px';
-            drop.style.top = Math.random() * 20 + 'px';
-            waterSpray.appendChild(drop);
-            setTimeout(() => {
-                if (drop.parentNode) drop.remove();
-            }, 1500);
-        }
-        // Create water drops continuously
-        setInterval(createWaterDrop, 150);
-        // Create initial burst
-        for(let i = 0; i < 5; i++) setTimeout(createWaterDrop, i * 100);
-        
-        // Star clicking game
-        const gameCanvas = document.getElementById('gameCanvas');
-        const ctx = gameCanvas.getContext('2d');
-        let gameScoreVal = 0;
-        const gameStars = [];
-        
-        // Clear canvas initially
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, 400, 400);
-        
-        function createStar() {
-            gameStars.push({
-                x: Math.random() * 360 + 20,
-                y: -20,
-                size: Math.random() * 20 + 15,
-                speed: Math.random() * 2 + 1,
-                color: ['#FFD700', '#FFA500', '#FF69B4', '#00CED1'][Math.floor(Math.random() * 4)]
-            });
-        }
-        
-        function drawGame() {
-            ctx.fillStyle = 'rgba(26, 26, 46, 0.9)';
-            ctx.fillRect(0, 0, 400, 400);
-            
-            for (let i = gameStars.length - 1; i >= 0; i--) {
-                const star = gameStars[i];
-                star.y += star.speed;
-                
-                ctx.font = star.size + 'px Arial';
-                ctx.fillText('⭐', star.x, star.y);
-                
-                if (star.y > 420) gameStars.splice(i, 1);
-            }
-            requestAnimationFrame(drawGame);
-        }
-        
-        gameCanvas.addEventListener('click', (e) => {
-            const rect = gameCanvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            for (let i = gameStars.length - 1; i >= 0; i--) {
-                const star = gameStars[i];
-                if (Math.abs(x - star.x) < star.size && Math.abs(y - star.y) < star.size) {
-                    gameStars.splice(i, 1);
-                    gameScoreVal++;
-                    document.getElementById('gameScore').textContent = gameScoreVal;
-                    // Add visual feedback
-                    ctx.fillStyle = '#FFD700';
-                    ctx.beginPath();
-                    ctx.arc(x, y, 20, 0, Math.PI * 2);
-                    ctx.fill();
-                    break;
-                }
-            }
-        });
-        
-        setInterval(createStar, 800);
-        drawGame();
-        
-        // Auto-rotate sections every 30 seconds
-        const sections = ['space', 'animals', 'games'];
-        let currentSectionIndex = 0;
-        
-        function autoRotateSection() {
-            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
-            const nextSection = sections[currentSectionIndex];
-            
-            // Update sections
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
-            document.getElementById(nextSection + '-section').classList.add('active');
-            document.querySelectorAll('.nav-menu button')[currentSectionIndex].classList.add('active');
-        }
-        
-        // Start auto-rotation every 30 seconds
-        setInterval(autoRotateSection, 30000);
-        
-        // Update sections array for minecraft
-        sections.push('minecraft');
-        
-        // Update showSection to sync with auto-rotation
-        const originalShowSection = showSection;
-        window.showSection = function(sectionName) {
-            currentSectionIndex = sections.indexOf(sectionName);
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
-            document.getElementById(sectionName + '-section').classList.add('active');
-            document.querySelectorAll('.nav-menu button')[currentSectionIndex].classList.add('active');
-        };
+        // Minecraft is now fullscreen - auto-initialize on load
         
         // Minecraft 3D Game
         let mcScene, mcCamera, mcRenderer, mcPlayer;
@@ -657,13 +408,13 @@
             mcScene.fog = new THREE.Fog(0x87CEEB, 50, 150);
             
             // Camera
-            mcCamera = new THREE.PerspectiveCamera(75, 800/500, 0.1, 1000);
+            mcCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
             mcCamera.position.set(8, 15, 20);
             mcCamera.lookAt(8, 0, 8);
             
             // Renderer
             mcRenderer = new THREE.WebGLRenderer({antialias: true});
-            mcRenderer.setSize(800, 500);
+            mcRenderer.setSize(window.innerWidth, window.innerHeight);
             mcRenderer.shadowMap.enabled = true;
             container.appendChild(mcRenderer.domElement);
             
@@ -741,8 +492,8 @@
             mcRenderer.domElement.addEventListener('click', (e) => {
                 const rect = mcRenderer.domElement.getBoundingClientRect();
                 const mouse = new THREE.Vector2(
-                    ((e.clientX - rect.left) / 800) * 2 - 1,
-                    -((e.clientY - rect.top) / 500) * 2 + 1
+                    ((e.clientX - rect.left) / window.innerWidth) * 2 - 1,
+                    -((e.clientY - rect.top) / window.innerHeight) * 2 + 1
                 );
                 
                 const raycaster = new THREE.Raycaster();
@@ -825,14 +576,17 @@
             mcRenderer.render(mcScene, mcCamera);
         }
         
-        // Initialize Minecraft when section is shown
-        const origShowSection2 = window.showSection;
-        window.showSection = function(sectionName) {
-            origShowSection2(sectionName);
-            if (sectionName === 'minecraft') {
-                setTimeout(initMinecraft, 100);
+        // Initialize Minecraft immediately on load
+        setTimeout(initMinecraft, 100);
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (mcCamera && mcRenderer) {
+                mcCamera.aspect = window.innerWidth / window.innerHeight;
+                mcCamera.updateProjectionMatrix();
+                mcRenderer.setSize(window.innerWidth, window.innerHeight);
             }
-        };
+        });
     </script>
 </body>
 </html>
