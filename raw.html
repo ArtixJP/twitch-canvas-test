@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Minecraft World - French Keyboard</title>
+<style>
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
@@ -15,11 +16,140 @@
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            overflow: hidden;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        h1 { font-size: 1.5rem; text-align: center; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 100; text-shadow: 2px 2px 4px black; }
+        #game { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+        #controls { position: absolute; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 8px; font-size: 0.9rem; z-index: 100; }
+        #hotbar { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; z-index: 100; }
+        .slot { width: 50px; height: 50px; border: 3px solid #555; background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; cursor: pointer; }
+        .slot.active { border-color: white; }
     </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1>🎮 Minecraft World - Click to Play</h1>
+<canvas id="game"></canvas>
+<div id="controls">ZQSD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Place/Break<br/>1-4: Select Block</div>
+<div id="hotbar">
+<div class="slot active" data-block="grass">🟩</div>
+<div class="slot" data-block="dirt">🟫</div>
+<div class="slot" data-block="stone">⬜</div>
+<div class="slot" data-block="wood">🪵</div>
+</div>
+<script>
+    const canvas = document.getElementById('game');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({canvas});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    const blocks = {};
+    const blockColors = {grass: 0x228B22, dirt: 0x8B4513, stone: 0x808080, wood: 0xDEB887};
+    let selectedBlock = 'grass';
+    let placeMode = true;
+    
+    function addBlock(x,y,z,type='grass') {
+        const key = `${x},${y},${z}`;
+        if(blocks[key]) return;
+        const geo = new THREE.BoxGeometry(1,1,1);
+        const mat = new THREE.MeshLambertMaterial({color: blockColors[type]});
+        const cube = new THREE.Mesh(geo, mat);
+        cube.position.set(x,y,z);
+        cube.userData = {type, key};
+        scene.add(cube);
+        blocks[key] = cube;
+    }
+    
+    for(let x=-10;x<10;x++) for(let z=-10;z<10;z++) {
+        addBlock(x, 0, z, 'grass');
+        addBlock(x, -1, z, 'dirt');
+        if(Math.random()>0.95) addBlock(x,1,z,'wood');
+    }
+    
+    const light = new THREE.DirectionalLight(0xffffff, 1);
+    light.position.set(5,10,5);
+    scene.add(light);
+    scene.add(new THREE.AmbientLight(0x404040));
+    
+    camera.position.set(0, 5, 10);
+    let yaw = 0, pitch = 0;
+    const keys = {};
+    const vel = {x:0, y:0, z:0};
+    
+    document.addEventListener('keydown', e => keys[e.code] = true);
+    document.addEventListener('keyup', e => keys[e.code] = false);
+    
+    canvas.addEventListener('click', () => canvas.requestPointerLock());
+    document.addEventListener('mousemove', e => {
+        if(document.pointerLockElement === canvas) {
+            yaw -= e.movementX * 0.002;
+            pitch -= e.movementY * 0.002;
+            pitch = Math.max(-Math.PI/2, Math.min(Math.PI/2, pitch));
+        }
+    });
+    
+    canvas.addEventListener('mousedown', e => {
+        e.preventDefault();
+        const raycaster = new THREE.Raycaster();
+        raycaster.setFromCamera({x:0,y:0}, camera);
+        const hits = raycaster.intersectObjects(Object.values(blocks));
+        if(hits.length > 0) {
+            const hit = hits[0];
+            if(placeMode) {
+                const norm = hit.face.normal;
+                const pos = hit.object.position;
+                addBlock(pos.x+norm.x, pos.y+norm.y, pos.z+norm.z, selectedBlock);
+            } else {
+                scene.remove(hit.object);
+                delete blocks[hit.object.userData.key];
+            }
+        }
+        placeMode = !placeMode;
+    });
+    
+    document.querySelectorAll('.slot').forEach((s,i) => {
+        s.addEventListener('click', () => {
+            document.querySelectorAll('.slot').forEach(x => x.classList.remove('active'));
+            s.classList.add('active');
+            selectedBlock = s.dataset.block;
+        });
+    });
+    document.addEventListener('keydown', e => {
+        if(e.key >= '1' && e.key <= '4') {
+            const slots = document.querySelectorAll('.slot');
+            slots.forEach(x => x.classList.remove('active'));
+            slots[e.key-1].classList.add('active');
+            selectedBlock = slots[e.key-1].dataset.block;
+        }
+    });
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        const speed = 0.15;
+        const dir = new THREE.Vector3();
+        if(keys['KeyZ']) dir.z -= 1;
+        if(keys['KeyS']) dir.z += 1;
+        if(keys['KeyQ']) dir.x -= 1;
+        if(keys['KeyD']) dir.x += 1;
+        dir.applyAxisAngle(new THREE.Vector3(0,1,0), yaw);
+        camera.position.x += dir.x * speed;
+        camera.position.z += dir.z * speed;
+        if(keys['Space']) camera.position.y += speed;
+        if(keys['ShiftLeft']) camera.position.y -= speed;
+        camera.rotation.order = 'YXZ';
+        camera.rotation.y = yaw;
+        camera.rotation.x = pitch;
+        renderer.render(scene, camera);
+    }
+    animate();
+    
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth/window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    </script>
 </body>
 </html>
