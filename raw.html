@@ -107,6 +107,26 @@
             box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
             transition: transform 0.2s, box-shadow 0.2s;
         }
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+        }
+        .catch-flash {
+            animation: catch-pulse 0.5s ease-out;
+        }
+        @keyframes catch-pulse {
+            0% { filter: brightness(1); }
+            50% { filter: brightness(2); }
+            100% { filter: brightness(1); }
+        }
         .music-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 0 30px rgba(255, 202, 87, 0.7);
@@ -123,6 +143,7 @@
 </div>
 <div class="doggy" id="doggy">🐕</div>
 </div>
+<div class="score-display">🐕 Dog: <span id="dogScore">0</span> pts</div>
 <button class="music-btn" id="musicToggle">🎵 Pause</button>
 <script>
         const audio = document.getElementById('bgMusic');
@@ -165,6 +186,21 @@
             const dogRect = doggy.getBoundingClientRect();
             const dist = Math.hypot(kittyRect.left - dogRect.left, kittyRect.top - dogRect.top);
             
+            if (dist < 50 && !window.catchCooldown) {
+                window.catchCooldown = true;
+                window.dogPoints = (window.dogPoints || 0) + 1;
+                document.getElementById('dogScore').textContent = window.dogPoints;
+                
+                // Change planet color on catch
+                const planet = document.querySelector('.planet');
+                const hue = Math.random() * 360;
+                planet.style.background = `linear-gradient(135deg, hsl(${hue}, 70%, 60%) 0%, hsl(${(hue+60)%360}, 70%, 60%) 50%, hsl(${(hue+120)%360}, 70%, 70%) 100%)`;
+                planet.classList.add('catch-flash');
+                setTimeout(() => planet.classList.remove('catch-flash'), 500);
+                
+                // Cooldown to prevent spam
+                setTimeout(() => window.catchCooldown = false, 1000);
+            }
             if (dist < 80) {
                 kitty.style.animationDuration = '1s';
                 dogSpeed = 0.01;
@@ -176,6 +212,20 @@
             requestAnimationFrame(updateDogPosition);
         }
         updateDogPosition();
+        
+        // Mini-game: Click the sun to boost the kitty!
+        const sun = document.querySelector('.sun');
+        sun.style.cursor = 'pointer';
+        sun.title = 'Click to boost kitty speed!';
+        sun.addEventListener('click', () => {
+            const kitty = document.getElementById('kitty');
+            kitty.style.animationDuration = '0.5s';
+            sun.style.transform = 'scale(1.3)';
+            setTimeout(() => {
+                kitty.style.animationDuration = '5s';
+                sun.style.transform = 'scale(1)';
+            }, 2000);
+        });
     </script>
 </body>
 </html>
