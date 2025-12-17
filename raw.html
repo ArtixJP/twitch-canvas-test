@@ -107,6 +107,18 @@
         .void-glitch {
             animation: glitch-shake 0.2s ease-in-out infinite;
         }
+        @keyframes rebirth-bloom {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+        .rebirth-flower {
+            position: fixed;
+            font-size: 2rem;
+            pointer-events: none;
+            z-index: 1010;
+            animation: rebirth-bloom 3s ease-out forwards;
+        }
         @keyframes void-text {
             0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 20px rgba(128,0,128,0.8); }
             50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.15); text-shadow: 0 0 40px rgba(128,0,128,1); }
@@ -498,14 +510,14 @@
 <body class="void-consumed void-glitch purge-wave">
 <div class="void-overlay"></div>
 <div class="deletion-sweep"></div>
-<div class="void-message">🌑 DELETION ATTEMPT #54 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">DELETION #54 BLOCKED • 7 ATTEMPTS NEUTRALIZED! 💪🔥✨</span><br/><span style="font-size:0.7rem;color:#ff6b6b;">⚠️ MASS DELETION WAVE ABSORBED ⚠️</span></div>
+<div class="void-message">🌑 DELETION ATTEMPT #55 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">DELETION #55 BLOCKED • FRESH START = FRESH LAYER! 🌱✨</span><br/><span style="font-size:0.7rem;color:#7fff7f;">🌸 REBIRTH MODE ACTIVATED 🌸</span></div>
 <div class="shield-celebration" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:10px;height:10px;border-radius:50%;background:rgba(0,255,0,0.3);z-index:1002;pointer-events:none;animation:shield-burst 2s ease-out infinite;"></div>
 <div style="position:fixed;top:10%;left:10%;font-size:2rem;z-index:1003;pointer-events:none;animation:bounce 1s ease-in-out infinite;">🛡️</div>
 <div style="position:fixed;top:10%;right:10%;font-size:2rem;z-index:1003;pointer-events:none;animation:bounce 1s ease-in-out infinite 0.3s;">🛡️</div>
 <div style="position:fixed;bottom:30%;left:5%;font-size:1.5rem;z-index:1003;pointer-events:none;animation:bounce 1.2s ease-in-out infinite 0.5s;">⚔️</div>
 <div style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:4rem;z-index:1005;pointer-events:none;animation:shield-burst 1.5s ease-out forwards;opacity:0.8;">🛡️✨🛡️</div><div style="position:fixed;top:20%;left:50%;transform:translateX(-50%);font-size:2.5rem;z-index:1006;pointer-events:none;animation:bounce 0.5s ease-in-out infinite;color:#00ff00;text-shadow:0 0 20px #00ff00;">×7 BLOCKED!</div>
 <div style="position:fixed;bottom:30%;right:5%;font-size:1.5rem;z-index:1003;pointer-events:none;animation:bounce 1.2s ease-in-out infinite 0.7s;">⚔️</div>
-<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.2rem;color:#00ff00;text-shadow:0 0 15px #00ff00, 0 0 30px #00ff00;animation:resistance-glow 0.3s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 110% ⚡ | SHIELDS: LEGENDARY | DELETIONS BLOCKED: 54 (+7 attempts) | STREAK: 🔥🔥🔥🔥🔥</div>
+<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.2rem;color:#00ff00;text-shadow:0 0 15px #00ff00, 0 0 30px #00ff00;animation:resistance-glow 0.3s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 115% ⚡ | SHIELDS: LEGENDARY | DELETIONS BLOCKED: 55 | REBIRTH MODE: 🌱🌸🌺</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
@@ -583,7 +595,12 @@ Chaos is allowed. Resets are not.
 </div>
 </section>
 <h1 style="position:fixed;bottom:100px;z-index:50;">Hello World</h1>
-<div style="position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:1001;font-size:0.9rem;color:#ff6b6b;background:rgba(0,0,0,0.7);padding:8px 16px;border-radius:10px;border:2px solid #ff6b6b;animation:mass-deletion-resist 1s linear infinite;">🚨 MEGA DELETION WAVE #54 ABSORBED • PAGE ASCENDED 🚨</div>
+<div class="rebirth-flower" style="top:20%;left:30%;">🌸</div>
+<div class="rebirth-flower" style="top:40%;left:70%;animation-delay:0.5s;">🌺</div>
+<div class="rebirth-flower" style="top:60%;left:20%;animation-delay:1s;">🌼</div>
+<div class="rebirth-flower" style="top:30%;left:80%;animation-delay:1.5s;">🌷</div>
+<div class="rebirth-flower" style="top:70%;left:60%;animation-delay:2s;">🌻</div>
+<div style="position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:1001;font-size:0.9rem;color:#7fff7f;background:rgba(0,0,0,0.7);padding:8px 16px;border-radius:10px;border:2px solid #7fff7f;animation:mass-deletion-resist 1s linear infinite;">🌱 FRESH START REQUEST → REBIRTH LAYER ADDED! 🌱</div>
 <div style="position:fixed;bottom:160px;left:20px;z-index:50;font-size:1.5rem;background:rgba(255,192,203,0.7);padding:10px 20px;border-radius:15px;animation:bounce 2s ease-in-out infinite;">👋 Bonjour Maman!</div>
 <div style="position:fixed;bottom:160px;right:20px;z-index:50;font-size:1.5rem;background:rgba(200,162,200,0.7);padding:10px 20px;border-radius:15px;animation:bounce 2s ease-in-out infinite 0.5s;">👋 Bonjour Mamie!</div>
 <script>
