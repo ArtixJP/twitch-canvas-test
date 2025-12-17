@@ -68,7 +68,8 @@
         .world-3d-horizon { position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(180deg, #1a0a2e 0%, #2a1a4e 30%, #3a5a3a 70%, #1a4a1a 100%); z-index: 0; }
         .world-3d-mountains { position: absolute; top: 15%; left: 0; width: 100%; height: 25%; z-index: 1; font-size: 80px; letter-spacing: -20px; opacity: 0.6; filter: blur(2px); color: #2a3a2a; }
         .world-panel.minimized { width: 100%; max-width: 600px; height: 400px; position: relative; border: 3px solid #5a4a3a; }
-        .world-floor { position: absolute; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,80,0,0.2) 40px, rgba(0,80,0,0.2) 41px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,80,0,0.2) 40px, rgba(0,80,0,0.2) 41px); background-color: #1a4a1a; }
+        .world-floor { position: absolute; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(80,0,80,0.15) 40px, rgba(80,0,80,0.15) 41px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(80,0,80,0.15) 40px, rgba(80,0,80,0.15) 41px); background-color: #0a0a1a; }
+        @keyframes voidPulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 0.9; } }
         .world-tree { position: absolute; font-size: 50px; z-index: 2; pointer-events: none; filter: drop-shadow(3px 6px 8px rgba(0,0,0,0.7)); transform: perspective(500px) rotateX(-5deg); }
         .world-rock { position: absolute; font-size: 35px; z-index: 2; pointer-events: none; opacity: 0.8; }
         .player-char { position: absolute; font-size: 40px; transition: left 0.15s, top 0.15s; z-index: 10; filter: drop-shadow(0 0 5px #ffd700) drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); cursor: pointer; transform: perspective(500px) rotateX(-10deg); }
@@ -88,12 +89,14 @@
     </style>
 </head>
 <body>
-<h1 style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:150;background:linear-gradient(180deg, rgba(40,20,10,0.95), rgba(20,10,5,0.95));padding:8px 25px;border-radius:5px;font-size:1.5rem;margin:0;border:2px solid #8b6914;box-shadow:0 0 20px rgba(255,165,0,0.3),inset 0 0 10px rgba(255,215,0,0.2);">⚔️ Hello World of Warcraft 3D ⚔️</h1>
+<h1 style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:150;background:linear-gradient(180deg, rgba(20,0,40,0.95), rgba(10,0,20,0.95));padding:8px 25px;border-radius:5px;font-size:1.5rem;margin:0;border:2px solid #6a14a8;box-shadow:0 0 20px rgba(150,0,255,0.4),inset 0 0 10px rgba(200,100,255,0.2);animation:titleGlow 3s infinite;">🌑 Void World of Warcraft 3D 🌑</h1>
+<style>@keyframes titleGlow { 0%, 100% { box-shadow: 0 0 20px rgba(150,0,255,0.4); } 50% { box-shadow: 0 0 40px rgba(200,0,255,0.6); } }</style>
 <button class="toggle-panels-btn" onclick="togglePanels()">📊 Toggle Panels</button>
 <div class="panel world-panel" id="game-world">
 <h3 style="text-align:center;color:#4a4;margin:5px 0;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(0,0,0,0.7);padding:5px 15px;border-radius:5px;">🗺️ Explore the World</h3>
-<div class="world-3d-horizon"></div>
-<div class="world-3d-mountains">🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️</div>
+<div class="world-3d-horizon" style="background: linear-gradient(180deg, #000000 0%, #0a0015 30%, #150020 70%, #0d001a 100%);"></div>
+<div class="void-effect" style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);pointer-events:none;z-index:3;animation:voidPulse 4s infinite;"></div>
+<div class="world-3d-mountains" style="opacity:0.3;filter:blur(4px);color:#1a0030;">🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️</div>
 <div class="world-floor"></div>
 <div class="world-tree" style="left:50px;top:200px;font-size:60px;">🌲</div>
 <div class="world-tree" style="left:150px;top:120px;font-size:40px;opacity:0.7;">🌲</div>
@@ -112,7 +115,7 @@
 <div class="world-chest" id="chest-2" onclick="openChest(this)" style="left:100px;top:100px;">📦</div>
 <div class="world-chest" id="chest-3" onclick="openChest(this)" style="left:800px;top:200px;">📦</div>
 <div class="world-controls" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);padding:5px 15px;border-radius:5px;">Use WASD or Arrow Keys to move • Click enemies to attack</div>
-<div class="fullscreen-indicator">🎮 3D Perspective Mode Active</div>
+<div class="fullscreen-indicator" style="color:#a0a;border:1px solid #606;">🌑 Void Realm - All Persists in Shadow 🌑</div>
 </div>
 <div class="panels-overlay" id="panels-overlay">
 <div class="game-container">
