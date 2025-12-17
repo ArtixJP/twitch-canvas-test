@@ -64,11 +64,11 @@
 </head>
 <body>
 <div id="click-to-play">
-<h1>⛏️ TwitchCraft</h1>
+<h1>⛏️ TwitchCraft × Mario</h1>
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break Block | Right-Click: Place Block</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks for Surprises!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -86,6 +86,9 @@
             0x8B4513, // Dirt
             0x808080, // Stone
             0x654321, // Wood
+            0xFFE135, // Banana Yellow
+            0xFF0000, // Mario Red
+            0x9932CC, // Puzzle Purple
         ];
         let currentBlock = 0;
         
@@ -113,6 +116,15 @@
             // Generate terrain
             generateTerrain();
             
+            // Add Mario NPC
+            createMario();
+            
+            // Add floating banana collectible
+            createBanana();
+            
+            // Add puzzle blocks
+            createPuzzleBlocks();
+            
             // Controls
             document.addEventListener('keydown', onKeyDown);
             document.addEventListener('keyup', onKeyUp);
@@ -131,6 +143,45 @@
             });
             
             animate();
+        }
+        
+        function createMario() {
+            // Mario body (red)
+            createBlock(worldSize/2 + 3, 6, worldSize/2 + 3, 0xFF0000);
+            createBlock(worldSize/2 + 3, 7, worldSize/2 + 3, 0xFF0000);
+            // Mario head (skin tone)
+            createBlock(worldSize/2 + 3, 8, worldSize/2 + 3, 0xFFDBB4);
+            // Mario hat (red)
+            createBlock(worldSize/2 + 3, 9, worldSize/2 + 3, 0xFF0000);
+            // Mario arms
+            createBlock(worldSize/2 + 2, 7, worldSize/2 + 3, 0xFFDBB4);
+            createBlock(worldSize/2 + 4, 7, worldSize/2 + 3, 0xFFDBB4);
+        }
+        
+        function createBanana() {
+            // Floating banana made of yellow blocks
+            const bananaY = 12;
+            createBlock(10, bananaY, 10, 0xFFE135);
+            createBlock(11, bananaY + 1, 10, 0xFFE135);
+            createBlock(12, bananaY + 1, 10, 0xFFE135);
+            createBlock(13, bananaY, 10, 0xFFE135);
+            
+            // Make banana spin
+            setInterval(() => {
+                blocks.forEach(b => {
+                    if (b.position.y >= bananaY && b.material.color.getHex() === 0xFFE135) {
+                        b.rotation.y += 0.05;
+                    }
+                });
+            }, 50);
+        }
+        
+        function createPuzzleBlocks() {
+            // Mystery puzzle blocks (purple) - click them for surprises!
+            for (let i = 0; i < 5; i++) {
+                const puzzleBlock = createBlock(5 + i * 2, 10, 8, 0x9932CC);
+                puzzleBlock.userData.isPuzzle = true;
+            }
         }
         
         function generateTerrain() {
@@ -194,8 +245,17 @@
             if (!isLocked) return;
             const hit = getTargetBlock();
             if (hit && hit.distance < 8) {
-                scene.remove(hit.object);
-                blocks = blocks.filter(b => b !== hit.object);
+                // Puzzle block special interaction
+                if (hit.object.userData.isPuzzle) {
+                    // Spawn a random block above!
+                    const randomColor = blockTypes[Math.floor(Math.random() * blockTypes.length)];
+                    createBlock(hit.object.position.x, hit.object.position.y + 2, hit.object.position.z, randomColor);
+                    hit.object.material.color.setHex(0x666666); // Turn grey after use
+                    hit.object.userData.isPuzzle = false;
+                } else {
+                    scene.remove(hit.object);
+                    blocks = blocks.filter(b => b !== hit.object);
+                }
             }
         }
         
