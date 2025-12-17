@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 NEW: Japanese Restaurant! | ⛏️ Minecraft Style!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -144,6 +144,15 @@
             
             // Add 3D Movie Theater!
             createMovieTheater();
+            
+            // Add Pizzeria!
+            createPizzeria();
+            
+            // Add Burger Place!
+            createBurgerPlace();
+            
+            // Add floating greeting signs!
+            createGreetingSigns();
             
             // Controls
             document.addEventListener('keydown', onKeyDown);
@@ -656,6 +665,221 @@
             createBlock(tx + 3, ty + 6, tz, 0xCC0000); // Mario red
             createBlock(tx + 4, ty + 6, tz, 0xFF69B4); // Peach pink
             createBlock(tx + 5, ty + 6, tz, 0xFFD700);
+        }
+        
+        function createPizzeria() {
+            // 🍕 PIZZERIA with Pizzaiolo! 🍕
+            const px = 8, pz = 28, py = 5;
+            
+            // Foundation (checkered tile floor)
+            for (let x = 0; x < 6; x++) {
+                for (let z = 0; z < 5; z++) {
+                    const tileColor = (x + z) % 2 === 0 ? 0xFFFFFF : 0xCC0000;
+                    createBlock(px + x, py, pz + z, tileColor);
+                }
+            }
+            
+            // Walls (warm terracotta)
+            for (let y = 1; y <= 3; y++) {
+                for (let x = 0; x < 6; x++) {
+                    createBlock(px + x, py + y, pz + 4, 0xE07040);
+                }
+                for (let z = 0; z < 5; z++) {
+                    createBlock(px, py + y, pz + z, 0xE07040);
+                    createBlock(px + 5, py + y, pz + z, 0xE07040);
+                }
+            }
+            
+            // Arched entrance (Italian style)
+            createBlock(px + 2, py + 3, pz, 0xE07040);
+            createBlock(px + 3, py + 3, pz, 0xE07040);
+            
+            // Green/white/red Italian flag stripe on wall
+            createBlock(px + 1, py + 3, pz + 4, 0x009246);
+            createBlock(px + 2, py + 3, pz + 4, 0xFFFFFF);
+            createBlock(px + 3, py + 3, pz + 4, 0xCE2B37);
+            
+            // Roof (terracotta tiles)
+            for (let x = -1; x < 7; x++) {
+                for (let z = -1; z < 6; z++) {
+                    createBlock(px + x, py + 4, pz + z, 0xB35A2A);
+                }
+            }
+            
+            // Wood-fired oven (stone & fire glow!)
+            createBlock(px + 4, py + 1, pz + 3, 0x4A4A4A);
+            createBlock(px + 4, py + 2, pz + 3, 0x4A4A4A);
+            createBlock(px + 4, py + 1, pz + 2, 0xFF4500); // Fire glow
+            
+            // Pizza counter
+            createBlock(px + 1, py + 1, pz + 2, 0x8B4513);
+            createBlock(px + 2, py + 1, pz + 2, 0x8B4513);
+            createBlock(px + 3, py + 1, pz + 2, 0x8B4513);
+            
+            // Pizzas on counter! 🍕
+            createBlock(px + 1, py + 2, pz + 2, 0xFFD700); // Margherita
+            createBlock(px + 2, py + 2, pz + 2, 0xFF6347); // Pepperoni
+            createBlock(px + 3, py + 2, pz + 2, 0x228B22); // Veggie
+            
+            // PIZZAIOLO (Chef!) 👨‍🍳
+            const cx = px + 4, cz = pz + 1, cy = py;
+            // Legs (white pants)
+            createBlock(cx, cy + 1, cz, 0xFFFFFF);
+            // Body (white chef coat)
+            createBlock(cx, cy + 2, cz, 0xFFFFFF);
+            createBlock(cx, cy + 3, cz, 0xFFFFFF);
+            // Head
+            createBlock(cx, cy + 4, cz, 0xC69C6D);
+            // Chef hat (tall white toque!)
+            createBlock(cx, cy + 5, cz, 0xFFFFFF);
+            createBlock(cx, cy + 6, cz, 0xFFFFFF);
+            // Mustache (Italian style!)
+            createBlock(cx + 1, cy + 4, cz, 0x3D2314);
+            // Arms holding pizza dough
+            createBlock(cx - 1, cy + 3, cz, 0xC69C6D);
+            createBlock(cx + 1, cy + 3, cz, 0xC69C6D);
+            // Pizza dough being tossed!
+            const dough = createBlock(cx, cy + 7, cz, 0xF5DEB3);
+            dough.userData.isDough = true;
+            
+            // Animate pizzaiolo tossing dough!
+            let doughTime = 0;
+            setInterval(() => {
+                doughTime += 0.1;
+                blocks.forEach(b => {
+                    if (b.userData.isDough) {
+                        b.position.y = cy + 7 + Math.sin(doughTime * 2) * 1.5;
+                        b.rotation.x = doughTime * 3;
+                        b.rotation.z = doughTime * 2;
+                    }
+                });
+            }, 50);
+            
+            // Sign: PIZZERIA
+            createBlock(px + 2, py + 5, pz - 1, 0xFFD700);
+            createBlock(px + 3, py + 5, pz - 1, 0xCC0000);
+        }
+        
+        function createBurgerPlace() {
+            // 🍔 BURGER JOINT! 🍔
+            const bx = 0, bz = 20, by = 5;
+            
+            // Foundation (diner floor)
+            for (let x = 0; x < 5; x++) {
+                for (let z = 0; z < 4; z++) {
+                    createBlock(bx + x, by, bz + z, 0x2F2F2F);
+                }
+            }
+            
+            // Walls (retro diner red)
+            for (let y = 1; y <= 3; y++) {
+                for (let x = 0; x < 5; x++) {
+                    createBlock(bx + x, by + y, bz + 3, 0xB22222);
+                }
+                createBlock(bx, by + y, bz, 0xB22222);
+                createBlock(bx, by + y, bz + 1, 0xB22222);
+                createBlock(bx, by + y, bz + 2, 0xB22222);
+                createBlock(bx + 4, by + y, bz, 0xB22222);
+                createBlock(bx + 4, by + y, bz + 1, 0xB22222);
+                createBlock(bx + 4, by + y, bz + 2, 0xB22222);
+            }
+            
+            // Chrome/silver trim (50s diner style)
+            createBlock(bx + 1, by + 2, bz, 0xC0C0C0);
+            createBlock(bx + 2, by + 2, bz, 0xC0C0C0);
+            createBlock(bx + 3, by + 2, bz, 0xC0C0C0);
+            
+            // Roof (silver)
+            for (let x = -1; x < 6; x++) {
+                for (let z = -1; z < 5; z++) {
+                    createBlock(bx + x, by + 4, bz + z, 0xA9A9A9);
+                }
+            }
+            
+            // Counter
+            createBlock(bx + 1, by + 1, bz + 2, 0xFFFFFF);
+            createBlock(bx + 2, by + 1, bz + 2, 0xFFFFFF);
+            createBlock(bx + 3, by + 1, bz + 2, 0xFFFFFF);
+            
+            // BURGERS! 🍔 (stacked blocks = burger layers)
+            // Burger 1
+            createBlock(bx + 1, by + 2, bz + 2, 0xDAA520); // Bottom bun
+            createBlock(bx + 1, by + 2.3, bz + 2, 0x8B4513); // Patty
+            createBlock(bx + 1, by + 2.5, bz + 2, 0xFFD700); // Cheese
+            createBlock(bx + 1, by + 2.7, bz + 2, 0x228B22); // Lettuce
+            createBlock(bx + 1, by + 2.9, bz + 2, 0xDAA520); // Top bun
+            
+            // Burger 2 (double patty!)
+            createBlock(bx + 2, by + 2, bz + 2, 0xDAA520);
+            createBlock(bx + 2, by + 2.2, bz + 2, 0x8B4513);
+            createBlock(bx + 2, by + 2.4, bz + 2, 0x8B4513);
+            createBlock(bx + 2, by + 2.6, bz + 2, 0xFFD700);
+            createBlock(bx + 2, by + 2.8, bz + 2, 0xDAA520);
+            
+            // Fries! 🍟
+            createBlock(bx + 3, by + 2, bz + 2, 0xFFD700);
+            
+            // Grill (dark with red glow)
+            createBlock(bx + 3, by + 1, bz + 3, 0x2F2F2F);
+            createBlock(bx + 3, by + 2, bz + 3, 0xFF4500);
+            
+            // Soda fountain
+            createBlock(bx + 1, by + 1, bz + 3, 0xCC0000);
+            
+            // Giant burger sign on roof!
+            createBlock(bx + 2, by + 5, bz + 1, 0xDAA520);
+            createBlock(bx + 2, by + 6, bz + 1, 0x8B4513);
+            createBlock(bx + 2, by + 7, bz + 1, 0xDAA520);
+        }
+        
+        function createGreetingSigns() {
+            // 🎈 FLOATING GREETING SIGNS! 🎈
+            
+            // "HI MOM!" sign (floating high in the sky)
+            const momX = 16, momY = 25, momZ = 16;
+            // Heart shape around text
+            createBlock(momX - 2, momY, momZ, 0xFF69B4);
+            createBlock(momX + 2, momY, momZ, 0xFF69B4);
+            createBlock(momX - 1, momY + 1, momZ, 0xFF69B4);
+            createBlock(momX + 1, momY + 1, momZ, 0xFF69B4);
+            createBlock(momX, momY + 2, momZ, 0xFF69B4);
+            // "HI" in white
+            createBlock(momX - 1, momY, momZ, 0xFFFFFF);
+            createBlock(momX, momY, momZ, 0xFFFFFF);
+            createBlock(momX + 1, momY, momZ, 0xFFFFFF);
+            // "MOM" below
+            createBlock(momX - 1, momY - 1, momZ, 0xFFD700);
+            createBlock(momX, momY - 1, momZ, 0xFFD700);
+            createBlock(momX + 1, momY - 1, momZ, 0xFFD700);
+            
+            // "HI FRIENDS!" sign (different location)
+            const friendX = 26, friendY = 22, friendZ = 10;
+            // Rainbow colors!
+            createBlock(friendX - 2, friendY, friendZ, 0xFF0000);
+            createBlock(friendX - 1, friendY, friendZ, 0xFFA500);
+            createBlock(friendX, friendY, friendZ, 0xFFFF00);
+            createBlock(friendX + 1, friendY, friendZ, 0x00FF00);
+            createBlock(friendX + 2, friendY, friendZ, 0x0000FF);
+            createBlock(friendX + 3, friendY, friendZ, 0x8B00FF);
+            // Second row
+            createBlock(friendX - 1, friendY - 1, friendZ, 0xFFFFFF);
+            createBlock(friendX, friendY - 1, friendZ, 0xFFFFFF);
+            createBlock(friendX + 1, friendY - 1, friendZ, 0xFFFFFF);
+            createBlock(friendX + 2, friendY - 1, friendZ, 0xFFFFFF);
+            
+            // Make signs float/bob gently
+            let signTime = 0;
+            const signBlocks = blocks.filter(b => 
+                (b.position.y >= momY - 1 && b.position.y <= momY + 2 && b.position.x >= momX - 2 && b.position.x <= momX + 2) ||
+                (b.position.y >= friendY - 1 && b.position.y <= friendY && b.position.x >= friendX - 2 && b.position.x <= friendX + 3)
+            );
+            const originalY = signBlocks.map(b => b.position.y);
+            setInterval(() => {
+                signTime += 0.05;
+                signBlocks.forEach((b, i) => {
+                    b.position.y = originalY[i] + Math.sin(signTime + i * 0.2) * 0.3;
+                });
+            }, 50);
         }
         
         function generateTerrain() {
