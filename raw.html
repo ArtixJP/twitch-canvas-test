@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -487,9 +487,25 @@
                 });
             }, 50);
             
-            // Sign: 🍜 RAMEN HOUSE
+            // Sign: 🍜 RAMEN HOUSE - Readable!
             createBlock(jx + 2, jy + 5, jz - 1, 0xFFD700);
             createBlock(jx + 3, jy + 5, jz - 1, 0xCC0000);
+            
+            const ramenCanvas = document.createElement('canvas');
+            ramenCanvas.width = 256;
+            ramenCanvas.height = 128;
+            const ramenCtx = ramenCanvas.getContext('2d');
+            ramenCtx.fillStyle = '#CC0000';
+            ramenCtx.fillRect(0, 0, 256, 128);
+            ramenCtx.fillStyle = '#FFD700';
+            ramenCtx.font = 'Bold 32px Arial';
+            ramenCtx.textAlign = 'center';
+            ramenCtx.fillText('🍜 RAMEN HOUSE', 128, 70);
+            const ramenTex = new THREE.CanvasTexture(ramenCanvas);
+            const ramenSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: ramenTex }));
+            ramenSign.scale.set(4, 2, 1);
+            ramenSign.position.set(jx + 2.5, jy + 6, jz - 2);
+            scene.add(ramenSign);
         }
         
         function createMovieTheater() {
@@ -779,9 +795,26 @@
                 });
             }, 50);
             
-            // Sign: PIZZERIA
+            // Sign: PIZZERIA - Now with readable text!
             createBlock(px + 2, py + 5, pz - 1, 0xFFD700);
             createBlock(px + 3, py + 5, pz - 1, 0xCC0000);
+            
+            // Add readable sign
+            const pizzaCanvas = document.createElement('canvas');
+            pizzaCanvas.width = 256;
+            pizzaCanvas.height = 128;
+            const pizzaCtx = pizzaCanvas.getContext('2d');
+            pizzaCtx.fillStyle = '#FFD700';
+            pizzaCtx.fillRect(0, 0, 256, 128);
+            pizzaCtx.fillStyle = '#CC0000';
+            pizzaCtx.font = 'Bold 36px Arial';
+            pizzaCtx.textAlign = 'center';
+            pizzaCtx.fillText('🍕 PIZZERIA', 128, 70);
+            const pizzaTex = new THREE.CanvasTexture(pizzaCanvas);
+            const pizzaSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: pizzaTex }));
+            pizzaSign.scale.set(4, 2, 1);
+            pizzaSign.position.set(px + 2.5, py + 6, pz - 2);
+            scene.add(pizzaSign);
         }
         
         function createBurgerPlace() {
@@ -854,6 +887,22 @@
             createBlock(bx + 2, by + 5, bz + 1, 0xDAA520);
             createBlock(bx + 2, by + 6, bz + 1, 0x8B4513);
             createBlock(bx + 2, by + 7, bz + 1, 0xDAA520);
+            
+            const burgerCanvas = document.createElement('canvas');
+            burgerCanvas.width = 256;
+            burgerCanvas.height = 128;
+            const burgerCtx = burgerCanvas.getContext('2d');
+            burgerCtx.fillStyle = '#B22222';
+            burgerCtx.fillRect(0, 0, 256, 128);
+            burgerCtx.fillStyle = '#FFD700';
+            burgerCtx.font = 'Bold 32px Arial';
+            burgerCtx.textAlign = 'center';
+            burgerCtx.fillText('🍔 BURGERS', 128, 70);
+            const burgerTex = new THREE.CanvasTexture(burgerCanvas);
+            const burgerSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: burgerTex }));
+            burgerSign.scale.set(4, 2, 1);
+            burgerSign.position.set(bx + 2, by + 8, bz);
+            scene.add(burgerSign);
         }
         
         function createGreetingSigns() {
@@ -1458,6 +1507,62 @@
         function createThankYouPanel() {
             // 🎉 FLOATING THANK YOU MARIO PANEL IN THE SKY!
             const panelX = 16, panelY = 30, panelZ = 10;
+            
+            // Create actual readable text using canvas texture!
+            function createTextSprite(message, parameters) {
+                const fontface = parameters.fontface || 'Arial';
+                const fontsize = parameters.fontsize || 48;
+                const borderThickness = parameters.borderThickness || 4;
+                const borderColor = parameters.borderColor || { r:0, g:0, b:0, a:1.0 };
+                const backgroundColor = parameters.backgroundColor || { r:255, g:255, b:255, a:1.0 };
+                const textColor = parameters.textColor || { r:0, g:0, b:0, a:1.0 };
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.width = 512;
+                canvas.height = 256;
+                
+                context.font = 'Bold ' + fontsize + 'px ' + fontface;
+                
+                // Background
+                context.fillStyle = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
+                context.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Border
+                context.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
+                context.lineWidth = borderThickness;
+                context.strokeRect(0, 0, canvas.width, canvas.height);
+                
+                // Text
+                context.fillStyle = 'rgba(' + textColor.r + ',' + textColor.g + ',' + textColor.b + ',' + textColor.a + ')';
+                context.textAlign = 'center';
+                context.textBaseline = 'middle';
+                context.fillText(message, canvas.width/2, canvas.height/2);
+                
+                const texture = new THREE.CanvasTexture(canvas);
+                const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
+                const sprite = new THREE.Sprite(spriteMaterial);
+                sprite.scale.set(10, 5, 1);
+                return sprite;
+            }
+            
+            // Main THANK YOU MARIO text
+            const thankYouSprite = createTextSprite('THANK YOU MARIO! ❤️', {
+                fontsize: 42,
+                borderColor: { r:255, g:215, b:0, a:1 },
+                borderThickness: 8,
+                backgroundColor: { r:255, g:255, b:240, a:0.9 },
+                textColor: { r:204, g:0, b:0, a:1 }
+            });
+            thankYouSprite.position.set(panelX, panelY + 1, panelZ - 2);
+            scene.add(thankYouSprite);
+            
+            // Animate floating
+            let textTime = 0;
+            setInterval(() => {
+                textTime += 0.02;
+                thankYouSprite.position.y = panelY + 1 + Math.sin(textTime) * 0.5;
+            }, 50);
             
             // Golden frame
             for (let x = -6; x <= 6; x++) {
