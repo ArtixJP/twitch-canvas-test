@@ -96,13 +96,15 @@
 <div id="captured-display" style="position:fixed;top:70px;left:20px;color:#f0f;font-family:monospace;font-size:14px;z-index:100;background:linear-gradient(180deg,rgba(80,0,80,0.9),rgba(40,0,60,0.95));padding:12px 15px;border-radius:10px;border:2px solid #f0f;box-shadow:0 0 20px rgba(255,0,255,0.4);">
 <div style="font-weight:bold;margin-bottom:8px;font-size:16px;color:#ff4444;">📖 POKÉDEX</div><div id="trainer-badges" style="font-size:10px;margin-bottom:5px;">🏅 Badges: <span id="badge-count">0</span>/8</div>
 <button id="new-game-plus" onclick="startNewGamePlus()" style="margin-top:5px;padding:3px 8px;background:linear-gradient(180deg,#4a0,#280);border:1px solid #8f8;color:#fff;border-radius:3px;cursor:pointer;font-size:10px;">🔄 New Game+</button>
+<button id="fresh-start" onclick="freshStartEffect()" style="margin-top:3px;padding:3px 8px;background:linear-gradient(180deg,#08f,#046);border:1px solid #4af;color:#fff;border-radius:3px;cursor:pointer;font-size:10px;">✨ Fresh Start</button>
 🔮 Captured: <span id="capture-count">0</span>/5
 <div id="captured-list" style="margin-top:8px;font-size:12px;max-height:100px;overflow-y:auto;"></div>
 </div>
 <div id="spaceship" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:48px;z-index:50;transition:transform 0.1s;filter:drop-shadow(0 0 20px #ffd700);cursor:pointer;">🧢</div>
 <div id="coordinates" style="position:fixed;top:20px;left:20px;color:#4f4;font-family:monospace;font-size:14px;z-index:100;background:rgba(0,0,0,0.5);padding:10px;border-radius:5px;border:1px solid #4f4;">🎮 EXPLORING...</div>
 <div id="space-objects"></div>
-<div id="tall-grass-indicator" style="position:fixed;right:15%;top:20%;padding:15px 25px;background:linear-gradient(180deg,#2a5a2a,#1a3a1a);border:3px solid #4a8a4a;border-radius:10px;z-index:20;color:#8f8;font-weight:bold;box-shadow:0 0 20px rgba(0,255,0,0.3);">
+<div id="tall-grass-indicator" style="position:fixed;right:15%;top:20%;padding:15px 25px;background:linear-gradient(180deg,#2a5a2a,#1a3a1a);border:3px solid #4a8a4a;border-radius:10px;z-index:20;color:#8f8;font-weight:bold;box-shadow:0 0 20px rgba(0,255,0,0.3);animation:grassPulse 3s infinite;">
+<style>@keyframes grassPulse { 0%,100% { box-shadow:0 0 20px rgba(0,255,0,0.3); } 50% { box-shadow:0 0 35px rgba(0,255,0,0.5),0 0 50px rgba(0,200,0,0.3); } }</style>
 🌿 TALL GRASS AREA 🌿<br/>
 <span style="font-size:12px;color:#6a6;">Wild Pokémon may appear!</span>
 </div>
@@ -485,6 +487,47 @@ function startNewGamePlus() {
     msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,#000,#206);padding:30px 50px;border:3px solid #ffd700;border-radius:15px;color:#ffd700;font-size:24px;z-index:500;text-align:center;animation:fadeUp 3s forwards;';
     document.body.appendChild(msg);
     setTimeout(() => msg.remove(), 3000);
+  }
+}
+
+// Fresh Start Effect - visual refresh without losing progress
+function freshStartEffect() {
+  // Create dramatic white flash
+  const flash = document.createElement('div');
+  flash.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#fff;z-index:9999;opacity:1;transition:opacity 1.5s;pointer-events:none;';
+  document.body.appendChild(flash);
+  
+  // Scatter all wild Pokemon to new positions
+  document.querySelectorAll('.cosmic-object').forEach((obj, i) => {
+    setTimeout(() => {
+      obj.style.transition = 'all 0.8s ease-out';
+      obj.style.left = Math.random() * 90 + 5 + '%';
+      obj.style.top = Math.random() * 80 + 10 + '%';
+      obj.style.transform = 'scale(1.2) rotate(' + (Math.random()*360) + 'deg)';
+      setTimeout(() => obj.style.transform = '', 800);
+    }, i * 50);
+  });
+  
+  // Reset player position to center
+  shipX = 0; shipY = 0;
+  updateShip();
+  
+  // Fade out flash
+  setTimeout(() => {
+    flash.style.opacity = '0';
+    setTimeout(() => flash.remove(), 1500);
+  }, 200);
+  
+  // Celebration message
+  const msg = document.createElement('div');
+  msg.innerHTML = '🌟 A FRESH ADVENTURE AWAITS! 🌟<br><span style="font-size:14px;">The world has been refreshed!</span>';
+  msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,#000,#024);padding:25px 40px;border:3px solid #4af;border-radius:15px;color:#4af;font-size:22px;z-index:500;text-align:center;animation:fadeUp 3s forwards;';
+  document.body.appendChild(msg);
+  setTimeout(() => msg.remove(), 3000);
+  
+  // Spawn extra particles for celebration
+  for(let i = 0; i < 80; i++) {
+    setTimeout(() => spawnParticles(Math.random()*window.innerWidth, Math.random()*window.innerHeight, ['#4af','#fff','#ffd700','#f0f'][Math.floor(Math.random()*4)], 3), i * 20);
   }
 }
 </script>
