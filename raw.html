@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 POKEMON PIZZA PARLOR! ⚡🔥🌿 | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -782,20 +782,50 @@
             const dough = createBlock(cx, cy + 7, cz, 0xF5DEB3);
             dough.userData.isDough = true;
             
-            // Animate pizzaiolo tossing dough!
+            // Animate pizzaiolo tossing dough HAPPILY!
             let doughTime = 0;
+            let chefHappy = 0;
             setInterval(() => {
                 doughTime += 0.1;
+                chefHappy += 0.08;
                 blocks.forEach(b => {
                     if (b.userData.isDough) {
                         b.position.y = cy + 7 + Math.sin(doughTime * 2) * 1.5;
                         b.rotation.x = doughTime * 3;
                         b.rotation.z = doughTime * 2;
+                        // Happy yellow glow when tossing high!
+                        if (Math.sin(doughTime * 2) > 0.5) {
+                            b.material.emissive = new THREE.Color(0xFFD700);
+                            b.material.emissiveIntensity = 0.5;
+                        } else {
+                            b.material.emissiveIntensity = 0;
+                        }
+                    }
+                });
+                // Chef bounces happily!
+                blocks.forEach(b => {
+                    if (b.position.x === cx && b.position.z === cz && b.position.y >= cy + 1 && b.position.y <= cy + 6) {
+                        b.position.y = b.position.y + Math.sin(chefHappy * 3) * 0.02;
                     }
                 });
             }, 50);
             
-            // Sign: PIZZERIA - Now with readable text!
+            // Happy emote above chef!
+            const happyEmote = createBlock(cx, cy + 8, cz, 0xFFFF00);
+            happyEmote.scale.set(0.4, 0.4, 0.4);
+            happyEmote.userData.isHappyEmote = true;
+            let emoteTime = 0;
+            setInterval(() => {
+                emoteTime += 0.1;
+                blocks.forEach(b => {
+                    if (b.userData.isHappyEmote) {
+                        b.position.y = cy + 8 + Math.abs(Math.sin(emoteTime * 2)) * 0.5;
+                        b.rotation.z = Math.sin(emoteTime) * 0.3;
+                    }
+                });
+            }, 50);
+            
+            // Sign: POKEMON PIZZA PARLOR - Now with readable text!
             createBlock(px + 2, py + 5, pz - 1, 0xFFD700);
             createBlock(px + 3, py + 5, pz - 1, 0xCC0000);
             
@@ -807,14 +837,52 @@
             pizzaCtx.fillStyle = '#FFD700';
             pizzaCtx.fillRect(0, 0, 256, 128);
             pizzaCtx.fillStyle = '#CC0000';
-            pizzaCtx.font = 'Bold 36px Arial';
+            pizzaCtx.font = 'Bold 28px Arial';
             pizzaCtx.textAlign = 'center';
-            pizzaCtx.fillText('🍕 PIZZERIA', 128, 70);
+            pizzaCtx.fillText('🍕 POKEMON PIZZA', 128, 70);
             const pizzaTex = new THREE.CanvasTexture(pizzaCanvas);
             const pizzaSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: pizzaTex }));
             pizzaSign.scale.set(4, 2, 1);
             pizzaSign.position.set(px + 2.5, py + 6, pz - 2);
             scene.add(pizzaSign);
+            
+            // PIKACHU CUSTOMER! ⚡
+            const pikaX = px + 1, pikaZ = pz + 1, pikaY = py;
+            createBlock(pikaX, pikaY + 1, pikaZ, 0xFFD700); // Body
+            createBlock(pikaX, pikaY + 2, pikaZ, 0xFFD700); // Head
+            createBlock(pikaX - 0.3, pikaY + 2.5, pikaZ, 0xFFD700); // Ear left
+            createBlock(pikaX + 0.3, pikaY + 2.5, pikaZ, 0xFFD700); // Ear right
+            createBlock(pikaX, pikaY + 2, pikaZ - 0.5, 0xFF0000); // Red cheeks
+            
+            // CHARMANDER CUSTOMER! 🔥
+            const charX = px + 2, charZ = pz + 1, charY = py;
+            createBlock(charX, charY + 1, charZ, 0xFF6347); // Body
+            createBlock(charX, charY + 2, charZ, 0xFF6347); // Head
+            const charTail = createBlock(charX, charY + 1, charZ + 0.5, 0xFF4500); // Tail fire
+            charTail.userData.isCharTail = true;
+            
+            // BULBASAUR CUSTOMER! 🌿
+            const bulbX = px + 3, bulbZ = pz + 1, bulbY = py;
+            createBlock(bulbX, bulbY + 1, bulbZ, 0x7FFF00); // Body
+            createBlock(bulbX, bulbY + 2, bulbZ, 0x7FFF00); // Head
+            createBlock(bulbX, bulbY + 1.5, bulbZ - 0.3, 0x228B22); // Bulb
+            
+            // Animate Charmander's tail flame!
+            let pokeTime = 0;
+            setInterval(() => {
+                pokeTime += 0.1;
+                blocks.forEach(b => {
+                    if (b.userData.isCharTail) {
+                        b.material.emissive = new THREE.Color(0xFF4500);
+                        b.material.emissiveIntensity = 0.5 + Math.sin(pokeTime * 5) * 0.3;
+                        b.scale.y = 1 + Math.sin(pokeTime * 8) * 0.2;
+                    }
+                });
+            }, 50);
+            
+            // Pokeball decoration on wall!
+            createBlock(px + 4, py + 3, pz + 4, 0xFF0000); // Top red
+            createBlock(px + 4, py + 2, pz + 4, 0xFFFFFF); // Bottom white
         }
         
         function createBurgerPlace() {
