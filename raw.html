@@ -205,9 +205,9 @@
 <div class="planet"></div>
 <div class="ring"></div>
 <div class="moon"></div>
-<div class="kitty">🐱</div>
+<div class="kitty">⭐</div>
 <div class="sun"></div>
-<div class="dog">🐕</div>
+<div class="dog">🌟</div>
 </div>
 </section>
 <section class="section" id="animals">
@@ -264,7 +264,7 @@
 </div>
 </div>
 </section>
-<div class="score-display">🐕 Dog Score: <span id="dogScore">0</span></div>
+<div class="score-display">✨ Star Alignments: <span id="dogScore">0</span></div>
 <button class="music-btn playing" id="musicToggle">⏸️ Pause</button>
 <script>
     const music = document.getElementById('bgMusic');
@@ -297,7 +297,9 @@
             scoreDisplay.textContent = dogScore;
             planet.style.background = planetColors[dogScore % planetColors.length];
             catchCooldown = true;
-            setTimeout(() => catchCooldown = false, 3000);
+            // Stars aligned! Create sparkle effect
+            planet.style.boxShadow = '0 0 80px rgba(255,255,100,0.8)';
+            setTimeout(() => { planet.style.boxShadow = ''; catchCooldown = false; }, 3000);
         }
     }
     setInterval(checkCatch, 100);
