@@ -345,11 +345,13 @@ setTimeout(createShootingStar, 1000);
           addLog('Welcome, Hero! Choose your class and begin your adventure!', 'log-level');
         }
         
-        // 2D World Movement System
+        // 2D World Movement System (legacy - player-sprite no longer exists)
         let playerX = 280, playerY = 180;
         const playerSprite = document.getElementById('player-sprite');
-        playerSprite.style.left = playerX + 'px';
-        playerSprite.style.top = playerY + 'px';
+        if(playerSprite) {
+          playerSprite.style.left = playerX + 'px';
+          playerSprite.style.top = playerY + 'px';
+        }
         
         document.addEventListener('keydown', (e) => {
             const speed = 15;
@@ -357,8 +359,10 @@ setTimeout(createShootingStar, 1000);
             if(e.key === 's' || e.key === 'ArrowDown') playerY = Math.min(350, playerY + speed);
             if(e.key === 'a' || e.key === 'ArrowLeft') playerX = Math.max(10, playerX - speed);
             if(e.key === 'd' || e.key === 'ArrowRight') playerX = Math.min(550, playerX + speed);
-            playerSprite.style.left = playerX + 'px';
-            playerSprite.style.top = playerY + 'px';
+            if(playerSprite) {
+              playerSprite.style.left = playerX + 'px';
+              playerSprite.style.top = playerY + 'px';
+            }
             checkProximity();
         });
         
@@ -426,14 +430,13 @@ setTimeout(createShootingStar, 1000);
         // Auto-select rogue for the dual dagger experience - only if UI exists
         if(document.getElementById('level')) selectClass('rogue');
         
-        // Epic Particle System
+        // Epic Particle System - particles array declared early to prevent reference errors
+        let particles = [];
         const particleCanvas = document.getElementById('particle-canvas');
         const pCtx = particleCanvas.getContext('2d');
         particleCanvas.width = window.innerWidth;
         particleCanvas.height = window.innerHeight;
         window.addEventListener('resize', () => { particleCanvas.width = window.innerWidth; particleCanvas.height = window.innerHeight; });
-        
-        let particles = [];
         class Particle {
             constructor(x, y, color, type) {
                 this.x = x; this.y = y;
@@ -519,8 +522,10 @@ setTimeout(createShootingStar, 1000);
             if(e.key === 's' || e.key === 'ArrowDown') playerY = Math.min(maxY, playerY + speed);
             if(e.key === 'a' || e.key === 'ArrowLeft') playerX = Math.max(10, playerX - speed);
             if(e.key === 'd' || e.key === 'ArrowRight') playerX = Math.min(maxX, playerX + speed);
-            playerSprite.style.left = playerX + 'px';
-            playerSprite.style.top = playerY + 'px';
+            if(playerSprite) {
+              playerSprite.style.left = playerX + 'px';
+              playerSprite.style.top = playerY + 'px';
+            }
             checkProximity();
         });
         
