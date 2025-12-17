@@ -97,6 +97,25 @@
             align-items: center;
         }
     /* Music button removed */
+        .rpg-stats {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            padding: 15px;
+            background: linear-gradient(135deg, #2d1b4e 0%, #1a0a2e 100%);
+            border: 2px solid #9b59b6;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            z-index: 100;
+            box-shadow: 0 0 15px rgba(155, 89, 182, 0.5);
+            min-width: 150px;
+        }
+        .rpg-stats h3 { margin: 0 0 10px 0; color: #f1c40f; text-align: center; }
+        .stat-bar { height: 12px; background: #333; border-radius: 6px; margin: 5px 0; overflow: hidden; }
+        .stat-fill { height: 100%; transition: width 0.3s; }
+        .hp-fill { background: linear-gradient(90deg, #e74c3c, #c0392b); }
+        .xp-fill { background: linear-gradient(90deg, #3498db, #2980b9); }
+        .level-badge { text-align: center; font-size: 1.5rem; color: #f1c40f; margin-top: 10px; }
         .score-display {
             position: fixed;
             top: 20px;
@@ -192,10 +211,19 @@
 </div>
 <div class="section" id="games-section">
 <div style="text-align: center;">
-<h2>🎮 Mini Games 🎮</h2>
-<p>Click the sun in Space to boost kitty!</p>
+<h2>🎮 RPG Adventure 🎮</h2>
+<p>⚔️ Earn XP to level up your hero!</p>
+<p>🌟 Click the sun in Space (+10 XP)</p>
 <p>Watch the dog chase the cat!</p>
 </div>
+</div>
+<div class="rpg-stats">
+<h3>⚔️ Hero Stats</h3>
+<div>❤️ HP</div>
+<div class="stat-bar"><div class="stat-fill hp-fill" id="hpBar" style="width: 100%"></div></div>
+<div>✨ XP: <span id="xpCount">0</span>/<span id="xpMax">100</span></div>
+<div class="stat-bar"><div class="stat-fill xp-fill" id="xpBar" style="width: 0%"></div></div>
+<div class="level-badge">🏅 Level <span id="playerLevel">1</span></div>
 </div>
 <div class="score-display">🐕 Dog: <span id="dogScore">0</span> pts</div>
 <script>
@@ -228,6 +256,7 @@
             if (dist < 50 && !window.catchCooldown) {
                 window.catchCooldown = true;
                 window.dogPoints = (window.dogPoints || 0) + 1;
+                gainXP(15);
                 document.getElementById('dogScore').textContent = window.dogPoints;
                 
                 // Change planet color on catch
@@ -291,7 +320,31 @@
                     elephant.parentElement.appendChild(drop);
                     setTimeout(() => drop.remove(), 1000);
                 }
+                gainXP(5);
+                }
             });
+        }
+        
+        // RPG System
+        window.playerXP = 0;
+        window.playerLevel = 1;
+        window.playerHP = 100;
+        window.xpToLevel = 100;
+        
+        function gainXP(amount) {
+            window.playerXP += amount;
+            while (window.playerXP >= window.xpToLevel) {
+                window.playerXP -= window.xpToLevel;
+                window.playerLevel++;
+                window.xpToLevel = Math.floor(window.xpToLevel * 1.5);
+                document.getElementById('playerLevel').textContent = window.playerLevel;
+                document.getElementById('xpMax').textContent = window.xpToLevel;
+                // Level up flash
+                document.querySelector('.rpg-stats').style.boxShadow = '0 0 30px #f1c40f';
+                setTimeout(() => document.querySelector('.rpg-stats').style.boxShadow = '0 0 15px rgba(155, 89, 182, 0.5)', 500);
+            }
+            document.getElementById('xpCount').textContent = window.playerXP;
+            document.getElementById('xpBar').style.width = (window.playerXP / window.xpToLevel * 100) + '%';
         }
         
         // Mini-game: Click the sun to boost the kitty!
@@ -305,6 +358,8 @@
             setTimeout(() => {
                 kitty.style.animationDuration = '5s';
                 sun.style.transform = 'scale(1)';
+            }, 2000);
+            gainXP(10);
             }, 2000);
         });
     </script>
