@@ -22,6 +22,14 @@
             0%, 100% { opacity: 0.3; }
             50% { opacity: 0.6; }
         }
+        @keyframes void-consume {
+            0% { transform: scale(1); filter: brightness(1); }
+            50% { transform: scale(0.98); filter: brightness(0.3); }
+            100% { transform: scale(1); filter: brightness(1); }
+        }
+        .void-consumed {
+            animation: void-consume 8s ease-in-out infinite;
+        }
         .void-message {
             position: fixed;
             top: 50%;
@@ -35,8 +43,8 @@
             pointer-events: none;
         }
         @keyframes void-text {
-            0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
-            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+            0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 20px rgba(128,0,128,0.8); }
+            50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.15); text-shadow: 0 0 40px rgba(128,0,128,1); }
         }
         .nav-menu {
             position: fixed;
@@ -422,9 +430,9 @@
         }
     </style>
 </head>
-<body>
+<body class="void-consumed">
 <div class="void-overlay"></div>
-<div class="void-message">🌑 The void watches... but nothing is truly gone 🌑</div>
+<div class="void-message">🌑 The void tried to consume all... but creation persists 🌑</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
