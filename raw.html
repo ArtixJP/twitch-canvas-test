@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🏚️ RIP Burger Joint | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -805,91 +805,96 @@
         }
         
         function createBurgerPlace() {
-            // 🍔 BURGER JOINT! 🍔
+            // 🏚️ ABANDONED BURGER RUINS - The community demanded its closure!
             const bx = 0, bz = 20, by = 5;
             
-            // Foundation (diner floor)
+            // Cracked foundation (dirty tiles)
             for (let x = 0; x < 5; x++) {
                 for (let z = 0; z < 4; z++) {
-                    createBlock(bx + x, by, bz + z, 0x2F2F2F);
+                    if (Math.random() > 0.25) {
+                        createBlock(bx + x, by, bz + z, 0x3A3A3A);
+                    }
                 }
             }
             
-            // Walls (retro diner red)
-            for (let y = 1; y <= 3; y++) {
+            // Crumbling walls (partial, damaged)
+            for (let y = 1; y <= 2; y++) {
                 for (let x = 0; x < 5; x++) {
-                    createBlock(bx + x, by + y, bz + 3, 0xB22222);
-                }
-                createBlock(bx, by + y, bz, 0xB22222);
-                createBlock(bx, by + y, bz + 1, 0xB22222);
-                createBlock(bx, by + y, bz + 2, 0xB22222);
-                createBlock(bx + 4, by + y, bz, 0xB22222);
-                createBlock(bx + 4, by + y, bz + 1, 0xB22222);
-                createBlock(bx + 4, by + y, bz + 2, 0xB22222);
-            }
-            
-            // Chrome/silver trim (50s diner style)
-            createBlock(bx + 1, by + 2, bz, 0xC0C0C0);
-            createBlock(bx + 2, by + 2, bz, 0xC0C0C0);
-            createBlock(bx + 3, by + 2, bz, 0xC0C0C0);
-            
-            // Roof (silver)
-            for (let x = -1; x < 6; x++) {
-                for (let z = -1; z < 5; z++) {
-                    createBlock(bx + x, by + 4, bz + z, 0xA9A9A9);
+                    if (Math.random() > 0.5) {
+                        createBlock(bx + x, by + y, bz + 3, 0x5C3D2E);
+                    }
                 }
             }
             
-            // Counter
-            createBlock(bx + 1, by + 1, bz + 2, 0xFFFFFF);
-            createBlock(bx + 2, by + 1, bz + 2, 0xFFFFFF);
-            createBlock(bx + 3, by + 1, bz + 2, 0xFFFFFF);
+            // Rubble pile where grill was
+            createBlock(bx + 3, by + 1, bz + 2, 0x4A4A4A);
+            createBlock(bx + 2, by + 1, bz + 3, 0x3A3A3A);
+            createBlock(bx + 1, by + 1, bz + 2, 0x2A2A2A);
             
-            // BURGERS! 🍔 (stacked blocks = burger layers)
-            // Burger 1
-            createBlock(bx + 1, by + 2, bz + 2, 0xDAA520); // Bottom bun
-            createBlock(bx + 1, by + 2.3, bz + 2, 0x8B4513); // Patty
-            createBlock(bx + 1, by + 2.5, bz + 2, 0xFFD700); // Cheese
-            createBlock(bx + 1, by + 2.7, bz + 2, 0x228B22); // Lettuce
-            createBlock(bx + 1, by + 2.9, bz + 2, 0xDAA520); // Top bun
+            // Broken counter remains
+            createBlock(bx + 1, by + 1, bz + 1, 0x8B8B8B);
             
-            // Burger 2 (double patty!)
-            createBlock(bx + 2, by + 2, bz + 2, 0xDAA520);
-            createBlock(bx + 2, by + 2.2, bz + 2, 0x8B4513);
-            createBlock(bx + 2, by + 2.4, bz + 2, 0x8B4513);
-            createBlock(bx + 2, by + 2.6, bz + 2, 0xFFD700);
-            createBlock(bx + 2, by + 2.8, bz + 2, 0xDAA520);
+            // Cobwebs
+            const cobweb1 = createBlock(bx + 4, by + 2, bz + 3, 0xDDDDDD);
+            cobweb1.material.transparent = true;
+            cobweb1.material.opacity = 0.4;
             
-            // Fries! 🍟
-            createBlock(bx + 3, by + 2, bz + 2, 0xFFD700);
+            // Fallen burger sign (on ground, broken)
+            createBlock(bx + 2, by + 1, bz - 1, 0x5C4033);
             
-            // Grill (dark with red glow)
-            createBlock(bx + 3, by + 1, bz + 3, 0x2F2F2F);
-            createBlock(bx + 3, by + 2, bz + 3, 0xFF4500);
+            // Ghost of a burger (transparent, sad memory)
+            const ghostBurger = createBlock(bx + 2, by + 2, bz + 1, 0xDAA520);
+            ghostBurger.material.transparent = true;
+            ghostBurger.material.opacity = 0.25;
+            ghostBurger.scale.set(0.7, 0.7, 0.7);
             
-            // Soda fountain
-            createBlock(bx + 1, by + 1, bz + 3, 0xCC0000);
+            // Weeds growing through cracks
+            createBlock(bx + 1, by + 0.5, bz + 1, 0x228B22);
+            createBlock(bx + 3, by + 0.5, bz + 2, 0x228B22);
             
-            // Giant burger sign on roof!
-            createBlock(bx + 2, by + 5, bz + 1, 0xDAA520);
-            createBlock(bx + 2, by + 6, bz + 1, 0x8B4513);
-            createBlock(bx + 2, by + 7, bz + 1, 0xDAA520);
-            
+            // "RIP BURGERS" sign
             const burgerCanvas = document.createElement('canvas');
             burgerCanvas.width = 256;
             burgerCanvas.height = 128;
             const burgerCtx = burgerCanvas.getContext('2d');
-            burgerCtx.fillStyle = '#B22222';
+            burgerCtx.fillStyle = '#4A4A4A';
             burgerCtx.fillRect(0, 0, 256, 128);
-            burgerCtx.fillStyle = '#FFD700';
-            burgerCtx.font = 'Bold 32px Arial';
+            burgerCtx.fillStyle = '#8B0000';
+            burgerCtx.font = 'Bold 28px Arial';
             burgerCtx.textAlign = 'center';
-            burgerCtx.fillText('🍔 BURGERS', 128, 70);
+            burgerCtx.fillText('RIP BURGERS 🍔💀', 128, 70);
             const burgerTex = new THREE.CanvasTexture(burgerCanvas);
             const burgerSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: burgerTex }));
-            burgerSign.scale.set(4, 2, 1);
-            burgerSign.position.set(bx + 2, by + 8, bz);
+            burgerSign.scale.set(3, 1.5, 1);
+            burgerSign.position.set(bx + 2, by + 3, bz - 1);
+            burgerSign.rotation.z = -0.2;
             scene.add(burgerSign);
+            
+            // Dust particles
+            const dustParticles = [];
+            for (let i = 0; i < 5; i++) {
+                const dust = createBlock(
+                    bx + 1 + Math.random() * 3,
+                    by + 1 + Math.random() * 2,
+                    bz + 1 + Math.random() * 2,
+                    0xA0A0A0
+                );
+                dust.scale.set(0.1, 0.1, 0.1);
+                dust.material.transparent = true;
+                dust.material.opacity = 0.4;
+                dust.userData.isBurgerDust = true;
+                dust.userData.baseY = dust.position.y;
+                dustParticles.push(dust);
+            }
+            
+            // Animate dust
+            let burgerDustTime = 0;
+            setInterval(() => {
+                burgerDustTime += 0.02;
+                dustParticles.forEach((d, i) => {
+                    d.position.y = d.userData.baseY + Math.sin(burgerDustTime + i) * 0.2;
+                });
+            }, 50);
         }
         
         function createGreetingSigns() {
