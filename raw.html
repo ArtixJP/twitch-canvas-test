@@ -179,6 +179,8 @@
 <p style="color: #ff69b4;">🌈 RAINBOW ACTIVE</p>
 <p>Click to explore safely</p>
 <p style="font-size: 10px; color: #666;">v1.0.0 - RECOVERY MODE</p>
+<p style="color: #FF69B4; margin-top: 8px;">📣 HI MOM! HI GRANDMA!</p>
+<p style="color: #00FF00;">🍄 MARIO BROS ACTIVE!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -211,7 +213,9 @@
         { name: 'Squirtle', color: 0x1E90FF, size: 1.5, speed: 2 },
         { name: 'Eevee', color: 0xD2691E, size: 1.4, speed: 3.5 },
         { name: 'Jigglypuff', color: 0xFFB6C1, size: 1.3, speed: 1.5 },
-        { name: 'Mario', color: 0xFF0000, size: 2.0, speed: 4, isMario: true }
+        { name: 'Mario', color: 0xFF0000, size: 2.0, speed: 4, isMario: true },
+        { name: 'Luigi', color: 0x00FF00, size: 2.1, speed: 3.8, isLuigi: true },
+        { name: 'Toad', color: 0xFFFFFF, size: 1.2, speed: 5, isToad: true }
     ];
     let blocksBroken = 0;
     const clicksEl = document.getElementById('clicks');
@@ -622,7 +626,49 @@
     }
     const thankYouPanel = createThankYouPanel();
     
+    // Community Greeting Panels!
+    function createGreetingPanel(text, x, y, z, color) {
+        const panelGroup = new THREE.Group();
+        
+        const panelGeo = new THREE.BoxGeometry(6, 2.5, 0.2);
+        const panelMat = new THREE.MeshLambertMaterial({ color: color });
+        const panel = new THREE.Mesh(panelGeo, panelMat);
+        panelGroup.add(panel);
+        
+        const canvas = document.createElement('canvas');
+        canvas.width = 384;
+        canvas.height = 160;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 384, 160);
+        ctx.fillStyle = '#333333';
+        ctx.font = 'bold 28px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(text, 192, 90);
+        ctx.font = '16px Arial';
+        ctx.fillText('💖 From Twitch Chat 💖', 192, 130);
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const textGeo = new THREE.PlaneGeometry(5.5, 2.2);
+        const textMat = new THREE.MeshBasicMaterial({ map: texture });
+        const textMesh = new THREE.Mesh(textGeo, textMat);
+        textMesh.position.z = 0.15;
+        panelGroup.add(textMesh);
+        
+        panelGroup.position.set(x, y, z);
+        scene.add(panelGroup);
+        return panelGroup;
+    }
+    
+    const hiMomPanel = createGreetingPanel('HI MOM! 👋🏠', -15, 20, -20, 0xFF69B4);
+    const hiGrandmaPanel = createGreetingPanel('HI GRANDMA! 👵💕', 15, 22, -25, 0x9370DB);
+    
     // Spawn initial Pokemon
+    // Spawn extra Mario Bros characters!
+    createPokemon(pokemonTypes.find(p => p.name === 'Mario'), 5, 5);
+    createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -5, 5);
+    createPokemon(pokemonTypes.find(p => p.name === 'Toad'), 0, 8);
+    
     for (let i = 0; i < 15; i++) {
         const type = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
         const x = (Math.random() - 0.5) * 60;
@@ -826,6 +872,16 @@
         if (thankYouPanel) {
             thankYouPanel.position.y = 35 + Math.sin(Date.now() * 0.002) * 0.5;
             thankYouPanel.rotation.y = Math.sin(Date.now() * 0.001) * 0.2;
+        }
+        
+        // Animate greeting panels
+        if (hiMomPanel) {
+            hiMomPanel.position.y = 20 + Math.sin(Date.now() * 0.0015) * 0.8;
+            hiMomPanel.rotation.y = Math.sin(Date.now() * 0.0008) * 0.3;
+        }
+        if (hiGrandmaPanel) {
+            hiGrandmaPanel.position.y = 22 + Math.sin(Date.now() * 0.0018 + 1) * 0.6;
+            hiGrandmaPanel.rotation.y = Math.sin(Date.now() * 0.001 + 2) * 0.25;
         }
         
         // Animate rainbow with gentle shimmer
