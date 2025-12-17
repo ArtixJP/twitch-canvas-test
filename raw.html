@@ -206,6 +206,8 @@
 <p style="color: #fff; font-size: 11px;">Walk near coins to collect!</p>
 <p style="color: #FF4500;">🍔 BURGER HUT OPENED!</p>
 <p style="color: #00FF00;">🍣 MORE SUSHI!</p>
+<p style="color: #DC143C;">🍣 SUSHI ARMADA x8!</p>
+<p style="color: #FF6347;">🏚️ RESTAURANT → BOATS!</p>
 <p style="color: #FFD700;">🪙 MORE COINS!</p>
 <p style="color: #FF69B4;">👋 HI MOM! HELLO!</p>
 <p style="color: #9400D3;">🎉 YOUPI!</p>
@@ -898,6 +900,8 @@
         return restaurantGroup;
     }
     const japaneseRestaurant = createJapaneseRestaurant();
+    // Community voted: Remove restaurant but ADD MORE SUSHI!
+    japaneseRestaurant.visible = false;
     
     // FLOATING SUSHI CONVEYOR BELT - Community requested!
     function createSushiConveyor() {
@@ -1513,6 +1517,16 @@
     const sushiBoat1 = createFloatingSushiBoat(-15, 10, 25);
     const sushiBoat2 = createFloatingSushiBoat(5, 12, 30);
     const sushiBoat3 = createFloatingSushiBoat(20, 8, 20);
+    
+    // MEGA SUSHI EXPANSION - Community wants MORE!
+    const sushiBoat4 = createFloatingSushiBoat(-25, 14, -15);
+    const sushiBoat5 = createFloatingSushiBoat(0, 16, -25);
+    const sushiBoat6 = createFloatingSushiBoat(30, 11, 10);
+    const sushiBoat7 = createFloatingSushiBoat(-30, 9, 30);
+    const sushiBoat8 = createFloatingSushiBoat(15, 18, -35);
+    
+    // SUSHI MEMORIAL where restaurant stood
+    const sushiMemorial = createGreetingPanel('🍣 SUSHI PARADISE LIVES ON! 🍣', 35, 12, 25, 0xDC143C);
     
     // GIANT FLOATING CHEESE - Community requested!
     function createGiantCheese() {
@@ -2251,6 +2265,27 @@
         if (typeof sushiBoat3 !== 'undefined' && sushiBoat3) {
             sushiBoat3.position.y = 8 + Math.sin(Date.now() * 0.003 + 2) * 1;
             sushiBoat3.rotation.y += delta * 0.35;
+        }
+        // MEGA SUSHI FLEET ANIMATION!
+        if (typeof sushiBoat4 !== 'undefined' && sushiBoat4) {
+            sushiBoat4.position.y = 14 + Math.sin(Date.now() * 0.0028 + 3) * 1.2;
+            sushiBoat4.rotation.y += delta * 0.4;
+        }
+        if (typeof sushiBoat5 !== 'undefined' && sushiBoat5) {
+            sushiBoat5.position.y = 16 + Math.sin(Date.now() * 0.0032 + 4) * 1.5;
+            sushiBoat5.rotation.y += delta * 0.28;
+        }
+        if (typeof sushiBoat6 !== 'undefined' && sushiBoat6) {
+            sushiBoat6.position.y = 11 + Math.sin(Date.now() * 0.0024 + 5) * 0.9;
+            sushiBoat6.rotation.y += delta * 0.45;
+        }
+        if (typeof sushiBoat7 !== 'undefined' && sushiBoat7) {
+            sushiBoat7.position.y = 9 + Math.sin(Date.now() * 0.0035 + 6) * 1.1;
+            sushiBoat7.rotation.y += delta * 0.32;
+        }
+        if (typeof sushiBoat8 !== 'undefined' && sushiBoat8) {
+            sushiBoat8.position.y = 18 + Math.sin(Date.now() * 0.0022 + 7) * 1.8;
+            sushiBoat8.rotation.y += delta * 0.38;
         }
         
         // Animate HEY HO panel
