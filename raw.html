@@ -52,7 +52,8 @@
 <div>Seed: HelloWorld 🍌</div>
 <div>Chunks: Loading...</div>
 </div>
-<div id="controls">🖱️ Drag to rotate | 🔄 Auto-generating terrain</div>
+<div id="controls">🎮 WASD: Move | SPACE: Jump | F: First Person | 🖱️ Mouse: Look Around</div>
+<div id="player-stats" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#55FF55;padding:10px;border-radius:5px;z-index:100;border:2px solid #333;font-family:monospace;">❤️❤️❤️❤️❤️<br/>🏃 Playing!</div>
 <script>
         // MINECRAFT 3D VOXEL WORLD
         const scene = new THREE.Scene();
@@ -164,10 +165,46 @@
         // Update info
         document.querySelector('#info div:last-child').textContent = 'Blocks: ' + blockCount;
         
-        // Mouse controls
+        // PLAYABLE CONTROLS!
         let isDragging = false;
         let prevX = 0, prevY = 0;
         let angleX = 0, angleY = 0.5;
+        
+        // Player state
+        const player = {
+            x: 0, y: 15, z: 0,
+            vx: 0, vy: 0, vz: 0,
+            speed: 0.3,
+            jumpPower: 0.4,
+            onGround: false
+        };
+        
+        // Create player cube (Steve!)
+        const playerGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
+        const playerMat = new THREE.MeshLambertMaterial({ color: 0x00AA00 });
+        const playerMesh = new THREE.Mesh(playerGeo, playerMat);
+        playerMesh.position.set(player.x, player.y, player.z);
+        scene.add(playerMesh);
+        
+        // Add player head
+        const headGeo = new THREE.BoxGeometry(0.6, 0.6, 0.6);
+        const headMat = new THREE.MeshLambertMaterial({ color: 0xFFDBAC });
+        const headMesh = new THREE.Mesh(headGeo, headMat);
+        headMesh.position.y = 1.2;
+        playerMesh.add(headMesh);
+        
+        let firstPerson = false;
+        const keys = {};
+        
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            if(e.key.toLowerCase() === 'f') firstPerson = !firstPerson;
+            if(e.key === ' ' && player.onGround) {
+                player.vy = player.jumpPower;
+                player.onGround = false;
+            }
+        });
+        document.addEventListener('keyup', (e) => keys[e.key.toLowerCase()] = false);
         
         renderer.domElement.addEventListener('mousedown', (e) => { isDragging = true; prevX = e.clientX; prevY = e.clientY; });
         renderer.domElement.addEventListener('mouseup', () => isDragging = false);
@@ -180,15 +217,56 @@
             }
         });
         
+        function updatePlayer() {
+            // Movement
+            const moveAngle = angleX;
+            if(keys['w']) { player.x -= Math.sin(moveAngle) * player.speed; player.z -= Math.cos(moveAngle) * player.speed; }
+            if(keys['s']) { player.x += Math.sin(moveAngle) * player.speed; player.z += Math.cos(moveAngle) * player.speed; }
+            if(keys['a']) { player.x -= Math.cos(moveAngle) * player.speed; player.z += Math.sin(moveAngle) * player.speed; }
+            if(keys['d']) { player.x += Math.cos(moveAngle) * player.speed; player.z -= Math.sin(moveAngle) * player.speed; }
+            
+            // Gravity
+            player.vy -= 0.02;
+            player.y += player.vy;
+            
+            // Ground collision (simple)
+            const groundHeight = Math.floor(noise(player.x, player.z) + 7);
+            if(player.y < groundHeight) {
+                player.y = groundHeight;
+                player.vy = 0;
+                player.onGround = true;
+            }
+            
+            playerMesh.position.set(player.x, player.y, player.z);
+            playerMesh.rotation.y = -angleX;
+        }
+        
         // Animation
         function animate() {
             requestAnimationFrame(animate);
-            if(!isDragging) angleX += 0.002;
-            const radius = 50;
-            camera.position.x = Math.sin(angleX) * radius;
-            camera.position.z = Math.cos(angleX) * radius;
-            camera.position.y = 20 + angleY * 30;
-            camera.lookAt(0, 5, 0);
+            updatePlayer();
+            
+            if(firstPerson) {
+                // First person view
+                camera.position.x = player.x;
+                camera.position.y = player.y + 1.5;
+                camera.position.z = player.z;
+                camera.lookAt(
+                    player.x - Math.sin(angleX) * 10,
+                    player.y + 1.5 - angleY * 5,
+                    player.z - Math.cos(angleX) * 10
+                );
+                playerMesh.visible = false;
+            } else {
+                // Third person view
+                const radius = 15;
+                camera.position.x = player.x + Math.sin(angleX) * radius;
+                camera.position.z = player.z + Math.cos(angleX) * radius;
+                camera.position.y = player.y + 5 + angleY * 10;
+                camera.lookAt(player.x, player.y + 1, player.z);
+                playerMesh.visible = true;
+            }
+            
             renderer.render(scene, camera);
         }
         animate();
