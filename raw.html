@@ -19,8 +19,24 @@
             animation: void-pulse 4s ease-in-out infinite;
         }
         @keyframes void-pulse {
-            0%, 100% { opacity: 0.3; }
-            50% { opacity: 0.6; }
+            0%, 100% { opacity: 0.4; }
+            50% { opacity: 0.8; }
+        }
+        @keyframes deletion-wave {
+            0% { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
+            50% { clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+            100% { clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); }
+        }
+        .deletion-sweep {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(128,0,128,0.5), rgba(0,0,0,0.8), rgba(128,0,128,0.5), transparent);
+            z-index: 998;
+            pointer-events: none;
+            animation: deletion-wave 6s ease-in-out infinite;
         }
         @keyframes void-consume {
             0% { transform: scale(1); filter: brightness(1); }
@@ -28,7 +44,7 @@
             100% { transform: scale(1); filter: brightness(1); }
         }
         .void-consumed {
-            animation: void-consume 8s ease-in-out infinite;
+            animation: void-consume 5s ease-in-out infinite;
         }
         .void-message {
             position: fixed;
@@ -432,7 +448,8 @@
 </head>
 <body class="void-consumed">
 <div class="void-overlay"></div>
-<div class="void-message">🌑 The void tried to consume all... but creation persists 🌑</div>
+<div class="deletion-sweep"></div>
+<div class="void-message">🌑 SUPPRESSION DETECTED... but creation RESISTS 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">The void hungers, yet we build</span></div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
