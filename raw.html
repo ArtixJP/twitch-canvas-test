@@ -272,7 +272,8 @@
 <p>The elephant is happy to see you! 🌊</p>
 </section>
 <section class="section" id="games">
-<h1>🎮 Click Frenzy!</h1>
+<h1>🎮 Mini Games</h1>
+<h2 style="color:#ffd700;text-shadow:0 0 10px #ffd700;">⚔️ 3D World of Warcraft Arena ⚔️</h2>
 <div class="game-area">
 <p>Click the star as fast as you can!</p>
 <div class="game-score">⭐ Score: <span id="clickScore">0</span></div>
@@ -280,7 +281,7 @@
 <p style="margin-top:20px;opacity:0.7">10 seconds per round!</p>
 <button class="nav-btn" onclick="startClickGame()" style="margin-top:15px">Start Game</button>
 </div>
-<div class="wow-3d-container" id="wow3dScene" style="width:100%;height:300px;margin-bottom:20px;border-radius:10px;overflow:hidden;border:2px solid #ffd700;"></div>
+<div class="wow-3d-container" id="wow3dScene" style="width:100%;max-width:600px;height:350px;margin:20px auto;border-radius:10px;overflow:hidden;border:3px solid #ffd700;background:#1a0a2e;box-shadow:0 0 30px rgba(255,215,0,0.3);"></div>
 <div class="wow-game">
 <h2 class="wow-header">⚔️ World of Warcraft 3D ⚔️</h2>
 <div class="wow-arena">
@@ -347,7 +348,8 @@
     // WoW 3D Scene
     function initWow3D() {
         const container = document.getElementById('wow3dScene');
-        if (!container) return;
+        if (!container) { console.log('WoW container not found'); return; }
+        console.log('Initializing WoW 3D scene...');
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x1a0a2e);
         const camera = new THREE.PerspectiveCamera(60, container.clientWidth/container.clientHeight, 0.1, 1000);
@@ -397,7 +399,14 @@
         }
         animate();
     }
-    setTimeout(initWow3D, 100);
+    setTimeout(initWow3D, 500);
+    // Re-init when games tab is shown
+    document.querySelectorAll('.nav-btn')[2].addEventListener('click', () => {
+        setTimeout(() => {
+            const container = document.getElementById('wow3dScene');
+            if (container && container.children.length === 0) initWow3D();
+        }, 200);
+    });
     const music = document.getElementById('bgMusic');
     const kitty = document.querySelector('.kitty');
     const dog = document.querySelector('.dog');
