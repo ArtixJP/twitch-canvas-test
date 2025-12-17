@@ -127,6 +127,51 @@
             50% { filter: brightness(2); }
             100% { filter: brightness(1); }
         }
+        .elephant {
+            position: absolute;
+            font-size: 50px;
+            z-index: 15;
+            cursor: pointer;
+            filter: drop-shadow(0 0 10px rgba(128, 128, 128, 0.6));
+        }
+        .water-drop {
+            position: absolute;
+            font-size: 20px;
+            animation: spray 1s ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes spray {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.5); }
+        }
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+        }
+        .nav-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.7);
+        }
+        .section { display: none; width: 100%; height: 100%; }
+        .section.active { display: flex; justify-content: center; align-items: center; }
         .music-btn:hover {
             transform: scale(1.1);
             box-shadow: 0 0 30px rgba(255, 202, 87, 0.7);
@@ -134,6 +179,12 @@
     </style>
 </head>
 <body>
+<nav class="nav-menu">
+<button class="nav-btn active" data-section="space">🚀 Space</button>
+<button class="nav-btn" data-section="animals">🐾 Animals</button>
+<button class="nav-btn" data-section="games">🎮 Games</button>
+</nav>
+<div class="section active" id="space-section">
 <div class="solar-system">
 <div class="sun"></div>
 <h1>Hello World</h1>
@@ -142,6 +193,21 @@
 <div class="kitty" id="kitty">🐱</div>
 </div>
 <div class="doggy" id="doggy">🐕</div>
+</div>
+</div>
+<div class="section" id="animals-section">
+<div style="text-align: center; position: relative;">
+<h2>🐾 Animal Kingdom 🐾</h2>
+<div class="elephant" id="elephant">🐘</div>
+<p>Click the elephant to spray water!</p>
+</div>
+</div>
+<div class="section" id="games-section">
+<div style="text-align: center;">
+<h2>🎮 Mini Games 🎮</h2>
+<p>Click the sun in Space to boost kitty!</p>
+<p>Watch the dog chase the cat!</p>
+</div>
 </div>
 <div class="score-display">🐕 Dog: <span id="dogScore">0</span> pts</div>
 <button class="music-btn" id="musicToggle">🎵 Pause</button>
@@ -212,6 +278,48 @@
             requestAnimationFrame(updateDogPosition);
         }
         updateDogPosition();
+        
+        // Section navigation
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const sections = document.querySelectorAll('.section');
+        let currentSection = 0;
+        const sectionIds = ['space', 'animals', 'games'];
+        
+        function showSection(sectionName) {
+            sections.forEach(s => s.classList.remove('active'));
+            navBtns.forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionName + '-section').classList.add('active');
+            document.querySelector(`[data-section="${sectionName}"]`).classList.add('active');
+            currentSection = sectionIds.indexOf(sectionName);
+        }
+        
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => showSection(btn.dataset.section));
+        });
+        
+        // Auto-rotate sections every 30 seconds
+        setInterval(() => {
+            currentSection = (currentSection + 1) % sectionIds.length;
+            showSection(sectionIds[currentSection]);
+        }, 30000);
+        
+        // Elephant water spray
+        const elephant = document.getElementById('elephant');
+        if (elephant) {
+            elephant.addEventListener('click', () => {
+                for (let i = 0; i < 8; i++) {
+                    const drop = document.createElement('span');
+                    drop.className = 'water-drop';
+                    drop.textContent = '💧';
+                    drop.style.setProperty('--tx', (Math.random() * 200 - 100) + 'px');
+                    drop.style.setProperty('--ty', (Math.random() * -150 - 50) + 'px');
+                    drop.style.left = elephant.offsetLeft + 25 + 'px';
+                    drop.style.top = elephant.offsetTop + 'px';
+                    elephant.parentElement.appendChild(drop);
+                    setTimeout(() => drop.remove(), 1000);
+                }
+            });
+        }
         
         // Mini-game: Click the sun to boost the kitty!
         const sun = document.querySelector('.sun');
