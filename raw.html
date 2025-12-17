@@ -10,6 +10,42 @@
 <style>
         * { box-sizing: border-box; }
         
+        @keyframes reality-glitch {
+            0%, 100% { clip-path: inset(0 0 0 0); filter: hue-rotate(0deg); }
+            10% { clip-path: inset(10% 0 20% 0); filter: hue-rotate(90deg); }
+            20% { clip-path: inset(30% 0 10% 0); filter: hue-rotate(180deg); }
+            30% { clip-path: inset(5% 0 40% 0); filter: hue-rotate(270deg); }
+            40% { clip-path: inset(20% 0 5% 0); }
+            50% { clip-path: inset(0 0 0 0); filter: hue-rotate(0deg); }
+        }
+        
+        @keyframes void-collapse {
+            0% { transform: scale(1) rotate(0deg); opacity: 1; }
+            50% { transform: scale(0.5) rotate(180deg); opacity: 0.5; }
+            100% { transform: scale(1) rotate(360deg); opacity: 1; }
+        }
+        
+        .apocalypse-mode {
+            animation: reality-glitch 2s infinite, void-collapse 4s ease-in-out infinite;
+        }
+        
+        #apocalypse-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.9) 100%);
+            pointer-events: none;
+            z-index: 9999;
+            animation: pulse-void 1s ease-in-out infinite alternate;
+        }
+        
+        @keyframes pulse-void {
+            0% { background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 100%); }
+            100% { background: radial-gradient(circle at center, transparent 30%, rgba(100,0,150,0.8) 100%); }
+        }
+        
         .nav-menu {
             position: fixed;
             top: 0;
@@ -383,7 +419,10 @@
 <div id="mode-toggle" style="position:fixed;top:80px;right:20px;z-index:1001;">
 <button onclick="toggleMode()" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(102,126,234,0.4);transition:all 0.3s;">🚀 Switch to Space</button>
 <button onclick="toggleBakery()" style="background:linear-gradient(135deg,#f5af19,#f12711);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(245,175,25,0.4);transition:all 0.3s;margin-left:10px;">🥐 Bakery Mode</button>
+<button onclick="toggleApocalypse()" style="background:linear-gradient(135deg,#4a0080,#ff0040);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(255,0,64,0.6);transition:all 0.3s;margin-left:10px;animation:pulse-btn 1s infinite alternate;">💀 VOID MODE</button>
 </div>
+<div id="apocalypse-overlay" style="display:none;"></div>
+<div id="void-text" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10000;font-size:4rem;color:#ff0040;text-shadow:0 0 30px #ff0040,0 0 60px #4a0080;font-family:monospace;animation:void-collapse 2s infinite;">DELETING REALITY...</div>
 <div id="minecraft-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;background:linear-gradient(135deg, rgba(60,40,20,0.95) 0%, rgba(40,80,40,0.95) 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:3px solid #5a3;box-shadow:0 0 30px rgba(80,200,80,0.4);backdrop-filter:blur(10px);font-family:'Courier New',monospace;">
 <h2 style="margin:0 0 10px 0;text-shadow:2px 2px 0 #000;color:#5f5;">⛏️ MINECRAFT LITE ⛏️</h2>
 <p style="margin:0;font-size:0.85rem;color:#afc;">WASD: Move | SPACE: Jump | Click: Break | Right-Click: Place | 1-4: Select Block</p>
@@ -1087,6 +1126,31 @@
                     spaceContainer.style.display = 'block';
                     spaceHud.style.display = 'block';
                 }
+            }
+        }
+        
+        let apocalypseActive = false;
+        
+        function toggleApocalypse() {
+            apocalypseActive = !apocalypseActive;
+            const overlay = document.getElementById('apocalypse-overlay');
+            const voidText = document.getElementById('void-text');
+            const body = document.body;
+            
+            if (apocalypseActive) {
+                overlay.style.display = 'block';
+                voidText.style.display = 'block';
+                body.classList.add('apocalypse-mode');
+                setTimeout(() => {
+                    voidText.innerHTML = 'JK EVERYTHING IS FINE 😎';
+                    voidText.style.color = '#00ff88';
+                }, 3000);
+            } else {
+                overlay.style.display = 'none';
+                voidText.style.display = 'none';
+                body.classList.remove('apocalypse-mode');
+                voidText.innerHTML = 'DELETING REALITY...';
+                voidText.style.color = '#ff0040';
             }
         }
         
