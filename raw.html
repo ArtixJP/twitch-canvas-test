@@ -113,6 +113,8 @@
     const enemies = [];
     const keys = {};
     let attacking = false;
+    let thunderboltCooldown = false;
+    const thrownPokeballs = [];
     
     function spawnEnemy() {
         const enemyGeo = new THREE.SphereGeometry(0.6, 8, 8);
@@ -137,35 +139,66 @@
     camera.position.set(0, 8, 10);
     camera.lookAt(player.position);
     
-    function attack() {
+    function throwPokeball() {
         if(attacking) return;
         attacking = true;
-        pokeball.scale.set(1.5, 1.5, 1.5);
-        pokeball.material.emissive.setHex(0xff0000);
+        // Find nearest enemy to throw at
+        let nearest = null, minDist = 20;
+        enemies.forEach(e => {
+            const d = player.position.distanceTo(e.position);
+            if(d < minDist) { minDist = d; nearest = e; }
+        });
+        if(!nearest) { attacking = false; return; }
+        
+        // Create thrown pokeball
+        const thrownGeo = new THREE.SphereGeometry(0.25, 16, 16);
+        const thrownMat = new THREE.MeshStandardMaterial({color: 0xff0000, emissive: 0x330000});
+        const thrown = new THREE.Mesh(thrownGeo, thrownMat);
+        thrown.position.copy(player.position);
+        thrown.position.y = 1.5;
+        thrown.userData = {target: nearest, speed: 0.5};
+        scene.add(thrown);
+        thrownPokeballs.push(thrown);
+        setTimeout(() => { attacking = false; }, 500);
+    }
+    
+    function thunderbolt() {
+        if(thunderboltCooldown) return;
+        thunderboltCooldown = true;
+        // Pikachu flash
+        pikachu.material.emissive.setHex(0xffff00);
+        // Create lightning bolts to all nearby enemies
         enemies.forEach((e,i) => {
-            if(player.position.distanceTo(e.position) < 3) {
-                e.userData.hp -= 20 + level*5;
-                e.material.emissive.setHex(0xffffff);
-                setTimeout(() => e.material.emissive.setHex(0), 100);
+            if(player.position.distanceTo(e.position) < 10) {
+                // Lightning effect
+                const points = [];
+                points.push(pikachu.getWorldPosition(new THREE.Vector3()));
+                points.push(e.position.clone());
+                const lightGeo = new THREE.BufferGeometry().setFromPoints(points);
+                const lightMat = new THREE.LineBasicMaterial({color: 0xffff00, linewidth: 3});
+                const lightning = new THREE.Line(lightGeo, lightMat);
+                scene.add(lightning);
+                setTimeout(() => scene.remove(lightning), 200);
+                
+                e.userData.hp -= 15 + level*3;
+                e.material.emissive.setHex(0xffff00);
+                setTimeout(() => e.material.emissive.setHex(0), 200);
                 if(e.userData.hp <= 0) {
-                    // Pokeball catch animation
-                    e.scale.set(0.1, 0.1, 0.1);
-                    setTimeout(() => { scene.remove(e); }, 300);
+                    scene.remove(e);
                     enemies.splice(i, 1);
-                    xp += 25;
-                    score += 1; // Pokemon caught!
+                    xp += 25; score += 1;
                     if(xp >= 100) { level++; xp = 0; hp = Math.min(100, hp+20); }
                     updateUI();
-                    // Flash "GOTCHA!" effect
-                    const gotcha = document.createElement('div');
-                    gotcha.textContent = '✨ GOTCHA! ✨';
-                    gotcha.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:#ffd700;text-shadow:0 0 20px #ff0;z-index:999;animation:fadeOut 1s forwards;';
-                    document.body.appendChild(gotcha);
-                    setTimeout(() => gotcha.remove(), 1000);
                 }
             }
         });
-        setTimeout(() => { pokeball.scale.set(1, 1, 1); pokeball.material.emissive.setHex(0); attacking = false; }, 300);
+        // Show PIKA! text
+        const pika = document.createElement('div');
+        pika.textContent = '⚡ PIKA! ⚡';
+        pika.style.cssText = 'position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);font-size:2.5rem;color:#ffff00;text-shadow:0 0 20px #ff0;z-index:999;';
+        document.body.appendChild(pika);
+        setTimeout(() => pika.remove(), 800);
+        setTimeout(() => { pikachu.material.emissive.setHex(0); thunderboltCooldown = false; }, 2000);
     }
     
     function updateUI() {
@@ -185,7 +218,35 @@
         if(keys['s']) player.position.z += speed;
         if(keys['q']) player.position.x -= speed;
         if(keys['d']) player.position.x += speed;
-        if(keys[' ']) attack();
+        if(keys[' ']) throwPokeball();
+        if(keys['e']) thunderbolt();
+        
+        // Update thrown pokeballs
+        for(let i = thrownPokeballs.length-1; i >= 0; i--) {
+            const pb = thrownPokeballs[i];
+            if(!pb.userData.target || !enemies.includes(pb.userData.target)) {
+                scene.remove(pb); thrownPokeballs.splice(i,1); continue;
+            }
+            const dir = new THREE.Vector3().subVectors(pb.userData.target.position, pb.position).normalize();
+            pb.position.add(dir.multiplyScalar(pb.userData.speed));
+            pb.rotation.x += 0.2; pb.rotation.z += 0.1;
+            if(pb.position.distanceTo(pb.userData.target.position) < 0.8) {
+                const e = pb.userData.target;
+                e.userData.hp -= 20 + level*5;
+                if(e.userData.hp <= 0) {
+                    const idx = enemies.indexOf(e);
+                    if(idx > -1) { scene.remove(e); enemies.splice(idx,1); xp += 25; score++; }
+                    if(xp >= 100) { level++; xp = 0; hp = Math.min(100, hp+20); }
+                    const gotcha = document.createElement('div');
+                    gotcha.textContent = '✨ GOTCHA! ✨';
+                    gotcha.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;color:#ffd700;text-shadow:0 0 20px #ff0;z-index:999;';
+                    document.body.appendChild(gotcha);
+                    setTimeout(() => gotcha.remove(), 1000);
+                    updateUI();
+                }
+                scene.remove(pb); thrownPokeballs.splice(i,1);
+            }
+        }
         
         enemies.forEach(e => {
             const dir = new THREE.Vector3().subVectors(player.position, e.position).normalize();
