@@ -26,7 +26,43 @@
         .orbit-container .moon {
             z-index: 10;
         }
-        .orbit-container .kitty {
+        .orbit-container .sun {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff9c4 0%, #ffeb3b 30%, #ff9800 70%, #ff5722 100%);
+            box-shadow: 
+                0 0 60px rgba(255, 235, 59, 0.8),
+                0 0 120px rgba(255, 152, 0, 0.6),
+                0 0 180px rgba(255, 87, 34, 0.4);
+            position: absolute;
+            top: -150px;
+            right: -100px;
+            animation: pulse-sun 4s ease-in-out infinite;
+        }
+        @keyframes pulse-sun {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(255, 235, 59, 0.8), 0 0 120px rgba(255, 152, 0, 0.6); }
+            50% { transform: scale(1.1); box-shadow: 0 0 80px rgba(255, 235, 59, 1), 0 0 160px rgba(255, 152, 0, 0.8); }
+        }
+        .sun-rays {
+            position: absolute;
+            top: -150px;
+            right: -100px;
+            width: 80px;
+            height: 80px;
+            animation: rotate-rays 20s linear infinite;
+        }
+        @keyframes rotate-rays {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .dog {
+            font-size: 28px;
+            position: absolute;
+            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
+            transition: none;
+        }
+        .kitty {
             z-index: 11;
         }
         .planet {
@@ -64,6 +100,42 @@
                 0 0 20px rgba(200, 200, 200, 0.3);
             position: absolute;
             animation: orbit 8s linear infinite;
+        }
+        .sun {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff9c4 0%, #ffeb3b 30%, #ff9800 70%, #ff5722 100%);
+            box-shadow: 
+                0 0 60px rgba(255, 235, 59, 0.8),
+                0 0 120px rgba(255, 152, 0, 0.6),
+                0 0 180px rgba(255, 87, 34, 0.4);
+            position: absolute;
+            top: -150px;
+            right: -100px;
+            animation: pulse-sun 4s ease-in-out infinite;
+        }
+        @keyframes pulse-sun {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(255, 235, 59, 0.8), 0 0 120px rgba(255, 152, 0, 0.6); }
+            50% { transform: scale(1.1); box-shadow: 0 0 80px rgba(255, 235, 59, 1), 0 0 160px rgba(255, 152, 0, 0.8); }
+        }
+        .sun-rays {
+            position: absolute;
+            top: -150px;
+            right: -100px;
+            width: 80px;
+            height: 80px;
+            animation: rotate-rays 20s linear infinite;
+        }
+        @keyframes rotate-rays {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .dog {
+            font-size: 28px;
+            position: absolute;
+            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
+            transition: none;
         }
         .kitty {
             font-size: 30px;
@@ -104,7 +176,9 @@
 <div class="orbit-container">
 <div class="planet"></div>
 <div class="moon"></div>
-<div class="kitty">🐱</div>
+<div class="kitty" id="kitty">🐱</div>
+<div class="dog" id="dog">🐕</div>
+<div class="sun"></div>
 </div>
 <h1>Hello World</h1>
 <button id="musicToggle" style="padding: 10px 20px; background: rgba(74, 144, 217, 0.6); border: none; border-radius: 20px; color: white; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; margin-top: 20px;">🔊 Music</button>
@@ -126,6 +200,48 @@
   });
   btn.addEventListener('mouseenter', () => btn.style.background = 'rgba(74, 144, 217, 0.9)');
   btn.addEventListener('mouseleave', () => btn.style.background = 'rgba(74, 144, 217, 0.6)');
+
+  // Dog chasing cat logic
+  const kitty = document.getElementById('kitty');
+  const dog = document.getElementById('dog');
+  let catAngle = 0;
+  let dogAngle = Math.PI;
+  let catSpeed = 0.008;
+  let dogSpeed = 0.012;
+  const orbitRadius = 150;
+  const container = document.querySelector('.orbit-container');
+  const containerRect = container.getBoundingClientRect();
+  const centerX = 100;
+  const centerY = 100;
+  
+  function updateChase() {
+    // Calculate positions
+    const catX = centerX + Math.cos(catAngle) * orbitRadius;
+    const catY = centerY + Math.sin(catAngle) * orbitRadius;
+    const dogX = centerX + Math.cos(dogAngle) * orbitRadius;
+    const dogY = centerY + Math.sin(dogAngle) * orbitRadius;
+    
+    // Distance between cat and dog
+    const dist = Math.sqrt((catX - dogX) ** 2 + (catY - dogY) ** 2);
+    
+    // If dog is close, cat speeds up!
+    if (dist < 80) {
+      catSpeed = 0.035;
+      kitty.style.transform = `rotate(${catAngle}rad) translateX(${orbitRadius}px) rotate(${-catAngle}rad) scale(1.2)`;
+    } else {
+      catSpeed = 0.008;
+      kitty.style.transform = `rotate(${catAngle}rad) translateX(${orbitRadius}px) rotate(${-catAngle}rad) scale(1)`;
+    }
+    
+    catAngle += catSpeed;
+    dogAngle += dogSpeed;
+    
+    kitty.style.animation = 'none';
+    dog.style.transform = `rotate(${dogAngle}rad) translateX(${orbitRadius}px) rotate(${-dogAngle}rad)`;
+    
+    requestAnimationFrame(updateChase);
+  }
+  updateChase();
 </script>
 </body>
 </html>
