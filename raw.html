@@ -119,6 +119,126 @@
             left: 4px;
         }
         
+        .kitty {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            font-size: 28px;
+            animation: kitty-orbit 4s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+            z-index: 10;
+            transition: animation-duration 0.3s;
+        }
+        
+        .kitty.escaping {
+            animation-duration: 1s !important;
+        }
+        
+        @keyframes kitty-orbit {
+            0% { transform: rotate(45deg) translateX(100px) rotate(-45deg); }
+            100% { transform: rotate(405deg) translateX(100px) rotate(-405deg); }
+        }
+        
+        .doggy {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            font-size: 32px;
+            animation: doggy-chase 2.5s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+            z-index: 9;
+        }
+        
+        @keyframes doggy-chase {
+            0% { transform: rotate(0deg) translateX(105px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(105px) rotate(-360deg); }
+        }
+        
+        .sun {
+            position: fixed;
+            top: 60px;
+            left: 60px;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #fff9c4 0%, #ffeb3b 30%, #ff9800 70%, #f57c00 100%);
+            border-radius: 50%;
+            box-shadow: 
+                0 0 60px 20px rgba(255, 235, 59, 0.6),
+                0 0 100px 40px rgba(255, 152, 0, 0.4),
+                0 0 150px 60px rgba(255, 87, 34, 0.2);
+            animation: sun-pulse 3s ease-in-out infinite;
+            z-index: 5;
+        }
+        
+        .sun::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: sun-flare 2s ease-in-out infinite alternate;
+        }
+        
+        .sun-rays {
+            position: fixed;
+            top: 60px;
+            left: 60px;
+            width: 80px;
+            height: 80px;
+            z-index: 4;
+        }
+        
+        .sun-rays::before,
+        .sun-rays::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120px;
+            height: 120px;
+            background: conic-gradient(from 0deg, transparent, rgba(255, 235, 59, 0.3), transparent, rgba(255, 235, 59, 0.3), transparent, rgba(255, 235, 59, 0.3), transparent, rgba(255, 235, 59, 0.3), transparent);
+            transform: translate(-50%, -50%);
+            animation: sun-rays-rotate 20s linear infinite;
+        }
+        
+        .sun-rays::after {
+            animation-direction: reverse;
+            opacity: 0.5;
+        }
+        
+        @keyframes sun-pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        @keyframes sun-flare {
+            0% { opacity: 0.5; transform: scale(1); }
+            100% { opacity: 0.8; transform: scale(1.1); }
+        }
+        
+        @keyframes sun-rays-rotate {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        
+        .light-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at 10% 10%, rgba(255, 235, 59, 0.15) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 1;
+        }
+        
         @keyframes orbit {
             0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
             100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
@@ -179,7 +299,12 @@
 <div class="planet"></div>
 <div class="ring"></div>
 <div class="moon"></div>
+<div class="kitty" id="kitty">🐱</div>
+<div class="doggy" id="doggy">🐕</div>
 </div>
+<div class="sun-rays"></div>
+<div class="sun"></div>
+<div class="light-overlay"></div>
 <div class="stars" id="stars"></div>
 <script>
         const starsContainer = document.getElementById('stars');
@@ -222,6 +347,57 @@
             isPlaying = false;
             musicBtn.textContent = '🎵 Play Music';
         });
+        
+        // Cat and Dog chase logic
+        const kitty = document.getElementById('kitty');
+        const doggy = document.getElementById('doggy');
+        
+        let kittyAngle = 45;
+        let doggyAngle = 0;
+        let kittySpeed = 2;
+        let doggySpeed = 4;
+        const normalKittySpeed = 2;
+        const escapeKittySpeed = 8;
+        const kittyRadius = 100;
+        const doggyRadius = 105;
+        
+        function updatePositions() {
+            // Calculate positions
+            const kittyRad = kittyAngle * Math.PI / 180;
+            const doggyRad = doggyAngle * Math.PI / 180;
+            
+            // Check distance between cat and dog
+            const kittyX = Math.cos(kittyRad) * kittyRadius;
+            const kittyY = Math.sin(kittyRad) * kittyRadius;
+            const doggyX = Math.cos(doggyRad) * doggyRadius;
+            const doggyY = Math.sin(doggyRad) * doggyRadius;
+            
+            const distance = Math.sqrt(Math.pow(kittyX - doggyX, 2) + Math.pow(kittyY - doggyY, 2));
+            
+            // If dog is close, cat escapes!
+            if (distance < 50) {
+                kittySpeed = escapeKittySpeed;
+                kitty.classList.add('escaping');
+            } else {
+                kittySpeed = normalKittySpeed;
+                kitty.classList.remove('escaping');
+            }
+            
+            // Update angles
+            kittyAngle += kittySpeed;
+            doggyAngle += doggySpeed;
+            
+            // Apply transforms
+            kitty.style.transform = `rotate(${kittyAngle}deg) translateX(${kittyRadius}px) rotate(-${kittyAngle}deg)`;
+            doggy.style.transform = `rotate(${doggyAngle}deg) translateX(${doggyRadius}px) rotate(-${doggyAngle}deg)`;
+            
+            requestAnimationFrame(updatePositions);
+        }
+        
+        // Override CSS animations with JS
+        kitty.style.animation = 'none';
+        doggy.style.animation = 'none';
+        updatePositions();
     </script>
 </body>
 </html>
