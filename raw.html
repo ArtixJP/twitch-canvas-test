@@ -135,30 +135,7 @@
             overflow: hidden;
         }
         
-        .music-control {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 100;
-        }
-        
-        #musicBtn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border: none;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 1rem;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-            transition: all 0.3s ease;
-        }
-        
-        #musicBtn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-        }
+        /* Music styles removed */
         h1 { font-size: 3rem; text-align: center; }
         
         .planet-container {
@@ -413,9 +390,6 @@
 </nav>
 <section class="section active" id="space-section">
 <h1>Hello World</h1>
-<div class="music-control">
-<button id="musicBtn" onclick="toggleMusic()">🎵 Pause Music</button>
-</div>
 <div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
 <div class="planet-container">
 <div class="planet"></div>
@@ -446,7 +420,6 @@
 <div class="sun"></div>
 <div class="light-overlay"></div>
 <div class="stars" id="stars"></div>
-
 <script>
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 100; i++) {
@@ -460,34 +433,7 @@
             starsContainer.appendChild(star);
         }
         
-        let isPlaying = true;
-        const bgMusic = document.getElementById('bgMusic');
-        const musicBtn = document.getElementById('musicBtn');
-        
-        function toggleMusic() {
-            if (isPlaying) {
-                bgMusic.pause();
-                musicBtn.textContent = '🎵 Play Music';
-            } else {
-                bgMusic.play();
-                musicBtn.textContent = '🎵 Pause Music';
-            }
-            isPlaying = !isPlaying;
-        }
-        
-        // Handle autoplay restrictions - attempt to play on load
-        document.addEventListener('click', function initAudio() {
-            bgMusic.play().then(() => {
-                isPlaying = true;
-                musicBtn.textContent = '🎵 Pause Music';
-            }).catch(() => {});
-            document.removeEventListener('click', initAudio);
-        }, { once: true });
-        
-        bgMusic.play().catch(() => {
-            isPlaying = false;
-            musicBtn.textContent = '🎵 Play Music';
-        });
+        // Music removed - was buggy!
         
         // Cat and Dog chase logic
         const kitty = document.getElementById('kitty');
