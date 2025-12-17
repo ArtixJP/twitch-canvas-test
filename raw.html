@@ -64,11 +64,11 @@
 </head>
 <body>
 <div id="click-to-play">
-<h1>⛏️ TwitchCraft × Mario</h1>
+<h1>⛏️ TwitchCraft</h1>
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | ⚔️ Link &amp; Ganon appeared!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | ⛏️ Minecraft Style!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -159,16 +159,25 @@
         }
         
         function createMario() {
-            // Mario body (red)
-            createBlock(worldSize/2 + 3, 6, worldSize/2 + 3, 0xFF0000);
-            createBlock(worldSize/2 + 3, 7, worldSize/2 + 3, 0xFF0000);
-            // Mario head (skin tone)
-            createBlock(worldSize/2 + 3, 8, worldSize/2 + 3, 0xFFDBB4);
-            // Mario hat (red)
-            createBlock(worldSize/2 + 3, 9, worldSize/2 + 3, 0xFF0000);
-            // Mario arms
-            createBlock(worldSize/2 + 2, 7, worldSize/2 + 3, 0xFFDBB4);
-            createBlock(worldSize/2 + 4, 7, worldSize/2 + 3, 0xFFDBB4);
+            // Steve-style Mario (Minecraft villager aesthetic)
+            const mx = worldSize/2 + 3, mz = worldSize/2 + 3;
+            // Legs (blue like Steve's pants)
+            createBlock(mx, 6, mz, 0x3b5998);
+            // Body (red shirt - Mario style)
+            createBlock(mx, 7, mz, 0xCC0000);
+            createBlock(mx, 8, mz, 0xCC0000);
+            // Head (blocky Minecraft style - 2x2x2)
+            createBlock(mx, 9, mz, 0xC69C6D); // skin
+            createBlock(mx + 1, 9, mz, 0xC69C6D);
+            createBlock(mx, 9, mz + 1, 0xC69C6D);
+            createBlock(mx + 1, 9, mz + 1, 0x8B4513); // hair back
+            createBlock(mx, 10, mz, 0xCC0000); // hat top
+            createBlock(mx + 1, 10, mz, 0xCC0000);
+            // Arms (blocky)
+            createBlock(mx - 1, 7, mz, 0xC69C6D);
+            createBlock(mx - 1, 8, mz, 0xC69C6D);
+            createBlock(mx + 2, 7, mz, 0xC69C6D);
+            createBlock(mx + 2, 8, mz, 0xC69C6D);
         }
         
         function createBanana() {
@@ -252,50 +261,77 @@
         }
         
         function createLink() {
-            // Link from Zelda - standing heroically!
+            // Minecraft-style Link (blocky Steve proportions)
             const lx = worldSize - 4, lz = worldSize - 4, ly = 6;
-            // Green tunic body
-            createBlock(lx, ly, lz, 0x228B22);
+            // Legs (brown boots)
+            createBlock(lx, ly, lz, 0x5C4033);
+            createBlock(lx + 1, ly, lz, 0x5C4033);
+            // Body (green tunic - 2 wide)
             createBlock(lx, ly + 1, lz, 0x228B22);
-            // Blonde hair/head
-            createBlock(lx, ly + 2, lz, 0xFFE4B5); // Face
-            createBlock(lx, ly + 3, lz, 0xFFD700); // Hair
-            // Green cap
-            createBlock(lx, ly + 3, lz - 1, 0x228B22);
-            // Arms (skin)
-            createBlock(lx - 1, ly + 1, lz, 0xFFDBB4);
-            createBlock(lx + 1, ly + 1, lz, 0xFFDBB4);
-            // Sword (silver)
-            createBlock(lx + 1, ly + 2, lz, 0xC0C0C0);
-            createBlock(lx + 1, ly + 3, lz, 0xC0C0C0);
-            // Shield (blue)
-            createBlock(lx - 1, ly + 2, lz, 0x0000CD);
-            // Brown boots
-            createBlock(lx, ly - 1, lz, 0x8B4513);
+            createBlock(lx + 1, ly + 1, lz, 0x228B22);
+            createBlock(lx, ly + 2, lz, 0x228B22);
+            createBlock(lx + 1, ly + 2, lz, 0x228B22);
+            // Head (blocky 2x2 Minecraft style)
+            createBlock(lx, ly + 3, lz, 0xC69C6D); // face
+            createBlock(lx + 1, ly + 3, lz, 0xC69C6D);
+            createBlock(lx, ly + 3, lz + 1, 0xE6BE8A); // ears
+            createBlock(lx + 1, ly + 3, lz + 1, 0xE6BE8A);
+            // Blonde hair top
+            createBlock(lx, ly + 4, lz, 0xFFD700);
+            createBlock(lx + 1, ly + 4, lz, 0xFFD700);
+            createBlock(lx, ly + 4, lz + 1, 0x228B22); // green cap back
+            createBlock(lx + 1, ly + 4, lz + 1, 0x228B22);
+            // Arms
+            createBlock(lx - 1, ly + 1, lz, 0xC69C6D);
+            createBlock(lx - 1, ly + 2, lz, 0xC69C6D);
+            createBlock(lx + 2, ly + 1, lz, 0xC69C6D);
+            createBlock(lx + 2, ly + 2, lz, 0xC69C6D);
+            // Diamond Sword (Minecraft style!)
+            createBlock(lx + 2, ly + 3, lz, 0x5DADE2);
+            createBlock(lx + 2, ly + 4, lz, 0x5DADE2);
+            createBlock(lx + 2, ly + 5, lz, 0x5DADE2);
+            // Shield
+            createBlock(lx - 1, ly + 3, lz, 0x1E3A8A);
         }
         
         function createGanon() {
-            // Ganondorf - the dark lord!
+            // Minecraft-style Ganon (like an Illager/Evoker boss!)
             const gx = worldSize - 8, gz = worldSize - 3, gy = 6;
-            // Dark armor body
-            createBlock(gx, gy, gz, 0x1a1a1a);
-            createBlock(gx, gy + 1, gz, 0x1a1a1a);
-            createBlock(gx, gy + 2, gz, 0x1a1a1a);
-            // Green skin face
-            createBlock(gx, gy + 3, gz, 0x556B2F);
-            // Red hair
-            createBlock(gx, gy + 4, gz, 0x8B0000);
-            createBlock(gx - 1, gy + 4, gz, 0x8B0000);
-            createBlock(gx + 1, gy + 4, gz, 0x8B0000);
-            // Cape (purple)
+            // Legs (dark)
+            createBlock(gx, gy, gz, 0x1C1C1C);
+            createBlock(gx + 1, gy, gz, 0x1C1C1C);
+            // Body (dark armor - wider like a boss mob)
+            createBlock(gx, gy + 1, gz, 0x2D2D2D);
+            createBlock(gx + 1, gy + 1, gz, 0x2D2D2D);
+            createBlock(gx, gy + 2, gz, 0x2D2D2D);
+            createBlock(gx + 1, gy + 2, gz, 0x2D2D2D);
+            createBlock(gx, gy + 1, gz + 1, 0x4B0082); // cape
+            createBlock(gx + 1, gy + 1, gz + 1, 0x4B0082);
             createBlock(gx, gy + 2, gz + 1, 0x4B0082);
-            createBlock(gx, gy + 1, gz + 1, 0x4B0082);
-            // Arms (green skin)
-            createBlock(gx - 1, gy + 2, gz, 0x556B2F);
-            createBlock(gx + 1, gy + 2, gz, 0x556B2F);
-            // Dark magic orb (glowing purple)
-            const orb = createBlock(gx + 1, gy + 3, gz, 0x9400D3);
-            orb.userData.isGanonOrb = true;
+            createBlock(gx + 1, gy + 2, gz + 1, 0x4B0082);
+            // Head (blocky 2x2 - green skin like zombie piglin)
+            createBlock(gx, gy + 3, gz, 0x6B8E23);
+            createBlock(gx + 1, gy + 3, gz, 0x6B8E23);
+            createBlock(gx, gy + 3, gz + 1, 0x556B2F);
+            createBlock(gx + 1, gy + 3, gz + 1, 0x556B2F);
+            // Red mane (like a Minecraft piglin brute)
+            createBlock(gx - 1, gy + 4, gz, 0x8B0000);
+            createBlock(gx, gy + 4, gz, 0x8B0000);
+            createBlock(gx + 1, gy + 4, gz, 0x8B0000);
+            createBlock(gx + 2, gy + 4, gz, 0x8B0000);
+            createBlock(gx, gy + 4, gz + 1, 0x8B0000);
+            createBlock(gx + 1, gy + 4, gz + 1, 0x8B0000);
+            // Arms (bulky)
+            createBlock(gx - 1, gy + 1, gz, 0x6B8E23);
+            createBlock(gx - 1, gy + 2, gz, 0x6B8E23);
+            createBlock(gx + 2, gy + 1, gz, 0x6B8E23);
+            createBlock(gx + 2, gy + 2, gz, 0x6B8E23);
+            // Trident (like drowned mob!)
+            createBlock(gx + 2, gy + 3, gz, 0x4169E1);
+            createBlock(gx + 2, gy + 4, gz, 0x4169E1);
+            createBlock(gx + 2, gy + 5, gz, 0x4169E1);
+            createBlock(gx + 3, gy + 5, gz, 0x4169E1);
+            createBlock(gx + 1, gy + 5, gz, 0x4169E1);
         }
         
         function createPizza() {
