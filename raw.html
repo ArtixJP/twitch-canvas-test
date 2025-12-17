@@ -282,7 +282,10 @@
 <button class="nav-btn" onclick="startClickGame()" style="margin-top:15px">Start Game</button>
 </div>
 <div class="wow-3d-container" id="wow3dScene" style="width:100%;max-width:800px;height:500px;margin:20px auto;border-radius:15px;overflow:hidden;border:3px solid #ffd700;background:#1a0a2e;box-shadow:0 0 40px rgba(255,215,0,0.4), inset 0 0 20px rgba(0,0,0,0.5);"></div>
-<p style="text-align:center;color:#ffd700;font-size:1rem;opacity:0.9;">🎮 Click the dragon for visual effects! Enjoy the immersive 3D world!</p>
+<p style="text-align:center;color:#ffd700;font-size:1rem;opacity:0.9;">🎮 Click the dragon to attack! Use arrow keys to navigate camera!</p>
+<div style="text-align:center;margin:10px 0;padding:10px;background:rgba(255,215,0,0.15);border-radius:8px;border:1px solid rgba(255,215,0,0.4);">
+<span style="color:#fff;font-size:0.9rem;">⌨️ <b>Controls:</b> ←→ Rotate | ↑↓ Zoom | <span style="color:#ff6b6b;">1</span> Heroic Strike | <span style="color:#6b9fff;">2</span> Shield Block | <span style="color:#ff4444;">3</span> Execute</span>
+</div>
 <div class="wow-3d-info" style="text-align:center;margin-top:15px;padding:15px;background:rgba(255,215,0,0.1);border-radius:10px;border:1px solid rgba(255,215,0,0.3);">
 <p style="color:#ffd700;font-size:1.1rem;margin:0;">🏰 Explore the 3D Fantasy World Above 🏰</p>
 <p style="color:#aaa;font-size:0.9rem;margin:5px 0 0 0;">Click the dragon to interact! Watch the mage and warrior idle animations.</p>
@@ -494,6 +497,8 @@
             }
         });
         renderer.domElement.style.cursor = 'crosshair';
+        renderer.domElement.tabIndex = 0;
+        renderer.domElement.focus();
         // Lights
         const ambLight = new THREE.AmbientLight(0x404060, 0.4);
         scene.add(ambLight);
@@ -532,6 +537,56 @@
             scene.add(p);
         }
         let angle = 0;
+        let cameraAngle = 0;
+        let cameraHeight = 5;
+        let cameraDistance = 12;
+        window.wowCameraControls = { angle: 0, height: 5, distance: 12 };
+        
+        // Keyboard controls for 3D navigation
+        document.addEventListener('keydown', (e) => {
+            const gamesSection = document.getElementById('games');
+            if (!gamesSection || !gamesSection.classList.contains('active')) return;
+            
+            if (e.key === 'ArrowLeft') {
+                wowCameraControls.angle -= 0.15;
+                wowLog('🎮 Camera rotating left');
+            }
+            if (e.key === 'ArrowRight') {
+                wowCameraControls.angle += 0.15;
+                wowLog('🎮 Camera rotating right');
+            }
+            if (e.key === 'ArrowUp') {
+                wowCameraControls.distance = Math.max(6, wowCameraControls.distance - 1);
+                wowLog('🎮 Zooming in');
+            }
+            if (e.key === 'ArrowDown') {
+                wowCameraControls.distance = Math.min(20, wowCameraControls.distance + 1);
+                wowLog('🎮 Zooming out');
+            }
+            // Warrior abilities 1, 2, 3
+            if (e.key === '1') {
+                attack3DDragon();
+                wowLog('⚔️ Heroic Strike! (Key 1)');
+            }
+            if (e.key === '2') {
+                window.dragonHit = true;
+                window.dragonHitTimer = 50;
+                shieldBlockActive = true;
+                wowLog('🛡️ Shield Block activated! (Key 2)');
+                setTimeout(() => shieldBlockActive = false, 3000);
+            }
+            if (e.key === '3') {
+                const executeDmg = wowEnemyHP < 30 ? 60 : 30;
+                wowEnemyHP -= executeDmg;
+                window.dragonHit = true;
+                window.dragonHitTimer = 40;
+                wowLog('💀 EXECUTE! ' + executeDmg + ' damage! (Key 3)');
+                checkEnemyDeath();
+                if(wowEnemyHP > 0) setTimeout(enemyAttack, 800);
+                updateWowUI();
+            }
+        });
+        
         function animate() {
             requestAnimationFrame(animate);
             angle += 0.01;
@@ -555,8 +610,11 @@
             } else {
                 dragonGroup.position.x = 3;
             }
-            camera.position.x = Math.sin(angle*0.2)*2;
-            camera.lookAt(0, 1, 0);
+            // Dynamic camera based on keyboard controls
+            camera.position.x = Math.sin(wowCameraControls.angle) * wowCameraControls.distance;
+            camera.position.z = Math.cos(wowCameraControls.angle) * wowCameraControls.distance;
+            camera.position.y = wowCameraControls.height;
+            camera.lookAt(dragonGroup.position);
             renderer.render(scene, camera);
         }
         animate();
