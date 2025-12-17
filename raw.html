@@ -199,6 +199,7 @@
 <p style="color: #FFA500;">🌅 SUNSET COLORS!</p>
 <p style="color: #FFD700;">🪙 COIN COLLECTION MODE!</p>
 <p style="color: #fff; font-size: 11px;">Walk near coins to collect!</p>
+<p style="color: #FF4500;">🍔 BURGER HUT OPENED!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -1224,6 +1225,160 @@
     }
     const pizzeria = createPizzeria();
     
+    // Create Hamburger Restaurant!
+    function createBurgerPlace() {
+        const burgerGroup = new THREE.Group();
+        
+        // Main building - American diner style
+        const buildingGeo = new THREE.BoxGeometry(12, 8, 10);
+        const buildingMat = new THREE.MeshLambertMaterial({ color: 0xB22222 });
+        const building = new THREE.Mesh(buildingGeo, buildingMat);
+        building.position.y = 4;
+        building.castShadow = true;
+        burgerGroup.add(building);
+        
+        // Chrome/silver roof trim (diner style)
+        const roofGeo = new THREE.BoxGeometry(13, 1, 11);
+        const roofMat = new THREE.MeshLambertMaterial({ color: 0xC0C0C0 });
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.position.y = 8.5;
+        burgerGroup.add(roof);
+        
+        // Neon sign frame
+        const signFrameGeo = new THREE.BoxGeometry(10, 4, 0.5);
+        const signFrameMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
+        const signFrame = new THREE.Mesh(signFrameGeo, signFrameMat);
+        signFrame.position.set(0, 11, 5);
+        burgerGroup.add(signFrame);
+        
+        // Burger sign with canvas
+        const signCanvas = document.createElement('canvas');
+        signCanvas.width = 320;
+        signCanvas.height = 128;
+        const sctx = signCanvas.getContext('2d');
+        sctx.fillStyle = '#8B0000';
+        sctx.fillRect(0, 0, 320, 128);
+        sctx.fillStyle = '#FFD700';
+        sctx.font = 'bold 36px Arial';
+        sctx.textAlign = 'center';
+        sctx.fillText('🍔 BURGER HUT 🍔', 160, 50);
+        sctx.font = '24px Arial';
+        sctx.fillStyle = '#FFFFFF';
+        sctx.fillText('BEST IN MUSHROOM KINGDOM!', 160, 90);
+        const signTex = new THREE.CanvasTexture(signCanvas);
+        const signGeo = new THREE.PlaneGeometry(9, 3.5);
+        const signMat = new THREE.MeshBasicMaterial({ map: signTex });
+        const sign = new THREE.Mesh(signGeo, signMat);
+        sign.position.set(0, 11, 5.3);
+        burgerGroup.add(sign);
+        
+        // Giant rotating burger on roof!
+        const burgerDisplay = new THREE.Group();
+        // Bottom bun
+        const bunBottomGeo = new THREE.CylinderGeometry(2, 2.2, 0.6, 16);
+        const bunMat = new THREE.MeshLambertMaterial({ color: 0xD2691E });
+        const bunBottom = new THREE.Mesh(bunBottomGeo, bunMat);
+        burgerDisplay.add(bunBottom);
+        // Patty
+        const pattyGeo = new THREE.CylinderGeometry(1.8, 1.8, 0.5, 16);
+        const pattyMat = new THREE.MeshLambertMaterial({ color: 0x4A2C2A });
+        const patty = new THREE.Mesh(pattyGeo, pattyMat);
+        patty.position.y = 0.5;
+        burgerDisplay.add(patty);
+        // Cheese
+        const cheeseGeo = new THREE.BoxGeometry(2.2, 0.15, 2.2);
+        const cheeseMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
+        const cheese = new THREE.Mesh(cheeseGeo, cheeseMat);
+        cheese.position.y = 0.8;
+        cheese.rotation.y = 0.785;
+        burgerDisplay.add(cheese);
+        // Lettuce
+        const lettuceGeo = new THREE.CylinderGeometry(1.9, 1.9, 0.2, 16);
+        const lettuceMat = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+        const lettuce = new THREE.Mesh(lettuceGeo, lettuceMat);
+        lettuce.position.y = 1.0;
+        burgerDisplay.add(lettuce);
+        // Tomato
+        const tomatoGeo = new THREE.CylinderGeometry(1.6, 1.6, 0.2, 16);
+        const tomatoMat = new THREE.MeshLambertMaterial({ color: 0xFF6347 });
+        const tomato = new THREE.Mesh(tomatoGeo, tomatoMat);
+        tomato.position.y = 1.2;
+        burgerDisplay.add(tomato);
+        // Top bun
+        const bunTopGeo = new THREE.SphereGeometry(2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const bunTop = new THREE.Mesh(bunTopGeo, bunMat);
+        bunTop.position.y = 1.4;
+        burgerDisplay.add(bunTop);
+        // Sesame seeds
+        const seedGeo = new THREE.SphereGeometry(0.1, 8, 8);
+        const seedMat = new THREE.MeshLambertMaterial({ color: 0xFFFACD });
+        for (let i = 0; i < 12; i++) {
+            const seed = new THREE.Mesh(seedGeo, seedMat);
+            const angle = (i / 12) * Math.PI * 2;
+            seed.position.set(Math.cos(angle) * 1.2, 2.2 + Math.random() * 0.3, Math.sin(angle) * 1.2);
+            burgerDisplay.add(seed);
+        }
+        burgerDisplay.position.set(0, 14, 0);
+        burgerDisplay.name = 'giantBurger';
+        burgerGroup.add(burgerDisplay);
+        
+        // Door
+        const doorGeo = new THREE.BoxGeometry(3, 5, 0.3);
+        const doorMat = new THREE.MeshLambertMaterial({ color: 0x2F2F2F });
+        const door = new THREE.Mesh(doorGeo, doorMat);
+        door.position.set(0, 2.5, 5.2);
+        burgerGroup.add(door);
+        
+        // Windows with neon glow effect
+        const windowMat = new THREE.MeshBasicMaterial({ color: 0xFF4500, transparent: true, opacity: 0.8 });
+        for (let i = 0; i < 2; i++) {
+            const windowGeo = new THREE.BoxGeometry(2.5, 3, 0.2);
+            const windowMesh = new THREE.Mesh(windowGeo, windowMat);
+            windowMesh.position.set(-4 + i * 8, 5, 5.2);
+            windowMesh.name = 'neonWindow';
+            burgerGroup.add(windowMesh);
+        }
+        
+        // Outdoor picnic tables
+        for (let t = 0; t < 2; t++) {
+            const tableGeo = new THREE.BoxGeometry(3, 0.2, 1.5);
+            const tableMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+            const table = new THREE.Mesh(tableGeo, tableMat);
+            table.position.set(-3 + t * 6, 1.5, 9);
+            burgerGroup.add(table);
+            // Benches
+            for (let b = 0; b < 2; b++) {
+                const benchGeo = new THREE.BoxGeometry(3, 0.15, 0.5);
+                const bench = new THREE.Mesh(benchGeo, tableMat);
+                bench.position.set(-3 + t * 6, 1, 8 + b * 2);
+                burgerGroup.add(bench);
+            }
+        }
+        
+        // Fries bucket decoration
+        const friesGroup = new THREE.Group();
+        const bucketGeo = new THREE.CylinderGeometry(0.6, 0.4, 1, 8);
+        const bucketMat = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+        const bucket = new THREE.Mesh(bucketGeo, bucketMat);
+        friesGroup.add(bucket);
+        // Fries sticking out
+        const frieMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
+        for (let f = 0; f < 8; f++) {
+            const frieGeo = new THREE.BoxGeometry(0.1, 0.8, 0.1);
+            const frie = new THREE.Mesh(frieGeo, frieMat);
+            frie.position.set((Math.random() - 0.5) * 0.6, 0.7, (Math.random() - 0.5) * 0.6);
+            frie.rotation.z = (Math.random() - 0.5) * 0.5;
+            friesGroup.add(frie);
+        }
+        friesGroup.position.set(5.5, 1, 5);
+        burgerGroup.add(friesGroup);
+        
+        burgerGroup.position.set(30, 0, -20);
+        scene.add(burgerGroup);
+        return burgerGroup;
+    }
+    const burgerPlace = createBurgerPlace();
+    
     // Create WoW Portal!
     function createWoWPortal() {
         const portalGroup = new THREE.Group();
@@ -1731,6 +1886,19 @@
                     child.position.x = Math.cos(d.angle + t * d.speed) * 1.5;
                     child.position.z = Math.sin(d.angle + t * d.speed) * 1.5;
                     child.position.y = 4.5 + Math.sin(t * 2 + d.height * 5) * 2;
+                }
+            });
+        }
+        
+        // Animate Burger Place giant burger spinning!
+        if (burgerPlace) {
+            burgerPlace.children.forEach(child => {
+                if (child.name === 'giantBurger') {
+                    child.rotation.y += delta * 0.5;
+                    child.position.y = 14 + Math.sin(Date.now() * 0.002) * 0.3;
+                }
+                if (child.name === 'neonWindow') {
+                    child.material.opacity = 0.5 + Math.sin(Date.now() * 0.006) * 0.4;
                 }
             });
         }
