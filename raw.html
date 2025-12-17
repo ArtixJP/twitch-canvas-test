@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🍕 Pizza Galaxy - Twitch Versus Code</title>
+<title>🍕🍄 Pizza Mushroom Galaxy - Twitch Versus Code</title>
 <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -215,6 +215,31 @@
             animation: float-pizza 8s ease-in-out infinite;
             z-index: 5;
             filter: drop-shadow(0 0 10px rgba(230,126,34,0.6));
+        }
+        .floating-pizza::after {
+            content: '🍄';
+            position: absolute;
+            font-size: 14px;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: mushroom-bounce 1.5s ease-in-out infinite;
+        }
+        @keyframes mushroom-bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(-5deg); }
+            50% { transform: translateX(-50%) translateY(-5px) rotate(5deg); }
+        }
+        .papy-star {
+            position: absolute;
+            font-size: 16px;
+            color: rgba(144,238,144,1);
+            animation: twinkle 1.5s infinite alternate, pulse-star 3s ease-in-out infinite;
+            text-shadow: 0 0 15px lightgreen, 0 0 30px rgba(50,205,50,0.8), 0 0 45px rgba(34,139,34,0.5);
+            z-index: 200;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(144,238,144,0.5);
         }
         @keyframes float-pizza {
             0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
@@ -430,6 +455,7 @@
 }
 </style>
 <div class="sun"></div>
+<div class="giant-mushroom" style="position: absolute; font-size: 60px; top: -120px; left: 50%; transform: translateX(-50%); animation: float-pizza 6s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(139,69,19,0.8)); z-index: 15;">🍄</div>
 <div class="floating-pizza" style="top: 15%; left: 25%; animation-delay: 0s;">🍕</div>
 <div class="floating-pizza" style="top: 60%; left: 75%; animation-delay: 1s;">🍕</div>
 <div class="floating-pizza" style="top: 80%; left: 20%; animation-delay: 2s;">🍕</div>
@@ -441,6 +467,8 @@
 <div class="floating-pizza" style="top: 55%; left: 30%; animation-delay: 3.5s;">🍕</div>
 <div class="floating-pizza" style="top: 30%; left: 55%; animation-delay: 4.5s;">🍕</div>
 <div class="mama-star" style="top: 5%; left: 85%;">⭐ coucou maman ♥ ⭐</div>
+<div class="papy-star" style="top: 8%; left: 5%;">🍄 bonjour papy! 🍄</div>
+<div class="papy-star" style="top: 92%; left: 15%;">🌟 salut papy! 🍕🍄 🌟</div>
 <div class="bonjour-maman" style="top: 12%; left: 82%;">💖 bonjour maman! 💕</div>
 <div class="eaten-counter">🍕 Pizzas Eaten: <span id="pizzasEaten">0</span> 👹</div>
 <div class="pizza-monster" id="pizzaMonster">👹</div>
