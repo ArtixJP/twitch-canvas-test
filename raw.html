@@ -91,7 +91,10 @@
 <body>
 <h1 style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:150;background:transparent;padding:20px 40px;font-size:3rem;margin:0;color:#fff;text-shadow:0 0 30px #fff,0 0 60px #888;animation:fadeIn 3s ease-out;">✨ A New Beginning ✨</h1>
 <style>@keyframes fadeIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 100% { opacity:1; transform:translate(-50%,-50%) scale(1); } }</style>
-<p style="position:fixed;bottom:20%;left:50%;transform:translateX(-50%);color:#666;font-size:1.2rem;text-align:center;z-index:100;">The slate is clean. What shall we create?</p>
+<p style="position:fixed;bottom:20%;left:50%;transform:translateX(-50%);color:#666;font-size:1.2rem;text-align:center;z-index:100;">Use WASD or Arrow Keys to explore the void...</p>
+<div id="spaceship" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:48px;z-index:50;transition:transform 0.1s;filter:drop-shadow(0 0 20px #0ff);cursor:pointer;">🚀</div>
+<div id="coordinates" style="position:fixed;top:20px;left:20px;color:#0ff;font-family:monospace;font-size:14px;z-index:100;background:rgba(0,0,0,0.5);padding:10px;border-radius:5px;border:1px solid #0ff;">X: 0 | Y: 0 | SECTOR: ALPHA</div>
+<div id="space-objects"></div>
 <div id="void-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(ellipse at center, #111 0%, #000 100%);z-index:0;"></div>
 <div id="star-field" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;"></div>
 <canvas id="particle-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;"></canvas>
@@ -104,8 +107,60 @@ for(let i = 0; i < 50; i++) {
   starField.appendChild(star);
 }
 const style = document.createElement('style');
-style.textContent = '@keyframes twinkle { 0%,100% { opacity:0.3; } 50% { opacity:1; } }';
+style.textContent = '@keyframes twinkle { 0%,100% { opacity:0.3; } 50% { opacity:1; } }
+@keyframes shipGlow { 0%,100% { filter:drop-shadow(0 0 20px #0ff); } 50% { filter:drop-shadow(0 0 40px #0ff) drop-shadow(0 0 60px #08f); } }';
 document.head.appendChild(style);
+
+// Spatial Exploration System
+let shipX = 0, shipY = 0;
+let shipRotation = 0;
+const ship = document.getElementById('spaceship');
+const coords = document.getElementById('coordinates');
+const spaceObjects = document.getElementById('space-objects');
+
+// Generate cosmic objects
+const cosmicEmojis = ['🌟', '🌙', '☄️', '🪐', '🌌', '💫', '⭐', '🌠'];
+for(let i = 0; i < 30; i++) {
+  const obj = document.createElement('div');
+  obj.className = 'cosmic-object';
+  obj.style.cssText = `position:fixed;font-size:${20+Math.random()*40}px;left:${Math.random()*100}%;top:${Math.random()*100}%;z-index:5;opacity:0.7;transition:transform 0.3s;pointer-events:none;`;
+  obj.textContent = cosmicEmojis[Math.floor(Math.random()*cosmicEmojis.length)];
+  obj.dataset.parallax = (Math.random()*0.5+0.2).toFixed(2);
+  spaceObjects.appendChild(obj);
+}
+
+const sectors = ['ALPHA', 'BETA', 'GAMMA', 'DELTA', 'OMEGA', 'NEBULA', 'VOID', 'ABYSS'];
+
+function updateShip() {
+  ship.style.transform = `translate(-50%,-50%) rotate(${shipRotation}deg)`;
+  const sector = sectors[Math.abs(Math.floor(shipX/500) + Math.floor(shipY/500)) % sectors.length];
+  coords.innerHTML = `X: ${shipX.toFixed(0)} | Y: ${shipY.toFixed(0)} | SECTOR: ${sector}`;
+  
+  // Parallax effect on cosmic objects
+  document.querySelectorAll('.cosmic-object').forEach(obj => {
+    const p = parseFloat(obj.dataset.parallax);
+    const offsetX = -shipX * p;
+    const offsetY = -shipY * p;
+    obj.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
+  });
+  
+  // Move stars too
+  starField.style.transform = `translate(${-shipX*0.1}px, ${-shipY*0.1}px)`;
+}
+
+document.addEventListener('keydown', (e) => {
+  const speed = 20;
+  if(e.key === 'w' || e.key === 'ArrowUp') { shipY -= speed; shipRotation = 0; }
+  if(e.key === 's' || e.key === 'ArrowDown') { shipY += speed; shipRotation = 180; }
+  if(e.key === 'a' || e.key === 'ArrowLeft') { shipX -= speed; shipRotation = -90; }
+  if(e.key === 'd' || e.key === 'ArrowRight') { shipX += speed; shipRotation = 90; }
+  updateShip();
+  // Spawn particles behind ship
+  const rect = ship.getBoundingClientRect();
+  spawnParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#0ff', 3);
+});
+
+ship.style.animation = 'shipGlow 2s infinite';
 </script>
 <script>
         // Legacy code preserved but inactive - awaiting new purpose
