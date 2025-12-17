@@ -8,6 +8,10 @@
 <title>Twitch Versus Code - Super Mario Voxel World</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
+        @keyframes momPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
         @keyframes pop {
             0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -80%) scale(1.5); }
@@ -34,7 +38,7 @@
 </head>
 <body>
 <div id="game-container"></div>
-<div id="ui-overlay"><h1 style="color: #e52521; text-shadow: 4px 4px 0 #fbd000, -2px -2px 0 #000; font-family: 'Impact', sans-serif;">🍄 Super Mario Voxel World 🍄</h1><h2 style="color: #fff; text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff; font-family: 'Impact', sans-serif; margin-top: -10px;">🚀 SPACE EXPLORATION MODE 🌌</h2></div>
+<div id="ui-overlay"><h1 style="color: #e52521; text-shadow: 4px 4px 0 #fbd000, -2px -2px 0 #000; font-family: 'Impact', sans-serif;">🍄 Super Mario Voxel World 🍄</h1><h2 style="color: #fff; text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff; font-family: 'Impact', sans-serif; margin-top: -10px;">🚀 SPACE EXPLORATION MODE 🌌</h2><h3 style="color: #ff69b4; text-shadow: 0 0 15px #ff1493, 0 0 30px #ff69b4; font-family: 'Impact', sans-serif; animation: momPulse 1s ease-in-out infinite; margin-top: 5px;">💕 HI MOM! 💕</h3></div>
 <div id="crosshair">+</div>
 <div id="instructions">WASD: Move | Space: Jump | Left Click: Break | Right Click: Place | <strong>M: Place Block (works anytime!)</strong> | 1-9: Select Block | 0: Moon | -: Star | =: Nebula | \: Mom | Click to start</div>
 <div id="block-selector">
@@ -137,6 +141,13 @@
     for(let i = 0; i < 6; i++) {
         if(hiMomText[i] !== ' ') createBlock(-3 + i, 20, -5, 'mom');
     }
+    // Extra hi mom blocks scattered in the sky!
+    for(let j = 0; j < 15; j++) {
+        const mx = Math.floor(Math.random() * 20 - 10);
+        const my = Math.floor(Math.random() * 8 + 18);
+        const mz = Math.floor(Math.random() * 20 - 10);
+        createBlock(mx, my, mz, 'mom');
+    }
     // Create 3D text sprite for "hi mom"
     const canvas = document.createElement('canvas');
     canvas.width = 512; canvas.height = 128;
@@ -148,8 +159,8 @@
     ctx.strokeStyle = '#ff1493';
     ctx.lineWidth = 4;
     ctx.textAlign = 'center';
-    ctx.strokeText('HI MOM! 💕', 256, 90);
-    ctx.fillText('HI MOM! 💕', 256, 90);
+    ctx.strokeText('HI MOM! 💕💕💕', 256, 90);
+    ctx.fillText('HI MOM! 💕💕💕', 256, 90);
     const texture = new THREE.CanvasTexture(canvas);
     const spriteMat = new THREE.SpriteMaterial({map: texture});
     const sprite = new THREE.Sprite(spriteMat);
