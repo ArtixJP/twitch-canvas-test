@@ -36,7 +36,7 @@
 <div id="game-container"></div>
 <div id="ui-overlay"><h1 style="color: #e52521; text-shadow: 4px 4px 0 #fbd000, -2px -2px 0 #000; font-family: 'Impact', sans-serif;">🍄 Super Mario Voxel World 🍄</h1><h2 style="color: #fff; text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff; font-family: 'Impact', sans-serif; margin-top: -10px;">🚀 SPACE EXPLORATION MODE 🌌</h2></div>
 <div id="crosshair">+</div>
-<div id="instructions">WASD: Move | Space: Jump | Left Click: Break | Right Click: Place | <strong>M: Place Block (works anytime!)</strong> | 1-7: Select Block | Click to start</div>
+<div id="instructions">WASD: Move | Space: Jump | Left Click: Break | Right Click: Place | <strong>M: Place Block (works anytime!)</strong> | 1-9: Select Block | 0: Moon | -: Star | =: Nebula | \: Mom | Click to start</div>
 <div id="block-selector">
 <div class="block-icon selected" data-type="grass" style="background: #4a7c23;" title="Grass"></div>
 <div class="block-icon" data-type="dirt" style="background: #8b4513;" title="Dirt"></div>
@@ -178,7 +178,7 @@
     
     document.addEventListener('keydown', e => {
         keys[e.code] = true;
-        if(e.code >= 'Digit1' && e.code <= 'Digit7') {
+        if(e.code >= 'Digit1' && e.code <= 'Digit9') {
             const types = ['grass', 'dirt', 'stone', 'wood', 'sand', 'water', 'brick', 'question', 'pipe'];
             const idx = parseInt(e.code.replace('Digit', '')) - 1;
             if(types[idx]) {
@@ -186,6 +186,26 @@
                 document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
                 document.querySelector(`[data-type="${selectedBlock}"]`).classList.add('selected');
             }
+        }
+        if(e.code === 'Digit0') {
+            selectedBlock = 'moon';
+            document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
+            document.querySelector('[data-type="moon"]').classList.add('selected');
+        }
+        if(e.code === 'Minus') {
+            selectedBlock = 'star';
+            document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
+            document.querySelector('[data-type="star"]').classList.add('selected');
+        }
+        if(e.code === 'Equal') {
+            selectedBlock = 'nebula';
+            document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
+            document.querySelector('[data-type="nebula"]').classList.add('selected');
+        }
+        if(e.code === 'Backslash') {
+            selectedBlock = 'mom';
+            document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
+            document.querySelector('[data-type="mom"]').classList.add('selected');
         }
         if(e.code === 'KeyM' || e.key.toLowerCase() === 'm') {
             placeBlockAnywhere();
