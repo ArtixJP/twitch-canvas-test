@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks for Surprises!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -124,6 +124,9 @@
             
             // Add puzzle blocks
             createPuzzleBlocks();
+            
+            // Add bakery
+            createBakery();
             
             // Controls
             document.addEventListener('keydown', onKeyDown);
@@ -182,6 +185,60 @@
                 const puzzleBlock = createBlock(5 + i * 2, 10, 8, 0x9932CC);
                 puzzleBlock.userData.isPuzzle = true;
             }
+        }
+        
+        function createBakery() {
+            const bx = 2, bz = 2, by = 5; // Bakery base position
+            
+            // Foundation & Floor (tan/beige)
+            for (let x = 0; x < 5; x++) {
+                for (let z = 0; z < 5; z++) {
+                    createBlock(bx + x, by, bz + z, 0xD2B48C);
+                }
+            }
+            
+            // Walls (warm brown)
+            for (let y = 1; y <= 3; y++) {
+                for (let x = 0; x < 5; x++) {
+                    createBlock(bx + x, by + y, bz, 0x8B4513);
+                    createBlock(bx + x, by + y, bz + 4, 0x8B4513);
+                }
+                for (let z = 1; z < 4; z++) {
+                    createBlock(bx, by + y, bz + z, 0x8B4513);
+                    createBlock(bx + 4, by + y, bz + z, 0x8B4513);
+                }
+            }
+            
+            // Door opening (remove front center blocks)
+            // Window (light blue glass)
+            createBlock(bx + 2, by + 2, bz, 0x87CEEB);
+            
+            // Roof (red tiles like Mario!)
+            for (let x = -1; x < 6; x++) {
+                for (let z = -1; z < 6; z++) {
+                    createBlock(bx + x, by + 4, bz + z, 0xB22222);
+                }
+            }
+            
+            // Chimney (grey stone)
+            createBlock(bx + 4, by + 5, bz + 3, 0x696969);
+            createBlock(bx + 4, by + 6, bz + 3, 0x696969);
+            
+            // Bread display inside (golden brown loaves)
+            createBlock(bx + 1, by + 1, bz + 2, 0xDAA520);
+            createBlock(bx + 2, by + 1, bz + 2, 0xDAA520);
+            createBlock(bx + 3, by + 1, bz + 2, 0xF4A460);
+            
+            // Croissant (lighter tan)
+            createBlock(bx + 1, by + 1, bz + 3, 0xFFDEAD);
+            
+            // Oven (dark grey/black)
+            createBlock(bx + 3, by + 1, bz + 3, 0x2F2F2F);
+            createBlock(bx + 3, by + 2, bz + 3, 0x2F2F2F);
+            
+            // Sign post outside
+            createBlock(bx - 1, by + 1, bz + 2, 0x654321);
+            createBlock(bx - 1, by + 2, bz + 2, 0xFFE4B5); // Sign (cream color)
         }
         
         function generateTerrain() {
