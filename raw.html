@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🚀 Space Voxel Explorer 🌌</title>
+<title>🚀 Space Station Builder 🌌</title>
 <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -28,14 +28,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>🚀 Space Voxel Explorer - Click to Explore 🌌🐍</h1>
+<h1>🚀 Space Station Builder - Click to Explore 🌌🐍</h1>
 <canvas id="game" tabindex="0"></canvas>
-<div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Place/Break<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
+<div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
 <div id="hotbar">
-<div class="slot active" data-block="grass">🟩</div>
-<div class="slot" data-block="dirt">🟫</div>
-<div class="slot" data-block="stone">⬜</div>
-<div class="slot" data-block="wood">🪵</div>
+<div class="slot active" data-block="grass">🔋</div>
+<div class="slot" data-block="dirt">🔷</div>
+<div class="slot" data-block="stone">⚙️</div>
+<div class="slot" data-block="wood">🔶</div>
 </div>
 <script>
     const canvas = document.getElementById('game');
@@ -58,7 +58,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     
     const blocks = {};
-    const blockColors = {grass: 0x228B22, dirt: 0x8B4513, stone: 0x808080, wood: 0xDEB887};
+    const blockColors = {grass: 0x00ffaa, dirt: 0x4466aa, stone: 0x8899aa, wood: 0xffaa33};
     let selectedBlock = 'grass';
     let placeMode = true;
     
