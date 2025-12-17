@@ -401,6 +401,7 @@
         }
         // Mage character (body + head + staff)
         const mageGroup = new THREE.Group();
+        mageGroup.userData.classType = 'mage';
         const bodyGeo = new THREE.CylinderGeometry(0.3, 0.5, 1.5, 8);
         const bodyMat = new THREE.MeshStandardMaterial({color:0x6644aa});
         const body = new THREE.Mesh(bodyGeo, bodyMat);
@@ -430,6 +431,43 @@
         mageGroup.position.set(-3, 0, 0);
         mageGroup.castShadow = true;
         scene.add(mageGroup);
+        
+        // Warrior character (body + head + sword + shield)
+        const warriorGroup = new THREE.Group();
+        warriorGroup.userData.classType = 'warrior';
+        const wBodyGeo = new THREE.CylinderGeometry(0.4, 0.5, 1.6, 8);
+        const wBodyMat = new THREE.MeshStandardMaterial({color:0x8b4513});
+        const wBody = new THREE.Mesh(wBodyGeo, wBodyMat);
+        wBody.position.y = 0.8;
+        warriorGroup.add(wBody);
+        const wHeadGeo = new THREE.SphereGeometry(0.32, 8, 8);
+        const wHeadMat = new THREE.MeshStandardMaterial({color:0xffcc99});
+        const wHead = new THREE.Mesh(wHeadGeo, wHeadMat);
+        wHead.position.y = 1.8;
+        warriorGroup.add(wHead);
+        const helmetGeo = new THREE.SphereGeometry(0.35, 8, 4, 0, Math.PI*2, 0, Math.PI/2);
+        const helmetMat = new THREE.MeshStandardMaterial({color:0x555555, metalness:0.8, roughness:0.3});
+        const helmet = new THREE.Mesh(helmetGeo, helmetMat);
+        helmet.position.y = 1.9;
+        warriorGroup.add(helmet);
+        const swordGeo = new THREE.BoxGeometry(0.08, 1.5, 0.02);
+        const swordMat = new THREE.MeshStandardMaterial({color:0xcccccc, metalness:0.9, roughness:0.2});
+        const sword = new THREE.Mesh(swordGeo, swordMat);
+        sword.position.set(0.6, 1.2, 0);
+        sword.rotation.z = 0.4;
+        warriorGroup.add(sword);
+        const shieldGeo = new THREE.CircleGeometry(0.4, 6);
+        const shieldMat = new THREE.MeshStandardMaterial({color:0xaa2222, metalness:0.6, roughness:0.4, side:THREE.DoubleSide});
+        const shield = new THREE.Mesh(shieldGeo, shieldMat);
+        shield.position.set(-0.5, 1, 0.2);
+        shield.rotation.y = 0.3;
+        warriorGroup.add(shield);
+        warriorGroup.position.set(-3, 0, 0);
+        warriorGroup.castShadow = true;
+        warriorGroup.visible = (playerClass === 'warrior');
+        mageGroup.visible = (playerClass === 'mage');
+        scene.add(warriorGroup);
+        window.wow3DCharacters = {mage: mageGroup, warrior: warriorGroup};
         // Dragon enemy
         const dragonGroup = new THREE.Group();
         const dBodyGeo = new THREE.SphereGeometry(0.8, 8, 8);
@@ -497,6 +535,8 @@
             angle += 0.01;
             mageGroup.rotation.y = Math.sin(angle)*0.3;
             orb.position.y = 2 + Math.sin(angle*3)*0.1;
+            warriorGroup.rotation.y = Math.sin(angle*1.5)*0.4;
+            sword.rotation.z = 0.4 + Math.sin(angle*4)*0.2;
             dragonGroup.position.y = 2 + Math.sin(angle*2)*0.5;
             dragonGroup.rotation.y = Math.sin(angle*0.5)*0.2;
             wingL.rotation.z = -0.5 + Math.sin(angle*8)*0.3;
@@ -662,6 +702,8 @@
             document.getElementById('warriorAbilities').style.display = 'none';
             document.getElementById('mageBtn').style.border = '2px solid #ff4444';
             document.getElementById('warriorBtn').style.border = '2px solid #ffd700';
+            if(window.wow3DCharacters) { window.wow3DCharacters.mage.visible = true; window.wow3DCharacters.warrior.visible = false; }
+            if(window.wow3DCharacters) { window.wow3DCharacters.warrior.visible = true; window.wow3DCharacters.mage.visible = false; }
         }
         wowPlayerHP=100; wowPlayerMP=100; wowPlayerRage=0; updateWowUI();
         wowLog('⚔️ You are now a ' + cls.toUpperCase() + '!');
