@@ -195,7 +195,7 @@
 <p style="color: #FF6347;">📱 POKEDEX ACTIVE!</p>
 <p style="color: #FFA500;">🎬 Press F near theater!</p>
 <p style="color: #E52521;">💬 MARIO TALKS TO TOAD!</p>
-<p style="color: #FF6B35;">🍕 PIZZERIA OPENED!</p>
+<p style="color: #666;">🏚️ PIZZERIA RUINS...</p>
 <p style="color: #FFD700;">🧀 CHEESE OVERFLOW!</p>
 <p style="color: #FF69B4;">🎵 JUKEBOX SINGING!</p>
 <p style="color: #00FFFF;">👋 HI CHAT!</p>
@@ -1120,129 +1120,76 @@
     }
     const pizza = createPizza();
     
-    // Create Pizzeria Building!
-    function createPizzeria() {
-        const pizzeriaGroup = new THREE.Group();
+    // Pizzeria Ruins - What remains after the community's request
+    function createPizzeriaRuins() {
+        const ruinsGroup = new THREE.Group();
         
-        // Main building - Italian style
-        const buildingGeo = new THREE.BoxGeometry(14, 10, 12);
-        const buildingMat = new THREE.MeshLambertMaterial({ color: 0xFAE5D3 });
-        const building = new THREE.Mesh(buildingGeo, buildingMat);
-        building.position.y = 5;
-        building.castShadow = true;
-        pizzeriaGroup.add(building);
-        
-        // Red and white striped awning
-        const awningGeo = new THREE.BoxGeometry(16, 0.5, 4);
-        const awningMat = new THREE.MeshLambertMaterial({ color: 0xE52521 });
-        const awning = new THREE.Mesh(awningGeo, awningMat);
-        awning.position.set(0, 8, 7);
-        pizzeriaGroup.add(awning);
-        
-        // White stripes on awning
-        for (let i = 0; i < 4; i++) {
-            const stripeGeo = new THREE.BoxGeometry(2, 0.6, 4.1);
-            const stripeMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-            const stripe = new THREE.Mesh(stripeGeo, stripeMat);
-            stripe.position.set(-6 + i * 4, 8, 7);
-            pizzeriaGroup.add(stripe);
+        // Scattered rubble blocks
+        const rubbleMat = new THREE.MeshLambertMaterial({ color: 0x8B7355 });
+        for (let i = 0; i < 15; i++) {
+            const rubbleGeo = new THREE.BoxGeometry(
+                0.5 + Math.random() * 1.5,
+                0.3 + Math.random() * 0.8,
+                0.5 + Math.random() * 1.5
+            );
+            const rubble = new THREE.Mesh(rubbleGeo, rubbleMat);
+            rubble.position.set(
+                (Math.random() - 0.5) * 12,
+                Math.random() * 0.5,
+                (Math.random() - 0.5) * 10
+            );
+            rubble.rotation.set(
+                Math.random() * 0.5,
+                Math.random() * Math.PI,
+                Math.random() * 0.5
+            );
+            ruinsGroup.add(rubble);
         }
         
-        // Pizzeria sign
-        const signCanvas = document.createElement('canvas');
-        signCanvas.width = 256;
-        signCanvas.height = 96;
-        const sctx = signCanvas.getContext('2d');
-        sctx.fillStyle = '#228B22';
-        sctx.fillRect(0, 0, 256, 96);
-        sctx.fillStyle = '#FFFFFF';
-        sctx.font = 'bold 32px Arial';
-        sctx.textAlign = 'center';
-        sctx.fillText('🍕 PIZZERIA 🍕', 128, 40);
-        sctx.font = '20px Arial';
-        sctx.fillText('MAMA MIA!', 128, 75);
-        const signTex = new THREE.CanvasTexture(signCanvas);
-        const signGeo = new THREE.PlaneGeometry(8, 3);
-        const signMat = new THREE.MeshBasicMaterial({ map: signTex });
-        const sign = new THREE.Mesh(signGeo, signMat);
-        sign.position.set(0, 12, 6.1);
-        pizzeriaGroup.add(sign);
+        // Broken oven remains
+        const ovenRuinGeo = new THREE.SphereGeometry(1.5, 8, 8, 0, Math.PI, 0, Math.PI / 2);
+        const ovenRuinMat = new THREE.MeshLambertMaterial({ color: 0x5C4033 });
+        const ovenRuin = new THREE.Mesh(ovenRuinGeo, ovenRuinMat);
+        ovenRuin.position.set(3, 0.3, -2);
+        ovenRuin.rotation.y = Math.random() * Math.PI;
+        ruinsGroup.add(ovenRuin);
         
-        // Door
-        const doorGeo = new THREE.BoxGeometry(3, 5, 0.3);
-        const doorMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        const door = new THREE.Mesh(doorGeo, doorMat);
-        door.position.set(0, 2.5, 6.2);
-        pizzeriaGroup.add(door);
+        // Memorial sign
+        const memorialCanvas = document.createElement('canvas');
+        memorialCanvas.width = 256;
+        memorialCanvas.height = 128;
+        const mctx = memorialCanvas.getContext('2d');
+        mctx.fillStyle = '#4A4A4A';
+        mctx.fillRect(0, 0, 256, 128);
+        mctx.fillStyle = '#CCCCCC';
+        mctx.font = 'bold 20px Arial';
+        mctx.textAlign = 'center';
+        mctx.fillText('🏚️ HERE STOOD', 128, 35);
+        mctx.fillText('THE PIZZERIA', 128, 60);
+        mctx.font = '14px Arial';
+        mctx.fillStyle = '#999999';
+        mctx.fillText('Removed by community vote', 128, 90);
+        mctx.fillText('🍕 R.I.P. 🍕', 128, 115);
+        const memorialTex = new THREE.CanvasTexture(memorialCanvas);
+        const memorialGeo = new THREE.PlaneGeometry(4, 2);
+        const memorialMat = new THREE.MeshBasicMaterial({ map: memorialTex });
+        const memorial = new THREE.Mesh(memorialGeo, memorialMat);
+        memorial.position.set(0, 3, 4);
+        ruinsGroup.add(memorial);
         
-        // Windows
-        const windowMat = new THREE.MeshBasicMaterial({ color: 0x87CEEB, transparent: true, opacity: 0.7 });
-        for (let i = 0; i < 2; i++) {
-            const windowGeo = new THREE.BoxGeometry(2.5, 3, 0.2);
-            const windowMesh = new THREE.Mesh(windowGeo, windowMat);
-            windowMesh.position.set(-4.5 + i * 9, 5, 6.2);
-            pizzeriaGroup.add(windowMesh);
-        }
+        // Sad broken flag pole
+        const brokenPoleGeo = new THREE.CylinderGeometry(0.08, 0.1, 2, 6);
+        const brokenPoleMat = new THREE.MeshLambertMaterial({ color: 0x666666 });
+        const brokenPole = new THREE.Mesh(brokenPoleGeo, brokenPoleMat);
+        brokenPole.position.set(5, 1, 4);
+        brokenPole.rotation.z = 0.4;
+        ruinsGroup.add(brokenPole);
         
-        // Pizza oven (brick dome)
-        const ovenGeo = new THREE.SphereGeometry(2.5, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const ovenMat = new THREE.MeshLambertMaterial({ color: 0xB22222 });
-        const oven = new THREE.Mesh(ovenGeo, ovenMat);
-        oven.position.set(5, 0.5, -3);
-        pizzeriaGroup.add(oven);
-        
-        // Chimney with smoke
-        const chimneyGeo = new THREE.CylinderGeometry(0.8, 1, 4, 8);
-        const chimneyMat = new THREE.MeshLambertMaterial({ color: 0x8B0000 });
-        const chimney = new THREE.Mesh(chimneyGeo, chimneyMat);
-        chimney.position.set(5, 12, -3);
-        pizzeriaGroup.add(chimney);
-        
-        // Italian flag
-        const flagPoleGeo = new THREE.CylinderGeometry(0.1, 0.1, 6, 8);
-        const flagPoleMat = new THREE.MeshLambertMaterial({ color: 0x808080 });
-        const flagPole = new THREE.Mesh(flagPoleGeo, flagPoleMat);
-        flagPole.position.set(7, 13, 6);
-        pizzeriaGroup.add(flagPole);
-        
-        const flagCanvas = document.createElement('canvas');
-        flagCanvas.width = 90;
-        flagCanvas.height = 60;
-        const fctx = flagCanvas.getContext('2d');
-        fctx.fillStyle = '#009246';
-        fctx.fillRect(0, 0, 30, 60);
-        fctx.fillStyle = '#FFFFFF';
-        fctx.fillRect(30, 0, 30, 60);
-        fctx.fillStyle = '#CE2B37';
-        fctx.fillRect(60, 0, 30, 60);
-        const flagTex = new THREE.CanvasTexture(flagCanvas);
-        const flagGeo = new THREE.PlaneGeometry(2, 1.3);
-        const flagMat = new THREE.MeshBasicMaterial({ map: flagTex, side: THREE.DoubleSide });
-        const flag = new THREE.Mesh(flagGeo, flagMat);
-        flag.position.set(8.2, 15, 6);
-        flag.name = 'italianFlag';
-        pizzeriaGroup.add(flag);
-        
-        // Outdoor seating - tables with checkered cloth
-        for (let t = 0; t < 3; t++) {
-            const tableGeo = new THREE.CylinderGeometry(1.2, 1.2, 0.15, 16);
-            const tableMat = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-            const table = new THREE.Mesh(tableGeo, tableMat);
-            table.position.set(-4 + t * 4, 2, 10);
-            pizzeriaGroup.add(table);
-            
-            const legGeo = new THREE.CylinderGeometry(0.1, 0.1, 2, 8);
-            const legMat = new THREE.MeshLambertMaterial({ color: 0x4A3728 });
-            const leg = new THREE.Mesh(legGeo, legMat);
-            leg.position.set(-4 + t * 4, 1, 10);
-            pizzeriaGroup.add(leg);
-        }
-        
-        pizzeriaGroup.position.set(-25, 0, 0);
-        scene.add(pizzeriaGroup);
-        return pizzeriaGroup;
+        ruinsGroup.position.set(-25, 0, 0);
+        scene.add(ruinsGroup);
+        return ruinsGroup;
     }
-    const pizzeria = createPizzeria();
+    const pizzeria = createPizzeriaRuins();
     
     // Create Hamburger Restaurant!
     function createBurgerPlace() {
@@ -1965,12 +1912,11 @@
             pizza.position.y = 15 + Math.sin(Date.now() * 0.003) * 2;
         }
         
-        // Animate pizzeria flag waving!
+        // Pizzeria ruins - gentle dust settling animation
         if (pizzeria) {
-            pizzeria.children.forEach(child => {
-                if (child.name === 'italianFlag') {
-                    child.rotation.y = Math.sin(Date.now() * 0.004) * 0.3;
-                    child.position.x = 8.2 + Math.sin(Date.now() * 0.003) * 0.1;
+            pizzeria.children.forEach((child, i) => {
+                if (child.geometry && child.geometry.type === 'BoxGeometry') {
+                    child.position.y += Math.sin(Date.now() * 0.001 + i) * 0.001;
                 }
             });
         }
