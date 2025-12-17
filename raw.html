@@ -380,9 +380,10 @@
     </style>
 </head>
 <body>
-<div id="minecraft-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;background:rgba(0,0,0,0.7);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;">
-<h2 style="margin:0 0 10px 0;">⛏️ MINECRAFT WORLD ⛏️</h2>
-<p style="margin:0;font-size:0.9rem;opacity:0.8;">WASD to move | Space to jump | Click to break | Shift+Click to place</p>
+<div id="mario-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(135deg, #e52521 0%, #ff6b35 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:3px solid #ffd700;box-shadow:0 0 20px rgba(255,215,0,0.5);">
+<h2 style="margin:0 0 10px 0;text-shadow:2px 2px #000;">🍄 SUPER MARIO WORLD 🍄</h2>
+<p style="margin:0;font-size:0.9rem;opacity:0.9;">WASD to move | Space to jump | Collect coins! 🪙</p>
+<div id="score-display" style="margin-top:10px;font-size:1.5rem;">COINS: <span id="coin-count">0</span> 🪙</div>
 </div>
 <div id="minecraft-container" style="position:fixed;top:0;left:0;width:100vw;height:100vh;"></div>
 <script>
@@ -404,8 +405,8 @@
             
             // Scene setup
             mcScene = new THREE.Scene();
-            mcScene.background = new THREE.Color(0x87CEEB);
-            mcScene.fog = new THREE.Fog(0x87CEEB, 50, 150);
+            mcScene.background = new THREE.Color(0x5c94fc);
+            mcScene.fog = new THREE.Fog(0x5c94fc, 50, 150);
             
             // Camera
             mcCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -427,14 +428,23 @@
             sunLight.castShadow = true;
             mcScene.add(sunLight);
             
-            // Block textures/colors
+            // Mario block colors
             const blockColors = {
-                grass: 0x4CAF50,
-                dirt: 0x8B4513,
-                stone: 0x808080,
-                wood: 0x8B5A2B,
-                leaves: 0x228B22
+                grass: 0x00a800,
+                dirt: 0xd87050,
+                stone: 0xc84c0c,
+                wood: 0x00a800,
+                leaves: 0x00a800,
+                brick: 0xc84c0c,
+                question: 0xffa500,
+                pipe: 0x00c800,
+                coin: 0xffd700
             };
+            
+            let coins = [];
+            let coinCount = 0;
+            let goombas = [];
+            let pipes = [];
             
             // Create terrain
             const worldSize = 16;
@@ -452,37 +462,85 @@
                 }
             }
             
-            // Add some trees
-            for (let i = 0; i < 5; i++) {
-                const tx = Math.floor(Math.random() * 14) + 1;
-                const tz = Math.floor(Math.random() * 14) + 1;
-                const baseHeight = Math.floor(Math.sin(tx*0.3) * Math.cos(tz*0.3) * 2 + 4);
+            // Add Mario pipes
+            for (let i = 0; i < 3; i++) {
+                const px = 3 + i * 5;
+                const pz = 8;
+                const baseHeight = Math.floor(Math.sin(px*0.3) * Math.cos(pz*0.3) * 2 + 4);
                 
-                // Trunk
-                for (let y = 0; y < 4; y++) {
-                    createBlock(tx, baseHeight + y, tz, blockColors.wood);
+                // Pipe body
+                for (let y = 0; y < 3; y++) {
+                    const pipeBlock = createBlock(px, baseHeight + y, pz, blockColors.pipe);
+                    pipes.push(pipeBlock);
                 }
-                
-                // Leaves
-                for (let lx = -1; lx <= 1; lx++) {
-                    for (let lz = -1; lz <= 1; lz++) {
-                        for (let ly = 0; ly <= 1; ly++) {
-                            if (lx !== 0 || lz !== 0 || ly !== 0) {
-                                createBlock(tx + lx, baseHeight + 3 + ly, tz + lz, blockColors.leaves);
-                            }
-                        }
-                    }
-                }
-                createBlock(tx, baseHeight + 5, tz, blockColors.leaves);
+                // Pipe top (wider)
+                createBlock(px, baseHeight + 3, pz, 0x00ff00);
             }
             
-            // Player (Steve!)
-            const playerGeo = new THREE.BoxGeometry(0.6, 1.8, 0.6);
-            const playerMat = new THREE.MeshLambertMaterial({color: 0x00BFFF});
-            mcPlayer = new THREE.Mesh(playerGeo, playerMat);
-            mcPlayer.position.set(8, 10, 8);
-            mcPlayer.castShadow = true;
-            mcScene.add(mcPlayer);
+            // Add brick platforms
+            for (let i = 0; i < 6; i++) {
+                createBlock(4 + i, 6, 8, blockColors.brick);
+            }
+            
+            // Add question blocks with coins
+            for (let i = 0; i < 3; i++) {
+                const qBlock = createBlock(5 + i * 2, 6, 8, blockColors.question);
+                qBlock.isQuestion = true;
+            }
+            
+            // Add floating coins
+            for (let i = 0; i < 8; i++) {
+                const cx = 2 + i * 2;
+                const cz = 8;
+                const cy = 8 + Math.sin(i) * 0.5;
+                createCoin(cx, cy, cz);
+            }
+            
+            // Add goombas
+            for (let i = 0; i < 3; i++) {
+                createGoomba(4 + i * 4, 5, 8);
+            }
+            
+            // Add clouds
+            for (let i = 0; i < 5; i++) {
+                createCloud(Math.random() * 20 - 2, 15 + Math.random() * 5, Math.random() * 20 - 2);
+            }
+            
+            // Mario!
+            const marioGroup = new THREE.Group();
+            
+            // Body (red)
+            const bodyGeo = new THREE.BoxGeometry(0.6, 0.8, 0.6);
+            const bodyMat = new THREE.MeshLambertMaterial({color: 0xe52521});
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            body.position.y = 0;
+            marioGroup.add(body);
+            
+            // Head (skin)
+            const headGeo = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+            const headMat = new THREE.MeshLambertMaterial({color: 0xffcc99});
+            const head = new THREE.Mesh(headGeo, headMat);
+            head.position.y = 0.65;
+            marioGroup.add(head);
+            
+            // Hat (red)
+            const hatGeo = new THREE.BoxGeometry(0.55, 0.2, 0.55);
+            const hatMat = new THREE.MeshLambertMaterial({color: 0xe52521});
+            const hat = new THREE.Mesh(hatGeo, hatMat);
+            hat.position.y = 1;
+            marioGroup.add(hat);
+            
+            // Overalls (blue)
+            const overallsGeo = new THREE.BoxGeometry(0.65, 0.4, 0.65);
+            const overallsMat = new THREE.MeshLambertMaterial({color: 0x0000ff});
+            const overalls = new THREE.Mesh(overallsGeo, overallsMat);
+            overalls.position.y = -0.3;
+            marioGroup.add(overalls);
+            
+            marioGroup.position.set(8, 10, 8);
+            marioGroup.castShadow = true;
+            mcScene.add(marioGroup);
+            mcPlayer = marioGroup;
             
             // Controls
             document.addEventListener('keydown', (e) => { mcKeys[e.key.toLowerCase()] = true; });
@@ -530,6 +588,61 @@
             return block;
         }
         
+        function createCoin(x, y, z) {
+            const coinGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
+            const coinMat = new THREE.MeshLambertMaterial({color: 0xffd700, emissive: 0xffa500, emissiveIntensity: 0.3});
+            const coin = new THREE.Mesh(coinGeo, coinMat);
+            coin.position.set(x, y, z);
+            coin.rotation.x = Math.PI / 2;
+            coin.isCoin = true;
+            mcScene.add(coin);
+            coins.push(coin);
+            return coin;
+        }
+        
+        function createGoomba(x, y, z) {
+            const goombaGroup = new THREE.Group();
+            
+            // Body
+            const bodyGeo = new THREE.SphereGeometry(0.4, 8, 8);
+            const bodyMat = new THREE.MeshLambertMaterial({color: 0x8b4513});
+            const body = new THREE.Mesh(bodyGeo, bodyMat);
+            goombaGroup.add(body);
+            
+            // Feet
+            const footGeo = new THREE.BoxGeometry(0.25, 0.15, 0.35);
+            const footMat = new THREE.MeshLambertMaterial({color: 0x000000});
+            const leftFoot = new THREE.Mesh(footGeo, footMat);
+            leftFoot.position.set(-0.2, -0.35, 0);
+            goombaGroup.add(leftFoot);
+            const rightFoot = new THREE.Mesh(footGeo, footMat);
+            rightFoot.position.set(0.2, -0.35, 0);
+            goombaGroup.add(rightFoot);
+            
+            goombaGroup.position.set(x, y, z);
+            goombaGroup.direction = 1;
+            goombaGroup.isGoomba = true;
+            mcScene.add(goombaGroup);
+            goombas.push(goombaGroup);
+            return goombaGroup;
+        }
+        
+        function createCloud(x, y, z) {
+            const cloudGroup = new THREE.Group();
+            const cloudMat = new THREE.MeshLambertMaterial({color: 0xffffff});
+            
+            for (let i = 0; i < 3; i++) {
+                const puffGeo = new THREE.SphereGeometry(1 + Math.random() * 0.5, 8, 8);
+                const puff = new THREE.Mesh(puffGeo, cloudMat);
+                puff.position.set(i * 1.2 - 1.2, Math.random() * 0.3, 0);
+                cloudGroup.add(puff);
+            }
+            
+            cloudGroup.position.set(x, y, z);
+            mcScene.add(cloudGroup);
+            return cloudGroup;
+        }
+        
         function animateMinecraft() {
             requestAnimationFrame(animateMinecraft);
             
@@ -572,6 +685,32 @@
             mcCamera.position.y = mcPlayer.position.y + 8;
             mcCamera.position.z = mcPlayer.position.z + 12;
             mcCamera.lookAt(mcPlayer.position);
+            
+            // Animate coins (spin)
+            coins.forEach(coin => {
+                if (coin.parent) {
+                    coin.rotation.z += 0.05;
+                }
+            });
+            
+            // Coin collection
+            coins = coins.filter(coin => {
+                if (coin.parent && mcPlayer.position.distanceTo(coin.position) < 1) {
+                    mcScene.remove(coin);
+                    coinCount++;
+                    document.getElementById('coin-count').textContent = coinCount;
+                    return false;
+                }
+                return true;
+            });
+            
+            // Animate goombas
+            goombas.forEach(goomba => {
+                goomba.position.x += 0.02 * goomba.direction;
+                if (goomba.position.x > 14 || goomba.position.x < 2) {
+                    goomba.direction *= -1;
+                }
+            });
             
             mcRenderer.render(mcScene, mcCamera);
         }
