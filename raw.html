@@ -189,6 +189,10 @@
 <p style="color: #FF0000;">🎮 MARIO MINI-GAME ZONE!</p>
 <p style="color: #FFFF00;">⭐ Hit ? Blocks for coins!</p>
 <p style="color: #00FFFF;">🐾 +10 MORE POKEMON!</p>
+<p style="color: #87CEEB;">⛲ FOUNTAIN ADDED!</p>
+<p style="color: #FF4500;">🎬 BOWSER MOVIE THEATER!</p>
+<p style="color: #DC143C;">🍣 JAPANESE RESTAURANT!</p>
+<p style="color: #FF6347;">📱 POKEDEX ACTIVE!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -202,6 +206,24 @@
 <div class="stat">
 <div class="stat-value" id="caught">0</div>
 <div class="stat-label">Pokemon Caught</div>
+</div>
+<div class="stat">
+<div class="stat-value" id="pokedex">9</div>
+<div class="stat-label">Pokedex</div>
+</div>
+</div>
+<div id="pokedexPanel" style="position:fixed;top:10px;right:10px;background:linear-gradient(135deg,#E52521,#8B0000);padding:15px;border-radius:15px;border:3px solid #FFD700;max-width:200px;z-index:100;font-size:12px;">
+<h4 style="color:#FFD700;margin:0 0 10px 0;text-align:center;">📱 POKEDEX</h4>
+<div style="background:#1a1a2e;padding:8px;border-radius:8px;color:#4facfe;">
+<div>⚡ Pikachu - Electric</div>
+<div>🌿 Bulbasaur - Grass</div>
+<div>🔥 Charmander - Fire</div>
+<div>💧 Squirtle - Water</div>
+<div>🦊 Eevee - Normal</div>
+<div>🎤 Jigglypuff - Fairy</div>
+<div style="color:#FF0000;">🍄 Mario - Plumber</div>
+<div style="color:#00FF00;">🍃 Luigi - Plumber</div>
+<div style="color:#FFB6C1;">🍄 Toad - Mushroom</div>
 </div>
 </div>
 <div id="blockSelector">
@@ -615,6 +637,185 @@
     }
     const marioZone = createMarioGameZone();
     
+    // Create Fountain!
+    function createFountain() {
+        const fountainGroup = new THREE.Group();
+        
+        // Base pool
+        const poolGeo = new THREE.CylinderGeometry(6, 7, 1, 24);
+        const poolMat = new THREE.MeshLambertMaterial({ color: 0x4682B4 });
+        const pool = new THREE.Mesh(poolGeo, poolMat);
+        pool.position.y = 0.5;
+        fountainGroup.add(pool);
+        
+        // Water surface
+        const waterGeo = new THREE.CylinderGeometry(5.5, 5.5, 0.2, 24);
+        const waterMat = new THREE.MeshBasicMaterial({ color: 0x00BFFF, transparent: true, opacity: 0.7 });
+        const water = new THREE.Mesh(waterGeo, waterMat);
+        water.position.y = 0.9;
+        water.name = 'fountainWater';
+        fountainGroup.add(water);
+        
+        // Center pillar
+        const pillarGeo = new THREE.CylinderGeometry(0.8, 1.2, 4, 12);
+        const pillarMat = new THREE.MeshLambertMaterial({ color: 0xD3D3D3 });
+        const pillar = new THREE.Mesh(pillarGeo, pillarMat);
+        pillar.position.y = 2.5;
+        fountainGroup.add(pillar);
+        
+        // Top basin
+        const basinGeo = new THREE.CylinderGeometry(2, 1.5, 0.5, 16);
+        const basin = new THREE.Mesh(basinGeo, pillarMat);
+        basin.position.y = 4.5;
+        fountainGroup.add(basin);
+        
+        // Water spout particles
+        for (let i = 0; i < 20; i++) {
+            const dropGeo = new THREE.SphereGeometry(0.15, 8, 8);
+            const dropMat = new THREE.MeshBasicMaterial({ color: 0x87CEEB, transparent: true, opacity: 0.8 });
+            const drop = new THREE.Mesh(dropGeo, dropMat);
+            drop.userData = { angle: (i / 20) * Math.PI * 2, speed: 0.5 + Math.random() * 0.5, height: Math.random() };
+            drop.name = 'waterDrop';
+            fountainGroup.add(drop);
+        }
+        
+        fountainGroup.position.set(0, 1, 0);
+        scene.add(fountainGroup);
+        return fountainGroup;
+    }
+    const fountain = createFountain();
+    
+    // Create Bowser Movie Theater!
+    function createBowserTheater() {
+        const theaterGroup = new THREE.Group();
+        
+        // Screen frame
+        const frameGeo = new THREE.BoxGeometry(16, 10, 0.5);
+        const frameMat = new THREE.MeshLambertMaterial({ color: 0x2F2F2F });
+        const frame = new THREE.Mesh(frameGeo, frameMat);
+        theaterGroup.add(frame);
+        
+        // Movie screen with Bowser
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 320;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#1a0a00';
+        ctx.fillRect(0, 0, 512, 320);
+        ctx.fillStyle = '#FF4500';
+        ctx.font = 'bold 36px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('🎬 BOWSER MOVIE 🎬', 256, 50);
+        ctx.fillStyle = '#228B22';
+        ctx.beginPath();
+        ctx.arc(256, 180, 80, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FFD700';
+        ctx.beginPath();
+        ctx.arc(230, 160, 15, 0, Math.PI * 2);
+        ctx.arc(282, 160, 15, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#FF0000';
+        ctx.font = 'bold 24px Arial';
+        ctx.fillText('KING KOOPA', 256, 290);
+        ctx.fillStyle = '#FFA500';
+        for (let i = 0; i < 5; i++) {
+            ctx.beginPath();
+            ctx.moveTo(200 + i * 28, 100);
+            ctx.lineTo(210 + i * 28, 70);
+            ctx.lineTo(220 + i * 28, 100);
+            ctx.fill();
+        }
+        
+        const texture = new THREE.CanvasTexture(canvas);
+        const screenGeo = new THREE.PlaneGeometry(15, 9);
+        const screenMat = new THREE.MeshBasicMaterial({ map: texture });
+        const screen = new THREE.Mesh(screenGeo, screenMat);
+        screen.position.z = 0.3;
+        theaterGroup.add(screen);
+        
+        // Theater seats
+        for (let row = 0; row < 3; row++) {
+            for (let seat = 0; seat < 5; seat++) {
+                const seatGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
+                const seatMat = new THREE.MeshLambertMaterial({ color: 0x8B0000 });
+                const seatMesh = new THREE.Mesh(seatGeo, seatMat);
+                seatMesh.position.set(-6 + seat * 3, -3 - row * 2, 8 + row * 3);
+                theaterGroup.add(seatMesh);
+            }
+        }
+        
+        theaterGroup.position.set(-30, 8, -30);
+        scene.add(theaterGroup);
+        return theaterGroup;
+    }
+    const bowserTheater = createBowserTheater();
+    
+    // Create Japanese Restaurant!
+    function createJapaneseRestaurant() {
+        const restaurantGroup = new THREE.Group();
+        
+        // Main building
+        const buildingGeo = new THREE.BoxGeometry(12, 8, 10);
+        const buildingMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        const building = new THREE.Mesh(buildingGeo, buildingMat);
+        building.position.y = 4;
+        restaurantGroup.add(building);
+        
+        // Traditional roof
+        const roofGeo = new THREE.ConeGeometry(10, 4, 4);
+        const roofMat = new THREE.MeshLambertMaterial({ color: 0x2F4F4F });
+        const roof = new THREE.Mesh(roofGeo, roofMat);
+        roof.position.y = 10;
+        roof.rotation.y = Math.PI / 4;
+        restaurantGroup.add(roof);
+        
+        // Paper lanterns
+        const lanternColors = [0xFF0000, 0xFFD700, 0xFF69B4];
+        for (let i = 0; i < 3; i++) {
+            const lanternGeo = new THREE.SphereGeometry(0.8, 12, 12);
+            const lanternMat = new THREE.MeshBasicMaterial({ color: lanternColors[i], transparent: true, opacity: 0.9 });
+            const lantern = new THREE.Mesh(lanternGeo, lanternMat);
+            lantern.position.set(-3 + i * 3, 7, 5.5);
+            lantern.name = 'lantern';
+            restaurantGroup.add(lantern);
+        }
+        
+        // Noren (curtain) entrance
+        const norenGeo = new THREE.PlaneGeometry(4, 3);
+        const norenCanvas = document.createElement('canvas');
+        norenCanvas.width = 128;
+        norenCanvas.height = 96;
+        const nctx = norenCanvas.getContext('2d');
+        nctx.fillStyle = '#DC143C';
+        nctx.fillRect(0, 0, 128, 96);
+        nctx.fillStyle = '#FFFFFF';
+        nctx.font = 'bold 32px Arial';
+        nctx.textAlign = 'center';
+        nctx.fillText('寿司', 64, 55);
+        const norenTex = new THREE.CanvasTexture(norenCanvas);
+        const norenMat = new THREE.MeshBasicMaterial({ map: norenTex, side: THREE.DoubleSide });
+        const noren = new THREE.Mesh(norenGeo, norenMat);
+        noren.position.set(0, 3.5, 5.1);
+        restaurantGroup.add(noren);
+        
+        // Sushi display
+        const sushiColors = [0xFF6347, 0xFFA07A, 0xFFD700, 0xFF69B4];
+        for (let i = 0; i < 4; i++) {
+            const sushiGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.5, 8);
+            const sushiMat = new THREE.MeshLambertMaterial({ color: sushiColors[i] });
+            const sushi = new THREE.Mesh(sushiGeo, sushiMat);
+            sushi.position.set(-2 + i * 1.5, 0.5, 6);
+            sushi.rotation.x = Math.PI / 2;
+            restaurantGroup.add(sushi);
+        }
+        
+        restaurantGroup.position.set(35, 0, 25);
+        scene.add(restaurantGroup);
+        return restaurantGroup;
+    }
+    const japaneseRestaurant = createJapaneseRestaurant();
+    
     // Create Rainbow in the sky
     function createRainbow() {
         const rainbowGroup = new THREE.Group();
@@ -852,6 +1053,13 @@
     createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -15, -10);
     
     // MEGA POKEMON SPAWN - Community requested!
+    // Extra Pokemon types for Pokedex!
+    pokemonTypes.push(
+        { name: 'Gengar', color: 0x663399, size: 1.7, speed: 4 },
+        { name: 'Snorlax', color: 0x4682B4, size: 2.5, speed: 0.5 },
+        { name: 'Mewtwo', color: 0x9370DB, size: 2.2, speed: 5 }
+    );
+    
     for (let i = 0; i < 25; i++) {
         const type = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
         const x = (Math.random() - 0.5) * 60;
@@ -1186,6 +1394,32 @@
                 if (child.name === 'portalEnergy') {
                     child.rotation.z -= delta * 0.5;
                     child.material.opacity = 0.5 + Math.sin(Date.now() * 0.004) * 0.3;
+                }
+            });
+        }
+        
+        // Animate fountain water!
+        if (fountain) {
+            fountain.children.forEach(child => {
+                if (child.name === 'fountainWater') {
+                    child.material.opacity = 0.5 + Math.sin(Date.now() * 0.005) * 0.2;
+                }
+                if (child.name === 'waterDrop') {
+                    const d = child.userData;
+                    const t = Date.now() * 0.003;
+                    child.position.x = Math.cos(d.angle + t * d.speed) * 1.5;
+                    child.position.z = Math.sin(d.angle + t * d.speed) * 1.5;
+                    child.position.y = 4.5 + Math.sin(t * 2 + d.height * 5) * 2;
+                }
+            });
+        }
+        
+        // Animate Japanese restaurant lanterns
+        if (japaneseRestaurant) {
+            japaneseRestaurant.children.forEach((child, i) => {
+                if (child.name === 'lantern') {
+                    child.position.y = 7 + Math.sin(Date.now() * 0.003 + i) * 0.3;
+                    child.material.opacity = 0.7 + Math.sin(Date.now() * 0.005 + i) * 0.3;
                 }
             });
         }
