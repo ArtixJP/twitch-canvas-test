@@ -184,6 +184,8 @@
 <p style="color: #FFA500;">🍕 PIZZA SPAWNED!</p>
 <p style="color: #9400D3;">🌀 WOW PORTAL OPEN!</p>
 <p style="color: #FFD700;">👋 HELLO MO!</p>
+<p style="color: #FF4500;">🎮 POKEMON GAME ACTIVE!</p>
+<p style="color: #fff; font-size: 11px;">Press E to throw Pokeball!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -193,6 +195,10 @@
 <div class="stat">
 <div class="stat-value" id="shapes">0</div>
 <div class="stat-label">Blocks Broken</div>
+</div>
+<div class="stat">
+<div class="stat-value" id="caught">0</div>
+<div class="stat-label">Pokemon Caught</div>
 </div>
 </div>
 <div id="blockSelector">
@@ -221,8 +227,12 @@
         { name: 'Toad', color: 0xFFFFFF, size: 1.2, speed: 5, isToad: true }
     ];
     let blocksBroken = 0;
+    let pokemonCaught = 0;
     const clicksEl = document.getElementById('clicks');
     const shapesEl = document.getElementById('shapes');
+    const caughtEl = document.getElementById('caught');
+    const pokeballs = [];
+    const caughtPokemon = [];
     
     // Three.js setup
     const scene = new THREE.Scene();
@@ -818,6 +828,7 @@
             case 'Digit3': selectBlock(2); break;
             case 'Digit4': selectBlock(3); break;
             case 'Digit5': selectBlock(4); break;
+            case 'KeyE': throwPokeball(); break;
         }
     });
     
@@ -887,6 +898,103 @@
         }
     });
     
+    // Pokeball throwing function
+    function throwPokeball() {
+        const pokeballGroup = new THREE.Group();
+        
+        // Red top half
+        const topGeo = new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+        const topMat = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+        const top = new THREE.Mesh(topGeo, topMat);
+        pokeballGroup.add(top);
+        
+        // White bottom half
+        const bottomGeo = new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
+        const bottomMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        const bottom = new THREE.Mesh(bottomGeo, bottomMat);
+        pokeballGroup.add(bottom);
+        
+        // Black band
+        const bandGeo = new THREE.TorusGeometry(0.38, 0.05, 8, 32);
+        const bandMat = new THREE.MeshLambertMaterial({ color: 0x000000 });
+        const band = new THREE.Mesh(bandGeo, bandMat);
+        band.rotation.x = Math.PI / 2;
+        pokeballGroup.add(band);
+        
+        // Center button
+        const buttonGeo = new THREE.SphereGeometry(0.12, 16, 16);
+        const buttonMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        const button = new THREE.Mesh(buttonGeo, buttonMat);
+        button.position.z = 0.35;
+        pokeballGroup.add(button);
+        
+        // Position at camera
+        pokeballGroup.position.copy(camera.position);
+        
+        // Get throw direction
+        const throwDir = new THREE.Vector3();
+        camera.getWorldDirection(throwDir);
+        
+        pokeballGroup.userData = {
+            velocity: throwDir.multiplyScalar(40),
+            life: 3,
+            active: true
+        };
+        
+        scene.add(pokeballGroup);
+        pokeballs.push(pokeballGroup);
+    }
+    
+    // Check pokeball collisions
+    function checkPokeballCollisions(pokeball, delta) {
+        if (!pokeball.userData.active) return;
+        
+        pokemons.forEach((pokemon, index) => {
+            if (caughtPokemon.includes(pokemon)) return;
+            
+            const dist = pokeball.position.distanceTo(pokemon.position);
+            if (dist < 3) {
+                // Caught!
+                pokeball.userData.active = false;
+                caughtPokemon.push(pokemon);
+                pokemonCaught++;
+                caughtEl.textContent = pokemonCaught;
+                
+                // Celebration effect
+                pokemon.scale.set(0.1, 0.1, 0.1);
+                
+                // Create catch particles
+                for (let i = 0; i < 10; i++) {
+                    const sparkGeo = new THREE.SphereGeometry(0.2, 8, 8);
+                    const sparkMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
+                    const spark = new THREE.Mesh(sparkGeo, sparkMat);
+                    spark.position.copy(pokemon.position);
+                    spark.userData = {
+                        velocity: new THREE.Vector3(
+                            (Math.random() - 0.5) * 10,
+                            Math.random() * 10,
+                            (Math.random() - 0.5) * 10
+                        ),
+                        life: 1
+                    };
+                    scene.add(spark);
+                    pokeballs.push(spark);
+                }
+                
+                // Remove pokemon after delay
+                setTimeout(() => {
+                    scene.remove(pokemon);
+                    const idx = pokemons.indexOf(pokemon);
+                    if (idx > -1) pokemons.splice(idx, 1);
+                    
+                    // Spawn new pokemon
+                    const type = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
+                    createPokemon(type, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60);
+                }, 500);
+            }
+        });
+    }
+
     // Animation loop
     const clock = new THREE.Clock();
     
@@ -1007,6 +1115,25 @@
                     child.material.opacity = 0.4 + Math.sin(Date.now() * 0.001 + i * 0.5) * 0.2;
                 }
             });
+        }
+        
+        // Update pokeballs
+        for (let i = pokeballs.length - 1; i >= 0; i--) {
+            const ball = pokeballs[i];
+            if (ball.userData.velocity) {
+                ball.position.add(ball.userData.velocity.clone().multiplyScalar(delta));
+                ball.userData.velocity.y -= 20 * delta; // Gravity
+                ball.rotation.x += delta * 10;
+                ball.rotation.z += delta * 8;
+                
+                checkPokeballCollisions(ball, delta);
+                
+                ball.userData.life -= delta;
+                if (ball.userData.life <= 0 || ball.position.y < -10) {
+                    scene.remove(ball);
+                    pokeballs.splice(i, 1);
+                }
+            }
         }
         
         renderer.render(scene, camera);
