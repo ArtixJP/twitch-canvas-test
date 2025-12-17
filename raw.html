@@ -5,328 +5,408 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>✨ Pokemon Battle Simulator ✨</title>
+<title>✨ Minecraft World + Pokemon Battle ✨</title>
 <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        
-        body {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-            font-family: 'Segoe UI', system-ui, sans-serif;
-            color: #e0e0e0;
-            overflow: hidden;
-        }
-        
-        .container {
-            text-align: center;
-            animation: fadeIn 1.5s ease-out;
-        }
-        
-        h1 {
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #f093fb, #f5576c, #4facfe);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 3s infinite;
-        }
-        
-        .subtitle {
-            font-size: 1.1rem;
-            color: #aaa;
-            margin-bottom: 2rem;
-        }
-        
-        .canvas-wrapper {
-            position: relative;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 0 50px rgba(240, 147, 251, 0.3);
-        }
-        
-        #mainCanvas {
-            background: #1a1a2e;
-            cursor: crosshair;
-            display: block;
-        }
-        
-        .info {
-            margin-top: 1.5rem;
-            font-size: 0.9rem;
-            color: #888;
-        }
-        
-        .stats {
-            margin-top: 1rem;
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-        }
-        
-        .stat {
-            background: rgba(255,255,255,0.05);
-            padding: 10px 20px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        
-        .stat-value {
-            font-size: 1.5rem;
-            color: #f093fb;
-            font-weight: bold;
-        }
-        
-        .stat-label {
-            font-size: 0.8rem;
-            color: #666;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        @keyframes shimmer {
-            0%, 100% { filter: brightness(1); }
-            50% { filter: brightness(1.3); }
-        }
-        
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -1;
-        }
-        
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: rgba(240, 147, 251, 0.6);
-            border-radius: 50%;
-            animation: float 8s infinite ease-in-out;
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
-            50% { transform: translateY(-30px) rotate(180deg); opacity: 1; }
-        }
-    </style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+        min-height: 100vh;
+        background: #87CEEB;
+        font-family: 'Segoe UI', system-ui, sans-serif;
+        color: #fff;
+        overflow: hidden;
+    }
+    
+    #gameContainer {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+    }
+    
+    #instructions {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        background: rgba(0,0,0,0.7);
+        padding: 15px;
+        border-radius: 10px;
+        font-size: 14px;
+        z-index: 100;
+        max-width: 250px;
+    }
+    
+    #instructions h3 {
+        color: #4facfe;
+        margin-bottom: 10px;
+    }
+    
+    #instructions p {
+        margin: 5px 0;
+        color: #ccc;
+    }
+    
+    #crosshair {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 20px;
+        height: 20px;
+        pointer-events: none;
+        z-index: 100;
+    }
+    
+    #crosshair::before, #crosshair::after {
+        content: '';
+        position: absolute;
+        background: white;
+        box-shadow: 0 0 3px black;
+    }
+    
+    #crosshair::before {
+        width: 2px;
+        height: 20px;
+        left: 9px;
+    }
+    
+    #crosshair::after {
+        width: 20px;
+        height: 2px;
+        top: 9px;
+    }
+    
+    .stats {
+        position: fixed;
+        bottom: 10px;
+        left: 10px;
+        display: flex;
+        gap: 1rem;
+        z-index: 100;
+    }
+    
+    .stat {
+        background: rgba(0,0,0,0.7);
+        padding: 10px 15px;
+        border-radius: 10px;
+        border: 1px solid rgba(255,255,255,0.2);
+    }
+    
+    .stat-value {
+        font-size: 1.2rem;
+        color: #4facfe;
+        font-weight: bold;
+    }
+    
+    .stat-label {
+        font-size: 0.7rem;
+        color: #888;
+    }
+    
+    #blockSelector {
+        position: fixed;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 5px;
+        background: rgba(0,0,0,0.7);
+        padding: 10px;
+        border-radius: 10px;
+        z-index: 100;
+    }
+    
+    .block-option {
+        width: 40px;
+        height: 40px;
+        border: 2px solid #555;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .block-option.selected {
+        border-color: #fff;
+        transform: scale(1.1);
+    }
+    
+    .block-option:hover {
+        border-color: #aaa;
+    }
+</style>
 </head>
 <body>
-<div class="particles" id="particles"></div>
-<div class="container">
-<h1>✨ Pokemon Battle ✨</h1>
-<p class="subtitle">Click to attack! Defeat the wild Pokemon!</p>
-<div class="canvas-wrapper">
-<canvas height="400" id="mainCanvas" width="700"></canvas>
+<div id="gameContainer"></div>
+<div id="crosshair"></div>
+<div id="instructions">
+<h3>🎮 Controls</h3>
+<p>🖱️ Click to lock mouse</p>
+<p>⬆️⬇️⬅️➡️ or WASD - Move</p>
+<p>Mouse - Look around</p>
+<p>Space - Jump</p>
+<p>M - Place block</p>
+<p>Left Click - Break block</p>
+<p>1-5 - Select block type</p>
 </div>
 <div class="stats">
 <div class="stat">
 <div class="stat-value" id="clicks">0</div>
-<div class="stat-label">Battles Won</div>
+<div class="stat-label">Blocks Placed</div>
 </div>
 <div class="stat">
 <div class="stat-value" id="shapes">0</div>
-<div class="stat-label">Total Damage</div>
+<div class="stat-label">Blocks Broken</div>
 </div>
 </div>
-<p class="info">Click the enemy Pokemon to attack! Your Pokemon: <span id="playerPoke">Pikachu</span> vs Wild <span id="enemyPoke">???</span></p>
+<div id="blockSelector">
+<div class="block-option selected" data-block="0" style="background: #8B4513;"></div>
+<div class="block-option" data-block="1" style="background: #228B22;"></div>
+<div class="block-option" data-block="2" style="background: #808080;"></div>
+<div class="block-option" data-block="3" style="background: #FFD700;"></div>
+<div class="block-option" data-block="4" style="background: #4169E1;"></div>
 </div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-        // Pokemon data
-        const pokemon = [
-            { name: 'Pikachu', color: '#f7d02c', hp: 100, attack: 15 },
-            { name: 'Charmander', color: '#ee8130', hp: 90, attack: 18 },
-            { name: 'Squirtle', color: '#6390f0', hp: 110, attack: 12 },
-            { name: 'Bulbasaur', color: '#7ac74c', hp: 105, attack: 14 },
-            { name: 'Eevee', color: '#a8a878', hp: 95, attack: 16 },
-            { name: 'Jigglypuff', color: '#ee99ac', hp: 120, attack: 10 },
-            { name: 'Meowth', color: '#f5f5dc', hp: 85, attack: 17 },
-            { name: 'Psyduck', color: '#f8d030', hp: 100, attack: 13 }
-        ];
-        
-        let playerPokemon = pokemon[0];
-        let enemyPokemon = null;
-        let enemyHP = 0;
-        let playerHP = 100;
-        let battlesWon = 0;
-        let totalDamage = 0;
-        
-        function getRandomPokemon() {
-            return pokemon[Math.floor(Math.random() * pokemon.length)];
-        }
-        
-        function spawnEnemy() {
-            enemyPokemon = getRandomPokemon();
-            enemyHP = enemyPokemon.hp;
-            document.getElementById('enemyPoke').textContent = enemyPokemon.name;
-        }
-        
-        spawnEnemy();
-        
-        // Create floating particles
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 50; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 8 + 's';
-            particle.style.animationDuration = (5 + Math.random() * 5) + 's';
-            particlesContainer.appendChild(particle);
-        }
-        
-        // Canvas setup
-        const canvas = document.getElementById('mainCanvas');
-        const ctx = canvas.getContext('2d');
-        const clicksEl = document.getElementById('clicks');
-        const shapesEl = document.getElementById('shapes');
-        
-        let clicks = 0;
-        let shapes = [];
-        
-        const colors = ['#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#43e97b', '#fa709a', '#fee140'];
-        
-        class Shape {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = 10 + Math.random() * 30;
-                this.color = colors[Math.floor(Math.random() * colors.length)];
-                this.type = Math.floor(Math.random() * 3);
-                this.rotation = 0;
-                this.rotationSpeed = (Math.random() - 0.5) * 0.05;
-                this.alpha = 1;
-                this.pulse = 0;
-            }
-            
-            update() {
-                this.rotation += this.rotationSpeed;
-                this.pulse += 0.05;
-            }
-            
-            draw() {
-                ctx.save();
-                ctx.translate(this.x, this.y);
-                ctx.rotate(this.rotation);
-                ctx.globalAlpha = this.alpha;
-                
-                const pulseSize = this.size + Math.sin(this.pulse) * 3;
-                ctx.fillStyle = this.color;
-                ctx.shadowColor = this.color;
-                ctx.shadowBlur = 15;
-                
-                if (this.type === 0) {
-                    // Circle
-                    ctx.beginPath();
-                    ctx.arc(0, 0, pulseSize / 2, 0, Math.PI * 2);
-                    ctx.fill();
-                } else if (this.type === 1) {
-                    // Square
-                    ctx.fillRect(-pulseSize / 2, -pulseSize / 2, pulseSize, pulseSize);
-                } else {
-                    // Triangle
-                    ctx.beginPath();
-                    ctx.moveTo(0, -pulseSize / 2);
-                    ctx.lineTo(pulseSize / 2, pulseSize / 2);
-                    ctx.lineTo(-pulseSize / 2, pulseSize / 2);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-                
-                ctx.restore();
-            }
-        }
-        
-        canvas.addEventListener('click', (e) => {
-            const rect = canvas.getBoundingClientRect();
-            const x = e.clientX - rect.left;
-            const y = e.clientY - rect.top;
-            
-            // Attack animation
-            for(let i = 0; i < 5; i++) {
-                shapes.push(new Shape(450 + Math.random()*100, 150 + Math.random()*100));
-            }
-            
-            // Deal damage
-            const damage = Math.floor(playerPokemon.attack * (0.8 + Math.random() * 0.4));
-            enemyHP -= damage;
-            totalDamage += damage;
-            shapesEl.textContent = totalDamage;
-            
-            if (enemyHP <= 0) {
-                battlesWon++;
-                clicksEl.textContent = battlesWon;
-                spawnEnemy();
-            }
+    // Stats
+    let blocksPlaced = 0;
+    let blocksBroken = 0;
+    const clicksEl = document.getElementById('clicks');
+    const shapesEl = document.getElementById('shapes');
+    
+    // Three.js setup
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.Fog(0x87CEEB, 50, 150);
+    
+    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(0, 10, 20);
+    
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    document.getElementById('gameContainer').appendChild(renderer.domElement);
+    
+    // Lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+    
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    sunLight.position.set(50, 100, 50);
+    sunLight.castShadow = true;
+    scene.add(sunLight);
+    
+    // Block types
+    const blockColors = [0x8B4513, 0x228B22, 0x808080, 0xFFD700, 0x4169E1];
+    let selectedBlock = 0;
+    
+    // World blocks storage
+    const blocks = new Map();
+    const blockSize = 2;
+    
+    function getBlockKey(x, y, z) {
+        return `${Math.floor(x/blockSize)},${Math.floor(y/blockSize)},${Math.floor(z/blockSize)}`;
+    }
+    
+    function createBlock(x, y, z, colorIndex = 0) {
+        const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
+        const material = new THREE.MeshLambertMaterial({ 
+            color: blockColors[colorIndex],
+            flatShading: true
         });
-        
-        function drawPokemon(x, y, poke, hp, maxHp, isPlayer) {
-            ctx.save();
-            ctx.fillStyle = poke.color;
-            ctx.shadowColor = poke.color;
-            ctx.shadowBlur = 20;
-            ctx.beginPath();
-            ctx.arc(x, y, 50, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // Eyes
-            ctx.fillStyle = '#000';
-            ctx.beginPath();
-            ctx.arc(x - 15, y - 10, 8, 0, Math.PI * 2);
-            ctx.arc(x + 15, y - 10, 8, 0, Math.PI * 2);
-            ctx.fill();
-            
-            // HP bar
-            ctx.fillStyle = '#333';
-            ctx.fillRect(x - 40, y - 70, 80, 12);
-            ctx.fillStyle = hp > maxHp * 0.3 ? '#4caf50' : '#f44336';
-            ctx.fillRect(x - 40, y - 70, 80 * (hp / maxHp), 12);
-            
-            // Name
-            ctx.fillStyle = '#fff';
-            ctx.font = '14px Segoe UI';
-            ctx.textAlign = 'center';
-            ctx.fillText(poke.name, x, y + 70);
-            ctx.fillText('HP: ' + Math.max(0, hp) + '/' + maxHp, x, y - 75);
-            ctx.restore();
-        }
-        
-        function animate() {
-            ctx.fillStyle = 'rgba(26, 26, 46, 0.15)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            
-            // Draw Pokemon
-            drawPokemon(150, 200, playerPokemon, playerHP, 100, true);
-            if (enemyPokemon) {
-                drawPokemon(550, 200, enemyPokemon, enemyHP, enemyPokemon.hp, false);
+        const block = new THREE.Mesh(geometry, material);
+        block.position.set(
+            Math.floor(x/blockSize) * blockSize + blockSize/2,
+            Math.floor(y/blockSize) * blockSize + blockSize/2,
+            Math.floor(z/blockSize) * blockSize + blockSize/2
+        );
+        block.castShadow = true;
+        block.receiveShadow = true;
+        return block;
+    }
+    
+    // Generate terrain
+    for (let x = -20; x < 20; x++) {
+        for (let z = -20; z < 20; z++) {
+            const height = Math.floor(Math.sin(x * 0.1) * 2 + Math.cos(z * 0.1) * 2);
+            for (let y = -2; y <= height; y++) {
+                const colorIndex = y === height ? 1 : (y < height - 2 ? 2 : 0);
+                const block = createBlock(x * blockSize, y * blockSize, z * blockSize, colorIndex);
+                scene.add(block);
+                blocks.set(getBlockKey(x * blockSize, y * blockSize, z * blockSize), block);
             }
+        }
+    }
+    
+    // Player controls
+    const velocity = new THREE.Vector3();
+    const direction = new THREE.Vector3();
+    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
+    let canJump = true;
+    let isLocked = false;
+    
+    // Euler for camera rotation
+    const euler = new THREE.Euler(0, 0, 0, 'YXZ');
+    
+    // Pointer lock
+    renderer.domElement.addEventListener('click', () => {
+        if (!isLocked) {
+            renderer.domElement.requestPointerLock();
+        }
+    });
+    
+    document.addEventListener('pointerlockchange', () => {
+        isLocked = document.pointerLockElement === renderer.domElement;
+    });
+    
+    // Mouse movement
+    document.addEventListener('mousemove', (e) => {
+        if (!isLocked) return;
+        
+        euler.setFromQuaternion(camera.quaternion);
+        euler.y -= e.movementX * 0.002;
+        euler.x -= e.movementY * 0.002;
+        euler.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, euler.x));
+        camera.quaternion.setFromEuler(euler);
+    });
+    
+    // Keyboard controls
+    document.addEventListener('keydown', (e) => {
+        switch(e.code) {
+            case 'ArrowUp': case 'KeyW': moveForward = true; break;
+            case 'ArrowDown': case 'KeyS': moveBackward = true; break;
+            case 'ArrowLeft': case 'KeyA': moveLeft = true; break;
+            case 'ArrowRight': case 'KeyD': moveRight = true; break;
+            case 'Space':
+                if (canJump) {
+                    velocity.y = 15;
+                    canJump = false;
+                }
+                break;
+            case 'KeyM': placeBlock(); break;
+            case 'Digit1': selectBlock(0); break;
+            case 'Digit2': selectBlock(1); break;
+            case 'Digit3': selectBlock(2); break;
+            case 'Digit4': selectBlock(3); break;
+            case 'Digit5': selectBlock(4); break;
+        }
+    });
+    
+    document.addEventListener('keyup', (e) => {
+        switch(e.code) {
+            case 'ArrowUp': case 'KeyW': moveForward = false; break;
+            case 'ArrowDown': case 'KeyS': moveBackward = false; break;
+            case 'ArrowLeft': case 'KeyA': moveLeft = false; break;
+            case 'ArrowRight': case 'KeyD': moveRight = false; break;
+        }
+    });
+    
+    // Block selection UI
+    document.querySelectorAll('.block-option').forEach(el => {
+        el.addEventListener('click', () => {
+            selectBlock(parseInt(el.dataset.block));
+        });
+    });
+    
+    function selectBlock(index) {
+        selectedBlock = index;
+        document.querySelectorAll('.block-option').forEach((el, i) => {
+            el.classList.toggle('selected', i === index);
+        });
+    }
+    
+    // Raycaster for block interaction
+    const raycaster = new THREE.Raycaster();
+    raycaster.far = 20;
+    
+    function placeBlock() {
+        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        
+        if (intersects.length > 0) {
+            const hit = intersects[0];
+            const normal = hit.face.normal;
+            const pos = hit.point.clone().add(normal.multiplyScalar(blockSize/2));
             
-            // Draw attack particles
-            shapes.forEach(shape => {
-                shape.update();
-                shape.draw();
-                shape.alpha -= 0.02;
-            });
-            shapes = shapes.filter(s => s.alpha > 0);
-            
-            requestAnimationFrame(animate);
+            const key = getBlockKey(pos.x, pos.y, pos.z);
+            if (!blocks.has(key)) {
+                const block = createBlock(pos.x, pos.y, pos.z, selectedBlock);
+                scene.add(block);
+                blocks.set(key, block);
+                blocksPlaced++;
+                clicksEl.textContent = blocksPlaced;
+            }
+        }
+    }
+    
+    // Left click to break
+    document.addEventListener('mousedown', (e) => {
+        if (!isLocked || e.button !== 0) return;
+        
+        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+        const intersects = raycaster.intersectObjects(scene.children);
+        
+        if (intersects.length > 0) {
+            const block = intersects[0].object;
+            const key = getBlockKey(block.position.x, block.position.y, block.position.z);
+            if (blocks.has(key)) {
+                scene.remove(block);
+                blocks.delete(key);
+                blocksBroken++;
+                shapesEl.textContent = blocksBroken;
+            }
+        }
+    });
+    
+    // Animation loop
+    const clock = new THREE.Clock();
+    
+    function animate() {
+        requestAnimationFrame(animate);
+        
+        const delta = clock.getDelta();
+        
+        // Movement
+        velocity.x *= 0.9;
+        velocity.z *= 0.9;
+        velocity.y -= 30 * delta; // Gravity
+        
+        direction.z = Number(moveForward) - Number(moveBackward);
+        direction.x = Number(moveRight) - Number(moveLeft);
+        direction.normalize();
+        
+        if (moveForward || moveBackward) velocity.z -= direction.z * 50 * delta;
+        if (moveLeft || moveRight) velocity.x -= direction.x * 50 * delta;
+        
+        // Apply movement in camera direction
+        const forward = new THREE.Vector3();
+        camera.getWorldDirection(forward);
+        forward.y = 0;
+        forward.normalize();
+        
+        const right = new THREE.Vector3();
+        right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
+        
+        camera.position.addScaledVector(forward, -velocity.z * delta);
+        camera.position.addScaledVector(right, -velocity.x * delta);
+        camera.position.y += velocity.y * delta;
+        
+        // Ground collision
+        if (camera.position.y < 5) {
+            camera.position.y = 5;
+            velocity.y = 0;
+            canJump = true;
         }
         
-        // Initial clear
-        ctx.fillStyle = '#1a1a2e';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        animate();
-    </script>
+        renderer.render(scene, camera);
+    }
+    
+    // Handle resize
+    window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+    
+    animate();
+</script>
 </body>
 </html>
