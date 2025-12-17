@@ -111,14 +111,8 @@
                 document.querySelector(`[data-type="${selectedBlock}"]`).classList.add('selected');
             }
         }
-        if(e.code === 'KeyM' && document.pointerLockElement) {
-            raycaster.setFromCamera({x:0,y:0}, camera);
-            const hits = raycaster.intersectObjects(scene.children);
-            if(hits.length > 0 && hits[0].distance < 5) {
-                const n = hits[0].face.normal;
-                const p = hits[0].object.position;
-                createBlock(p.x+n.x, p.y+n.y, p.z+n.z, selectedBlock);
-            }
+        if(e.code === 'KeyM') {
+            placeBlock();
         }
     });
     document.addEventListener('keyup', e => keys[e.code] = false);
@@ -132,10 +126,32 @@
     });
     
     const raycaster = new THREE.Raycaster();
+    
+    function placeBlock() {
+        if(!document.pointerLockElement) return;
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+        raycaster.set(camera.position, direction);
+        const meshes = Array.from(blocks.values());
+        const hits = raycaster.intersectObjects(meshes);
+        if(hits.length > 0 && hits[0].distance < 6) {
+            const n = hits[0].face.normal;
+            const p = hits[0].object.position;
+            const newX = Math.round(p.x + n.x);
+            const newY = Math.round(p.y + n.y);
+            const newZ = Math.round(p.z + n.z);
+            if(!blocks.has(`${newX},${newY},${newZ}`)) {
+                createBlock(newX, newY, newZ, selectedBlock);
+            }
+        }
+    }
     document.addEventListener('mousedown', e => {
         if(!document.pointerLockElement) return;
-        raycaster.setFromCamera({x:0,y:0}, camera);
-        const hits = raycaster.intersectObjects(scene.children);
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+        raycaster.set(camera.position, direction);
+        const meshes = Array.from(blocks.values());
+        const hits = raycaster.intersectObjects(meshes);
         if(hits.length > 0 && hits[0].distance < 5) {
             if(e.button === 0) {
                 const p = hits[0].object.position;
