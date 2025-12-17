@@ -28,7 +28,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>🚀 Space Station Builder - Click to Explore 🌌🐍</h1>
+<h1>🚀 Space Station Builder - Mario Galaxy Edition 🌌🍄</h1>
 <canvas id="game" tabindex="0"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
 <div id="hotbar">
@@ -36,6 +36,8 @@
 <div class="slot" data-block="dirt">🔷</div>
 <div class="slot" data-block="stone">⚙️</div>
 <div class="slot" data-block="wood">🔶</div>
+<div class="slot" data-block="question">❓</div>
+<div class="slot" data-block="brick">🧱</div>
 </div>
 <script>
     const canvas = document.getElementById('game');
@@ -58,7 +60,7 @@
     renderer.setSize(window.innerWidth, window.innerHeight);
     
     const blocks = {};
-    const blockColors = {grass: 0x00ffaa, dirt: 0x4466aa, stone: 0x8899aa, wood: 0xffaa33};
+    const blockColors = {grass: 0x00ffaa, dirt: 0x4466aa, stone: 0x8899aa, wood: 0xffaa33, question: 0xffcc00, brick: 0xcc6633};
     let selectedBlock = 'grass';
     let placeMode = true;
     
@@ -78,6 +80,7 @@
         addBlock(x, 0, z, 'grass');
         addBlock(x, -1, z, 'dirt');
         if(Math.random()>0.95) addBlock(x,1,z,'wood');
+        if(Math.random()>0.97) addBlock(x,3,z,'question');
     }
     
     const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -97,6 +100,38 @@
         scene.add(asteroid);
         asteroids.push(asteroid);
     }
+    
+    // Mario coins floating in space
+    const coins = [];
+    for(let i = 0; i < 20; i++) {
+        const coinGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
+        const coinMat = new THREE.MeshLambertMaterial({color: 0xffd700, emissive: 0xffaa00, emissiveIntensity: 0.3});
+        const coin = new THREE.Mesh(coinGeo, coinMat);
+        coin.position.set((Math.random()-0.5)*30, Math.random()*8+2, (Math.random()-0.5)*30);
+        coin.rotation.x = Math.PI/2;
+        coin.userData.baseY = coin.position.y;
+        scene.add(coin);
+        coins.push(coin);
+    }
+    
+    // Piranha plant pipe
+    const pipeGeo = new THREE.CylinderGeometry(0.8, 0.8, 2, 16);
+    const pipeMat = new THREE.MeshLambertMaterial({color: 0x00aa00});
+    const pipe = new THREE.Mesh(pipeGeo, pipeMat);
+    pipe.position.set(5, 1, -5);
+    scene.add(pipe);
+    const pipeRim = new THREE.Mesh(new THREE.TorusGeometry(0.85, 0.15, 8, 16), pipeMat);
+    pipeRim.position.set(5, 2, -5);
+    pipeRim.rotation.x = Math.PI/2;
+    scene.add(pipeRim);
+    
+    // Piranha plant
+    const plantHead = new THREE.Mesh(new THREE.SphereGeometry(0.5, 8, 8), new THREE.MeshLambertMaterial({color: 0xff0000}));
+    plantHead.position.set(5, 2.5, -5);
+    scene.add(plantHead);
+    const plantSpots = new THREE.Mesh(new THREE.SphereGeometry(0.15, 8, 8), new THREE.MeshLambertMaterial({color: 0xffffff}));
+    plantSpots.position.set(5.2, 2.6, -4.7);
+    scene.add(plantSpots);
     
     // Nebula light
     const nebulaLight = new THREE.PointLight(0x9933ff, 0.5, 50);
@@ -200,6 +235,13 @@
         // Pulse nebula lights
         nebulaLight.intensity = 0.5 + Math.sin(Date.now() * 0.001) * 0.2;
         nebulaLight2.intensity = 0.5 + Math.cos(Date.now() * 0.0015) * 0.2;
+        // Animate Mario coins
+        coins.forEach((coin, i) => {
+            coin.rotation.z += 0.05;
+            coin.position.y = coin.userData.baseY + Math.sin(Date.now() * 0.003 + i) * 0.3;
+        });
+        // Animate piranha plant
+        plantHead.position.y = 2.5 + Math.sin(Date.now() * 0.002) * 0.8;
         renderer.render(scene, camera);
     }
     
