@@ -5,14 +5,14 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Minecraft World</title>
+<title>Lost Civilization Ruins</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             font-family: 'Courier New', monospace; 
             overflow: hidden;
-            background: #87CEEB;
+            background: #2C1810;
         }
         #info {
             position: absolute;
@@ -48,17 +48,17 @@
 </head>
 <body>
 <div id="info">
-<h1>⛏️ TWITCH MINECRAFT</h1>
-<div>Seed: HelloWorld 🍌</div>
-<div>Chunks: Loading...</div>
+<h1>🏛️ LOST CIVILIZATION</h1>
+<div>Era: Post-Apocalyptic 🌿</div>
+<div>Ruins: Ancient...</div>
 </div>
-<div id="controls">🎮 WASD: Move | SPACE: Jump | F: First Person | 🖱️ Mouse: Look Around</div>
-<div id="player-stats" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#55FF55;padding:10px;border-radius:5px;z-index:100;border:2px solid #333;font-family:monospace;">❤️❤️❤️❤️❤️<br/>🏃 Playing!</div>
+<div id="controls">🏛️ WASD: Explore | SPACE: Climb | F: First Person | 🖱️ Mouse: Survey Ruins</div>
+<div id="player-stats" style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.7);color:#D4AF37;padding:10px;border-radius:5px;z-index:100;border:2px solid #8B4513;font-family:monospace;">🔦🔦🔦🔦🔦<br/>🧭 Exploring!</div>
 <script>
-        // MINECRAFT 3D VOXEL WORLD
+        // ANCIENT RUINS - What remains of Minecraft...
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x87CEEB);
-        scene.fog = new THREE.Fog(0x87CEEB, 50, 150);
+        scene.background = new THREE.Color(0x1a0f0a);
+        scene.fog = new THREE.Fog(0x1a0f0a, 20, 80);
         
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
         camera.position.set(30, 40, 30);
@@ -71,13 +71,13 @@
         
         // Minecraft block colors
         const BLOCKS = {
-            grass: 0x4CAF50,
-            dirt: 0x8B4513,
-            stone: 0x808080,
+            grass: 0x3d3d29,
+            dirt: 0x4a3728,
+            stone: 0x5a5a5a,
             water: 0x4169E1,
             sand: 0xF4D03F,
             wood: 0x6B4423,
-            leaves: 0x228B22
+            leaves: 0x2d4a2d
         };
         
         // Simple noise function for terrain
@@ -157,10 +157,10 @@
         }
         
         // Lighting
-        const sun = new THREE.DirectionalLight(0xFFFFFF, 1);
+        const sun = new THREE.DirectionalLight(0xFFD700, 0.4);
         sun.position.set(50, 100, 50);
         scene.add(sun);
-        scene.add(new THREE.AmbientLight(0x404040, 0.5));
+        scene.add(new THREE.AmbientLight(0x1a1a2e, 0.3));
         
         // Update info
         document.querySelector('#info div:last-child').textContent = 'Blocks: ' + blockCount;
@@ -181,7 +181,7 @@
         
         // Create player cube (Steve!)
         const playerGeo = new THREE.BoxGeometry(0.8, 1.8, 0.8);
-        const playerMat = new THREE.MeshLambertMaterial({ color: 0x00AA00 });
+        const playerMat = new THREE.MeshLambertMaterial({ color: 0x8B7355 });
         const playerMesh = new THREE.Mesh(playerGeo, playerMat);
         playerMesh.position.set(player.x, player.y, player.z);
         scene.add(playerMesh);
