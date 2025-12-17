@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>WoW RPG Simulator - Twitch Versus Code</title>
+<title>The Void - New Beginning</title>
 <style>
         * { box-sizing: border-box; }
         body { 
@@ -89,69 +89,26 @@
     </style>
 </head>
 <body>
-<h1 style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:150;background:linear-gradient(180deg, rgba(20,0,40,0.95), rgba(10,0,20,0.95));padding:8px 25px;border-radius:5px;font-size:1.5rem;margin:0;border:2px solid #6a14a8;box-shadow:0 0 20px rgba(150,0,255,0.4),inset 0 0 10px rgba(200,100,255,0.2);animation:titleGlow 3s infinite;">🌑 Void World of Warcraft 3D 🌑</h1>
-<style>@keyframes titleGlow { 0%, 100% { box-shadow: 0 0 20px rgba(150,0,255,0.4); } 50% { box-shadow: 0 0 40px rgba(200,0,255,0.6); } }</style>
-<button class="toggle-panels-btn" onclick="togglePanels()">📊 Toggle Panels</button>
-<div class="panel world-panel" id="game-world">
-<h3 style="text-align:center;color:#4a4;margin:5px 0;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(0,0,0,0.7);padding:5px 15px;border-radius:5px;">🗺️ Explore the World</h3>
-<div class="world-3d-horizon" style="background: linear-gradient(180deg, #000000 0%, #0a0015 30%, #150020 70%, #0d001a 100%);"></div>
-<div class="void-effect" style="position:absolute;top:0;left:0;width:100%;height:100%;background:radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.7) 100%);pointer-events:none;z-index:3;animation:voidPulse 4s infinite;"></div>
-<div class="world-3d-mountains" style="opacity:0.3;filter:blur(4px);color:#1a0030;">🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️🗻🏔️</div>
-<div class="world-floor"></div>
-<div class="world-tree" style="left:50px;top:200px;font-size:60px;">🌲</div>
-<div class="world-tree" style="left:150px;top:120px;font-size:40px;opacity:0.7;">🌲</div>
-<div class="world-tree" style="left:1100px;top:150px;font-size:45px;opacity:0.8;">🌳</div>
-<div class="world-tree" style="left:600px;top:100px;">🌳</div>
-<div class="world-tree" style="left:900px;top:350px;">🌲</div>
-<div class="world-tree" style="left:300px;top:450px;">🌳</div>
-<div class="world-rock" style="left:450px;top:500px;">🪨</div>
-<div class="world-rock" style="left:750px;top:150px;">🪨</div>
-<div class="player-char" id="player-sprite">🗡️<span class="daggers" id="dagger-left">🗡️</span><span class="daggers" id="dagger-right">🗡️</span></div>
-<div class="world-enemy" data-hp="30" data-name="Goblin" id="world-enemy-1" style="left:400px;top:150px;">👺</div>
-<div class="world-enemy" data-hp="45" data-name="Wolf" id="world-enemy-2" style="left:200px;top:280px;">🐺</div>
-<div class="world-enemy" data-hp="60" data-name="Orc" id="world-enemy-3" style="left:700px;top:400px;">👹</div>
-<div class="world-enemy" data-hp="40" data-name="Spider" id="world-enemy-4" style="left:150px;top:500px;">🕷️</div>
-<div class="world-chest" id="chest-1" onclick="openChest(this)" style="left:500px;top:300px;">📦</div>
-<div class="world-chest" id="chest-2" onclick="openChest(this)" style="left:100px;top:100px;">📦</div>
-<div class="world-chest" id="chest-3" onclick="openChest(this)" style="left:800px;top:200px;">📦</div>
-<div class="world-controls" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);padding:5px 15px;border-radius:5px;">Use WASD or Arrow Keys to move • Click enemies to attack</div>
-<div class="fullscreen-indicator" style="color:#a0a;border:1px solid #606;">🌑 Void Realm - All Persists in Shadow 🌑</div>
-</div>
-<div class="panels-overlay" id="panels-overlay">
-<div class="game-container">
-<div class="panel character-panel">
-<h3 style="text-align:center;color:#ffd700;margin:0 0 10px 0;">🛡️ Your Hero</h3>
-<div class="level-display">Level <span id="level">1</span></div>
-<div class="class-select">
-<button class="class-btn selected" data-class="warrior" onclick="selectClass('warrior')">⚔️ Warrior</button>
-<button class="class-btn" data-class="mage" onclick="selectClass('mage')">🔮 Mage</button>
-<button class="class-btn" data-class="rogue" onclick="selectClass('rogue')">🗡️ Rogue</button>
-</div>
-<div class="stat-bar health-bar"><div class="bar-fill" id="health-fill" style="width:100%;background:#22aa22;"></div><span class="bar-text" id="health-text">100/100 HP</span></div>
-<div class="stat-bar mana-bar"><div class="bar-fill" id="mana-fill" style="width:100%;background:#2266dd;"></div><span class="bar-text" id="mana-text">50/50 MP</span></div>
-<div class="stat-bar xp-bar"><div class="bar-fill" id="xp-fill" style="width:0%;background:#9932cc;"></div><span class="bar-text" id="xp-text">0/100 XP</span></div>
-<div class="gold-display">💰 <span id="gold">0</span> Gold</div>
-<div class="stats-grid">
-<div class="stat-item">⚔️ ATK: <span id="atk">10</span></div>
-<div class="stat-item">🛡️ DEF: <span id="def">5</span></div>
-<div class="stat-item">✨ CRIT: <span id="crit">5</span>%</div>
-<div class="stat-item">💨 SPD: <span id="spd">10</span></div>
-</div>
-</div>
-<div class="panel" style="width:280px;text-align:center;">
-<h3 style="color:#4a4;margin:0 0 10px 0;">🌍 World Actions</h3>
-<p style="font-size:13px;color:#aaa;">Click enemies in the world to attack them!</p>
-<button class="action-btn heal-btn" onclick="heal()" style="margin-top:10px;">💚 Heal (15 MP)</button>
-<p style="font-size:11px;color:#666;margin-top:10px;">Explore the map and defeat monsters!</p>
-</div>
-</div>
-</div>
-<div class="panel log-panel" style="max-height:200px;">
-<h3 style="text-align:center;color:#aaa;margin:0 0 10px 0;">📜 Battle Log</h3>
-<div id="log"></div>
-</div>
+<h1 style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:150;background:transparent;padding:20px 40px;font-size:3rem;margin:0;color:#fff;text-shadow:0 0 30px #fff,0 0 60px #888;animation:fadeIn 3s ease-out;">✨ A New Beginning ✨</h1>
+<style>@keyframes fadeIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 100% { opacity:1; transform:translate(-50%,-50%) scale(1); } }</style>
+<p style="position:fixed;bottom:20%;left:50%;transform:translateX(-50%);color:#666;font-size:1.2rem;text-align:center;z-index:100;">The slate is clean. What shall we create?</p>
+<div id="void-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(ellipse at center, #111 0%, #000 100%);z-index:0;"></div>
+<div id="star-field" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;"></div>
 <canvas id="particle-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;"></canvas>
 <script>
+// Gentle star animation for the new beginning
+const starField = document.getElementById('star-field');
+for(let i = 0; i < 50; i++) {
+  const star = document.createElement('div');
+  star.style.cssText = `position:absolute;width:${Math.random()*3+1}px;height:${Math.random()*3+1}px;background:#fff;border-radius:50%;left:${Math.random()*100}%;top:${Math.random()*100}%;opacity:${Math.random()*0.7+0.3};animation:twinkle ${Math.random()*3+2}s infinite;`;
+  starField.appendChild(star);
+}
+const style = document.createElement('style');
+style.textContent = '@keyframes twinkle { 0%,100% { opacity:0.3; } 50% { opacity:1; } }';
+document.head.appendChild(style);
+</script>
+<script>
+        // Legacy code preserved but inactive - awaiting new purpose
         const classes = {
             warrior: { hp: 120, mp: 30, atk: 15, def: 10, crit: 5, spd: 8, skill: 'Heroic Strike', skillMult: 2.5 },
             mage: { hp: 70, mp: 100, atk: 8, def: 3, crit: 15, spd: 12, skill: 'Fireball', skillMult: 3.5 },
