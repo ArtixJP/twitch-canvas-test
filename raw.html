@@ -625,6 +625,34 @@
         
         setInterval(createStar, 800);
         drawGame();
+        
+        // Auto-rotate sections every 30 seconds
+        const sections = ['space', 'animals', 'games'];
+        let currentSectionIndex = 0;
+        
+        function autoRotateSection() {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            const nextSection = sections[currentSectionIndex];
+            
+            // Update sections
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
+            document.getElementById(nextSection + '-section').classList.add('active');
+            document.querySelectorAll('.nav-menu button')[currentSectionIndex].classList.add('active');
+        }
+        
+        // Start auto-rotation every 30 seconds
+        setInterval(autoRotateSection, 30000);
+        
+        // Update showSection to sync with auto-rotation
+        const originalShowSection = showSection;
+        window.showSection = function(sectionName) {
+            currentSectionIndex = sections.indexOf(sectionName);
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
+            document.getElementById(sectionName + '-section').classList.add('active');
+            document.querySelectorAll('.nav-menu button')[currentSectionIndex].classList.add('active');
+        };
     </script>
 </body>
 </html>
