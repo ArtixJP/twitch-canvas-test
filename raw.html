@@ -45,6 +45,7 @@
 <div class="block-icon" data-type="moon" style="background: #cccccc;" title="Moon Rock">🌙</div>
 <div class="block-icon" data-type="star" style="background: #ffff00;" title="Star Block">⭐</div>
 <div class="block-icon" data-type="nebula" style="background: linear-gradient(45deg, #ff00ff, #00ffff);" title="Nebula">🌌</div>
+<div class="block-icon" data-type="mom" style="background: linear-gradient(45deg, #ff69b4, #ff1493);" title="Hi Mom Block">💕</div>
 </div>
 <script>
     const scene = new THREE.Scene();
@@ -71,6 +72,7 @@
         moon: new THREE.MeshLambertMaterial({color: 0xcccccc}),
         star: new THREE.MeshLambertMaterial({color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 0.5}),
         nebula: new THREE.MeshLambertMaterial({color: 0xff00ff, transparent: true, opacity: 0.6}),
+        mom: new THREE.MeshLambertMaterial({color: 0xff69b4, emissive: 0xff1493, emissiveIntensity: 0.3}),
         marioRed: new THREE.MeshLambertMaterial({color: 0xe52521})
     };
     
@@ -125,6 +127,31 @@
         const sz = Math.floor(Math.random() * 30 - 15);
         createBlock(sx, sy, sz, 'star');
     }
+    // Add "hi mom" floating text blocks
+    const hiMomText = ['H','I',' ','M','O','M'];
+    for(let i = 0; i < 6; i++) {
+        if(hiMomText[i] !== ' ') createBlock(-3 + i, 20, -5, 'mom');
+    }
+    // Create 3D text sprite for "hi mom"
+    const canvas = document.createElement('canvas');
+    canvas.width = 512; canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ff69b4';
+    ctx.fillRect(0, 0, 512, 128);
+    ctx.font = 'bold 80px Impact';
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#ff1493';
+    ctx.lineWidth = 4;
+    ctx.textAlign = 'center';
+    ctx.strokeText('HI MOM! 💕', 256, 90);
+    ctx.fillText('HI MOM! 💕', 256, 90);
+    const texture = new THREE.CanvasTexture(canvas);
+    const spriteMat = new THREE.SpriteMaterial({map: texture});
+    const sprite = new THREE.Sprite(spriteMat);
+    sprite.scale.set(8, 2, 1);
+    sprite.position.set(0, 22, -5);
+    scene.add(sprite);
+    
     // Add moon platform
     for(let mx = -3; mx <= 3; mx++) {
         for(let mz = -3; mz <= 3; mz++) {
