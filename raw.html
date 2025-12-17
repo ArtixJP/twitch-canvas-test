@@ -380,6 +380,9 @@
     </style>
 </head>
 <body>
+<div id="mode-toggle" style="position:fixed;top:80px;right:20px;z-index:1001;">
+<button onclick="toggleMode()" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(102,126,234,0.4);transition:all 0.3s;">🚀 Switch to Space</button>
+</div>
 <div id="minecraft-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;background:linear-gradient(135deg, rgba(60,40,20,0.95) 0%, rgba(40,80,40,0.95) 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:3px solid #5a3;box-shadow:0 0 30px rgba(80,200,80,0.4);backdrop-filter:blur(10px);font-family:'Courier New',monospace;">
 <h2 style="margin:0 0 10px 0;text-shadow:2px 2px 0 #000;color:#5f5;">⛏️ MINECRAFT LITE ⛏️</h2>
 <p style="margin:0;font-size:0.85rem;color:#afc;">WASD: Move | SPACE: Jump | Click: Break | Right-Click: Place | 1-4: Select Block</p>
@@ -888,6 +891,37 @@
             mcCamera.position.set(mcPlayer.x, mcPlayer.y + 1.6, mcPlayer.z);
             
             mcRenderer.render(mcScene, mcCamera);
+        }
+        
+        let currentMode = 'minecraft';
+        
+        function toggleMode() {
+            const btn = document.querySelector('#mode-toggle button');
+            const mcContainer = document.getElementById('minecraft-container');
+            const spaceContainer = document.getElementById('space-container');
+            const mcHud = document.getElementById('minecraft-hud');
+            const spaceHud = document.getElementById('space-hud');
+            const crosshair = document.getElementById('crosshair');
+            
+            if (currentMode === 'minecraft') {
+                currentMode = 'space';
+                mcContainer.style.display = 'none';
+                spaceContainer.style.display = 'block';
+                mcHud.style.display = 'none';
+                spaceHud.style.display = 'block';
+                crosshair.style.display = 'none';
+                btn.innerHTML = '⛏️ Switch to Minecraft';
+                if (!spaceInitialized) initSpace();
+                document.exitPointerLock();
+            } else {
+                currentMode = 'minecraft';
+                mcContainer.style.display = 'block';
+                spaceContainer.style.display = 'none';
+                mcHud.style.display = 'block';
+                spaceHud.style.display = 'none';
+                crosshair.style.display = 'block';
+                btn.innerHTML = '🚀 Switch to Space';
+            }
         }
         
         setTimeout(initMinecraft, 100);
