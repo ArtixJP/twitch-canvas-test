@@ -64,6 +64,41 @@
             gap: 2rem;
         }
         h1 { font-size: 3rem; text-align: center; }
+        .ukulele {
+            position: absolute;
+            font-size: 60px;
+            cursor: pointer;
+            animation: orbit-ukulele 20s linear infinite, ukulele-wobble 0.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255,200,100,0.6));
+            transition: transform 0.1s;
+            z-index: 20;
+        }
+        .ukulele:hover { transform: scale(1.2); }
+        .ukulele.strummed { animation: strum-effect 0.3s ease-out; }
+        @keyframes orbit-ukulele {
+            from { transform: rotate(0deg) translateX(160px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(160px) rotate(-360deg); }
+        }
+        @keyframes ukulele-wobble {
+            0%, 100% { rotate: -5deg; }
+            50% { rotate: 5deg; }
+        }
+        @keyframes strum-effect {
+            0% { filter: drop-shadow(0 0 10px rgba(255,200,100,0.6)); }
+            50% { filter: drop-shadow(0 0 30px rgba(255,255,100,1)); }
+            100% { filter: drop-shadow(0 0 10px rgba(255,200,100,0.6)); }
+        }
+        .music-note {
+            position: absolute;
+            font-size: 24px;
+            pointer-events: none;
+            animation: float-note 2s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes float-note {
+            0% { opacity: 1; transform: translateY(0) scale(1); }
+            100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
+        }
         .planet-container {
             position: relative;
             width: 300px;
@@ -208,6 +243,7 @@
 <div class="kitty">⭐</div>
 <div class="sun"></div>
 <div class="dog">🌟</div>
+<div class="ukulele" id="cosmicUkulele" title="Click to strum!">🪕</div>
 </div>
 </section>
 <section class="section" id="animals">
@@ -232,6 +268,7 @@
 </section>
 <section class="section" id="canon">
 <h1>📜 The Canon</h1>
+<p style="opacity:0.8;margin-bottom:20px">🪕 Click the cosmic ukulele in Space to play music!</p>
 <div class="canon-container">
 <div class="canon-card">
 <h2>🌌 Premise</h2>
@@ -303,6 +340,46 @@
         }
     }
     setInterval(checkCatch, 100);
+    // Cosmic Ukulele interaction
+    const ukulele = document.getElementById('cosmicUkulele');
+    const notes = ['🎵', '🎶', '♪', '♫', '✨'];
+    const chords = [261.63, 329.63, 392.00, 523.25]; // C, E, G, C
+    let audioCtx = null;
+    
+    ukulele.addEventListener('click', (e) => {
+        // Visual feedback
+        ukulele.classList.add('strummed');
+        setTimeout(() => ukulele.classList.remove('strummed'), 300);
+        
+        // Spawn floating notes
+        for(let i = 0; i < 3; i++) {
+            setTimeout(() => {
+                const note = document.createElement('div');
+                note.className = 'music-note';
+                note.textContent = notes[Math.floor(Math.random() * notes.length)];
+                note.style.left = (e.clientX + Math.random()*40-20) + 'px';
+                note.style.top = (e.clientY + Math.random()*20-10) + 'px';
+                document.body.appendChild(note);
+                setTimeout(() => note.remove(), 2000);
+            }, i * 100);
+        }
+        
+        // Play sound
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        chords.forEach((freq, i) => {
+            setTimeout(() => {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+                osc.connect(gain).connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.8);
+            }, i * 50);
+        });
+    });
     let clickScore = 0;
     let gameActive = false;
     const clickTarget = document.getElementById('clickTarget');
