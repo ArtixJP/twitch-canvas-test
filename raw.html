@@ -7,6 +7,37 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
 <style>
+        .void-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%);
+            z-index: 999;
+            pointer-events: none;
+            animation: void-pulse 4s ease-in-out infinite;
+        }
+        @keyframes void-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        .void-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.4);
+            z-index: 1001;
+            text-align: center;
+            animation: void-text 3s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes void-text {
+            0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+            50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.1); }
+        }
         .nav-menu {
             position: fixed;
             top: 0;
@@ -392,6 +423,8 @@
     </style>
 </head>
 <body>
+<div class="void-overlay"></div>
+<div class="void-message">🌑 The void watches... but nothing is truly gone 🌑</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
