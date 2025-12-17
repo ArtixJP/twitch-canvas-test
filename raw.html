@@ -30,7 +30,7 @@
 <body>
 <h1>🎮 Minecraft World - Click to Play</h1>
 <canvas id="game"></canvas>
-<div id="controls">ZQSD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Place/Break<br/>1-4: Select Block</div>
+<div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Place/Break<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start!</span></div>
 <div id="hotbar">
 <div class="slot active" data-block="grass">🟩</div>
 <div class="slot" data-block="dirt">🟫</div>
@@ -78,10 +78,10 @@
     const keys = {};
     const vel = {x:0, y:0, z:0};
     
-    document.addEventListener('keydown', e => keys[e.code] = true);
-    document.addEventListener('keyup', e => keys[e.code] = false);
+    document.addEventListener('keydown', e => { keys[e.code] = true; e.preventDefault(); });
+    document.addEventListener('keyup', e => { keys[e.code] = false; e.preventDefault(); });
     
-    canvas.addEventListener('click', () => canvas.requestPointerLock());
+    canvas.addEventListener('click', () => { canvas.requestPointerLock(); document.getElementById('debug').textContent = 'Controls active!'; });
     document.addEventListener('mousemove', e => {
         if(document.pointerLockElement === canvas) {
             yaw -= e.movementX * 0.002;
@@ -129,9 +129,9 @@
         requestAnimationFrame(animate);
         const speed = 0.15;
         const dir = new THREE.Vector3();
-        if(keys['KeyZ']) dir.z -= 1;
+        if(keys['KeyZ'] || keys['KeyW']) dir.z -= 1;
         if(keys['KeyS']) dir.z += 1;
-        if(keys['KeyQ']) dir.x -= 1;
+        if(keys['KeyQ'] || keys['KeyA']) dir.x -= 1;
         if(keys['KeyD']) dir.x += 1;
         dir.applyAxisAngle(new THREE.Vector3(0,1,0), yaw);
         camera.position.x += dir.x * speed;
