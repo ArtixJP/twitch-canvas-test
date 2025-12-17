@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -174,6 +174,9 @@
             
             // Add Weather Particles!
             createWeatherEffects();
+            
+            // Add Floating Thank You Panel!
+            createThankYouPanel();
             
             // Controls
             document.addEventListener('keydown', onKeyDown);
@@ -1447,6 +1450,98 @@
                         c.position.y = sy + 25;
                         c.position.x = sx + (Math.random() - 0.5) * 10;
                         c.position.z = sz + (Math.random() - 0.5) * 10;
+                    }
+                });
+            }, 50);
+        }
+        
+        function createThankYouPanel() {
+            // 🎉 FLOATING THANK YOU MARIO PANEL IN THE SKY!
+            const panelX = 16, panelY = 30, panelZ = 10;
+            
+            // Golden frame
+            for (let x = -6; x <= 6; x++) {
+                createBlock(panelX + x, panelY - 1, panelZ, 0xFFD700);
+                createBlock(panelX + x, panelY + 3, panelZ, 0xFFD700);
+            }
+            for (let y = 0; y <= 2; y++) {
+                createBlock(panelX - 6, panelY + y, panelZ, 0xFFD700);
+                createBlock(panelX + 6, panelY + y, panelZ, 0xFFD700);
+            }
+            
+            // White background
+            const panelBlocks = [];
+            for (let x = -5; x <= 5; x++) {
+                for (let y = 0; y <= 2; y++) {
+                    const bg = createBlock(panelX + x, panelY + y, panelZ, 0xFFFFF0);
+                    bg.material.emissive = new THREE.Color(0xFFFFF0);
+                    bg.material.emissiveIntensity = 0.3;
+                    panelBlocks.push(bg);
+                }
+            }
+            
+            // THANK YOU MARIO - Red letters
+            // T
+            createBlock(panelX - 4, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX - 4, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // H
+            createBlock(panelX - 3, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX - 3, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // A
+            createBlock(panelX - 2, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX - 2, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // N
+            createBlock(panelX - 1, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX - 1, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // K
+            createBlock(panelX, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // Heart
+            createBlock(panelX + 1, panelY + 1.5, panelZ - 0.1, 0xFF69B4);
+            // Y
+            createBlock(panelX + 2, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX + 2, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // O
+            createBlock(panelX + 3, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX + 3, panelY + 1, panelZ - 0.1, 0xCC0000);
+            // U
+            createBlock(panelX + 4, panelY + 2, panelZ - 0.1, 0xCC0000);
+            createBlock(panelX + 4, panelY + 1, panelZ - 0.1, 0xCC0000);
+            
+            // MARIO at bottom - Blue
+            createBlock(panelX - 2, panelY, panelZ - 0.1, 0x3b5998);
+            createBlock(panelX - 1, panelY, panelZ - 0.1, 0x3b5998);
+            createBlock(panelX, panelY, panelZ - 0.1, 0x3b5998);
+            createBlock(panelX + 1, panelY, panelZ - 0.1, 0x3b5998);
+            createBlock(panelX + 2, panelY, panelZ - 0.1, 0x3b5998);
+            
+            // Stars around panel
+            const starPositions = [
+                {x: -7, y: 3}, {x: 7, y: 3}, {x: -7, y: -1}, {x: 7, y: -1}
+            ];
+            const starBlocks = [];
+            starPositions.forEach(pos => {
+                const star = createBlock(panelX + pos.x, panelY + pos.y, panelZ, 0xFFFF00);
+                star.material.emissive = new THREE.Color(0xFFFF00);
+                star.material.emissiveIntensity = 1;
+                star.userData.isPanelStar = true;
+                starBlocks.push(star);
+            });
+            
+            // Animate the floating panel
+            let panelTime = 0;
+            const allPanelBlocks = [...panelBlocks, ...starBlocks];
+            const baseY = panelY;
+            setInterval(() => {
+                panelTime += 0.03;
+                // Gentle floating
+                blocks.forEach(b => {
+                    if (b.position.z === panelZ && b.position.y >= panelY - 2 && b.position.y <= panelY + 4) {
+                        b.position.y = b.position.y + Math.sin(panelTime) * 0.003;
+                    }
+                    if (b.userData.isPanelStar) {
+                        b.rotation.y = panelTime * 2;
+                        b.material.emissiveIntensity = 0.7 + Math.sin(panelTime * 3) * 0.3;
                     }
                 });
             }, 50);
