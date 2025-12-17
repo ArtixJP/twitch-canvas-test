@@ -176,6 +176,7 @@
 <p>INTEGRITY: 98%</p>
 <p>All threats contained...</p>
 <p style="color: #4facfe;">ENVIRONMENT: PEACEFUL</p>
+<p style="color: #ff69b4;">🌈 RAINBOW ACTIVE</p>
 <p>Click to explore safely</p>
 <p style="font-size: 10px; color: #666;">v1.0.0 - RECOVERY MODE</p>
 </div>
@@ -518,6 +519,62 @@
     }
     buildMarioTower();
     
+    // Create Rainbow in the sky
+    function createRainbow() {
+        const rainbowGroup = new THREE.Group();
+        const rainbowColors = [0xFF0000, 0xFF7F00, 0xFFFF00, 0x00FF00, 0x0000FF, 0x4B0082, 0x9400D3];
+        
+        for (let i = 0; i < 7; i++) {
+            const curve = new THREE.EllipseCurve(
+                0, 0,
+                50 + i * 3, 35 + i * 2,
+                0, Math.PI,
+                false,
+                0
+            );
+            const points = curve.getPoints(50);
+            const geometry = new THREE.BufferGeometry().setFromPoints(points);
+            const material = new THREE.LineBasicMaterial({ 
+                color: rainbowColors[i],
+                linewidth: 3,
+                transparent: true,
+                opacity: 0.8
+            });
+            const arc = new THREE.Line(geometry, material);
+            arc.rotation.x = -Math.PI / 2;
+            rainbowGroup.add(arc);
+        }
+        
+        // Add glowing tubes for more visible rainbow
+        for (let i = 0; i < 7; i++) {
+            const curve = new THREE.EllipseCurve(
+                0, 0,
+                50 + i * 3, 35 + i * 2,
+                0, Math.PI,
+                false,
+                0
+            );
+            const points = curve.getPoints(50);
+            const path = new THREE.CatmullRomCurve3(
+                points.map(p => new THREE.Vector3(p.x, 0, p.y))
+            );
+            const tubeGeo = new THREE.TubeGeometry(path, 50, 0.8, 8, false);
+            const tubeMat = new THREE.MeshBasicMaterial({
+                color: rainbowColors[i],
+                transparent: true,
+                opacity: 0.5
+            });
+            const tube = new THREE.Mesh(tubeGeo, tubeMat);
+            rainbowGroup.add(tube);
+        }
+        
+        rainbowGroup.position.set(-20, 25, -60);
+        rainbowGroup.rotation.y = Math.PI / 6;
+        scene.add(rainbowGroup);
+        return rainbowGroup;
+    }
+    const rainbow = createRainbow();
+    
     // Create Thank You Mario panel
     function createThankYouPanel() {
         const panelGroup = new THREE.Group();
@@ -769,6 +826,15 @@
         if (thankYouPanel) {
             thankYouPanel.position.y = 35 + Math.sin(Date.now() * 0.002) * 0.5;
             thankYouPanel.rotation.y = Math.sin(Date.now() * 0.001) * 0.2;
+        }
+        
+        // Animate rainbow with gentle shimmer
+        if (rainbow) {
+            rainbow.children.forEach((child, i) => {
+                if (child.material) {
+                    child.material.opacity = 0.4 + Math.sin(Date.now() * 0.001 + i * 0.5) * 0.2;
+                }
+            });
         }
         
         renderer.render(scene, camera);
