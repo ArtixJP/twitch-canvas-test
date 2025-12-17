@@ -19,6 +19,10 @@
         #ui-overlay { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 100; text-align: center; pointer-events: none; }
         #crosshair { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 100; }
         #instructions { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px; font-size: 14px; z-index: 100; }
+        #block-selector { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px; z-index: 100; display: flex; gap: 10px; }
+        .block-icon { width: 40px; height: 40px; border: 2px solid white; border-radius: 5px; cursor: pointer; transition: transform 0.2s; }
+        .block-icon.selected { border-color: gold; transform: scale(1.2); }
+        .block-icon:hover { transform: scale(1.1); }
         h1 { font-size: 3rem; text-align: center; }
     </style>
 </head>
@@ -26,7 +30,16 @@
 <div id="game-container"></div>
 <div id="ui-overlay"><h1>Voxel World</h1></div>
 <div id="crosshair">+</div>
-<div id="instructions">WASD: Move | Space: Jump | Click: Break | Right-Click: Place | Click to start</div>
+<div id="instructions">WASD: Move | Space: Jump | Click: Break | M: Place | 1-7: Select Block | Click to start</div>
+<div id="block-selector">
+<div class="block-icon selected" data-type="grass" style="background: #4a7c23;" title="Grass"></div>
+<div class="block-icon" data-type="dirt" style="background: #8b4513;" title="Dirt"></div>
+<div class="block-icon" data-type="stone" style="background: #808080;" title="Stone"></div>
+<div class="block-icon" data-type="wood" style="background: #8B5A2B;" title="Wood"></div>
+<div class="block-icon" data-type="sand" style="background: #f4d03f;" title="Sand"></div>
+<div class="block-icon" data-type="water" style="background: #3498db;" title="Water"></div>
+<div class="block-icon" data-type="brick" style="background: #c0392b;" title="Brick"></div>
+</div>
 <script>
     const scene = new THREE.Scene();
     scene.background = new THREE.Color(0x87CEEB);
@@ -42,7 +55,11 @@
     const textures = {
         grass: new THREE.MeshLambertMaterial({color: 0x4a7c23}),
         dirt: new THREE.MeshLambertMaterial({color: 0x8b4513}),
-        stone: new THREE.MeshLambertMaterial({color: 0x808080})
+        stone: new THREE.MeshLambertMaterial({color: 0x808080}),
+        wood: new THREE.MeshLambertMaterial({color: 0x8B5A2B}),
+        sand: new THREE.MeshLambertMaterial({color: 0xf4d03f}),
+        water: new THREE.MeshLambertMaterial({color: 0x3498db, transparent: true, opacity: 0.7}),
+        brick: new THREE.MeshLambertMaterial({color: 0xc0392b})
     };
     
     function createBlock(x, y, z, type='grass') {
@@ -72,9 +89,38 @@
     scene.add(new THREE.AmbientLight(0x404040));
     
     const player = {x: 0, y: 10, z: 5, vx: 0, vy: 0, vz: 0, yaw: 0, pitch: 0, grounded: false};
+    let selectedBlock = 'grass';
+    
+    document.querySelectorAll('.block-icon').forEach(icon => {
+        icon.addEventListener('click', () => {
+            document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
+            icon.classList.add('selected');
+            selectedBlock = icon.dataset.type;
+        });
+    });
     const keys = {};
     
-    document.addEventListener('keydown', e => keys[e.code] = true);
+    document.addEventListener('keydown', e => {
+        keys[e.code] = true;
+        if(e.code >= 'Digit1' && e.code <= 'Digit7') {
+            const types = ['grass', 'dirt', 'stone', 'wood', 'sand', 'water', 'brick'];
+            const idx = parseInt(e.code.replace('Digit', '')) - 1;
+            if(types[idx]) {
+                selectedBlock = types[idx];
+                document.querySelectorAll('.block-icon').forEach(i => i.classList.remove('selected'));
+                document.querySelector(`[data-type="${selectedBlock}"]`).classList.add('selected');
+            }
+        }
+        if(e.code === 'KeyM' && document.pointerLockElement) {
+            raycaster.setFromCamera({x:0,y:0}, camera);
+            const hits = raycaster.intersectObjects(scene.children);
+            if(hits.length > 0 && hits[0].distance < 5) {
+                const n = hits[0].face.normal;
+                const p = hits[0].object.position;
+                createBlock(p.x+n.x, p.y+n.y, p.z+n.z, selectedBlock);
+            }
+        }
+    });
     document.addEventListener('keyup', e => keys[e.code] = false);
     document.addEventListener('click', () => document.body.requestPointerLock());
     document.addEventListener('mousemove', e => {
@@ -95,10 +141,6 @@
                 const p = hits[0].object.position;
                 blocks.delete(`${p.x},${p.y},${p.z}`);
                 scene.remove(hits[0].object);
-            } else if(e.button === 2) {
-                const n = hits[0].face.normal;
-                const p = hits[0].object.position;
-                createBlock(p.x+n.x, p.y+n.y, p.z+n.z, 'grass');
             }
         }
     });
