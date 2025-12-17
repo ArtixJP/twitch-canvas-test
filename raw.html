@@ -80,6 +80,33 @@
             animation: orbit-kitty 12s linear infinite;
             filter: drop-shadow(0 0 5px rgba(255,200,200,0.5));
         }
+        .dog {
+            position: absolute;
+            font-size: 18px;
+            animation: orbit-dog 6s linear infinite;
+            filter: drop-shadow(0 0 5px rgba(200,150,100,0.5));
+            z-index: 10;
+        }
+        @keyframes orbit-dog {
+            from { transform: rotate(0deg) translateX(125px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(125px) rotate(-360deg); }
+        }
+        .kitty.escaping {
+            animation: orbit-kitty-fast 4s linear infinite !important;
+        }
+        @keyframes orbit-kitty-fast {
+            from { transform: rotate(0deg) translateX(130px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(130px) rotate(-360deg); }
+        }
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+        }
         .sun {
             position: absolute;
             width: 40px;
@@ -129,11 +156,46 @@
 <div class="moon"></div>
 <div class="kitty">🐱</div>
 <div class="sun"></div>
+<div class="dog">🐕</div>
 </div>
 <h1>Hello World</h1>
+<div class="score-display">🐕 Dog Score: <span id="dogScore">0</span></div>
 <button class="music-btn playing" id="musicToggle">⏸️ Pause</button>
 <script>
     const music = document.getElementById('bgMusic');
+    const kitty = document.querySelector('.kitty');
+    const dog = document.querySelector('.dog');
+    const planet = document.querySelector('.planet');
+    const scoreDisplay = document.getElementById('dogScore');
+    let dogScore = 0;
+    let catchCooldown = false;
+    const planetColors = [
+        'linear-gradient(135deg, #ff6b6b 0%, #c44569 50%, #6b2d5c 100%)',
+        'linear-gradient(135deg, #6b6bff 0%, #4569c4 50%, #2d5c6b 100%)',
+        'linear-gradient(135deg, #6bff6b 0%, #45c469 50%, #2d6b5c 100%)',
+        'linear-gradient(135deg, #ffff6b 0%, #c4c445 50%, #6b6b2d 100%)',
+        'linear-gradient(135deg, #ff6bff 0%, #c445c4 50%, #6b2d6b 100%)'
+    ];
+    function checkCatch() {
+        if (catchCooldown) return;
+        const kittyRect = kitty.getBoundingClientRect();
+        const dogRect = dog.getBoundingClientRect();
+        const dx = kittyRect.left - dogRect.left;
+        const dy = kittyRect.top - dogRect.top;
+        const distance = Math.sqrt(dx*dx + dy*dy);
+        if (distance < 60) {
+            kitty.classList.add('escaping');
+            setTimeout(() => kitty.classList.remove('escaping'), 2000);
+        }
+        if (distance < 25) {
+            dogScore++;
+            scoreDisplay.textContent = dogScore;
+            planet.style.background = planetColors[dogScore % planetColors.length];
+            catchCooldown = true;
+            setTimeout(() => catchCooldown = false, 3000);
+        }
+    }
+    setInterval(checkCatch, 100);
     const btn = document.getElementById('musicToggle');
     btn.addEventListener('click', () => {
         if (!music || music.paused) {
