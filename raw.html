@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | ⛏️ Minecraft Style!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 Watch the 3D Movie! | ⛏️ Minecraft Style!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -138,6 +138,9 @@
             // Add more food items
             createPizza();
             createMoreBread();
+            
+            // Add 3D Movie Theater!
+            createMovieTheater();
             
             // Controls
             document.addEventListener('keydown', onKeyDown);
@@ -356,6 +359,80 @@
             createBlock(bx, by, bz + 2, 0xF5DEB3); // Baguette 2 (lighter)
             // Bread basket
             createBlock(bx - 1, by - 1, bz + 1, 0x8B4513);
+        }
+        
+        function createMovieTheater() {
+            // 3D Movie Theater! 🎬
+            const tx = 12, tz = 20, ty = 5;
+            
+            // Theater floor (red carpet!)
+            for (let x = 0; x < 8; x++) {
+                for (let z = 0; z < 6; z++) {
+                    createBlock(tx + x, ty, tz + z, 0x8B0000);
+                }
+            }
+            
+            // Back wall (dark)
+            for (let x = 0; x < 8; x++) {
+                for (let y = 1; y <= 5; y++) {
+                    createBlock(tx + x, ty + y, tz + 5, 0x1C1C1C);
+                }
+            }
+            
+            // Side walls
+            for (let z = 0; z < 6; z++) {
+                for (let y = 1; y <= 5; y++) {
+                    createBlock(tx, ty + y, tz + z, 0x2D2D2D);
+                    createBlock(tx + 7, ty + y, tz + z, 0x2D2D2D);
+                }
+            }
+            
+            // Movie Screen (white glowing)
+            for (let x = 2; x < 6; x++) {
+                for (let y = 2; y <= 4; y++) {
+                    const screenBlock = createBlock(tx + x, ty + y, tz + 4.9, 0xFFFFFF);
+                    screenBlock.userData.isScreen = true;
+                }
+            }
+            
+            // Seats (brown benches)
+            for (let row = 0; row < 2; row++) {
+                for (let seat = 1; seat < 7; seat++) {
+                    createBlock(tx + seat, ty + 1, tz + row + 1, 0x654321);
+                }
+            }
+            
+            // Projector booth
+            createBlock(tx + 3, ty + 5, tz + 1, 0x444444);
+            createBlock(tx + 4, ty + 5, tz + 1, 0x444444);
+            
+            // Animated 3D movie cubes!
+            const movieCubes = [];
+            const colors = [0xFF6B6B, 0x4ECDC4, 0xFFE66D, 0x95E1D3];
+            for (let i = 0; i < 4; i++) {
+                const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5);
+                const material = new THREE.MeshLambertMaterial({ color: colors[i] });
+                const cube = new THREE.Mesh(geometry, material);
+                cube.position.set(tx + 3 + (i % 2), ty + 3, tz + 3);
+                scene.add(cube);
+                movieCubes.push(cube);
+            }
+            
+            // Animate the 3D movie!
+            let movieTime = 0;
+            setInterval(() => {
+                movieTime += 0.1;
+                movieCubes.forEach((cube, i) => {
+                    cube.rotation.x += 0.05;
+                    cube.rotation.y += 0.03;
+                    cube.position.y = ty + 3 + Math.sin(movieTime + i) * 0.5;
+                    cube.position.x = tx + 3.5 + Math.cos(movieTime * 0.5 + i * 1.5) * 0.8;
+                });
+            }, 50);
+            
+            // Sign outside: "3D CINEMA"
+            createBlock(tx + 3, ty + 6, tz, 0xFFD700);
+            createBlock(tx + 4, ty + 6, tz, 0xFFD700);
         }
         
         function generateTerrain() {
