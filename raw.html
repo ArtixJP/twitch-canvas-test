@@ -197,6 +197,8 @@
 <p style="color: #E52521;">💬 MARIO TALKS TO TOAD!</p>
 <p style="color: #FF6B35;">🍕 PIZZERIA OPENED!</p>
 <p style="color: #FFA500;">🌅 SUNSET COLORS!</p>
+<p style="color: #FFD700;">🪙 COIN COLLECTION MODE!</p>
+<p style="color: #fff; font-size: 11px;">Walk near coins to collect!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -214,6 +216,10 @@
 <div class="stat">
 <div class="stat-value" id="pokedex">9</div>
 <div class="stat-label">Pokedex</div>
+</div>
+<div class="stat">
+<div class="stat-value" id="coinCount">0</div>
+<div class="stat-label">🪙 Coins</div>
 </div>
 </div>
 <div id="pokedexPanel" style="position:fixed;top:10px;right:10px;background:linear-gradient(135deg,#E52521,#8B0000);padding:15px;border-radius:15px;border:3px solid #FFD700;max-width:200px;z-index:100;font-size:12px;">
@@ -262,6 +268,9 @@
     const caughtEl = document.getElementById('caught');
     const pokeballs = [];
     const caughtPokemon = [];
+    const worldCoins = [];
+    let totalCoinsCollected = 0;
+    const coinCountEl = document.getElementById('coinCount');
     
     // Three.js setup
     const scene = new THREE.Scene();
@@ -640,6 +649,32 @@
         return { questionBlocks, coins };
     }
     const marioZone = createMarioGameZone();
+    
+    // MEGA COIN SPAWNER - Community requested!
+    function spawnWorldCoins() {
+        for (let i = 0; i < 50; i++) {
+            const coinGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.12, 16);
+            const coinMat = new THREE.MeshBasicMaterial({ color: 0xFFD700, emissive: 0xFFAA00 });
+            const coin = new THREE.Mesh(coinGeo, coinMat);
+            coin.position.set(
+                (Math.random() - 0.5) * 80,
+                4 + Math.random() * 15,
+                (Math.random() - 0.5) * 80
+            );
+            coin.rotation.x = Math.PI / 2;
+            coin.userData = { collected: false, baseY: coin.position.y, sparkle: Math.random() * Math.PI * 2 };
+            
+            // Add golden glow ring
+            const glowGeo = new THREE.TorusGeometry(0.7, 0.08, 8, 16);
+            const glowMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00, transparent: true, opacity: 0.5 });
+            const glow = new THREE.Mesh(glowGeo, glowMat);
+            coin.add(glow);
+            
+            scene.add(coin);
+            worldCoins.push(coin);
+        }
+    }
+    spawnWorldCoins();
     
     // Create Fountain!
     function createFountain() {
@@ -1734,6 +1769,61 @@
                 }
             });
         }
+        
+        // COIN COLLECTION SYSTEM!
+        worldCoins.forEach((coin, index) => {
+            if (coin.userData.collected) return;
+            
+            // Spinning animation
+            coin.rotation.z += delta * 3;
+            coin.position.y = coin.userData.baseY + Math.sin(Date.now() * 0.003 + coin.userData.sparkle) * 0.8;
+            
+            // Glow pulse
+            if (coin.children[0]) {
+                coin.children[0].material.opacity = 0.3 + Math.sin(Date.now() * 0.005 + index) * 0.3;
+                coin.children[0].rotation.z -= delta * 2;
+            }
+            
+            // Check if player is close enough to collect
+            const distToCoin = camera.position.distanceTo(coin.position);
+            if (distToCoin < 3) {
+                // COLLECTED!
+                coin.userData.collected = true;
+                totalCoinsCollected++;
+                coinCountEl.textContent = totalCoinsCollected;
+                
+                // Celebration particles!
+                for (let p = 0; p < 8; p++) {
+                    const sparkGeo = new THREE.SphereGeometry(0.15, 8, 8);
+                    const sparkMat = new THREE.MeshBasicMaterial({ color: Math.random() > 0.5 ? 0xFFD700 : 0xFFFF00 });
+                    const spark = new THREE.Mesh(sparkGeo, sparkMat);
+                    spark.position.copy(coin.position);
+                    spark.userData = {
+                        velocity: new THREE.Vector3(
+                            (Math.random() - 0.5) * 8,
+                            Math.random() * 8 + 2,
+                            (Math.random() - 0.5) * 8
+                        ),
+                        life: 0.8
+                    };
+                    scene.add(spark);
+                    pokeballs.push(spark);
+                }
+                
+                // Remove coin and respawn after delay
+                scene.remove(coin);
+                setTimeout(() => {
+                    coin.position.set(
+                        (Math.random() - 0.5) * 80,
+                        4 + Math.random() * 15,
+                        (Math.random() - 0.5) * 80
+                    );
+                    coin.userData.collected = false;
+                    coin.userData.baseY = coin.position.y;
+                    scene.add(coin);
+                }, 5000);
+            }
+        });
         
         // Update pokeballs
         for (let i = pokeballs.length - 1; i >= 0; i--) {
