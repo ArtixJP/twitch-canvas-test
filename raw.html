@@ -28,7 +28,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>🍄 Mario Minecraft Builder 🧱⛏️</h1>
+<h1>🍄 Mario Minecraft Builder 🧱⛏️ 🎬</h1>
+<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.7);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;">🎬 Look up! Mario Movie playing in the sky!</div>
 <canvas id="game" tabindex="0"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
 <div id="hotbar">
@@ -235,6 +236,9 @@
         });
         // Animate piranha plant
         plantHead.position.y = 2.5 + Math.sin(Date.now() * 0.002) * 0.8;
+        // Update Mario movie
+        updateMovie();
+        theaterGroup.rotation.y = Math.sin(Date.now() * 0.0005) * 0.1;
         renderer.render(scene, camera);
     }
     
