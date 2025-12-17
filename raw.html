@@ -125,6 +125,13 @@
         }
     });
     
+    // Snake creature
+    const snakeSegments = [];
+    const snakeLength = 8;
+    const snakeSpeed = 0.05;
+    let snakeAngle = 0;
+    let snakeX = 5, snakeZ = 5;
+    
     function animate() {
         requestAnimationFrame(animate);
         const speed = 0.15;
@@ -144,14 +151,6 @@
         updateSnake();
         renderer.render(scene, camera);
     }
-    animate();
-    
-    // Snake creature
-    const snakeSegments = [];
-    const snakeLength = 8;
-    const snakeSpeed = 0.05;
-    let snakeAngle = 0;
-    let snakeX = 5, snakeZ = 5;
     
     for(let i = 0; i < snakeLength; i++) {
         const geo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
@@ -171,6 +170,8 @@
     snakeSegments[0].add(rightEye);
     leftEye.position.set(-0.2, 0.15, -0.25);
     rightEye.position.set(0.2, 0.15, -0.25);
+    
+    animate();
     
     function updateSnake() {
         snakeAngle += 0.02 + Math.sin(Date.now() * 0.001) * 0.01;
@@ -199,8 +200,7 @@
         }
     }
     
-    // Add snake update to animation loop
-    const originalAnimate = animate;
+    
     
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth/window.innerHeight;
