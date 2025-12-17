@@ -217,7 +217,7 @@
 <div style="text-align: center; position: relative; width: 100%; height: 100%;">
 <h2 style="position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 50;">🎮 3D RPG Arena 🎮</h2>
 <div id="game3d" style="width: 100%; min-width: 600px; height: 400px; border-radius: 15px; overflow: hidden; box-shadow: 0 0 30px rgba(102, 126, 234, 0.5); background: #1a1a2e;"></div>
-<p style="margin-top: 10px;">⬆️⬇️⬅️➡️ or WASD to move | Collect orbs for XP!</p>
+<p style="margin-top: 10px;">⬆️⬇️⬅️➡️ or WASD to move | SPACE to attack | Defeat enemies &amp; collect orbs!</p>
 </div>
 </div>
 <div class="rpg-stats">
@@ -259,7 +259,7 @@
             if (dist < 50 && !window.catchCooldown) {
                 window.catchCooldown = true;
                 window.dogPoints = (window.dogPoints || 0) + 1;
-                gainXP(15);
+                // XP removed - dog chase is now just for fun!
                 document.getElementById('dogScore').textContent = window.dogPoints;
                 
                 // Change planet color on catch
@@ -323,7 +323,7 @@
                     elephant.parentElement.appendChild(drop);
                     setTimeout(() => drop.remove(), 1000);
                 }
-                gainXP(5);
+                // Elephant spray is just for fun now!
             });
         }
         
@@ -391,6 +391,40 @@
                 orbs.push(orb);
             }
             
+            // Enemies!
+            const enemies = [];
+            for (let i = 0; i < 3; i++) {
+                const enemy = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1, 4), new THREE.MeshStandardMaterial({ color: 0xe74c3c }));
+                enemy.position.set(Math.random() * 14 - 7, 0.5, Math.random() * 14 - 7);
+                enemy.userData = { hp: 3, speed: 0.02 + Math.random() * 0.02 };
+                scene.add(enemy);
+                enemies.push(enemy);
+            }
+            
+            // Attack system
+            let attackCooldown = false;
+            window.addEventListener('keydown', e => {
+                if (e.code === 'Space' && !attackCooldown) {
+                    attackCooldown = true;
+                    player.material.emissive = new THREE.Color(0x3498db);
+                    player.material.emissiveIntensity = 1;
+                    enemies.forEach(enemy => {
+                        if (player.position.distanceTo(enemy.position) < 2) {
+                            enemy.userData.hp--;
+                            if (enemy.userData.hp <= 0) {
+                                enemy.position.set(Math.random() * 14 - 7, 0.5, Math.random() * 14 - 7);
+                                enemy.userData.hp = 3 + Math.floor(window.playerLevel / 2);
+                                gainXP(30);
+                            }
+                        }
+                    });
+                    setTimeout(() => {
+                        player.material.emissive = new THREE.Color(0x000000);
+                        attackCooldown = false;
+                    }, 300);
+                }
+            });
+            
             // Lights
             scene.add(new THREE.AmbientLight(0xffffff, 0.4));
             const light = new THREE.PointLight(0xffffff, 1);
@@ -420,6 +454,22 @@
                     }
                 });
                 
+                // Enemy AI - chase player!
+                enemies.forEach(enemy => {
+                    enemy.rotation.y += 0.05;
+                    const dir = new THREE.Vector3().subVectors(player.position, enemy.position).normalize();
+                    enemy.position.x += dir.x * enemy.userData.speed;
+                    enemy.position.z += dir.z * enemy.userData.speed;
+                    // Enemy damages player on contact
+                    if (player.position.distanceTo(enemy.position) < 0.8 && !window.damageCooldown) {
+                        window.damageCooldown = true;
+                        window.playerHP = Math.max(0, window.playerHP - 10);
+                        document.getElementById('hpBar').style.width = window.playerHP + '%';
+                        player.material.color.setHex(0xe74c3c);
+                        setTimeout(() => { player.material.color.setHex(0x3498db); window.damageCooldown = false; }, 500);
+                    }
+                });
+                
                 camera.position.x = player.position.x * 0.3;
                 camera.position.z = player.position.z * 0.3 + 10;
                 camera.lookAt(player.position);
@@ -440,7 +490,7 @@
                 kitty.style.animationDuration = '5s';
                 sun.style.transform = 'scale(1)';
             }, 2000);
-            gainXP(10);
+            // Sun boost is just visual fun!
         });
     </script>
 </body>
