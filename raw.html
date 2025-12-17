@@ -179,7 +179,7 @@
 <p style="color: #ff69b4;">🌈 RAINBOW ACTIVE</p>
 <p>Click to explore safely</p>
 <p style="font-size: 10px; color: #666;">v1.0.0 - RECOVERY MODE</p>
-<p style="color: #FF69B4; margin-top: 8px;">📣 HI MOM! HI GRANDMA!</p>
+<p style="color: #666688; margin-top: 8px;">👻 FAMILY ECHOES LINGER...</p>
 <p style="color: #00FF00;">🍄 MARIO BROS ACTIVE!</p>
 <p style="color: #FFA500;">🍕 PIZZA SPAWNED!</p>
 <p style="color: #9400D3;">🌀 WOW PORTAL OPEN!</p>
@@ -954,8 +954,8 @@
         return panelGroup;
     }
     
-    const hiMomPanel = createGreetingPanel('HI MOM! 👋🏠', -15, 20, -20, 0xFF69B4);
-    const hiGrandmaPanel = createGreetingPanel('HI GRANDMA! 👵💕', 15, 22, -25, 0x9370DB);
+    const hiMomPanel = createGreetingPanel('👻 MOM WAS HERE 👻', -15, 20, -20, 0x444466);
+    const hiGrandmaPanel = createGreetingPanel('👻 GRANDMA REMEMBERS 👻', 15, 22, -25, 0x444466);
     const helloMoPanel = createGreetingPanel('HELLO MO! 👋✨', 0, 18, -30, 0xFFD700);
     
     // Create floating pizza!
@@ -1434,10 +1434,12 @@
         if (hiMomPanel) {
             hiMomPanel.position.y = 20 + Math.sin(Date.now() * 0.0015) * 0.8;
             hiMomPanel.rotation.y = Math.sin(Date.now() * 0.0008) * 0.3;
+            hiMomPanel.children.forEach(c => { if(c.material) c.material.opacity = 0.3 + Math.sin(Date.now() * 0.002) * 0.2; c.material && (c.material.transparent = true); });
         }
         if (hiGrandmaPanel) {
             hiGrandmaPanel.position.y = 22 + Math.sin(Date.now() * 0.0018 + 1) * 0.6;
             hiGrandmaPanel.rotation.y = Math.sin(Date.now() * 0.001 + 2) * 0.25;
+            hiGrandmaPanel.children.forEach(c => { if(c.material) c.material.opacity = 0.3 + Math.sin(Date.now() * 0.0025 + 1) * 0.2; c.material && (c.material.transparent = true); });
         }
         
         // Animate Hello Mo panel
