@@ -8,6 +8,10 @@
 <title>Twitch Versus Code - Super Mario Voxel World</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
+        @keyframes pop {
+            0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -80%) scale(1.5); }
+        }
         body { 
             font-family: system-ui, sans-serif; 
             margin: 0;
@@ -20,6 +24,7 @@
         #crosshair { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; z-index: 100; }
         .block-icon[data-type="question"] { display: flex; align-items: center; justify-content: center; font-weight: bold; color: #8B4513; font-size: 20px; }
         #instructions { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px; font-size: 14px; z-index: 100; max-width: 350px; }
+        #instructions strong { color: #ffd700; }
         #block-selector { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.7); padding: 15px; border-radius: 10px; z-index: 100; display: flex; gap: 10px; }
         .block-icon { width: 40px; height: 40px; border: 2px solid white; border-radius: 5px; cursor: pointer; transition: transform 0.2s; }
         .block-icon.selected { border-color: gold; transform: scale(1.2); }
@@ -31,7 +36,7 @@
 <div id="game-container"></div>
 <div id="ui-overlay"><h1 style="color: #e52521; text-shadow: 4px 4px 0 #fbd000, -2px -2px 0 #000; font-family: 'Impact', sans-serif;">🍄 Super Mario Voxel World 🍄</h1><h2 style="color: #fff; text-shadow: 0 0 10px #00ffff, 0 0 20px #ff00ff; font-family: 'Impact', sans-serif; margin-top: -10px;">🚀 SPACE EXPLORATION MODE 🌌</h2></div>
 <div id="crosshair">+</div>
-<div id="instructions">WASD: Move | Space: Jump | Left Click: Break | Right Click: Place | M: Place Block | 1-7: Select Block | Click to start</div>
+<div id="instructions">WASD: Move | Space: Jump | Left Click: Break | Right Click: Place | <strong>M: Place Block (works anytime!)</strong> | 1-7: Select Block | Click to start</div>
 <div id="block-selector">
 <div class="block-icon selected" data-type="grass" style="background: #4a7c23;" title="Grass"></div>
 <div class="block-icon" data-type="dirt" style="background: #8b4513;" title="Dirt"></div>
@@ -183,7 +188,7 @@
             }
         }
         if(e.code === 'KeyM' || e.key.toLowerCase() === 'm') {
-            placeBlock();
+            placeBlockAnywhere();
         }
     });
     document.addEventListener('keyup', e => keys[e.code] = false);
@@ -197,6 +202,27 @@
     });
     
     const raycaster = new THREE.Raycaster();
+    
+    function placeBlockAnywhere() {
+        // Place block in front of player even without pointer lock
+        const direction = new THREE.Vector3();
+        camera.getWorldDirection(direction);
+        const newX = Math.round(player.x + direction.x * 3);
+        const newY = Math.round(player.y + direction.y * 3);
+        const newZ = Math.round(player.z + direction.z * 3);
+        if(!blocks.has(`${newX},${newY},${newZ}`)) {
+            createBlock(newX, newY, newZ, selectedBlock);
+            showPlaceEffect(newX, newY, newZ);
+        }
+    }
+    
+    function showPlaceEffect(x, y, z) {
+        const flash = document.createElement('div');
+        flash.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);color:#ffd700;font-size:24px;font-weight:bold;z-index:200;animation:pop 0.5s ease-out forwards;pointer-events:none;';
+        flash.textContent = '✨ Block Placed! ✨';
+        document.body.appendChild(flash);
+        setTimeout(() => flash.remove(), 500);
+    }
     
     function placeBlock() {
         if(!document.pointerLockElement) return;
