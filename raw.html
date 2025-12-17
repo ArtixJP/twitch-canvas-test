@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch Versus Code</title>
 <style>
@@ -387,6 +388,7 @@
 <button class="active" onclick="showSection('space')">🌌 Space</button>
 <button onclick="showSection('animals')">🐾 Animals</button>
 <button onclick="showSection('games')">🎮 Games</button>
+<button onclick="showSection('minecraft')">⛏️ Minecraft</button>
 </nav>
 <section class="section active" id="space-section">
 <h1>Hello World</h1>
@@ -415,6 +417,11 @@
 </div>
 <canvas height="400" id="gameCanvas" width="400"></canvas>
 </div>
+</section>
+<section class="section" id="minecraft-section">
+<h1>⛏️ Minecraft 3D</h1>
+<p style="margin-bottom:10px;">WASD to move, Space to jump, Click to break blocks, Shift+Click to place</p>
+<div id="minecraft-container" style="width:800px;height:500px;border:3px solid #5d4e37;border-radius:10px;overflow:hidden;"></div>
 </section>
 <div class="sun-rays"></div>
 <div class="sun"></div>
@@ -617,6 +624,9 @@
         // Start auto-rotation every 30 seconds
         setInterval(autoRotateSection, 30000);
         
+        // Update sections array for minecraft
+        sections.push('minecraft');
+        
         // Update showSection to sync with auto-rotation
         const originalShowSection = showSection;
         window.showSection = function(sectionName) {
@@ -625,6 +635,203 @@
             document.querySelectorAll('.nav-menu button').forEach(b => b.classList.remove('active'));
             document.getElementById(sectionName + '-section').classList.add('active');
             document.querySelectorAll('.nav-menu button')[currentSectionIndex].classList.add('active');
+        };
+        
+        // Minecraft 3D Game
+        let mcScene, mcCamera, mcRenderer, mcPlayer;
+        let mcBlocks = [];
+        let mcKeys = {};
+        let mcVelocity = {x: 0, y: 0, z: 0};
+        let mcOnGround = false;
+        let mcInitialized = false;
+        
+        function initMinecraft() {
+            if (mcInitialized) return;
+            mcInitialized = true;
+            
+            const container = document.getElementById('minecraft-container');
+            
+            // Scene setup
+            mcScene = new THREE.Scene();
+            mcScene.background = new THREE.Color(0x87CEEB);
+            mcScene.fog = new THREE.Fog(0x87CEEB, 50, 150);
+            
+            // Camera
+            mcCamera = new THREE.PerspectiveCamera(75, 800/500, 0.1, 1000);
+            mcCamera.position.set(8, 15, 20);
+            mcCamera.lookAt(8, 0, 8);
+            
+            // Renderer
+            mcRenderer = new THREE.WebGLRenderer({antialias: true});
+            mcRenderer.setSize(800, 500);
+            mcRenderer.shadowMap.enabled = true;
+            container.appendChild(mcRenderer.domElement);
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            mcScene.add(ambientLight);
+            
+            const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            sunLight.position.set(50, 100, 50);
+            sunLight.castShadow = true;
+            mcScene.add(sunLight);
+            
+            // Block textures/colors
+            const blockColors = {
+                grass: 0x4CAF50,
+                dirt: 0x8B4513,
+                stone: 0x808080,
+                wood: 0x8B5A2B,
+                leaves: 0x228B22
+            };
+            
+            // Create terrain
+            const worldSize = 16;
+            for (let x = 0; x < worldSize; x++) {
+                for (let z = 0; z < worldSize; z++) {
+                    const height = Math.floor(Math.sin(x*0.3) * Math.cos(z*0.3) * 2 + 3);
+                    
+                    // Grass top
+                    createBlock(x, height, z, blockColors.grass);
+                    
+                    // Dirt layers
+                    for (let y = 0; y < height; y++) {
+                        createBlock(x, y, z, y < height - 2 ? blockColors.stone : blockColors.dirt);
+                    }
+                }
+            }
+            
+            // Add some trees
+            for (let i = 0; i < 5; i++) {
+                const tx = Math.floor(Math.random() * 14) + 1;
+                const tz = Math.floor(Math.random() * 14) + 1;
+                const baseHeight = Math.floor(Math.sin(tx*0.3) * Math.cos(tz*0.3) * 2 + 4);
+                
+                // Trunk
+                for (let y = 0; y < 4; y++) {
+                    createBlock(tx, baseHeight + y, tz, blockColors.wood);
+                }
+                
+                // Leaves
+                for (let lx = -1; lx <= 1; lx++) {
+                    for (let lz = -1; lz <= 1; lz++) {
+                        for (let ly = 0; ly <= 1; ly++) {
+                            if (lx !== 0 || lz !== 0 || ly !== 0) {
+                                createBlock(tx + lx, baseHeight + 3 + ly, tz + lz, blockColors.leaves);
+                            }
+                        }
+                    }
+                }
+                createBlock(tx, baseHeight + 5, tz, blockColors.leaves);
+            }
+            
+            // Player (Steve!)
+            const playerGeo = new THREE.BoxGeometry(0.6, 1.8, 0.6);
+            const playerMat = new THREE.MeshLambertMaterial({color: 0x00BFFF});
+            mcPlayer = new THREE.Mesh(playerGeo, playerMat);
+            mcPlayer.position.set(8, 10, 8);
+            mcPlayer.castShadow = true;
+            mcScene.add(mcPlayer);
+            
+            // Controls
+            document.addEventListener('keydown', (e) => { mcKeys[e.key.toLowerCase()] = true; });
+            document.addEventListener('keyup', (e) => { mcKeys[e.key.toLowerCase()] = false; });
+            
+            // Click to break/place blocks
+            mcRenderer.domElement.addEventListener('click', (e) => {
+                const rect = mcRenderer.domElement.getBoundingClientRect();
+                const mouse = new THREE.Vector2(
+                    ((e.clientX - rect.left) / 800) * 2 - 1,
+                    -((e.clientY - rect.top) / 500) * 2 + 1
+                );
+                
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(mouse, mcCamera);
+                
+                const intersects = raycaster.intersectObjects(mcBlocks);
+                if (intersects.length > 0) {
+                    const hit = intersects[0];
+                    if (e.shiftKey) {
+                        // Place block
+                        const normal = hit.face.normal;
+                        const pos = hit.object.position.clone().add(normal);
+                        createBlock(pos.x, pos.y, pos.z, 0x4CAF50);
+                    } else {
+                        // Break block
+                        mcScene.remove(hit.object);
+                        mcBlocks = mcBlocks.filter(b => b !== hit.object);
+                    }
+                }
+            });
+            
+            animateMinecraft();
+        }
+        
+        function createBlock(x, y, z, color) {
+            const geometry = new THREE.BoxGeometry(1, 1, 1);
+            const material = new THREE.MeshLambertMaterial({color: color});
+            const block = new THREE.Mesh(geometry, material);
+            block.position.set(x, y, z);
+            block.castShadow = true;
+            block.receiveShadow = true;
+            mcScene.add(block);
+            mcBlocks.push(block);
+            return block;
+        }
+        
+        function animateMinecraft() {
+            requestAnimationFrame(animateMinecraft);
+            
+            if (!mcPlayer) return;
+            
+            // Movement
+            const speed = 0.15;
+            if (mcKeys['w']) mcPlayer.position.z -= speed;
+            if (mcKeys['s']) mcPlayer.position.z += speed;
+            if (mcKeys['a']) mcPlayer.position.x -= speed;
+            if (mcKeys['d']) mcPlayer.position.x += speed;
+            
+            // Jump
+            if (mcKeys[' '] && mcOnGround) {
+                mcVelocity.y = 0.25;
+                mcOnGround = false;
+            }
+            
+            // Gravity
+            mcVelocity.y -= 0.015;
+            mcPlayer.position.y += mcVelocity.y;
+            
+            // Ground collision
+            mcOnGround = false;
+            for (const block of mcBlocks) {
+                if (Math.abs(mcPlayer.position.x - block.position.x) < 0.8 &&
+                    Math.abs(mcPlayer.position.z - block.position.z) < 0.8) {
+                    if (mcPlayer.position.y - 0.9 < block.position.y + 0.5 &&
+                        mcPlayer.position.y - 0.9 > block.position.y - 0.5 &&
+                        mcVelocity.y < 0) {
+                        mcPlayer.position.y = block.position.y + 1.4;
+                        mcVelocity.y = 0;
+                        mcOnGround = true;
+                    }
+                }
+            }
+            
+            // Camera follows player
+            mcCamera.position.x = mcPlayer.position.x + 10;
+            mcCamera.position.y = mcPlayer.position.y + 8;
+            mcCamera.position.z = mcPlayer.position.z + 12;
+            mcCamera.lookAt(mcPlayer.position);
+            
+            mcRenderer.render(mcScene, mcCamera);
+        }
+        
+        // Initialize Minecraft when section is shown
+        const origShowSection2 = window.showSection;
+        window.showSection = function(sectionName) {
+            origShowSection2(sectionName);
+            if (sectionName === 'minecraft') {
+                setTimeout(initMinecraft, 100);
+            }
         };
     </script>
 </body>
