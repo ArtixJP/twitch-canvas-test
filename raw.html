@@ -381,6 +381,10 @@
             border-radius: 50%;
             filter: blur(3px);
         }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
         @keyframes float {
             0%, 100% { transform: translateY(0) rotate(0deg); }
             50% { transform: translateY(-20px) rotate(5deg); }
@@ -404,6 +408,8 @@
 </section>
 <section class="section" id="animals-section">
 <div class="elephant" id="elephant" title="Click me to spray water!">🐘</div>
+<div class="elephant" id="elephant2" style="font-size:40px;top:35%;left:60%;transform:translate(-50%,-50%)" title="Baby elephant!">🐘</div>
+<div class="sign-panel" style="position:absolute;bottom:80px;background:linear-gradient(135deg,#8B4513,#D2691E);padding:20px 40px;border-radius:10px;border:4px solid #5D3A1A;box-shadow:0 5px 20px rgba(0,0,0,0.4);font-size:1.5rem;font-weight:bold;color:#FFF8DC;text-shadow:2px 2px 4px rgba(0,0,0,0.5);">🪧 Comment ça va? 🪧</div>
 </section>
 <section class="section" id="games-section">
 <div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
@@ -428,6 +434,8 @@
 </div>
 </section>
 <h1 style="position:fixed;bottom:100px;z-index:50;">Hello World</h1>
+<div style="position:fixed;bottom:160px;left:20px;z-index:50;font-size:1.5rem;background:rgba(255,192,203,0.7);padding:10px 20px;border-radius:15px;animation:bounce 2s ease-in-out infinite;">👋 Bonjour Maman!</div>
+<div style="position:fixed;bottom:160px;right:20px;z-index:50;font-size:1.5rem;background:rgba(200,162,200,0.7);padding:10px 20px;border-radius:15px;animation:bounce 2s ease-in-out infinite 0.5s;">👋 Bonjour Mamie!</div>
 <script>
 
   // Dog chasing cat logic
@@ -510,6 +518,22 @@
 
   // Elephant water spray
   const elephant = document.getElementById('elephant');
+  const elephant2 = document.getElementById('elephant2');
+  elephant2.addEventListener('click', () => {
+    for (let i = 0; i < 5; i++) {
+      const drop = document.createElement('div');
+      drop.className = 'water-drop';
+      drop.textContent = '💧';
+      const angle = (i / 5) * Math.PI * 2;
+      const distance = 60 + Math.random() * 30;
+      drop.style.setProperty('--tx', Math.cos(angle) * distance + 'px');
+      drop.style.setProperty('--ty', Math.sin(angle) * distance + 'px');
+      drop.style.left = '60%';
+      drop.style.top = '35%';
+      document.body.appendChild(drop);
+      setTimeout(() => drop.remove(), 1500);
+    }
+  });
   elephant.addEventListener('click', () => {
     // Show animals section when elephant clicked
     for (let i = 0; i < 8; i++) {
