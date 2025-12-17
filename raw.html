@@ -20,13 +20,25 @@
             top: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(0,0,0,0.7);
-            padding: 10px 25px;
-            border-radius: 8px;
-            color: #4ade80;
+            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%);
+            padding: 15px 30px;
+            border-radius: 12px;
+            color: #FFF8DC;
             font-size: 14px;
             z-index: 100;
             text-align: center;
+            border: 3px solid #DAA520;
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.5);
+            font-family: 'Georgia', serif;
+        }
+        #ui::before {
+            content: '🥐 BAKERY WORLD 🥖';
+            display: block;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #FFE4B5;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
         #crosshair {
             position: fixed;
@@ -64,11 +76,11 @@
 </head>
 <body>
 <div id="click-to-play">
-<h1>⛏️ TwitchCraft</h1>
+<h1>🥐 TwitchCraft Bakery 🍞</h1>
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🌸 Memorial Garden | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🌸 Memorial Garden | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE! | 🌸 NEW: FLOWER GARDEN AT FOUNTAIN!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -911,6 +923,42 @@
             createBlock(bx + 5, by + 1, bz, 0xC0C0C0);
             createBlock(bx - 1, by + 1, bz + 3, 0xC0C0C0);
             createBlock(bx + 5, by + 1, bz + 3, 0xC0C0C0);
+            
+            // Add beautiful flower garden around fountain!
+            const flowerColors = [0xFF69B4, 0xFF1493, 0xFFB6C1, 0xFFA07A, 0xFFD700, 0xFF6347, 0xDA70D6, 0x00CED1, 0x98FB98, 0xDDA0DD];
+            const flowerPositions = [
+                {x: -2, z: -2}, {x: -2, z: 5}, {x: 6, z: -2}, {x: 6, z: 5},
+                {x: -3, z: 1}, {x: -3, z: 3}, {x: 7, z: 1}, {x: 7, z: 3},
+                {x: 0, z: -3}, {x: 4, z: -3}, {x: 0, z: 6}, {x: 4, z: 6},
+                {x: -1, z: -2}, {x: 5, z: -2}, {x: -1, z: 5}, {x: 5, z: 5}
+            ];
+            
+            flowerPositions.forEach((pos, i) => {
+                const flowerColor = flowerColors[i % flowerColors.length];
+                // Flower stem
+                createBlock(bx + pos.x, by + 0.5, bz + pos.z, 0x228B22);
+                // Flower bloom
+                const bloom = createBlock(bx + pos.x, by + 1, bz + pos.z, flowerColor);
+                bloom.userData.isFlower = true;
+                bloom.userData.baseY = by + 1;
+                bloom.userData.phase = i * 0.5;
+                // Flower center
+                const center = createBlock(bx + pos.x, by + 1.2, bz + pos.z, 0xFFFF00);
+                center.scale.set(0.3, 0.3, 0.3);
+                center.userData.isFlowerCenter = true;
+            });
+            
+            // Animate flowers swaying
+            let flowerTime = 0;
+            setInterval(() => {
+                flowerTime += 0.05;
+                blocks.forEach(b => {
+                    if (b.userData.isFlower) {
+                        b.rotation.z = Math.sin(flowerTime + b.userData.phase) * 0.15;
+                        b.rotation.x = Math.cos(flowerTime * 0.7 + b.userData.phase) * 0.1;
+                    }
+                });
+            }, 50);
             
             // "GRAND FOUNTAIN" sign
             const fountainCanvas = document.createElement('canvas');
