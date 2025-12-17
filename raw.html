@@ -89,11 +89,13 @@
     </style>
 </head>
 <body>
-<h1 style="position:fixed;top:10%;left:50%;transform:translateX(-50%);z-index:150;background:transparent;padding:20px 40px;font-size:2.5rem;margin:0;color:#ff4444;text-shadow:0 0 30px #ff0000,0 0 60px #880000;animation:fadeIn 3s ease-out;">🔴 POKÉMON SIMULATOR 🔴</h1>
+<h1 style="position:fixed;top:10%;left:50%;transform:translateX(-50%);z-index:150;background:transparent;padding:20px 40px;font-size:2.5rem;margin:0;color:#ff4444;text-shadow:0 0 30px #ff0000,0 0 60px #880000;animation:fadeIn 3s ease-out, titlePulse 4s infinite;">🔴 POKÉMON SIMULATOR 🔴</h1>
+<style>@keyframes titlePulse { 0%,100% { text-shadow:0 0 30px #ff0000,0 0 60px #880000; } 50% { text-shadow:0 0 50px #ff4444,0 0 80px #ff0000,0 0 100px #880000; } }</style>
 <style>@keyframes fadeIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 100% { opacity:1; transform:translate(-50%,-50%) scale(1); } }</style>
 <p style="position:fixed;bottom:20%;left:50%;transform:translateX(-50%);color:#f0f;font-size:1.2rem;text-align:center;z-index:100;text-shadow:0 0 10px #808;">🎮 WASD to explore • Click wild Pokémon to battle • Throw Pokéballs to catch! 🎮</p>
 <div id="captured-display" style="position:fixed;top:70px;left:20px;color:#f0f;font-family:monospace;font-size:14px;z-index:100;background:linear-gradient(180deg,rgba(80,0,80,0.9),rgba(40,0,60,0.95));padding:12px 15px;border-radius:10px;border:2px solid #f0f;box-shadow:0 0 20px rgba(255,0,255,0.4);">
 <div style="font-weight:bold;margin-bottom:8px;font-size:16px;color:#ff4444;">📖 POKÉDEX</div><div id="trainer-badges" style="font-size:10px;margin-bottom:5px;">🏅 Badges: <span id="badge-count">0</span>/8</div>
+<button id="new-game-plus" onclick="startNewGamePlus()" style="margin-top:5px;padding:3px 8px;background:linear-gradient(180deg,#4a0,#280);border:1px solid #8f8;color:#fff;border-radius:3px;cursor:pointer;font-size:10px;">🔄 New Game+</button>
 🔮 Captured: <span id="capture-count">0</span>/5
 <div id="captured-list" style="margin-top:8px;font-size:12px;max-height:100px;overflow-y:auto;"></div>
 </div>
@@ -450,6 +452,41 @@ function updateWildCreatures() {
   });
 }
 setInterval(updateWildCreatures, 50);
+
+// New Game+ Feature - Fresh start feel while preserving the experience
+function startNewGamePlus() {
+  if(confirm('Start New Game+? Your Pokedex progress carries over as legacy badges!')) {
+    const legacyCount = battleState.captured.length;
+    battleState.captured = [];
+    pokeballCount = 25 + legacyCount * 2;
+    document.getElementById('ball-count').textContent = pokeballCount;
+    document.getElementById('capture-count').textContent = '0';
+    document.getElementById('captured-list').innerHTML = '<div style="color:#888;font-size:10px;">Legacy: ' + legacyCount + ' Pokémon</div>';
+    
+    // Refresh wild Pokemon
+    document.querySelectorAll('.cosmic-object').forEach(obj => obj.remove());
+    for(let i = 0; i < 35; i++) {
+      const obj = document.createElement('div');
+      obj.className = 'cosmic-object wild-creature';
+      obj.style.cssText = `position:fixed;font-size:${20+Math.random()*40}px;left:${Math.random()*100}%;top:${Math.random()*100}%;z-index:5;opacity:0.7;transition:transform 0.3s;pointer-events:auto;cursor:pointer;`;
+      obj.title='Click to encounter!';
+      obj.textContent = cosmicEmojis[Math.floor(Math.random()*cosmicEmojis.length)];
+      obj.dataset.parallax = (Math.random()*0.5+0.2).toFixed(2);
+      spaceObjects.appendChild(obj);
+    }
+    
+    // Visual celebration
+    for(let i = 0; i < 50; i++) {
+      setTimeout(() => spawnParticles(Math.random()*window.innerWidth, Math.random()*window.innerHeight, '#' + Math.floor(Math.random()*16777215).toString(16), 5), i * 30);
+    }
+    
+    const msg = document.createElement('div');
+    msg.innerHTML = '🌟 NEW GAME+ STARTED! 🌟<br>+' + (legacyCount*2) + ' bonus Pokéballs!';
+    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,#000,#206);padding:30px 50px;border:3px solid #ffd700;border-radius:15px;color:#ffd700;font-size:24px;z-index:500;text-align:center;animation:fadeUp 3s forwards;';
+    document.body.appendChild(msg);
+    setTimeout(() => msg.remove(), 3000);
+  }
+}
 </script>
 <script>
         // Legacy code preserved but inactive - awaiting new purpose
