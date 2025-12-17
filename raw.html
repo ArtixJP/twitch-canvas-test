@@ -49,7 +49,7 @@
 <body>
 <div id="info">
 <h1>⛏️ TWITCH MINECRAFT</h1>
-<div>Seed: HelloWorld</div>
+<div>Seed: HelloWorld 🍌</div>
 <div>Chunks: Loading...</div>
 </div>
 <div id="controls">🖱️ Drag to rotate | 🔄 Auto-generating terrain</div>
@@ -116,6 +116,27 @@
                 }
             }
         }
+        
+        // Add a giant banana monument!
+        function createBanana(bx, by, bz) {
+            const bananaYellow = 0xFFE135;
+            const bananaTip = 0x8B4513;
+            // Curved banana body (voxel style)
+            const bananaBlocks = [
+                [0,0,0], [0,1,0], [0,2,0], [0,3,0], [0,4,0],
+                [1,5,0], [1,6,0], [2,7,0], [2,8,0], [3,9,0],
+                [0,0,1], [0,1,1], [0,2,1], [0,3,1],
+                [1,5,1], [1,6,1], [2,7,1],
+                [-1,1,0], [-1,2,0], [-1,3,0]
+            ];
+            bananaBlocks.forEach(([dx, dy, dz]) => {
+                createBlock(bx + dx, by + dy, bz + dz, bananaYellow);
+            });
+            // Brown tips
+            createBlock(bx, by - 1, bz, bananaTip);
+            createBlock(bx + 3, by + 10, bz, bananaTip);
+        }
+        createBanana(8, 8, -5);
         
         // Add some trees
         for(let i = 0; i < 8; i++) {
