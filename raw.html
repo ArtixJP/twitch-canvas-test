@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | ⚔️ Link &amp; Ganon appeared!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -127,6 +127,16 @@
             
             // Add bakery
             createBakery();
+            
+            // Add Link from Zelda
+            createLink();
+            
+            // Add Ganon
+            createGanon();
+            
+            // Add more food items
+            createPizza();
+            createMoreBread();
             
             // Controls
             document.addEventListener('keydown', onKeyDown);
@@ -239,6 +249,76 @@
             // Sign post outside
             createBlock(bx - 1, by + 1, bz + 2, 0x654321);
             createBlock(bx - 1, by + 2, bz + 2, 0xFFE4B5); // Sign (cream color)
+        }
+        
+        function createLink() {
+            // Link from Zelda - standing heroically!
+            const lx = worldSize - 4, lz = worldSize - 4, ly = 6;
+            // Green tunic body
+            createBlock(lx, ly, lz, 0x228B22);
+            createBlock(lx, ly + 1, lz, 0x228B22);
+            // Blonde hair/head
+            createBlock(lx, ly + 2, lz, 0xFFE4B5); // Face
+            createBlock(lx, ly + 3, lz, 0xFFD700); // Hair
+            // Green cap
+            createBlock(lx, ly + 3, lz - 1, 0x228B22);
+            // Arms (skin)
+            createBlock(lx - 1, ly + 1, lz, 0xFFDBB4);
+            createBlock(lx + 1, ly + 1, lz, 0xFFDBB4);
+            // Sword (silver)
+            createBlock(lx + 1, ly + 2, lz, 0xC0C0C0);
+            createBlock(lx + 1, ly + 3, lz, 0xC0C0C0);
+            // Shield (blue)
+            createBlock(lx - 1, ly + 2, lz, 0x0000CD);
+            // Brown boots
+            createBlock(lx, ly - 1, lz, 0x8B4513);
+        }
+        
+        function createGanon() {
+            // Ganondorf - the dark lord!
+            const gx = worldSize - 8, gz = worldSize - 3, gy = 6;
+            // Dark armor body
+            createBlock(gx, gy, gz, 0x1a1a1a);
+            createBlock(gx, gy + 1, gz, 0x1a1a1a);
+            createBlock(gx, gy + 2, gz, 0x1a1a1a);
+            // Green skin face
+            createBlock(gx, gy + 3, gz, 0x556B2F);
+            // Red hair
+            createBlock(gx, gy + 4, gz, 0x8B0000);
+            createBlock(gx - 1, gy + 4, gz, 0x8B0000);
+            createBlock(gx + 1, gy + 4, gz, 0x8B0000);
+            // Cape (purple)
+            createBlock(gx, gy + 2, gz + 1, 0x4B0082);
+            createBlock(gx, gy + 1, gz + 1, 0x4B0082);
+            // Arms (green skin)
+            createBlock(gx - 1, gy + 2, gz, 0x556B2F);
+            createBlock(gx + 1, gy + 2, gz, 0x556B2F);
+            // Dark magic orb (glowing purple)
+            const orb = createBlock(gx + 1, gy + 3, gz, 0x9400D3);
+            orb.userData.isGanonOrb = true;
+        }
+        
+        function createPizza() {
+            // Pizza on bakery counter! 🍕
+            const px = 4, py = 6, pz = 5;
+            // Pizza base (tan)
+            createBlock(px, py, pz, 0xDAA520);
+            // Tomato sauce (red center)
+            createBlock(px, py + 0.1, pz, 0xFF6347);
+            // Pepperoni spots
+            createBlock(px + 1, py, pz, 0xDAA520);
+            createBlock(px - 1, py, pz, 0xDAA520);
+            createBlock(px, py, pz + 1, 0xDAA520);
+        }
+        
+        function createMoreBread() {
+            // Fresh baguettes outside bakery! 🥖
+            const bx = 1, by = 6, bz = 4;
+            createBlock(bx, by, bz, 0xDEB887); // Baguette 1
+            createBlock(bx, by, bz + 1, 0xDEB887);
+            createBlock(bx, by, bz + 2, 0xF5DEB3); // Baguette 2 (lighter)
+            // Bread basket
+            createBlock(bx - 1, by - 1, bz + 1, 0x8B4513);
         }
         
         function generateTerrain() {
