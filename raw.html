@@ -205,6 +205,11 @@
 <p style="color: #FFD700;">🪙 COIN COLLECTION MODE!</p>
 <p style="color: #fff; font-size: 11px;">Walk near coins to collect!</p>
 <p style="color: #FF4500;">🍔 BURGER HUT OPENED!</p>
+<p style="color: #00FF00;">🍣 MORE SUSHI!</p>
+<p style="color: #FFD700;">🪙 MORE COINS!</p>
+<p style="color: #FF69B4;">👋 HI MOM! HELLO!</p>
+<p style="color: #9400D3;">🎉 YOUPI!</p>
+<p style="color: #00FFFF;">🎵 SINGING YOUPI!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -682,6 +687,21 @@
     }
     spawnWorldCoins();
     // BONUS COINS - Community wants more!
+    // MEGA EXTRA COINS - Community keeps asking!
+    for (let mc = 0; mc < 30; mc++) {
+        const megaCoinGeo = new THREE.CylinderGeometry(1.0, 1.0, 0.2, 16);
+        const megaCoinMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+        const megaCoin = new THREE.Mesh(megaCoinGeo, megaCoinMat);
+        megaCoin.position.set(
+            (Math.random() - 0.5) * 120,
+            6 + Math.random() * 25,
+            (Math.random() - 0.5) * 120
+        );
+        megaCoin.rotation.x = Math.PI / 2;
+        megaCoin.userData = { collected: false, baseY: megaCoin.position.y, sparkle: Math.random() * Math.PI * 2 };
+        scene.add(megaCoin);
+        worldCoins.push(megaCoin);
+    }
     for (let b = 0; b < 25; b++) {
         const bonusCoinGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.15, 16);
         const bonusCoinMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
@@ -1458,6 +1478,38 @@
         return burgerGroup;
     }
     const burgerPlace = createBurgerPlace();
+    // Community requested burger removal - converting to ruins!
+    burgerPlace.visible = false;
+    
+    // BURGER RUINS MEMORIAL
+    const burgerRuinsSign = createGreetingPanel('🍔 BURGER HUT RUINS 🍔', 30, 8, -20, 0x8B4513);
+    
+    // EXTRA SUSHI BOATS - Community wants more sushi!
+    function createFloatingSushiBoat(x, y, z) {
+        const boat = new THREE.Group();
+        const boatGeo = new THREE.BoxGeometry(3, 0.5, 1.5);
+        const boatMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
+        const boatMesh = new THREE.Mesh(boatGeo, boatMat);
+        boat.add(boatMesh);
+        
+        // Sushi pieces on boat
+        const sushiColors = [0xFF6347, 0xFFA07A, 0xFFD700];
+        for (let s = 0; s < 3; s++) {
+            const sushiGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.4, 8);
+            const sushiMat = new THREE.MeshLambertMaterial({ color: sushiColors[s] });
+            const sushi = new THREE.Mesh(sushiGeo, sushiMat);
+            sushi.position.set(-1 + s, 0.4, 0);
+            sushi.rotation.x = Math.PI / 2;
+            boat.add(sushi);
+        }
+        boat.position.set(x, y, z);
+        boat.name = 'sushiBoat';
+        scene.add(boat);
+        return boat;
+    }
+    const sushiBoat1 = createFloatingSushiBoat(-15, 10, 25);
+    const sushiBoat2 = createFloatingSushiBoat(5, 12, 30);
+    const sushiBoat3 = createFloatingSushiBoat(20, 8, 20);
     
     // GIANT FLOATING CHEESE - Community requested!
     function createGiantCheese() {
@@ -1532,8 +1584,8 @@
         lctx.fillStyle = '#FFFFFF';
         lctx.font = '16px Arial';
         lctx.fillText('La la la~', 128, 65);
-        lctx.fillText('Hey ho hey ho!', 128, 90);
-        lctx.fillText('To the mines we go!', 128, 115);
+        lctx.fillText('YOUPI YOUPI!', 128, 90);
+        lctx.fillText('HI MOM! HELLO ALL!', 128, 115);
         const lyricsTex = new THREE.CanvasTexture(lyricsCanvas);
         const lyricsGeo = new THREE.PlaneGeometry(3, 1.5);
         const lyricsMat = new THREE.MeshBasicMaterial({ map: lyricsTex });
@@ -1550,6 +1602,15 @@
     
     // HI CHAT greeting panel!
     const hiChatPanel = createGreetingPanel('HI CHAT! 👋💖', 20, 15, 10, 0x00FFFF);
+    
+    // YOUPI celebration panel!
+    const youpiPanel = createGreetingPanel('🎉 YOUPI! 🎉', -5, 25, 5, 0x9400D3);
+    
+    // Extra HI MOM panel (community keeps asking!)
+    const hiMomPanel2 = createGreetingPanel('👋 HI MOM! 💖', 25, 20, -5, 0xFF69B4);
+    
+    // HELLO panel
+    const helloPanel = createGreetingPanel('HELLO EVERYONE! 🌟', -25, 18, 15, 0x00FF00);
     
     // HEY HO mining sign
     const heyHoPanel = createGreetingPanel('⛏️ HEY HO HEY HO! ⛏️', -20, 12, -15, 0x8B4513);
@@ -2129,6 +2190,26 @@
         if (hiChatPanel) {
             hiChatPanel.position.y = 15 + Math.sin(Date.now() * 0.003) * 0.5;
             hiChatPanel.rotation.y = Math.sin(Date.now() * 0.001) * 0.3;
+        }
+        
+        // Animate YOUPI panel
+        if (youpiPanel) {
+            youpiPanel.position.y = 25 + Math.sin(Date.now() * 0.005) * 1.5;
+            youpiPanel.rotation.y += delta * 0.5;
+        }
+        
+        // Animate sushi boats floating
+        if (typeof sushiBoat1 !== 'undefined' && sushiBoat1) {
+            sushiBoat1.position.y = 10 + Math.sin(Date.now() * 0.002) * 1;
+            sushiBoat1.rotation.y += delta * 0.3;
+        }
+        if (typeof sushiBoat2 !== 'undefined' && sushiBoat2) {
+            sushiBoat2.position.y = 12 + Math.sin(Date.now() * 0.0025 + 1) * 1;
+            sushiBoat2.rotation.y += delta * 0.25;
+        }
+        if (typeof sushiBoat3 !== 'undefined' && sushiBoat3) {
+            sushiBoat3.position.y = 8 + Math.sin(Date.now() * 0.003 + 2) * 1;
+            sushiBoat3.rotation.y += delta * 0.35;
         }
         
         // Animate HEY HO panel
