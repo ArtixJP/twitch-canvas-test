@@ -394,8 +394,8 @@
 <div style="width:2px;height:20px;background:white;position:absolute;left:-1px;top:-10px;box-shadow:0 0 3px #000;"></div>
 </div>
 <div id="space-hud" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(135deg, rgba(10,10,40,0.9) 0%, rgba(30,0,60,0.9) 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:2px solid rgba(100,150,255,0.5);box-shadow:0 0 30px rgba(100,150,255,0.3);backdrop-filter:blur(10px);">
-<h2 style="margin:0 0 10px 0;text-shadow:0 0 20px #00ffff;color:#fff;">🚀 SPATIAL EXPLORATION 🌌</h2>
-<p style="margin:0;font-size:0.9rem;opacity:0.9;color:#aaccff;">WASD to fly | Q/E to roll | Mouse to look | Scroll to speed</p>
+<h2 style="margin:0 0 10px 0;text-shadow:0 0 20px #00ffff;color:#fff;">🚀 SPACE BATTLE: MARIO vs BOWSER! 🌌</h2>
+<p style="margin:0;font-size:0.9rem;opacity:0.9;color:#aaccff;">WASD to fly | Q/E to roll | Mouse to look | Watch Mario defeat Bowser! 🔥</p>
 <div id="coords-display" style="margin-top:10px;font-size:0.9rem;color:#88ffaa;">Position: <span id="coords">0, 0, 0</span></div>
 </div>
 <div id="minecraft-container" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:500;"></div>
@@ -591,6 +591,55 @@
                 planets.push(planet);
             }
             
+            // Create Mario chasing Bowser in space!
+            const marioGroup = new THREE.Group();
+            const marioBody = new THREE.Mesh(
+                new THREE.SphereGeometry(3, 16, 16),
+                new THREE.MeshStandardMaterial({color: 0xff0000, emissive: 0xff0000, emissiveIntensity: 0.3})
+            );
+            const marioHead = new THREE.Mesh(
+                new THREE.SphereGeometry(2, 16, 16),
+                new THREE.MeshStandardMaterial({color: 0xffdbac})
+            );
+            marioHead.position.y = 4;
+            const marioCape = new THREE.Mesh(
+                new THREE.ConeGeometry(4, 8, 4),
+                new THREE.MeshStandardMaterial({color: 0xffff00, emissive: 0xffff00, emissiveIntensity: 0.5})
+            );
+            marioCape.rotation.x = Math.PI/2;
+            marioCape.position.z = 3;
+            marioGroup.add(marioBody, marioHead, marioCape);
+            marioGroup.position.set(50, 30, -100);
+            marioGroup.userData = {angle: 0, targetBowser: true};
+            spaceScene.add(marioGroup);
+            
+            // Create Bowser
+            const bowserGroup = new THREE.Group();
+            const bowserBody = new THREE.Mesh(
+                new THREE.SphereGeometry(6, 16, 16),
+                new THREE.MeshStandardMaterial({color: 0x228b22, emissive: 0x228b22, emissiveIntensity: 0.2})
+            );
+            const bowserShell = new THREE.Mesh(
+                new THREE.SphereGeometry(5, 16, 16),
+                new THREE.MeshStandardMaterial({color: 0x8b4513, emissive: 0x5c3317, emissiveIntensity: 0.3})
+            );
+            bowserShell.position.z = 2;
+            bowserShell.scale.set(1, 1, 0.6);
+            const bowserHead = new THREE.Mesh(
+                new THREE.SphereGeometry(3, 16, 16),
+                new THREE.MeshStandardMaterial({color: 0x228b22})
+            );
+            bowserHead.position.set(0, 4, -3);
+            bowserGroup.add(bowserBody, bowserShell, bowserHead);
+            bowserGroup.position.set(100, 50, -200);
+            bowserGroup.userData = {angle: 0, fleeing: true};
+            spaceScene.add(bowserGroup);
+            
+            // Store for animation
+            window.marioGroup = marioGroup;
+            window.bowserGroup = bowserGroup;
+            window.fireballs = [];
+            
             // Create a sun
             const sunGeo = new THREE.SphereGeometry(50, 32, 32);
             const sunMat = new THREE.MeshBasicMaterial({
@@ -689,6 +738,50 @@
             nebulae.forEach((nebula, i) => {
                 nebula.rotation.y += 0.0002 * (i + 1);
             });
+            
+            // Mario vs Bowser space battle!
+            if (window.marioGroup && window.bowserGroup) {
+                // Bowser flees in a spiral pattern
+                window.bowserGroup.userData.angle += 0.02;
+                const ba = window.bowserGroup.userData.angle;
+                window.bowserGroup.position.x = 80 + Math.cos(ba) * 60;
+                window.bowserGroup.position.y = 40 + Math.sin(ba * 0.7) * 30;
+                window.bowserGroup.position.z = -150 + Math.sin(ba) * 50;
+                window.bowserGroup.rotation.y += 0.05;
+                
+                // Mario chases Bowser
+                const mDir = new THREE.Vector3();
+                mDir.subVectors(window.bowserGroup.position, window.marioGroup.position);
+                mDir.normalize();
+                window.marioGroup.position.add(mDir.multiplyScalar(0.8));
+                window.marioGroup.lookAt(window.bowserGroup.position);
+                window.marioGroup.rotation.z = Math.sin(Date.now() * 0.01) * 0.2;
+                
+                // Shoot fireballs occasionally
+                if (Math.random() < 0.03 && window.fireballs.length < 10) {
+                    const fireball = new THREE.Mesh(
+                        new THREE.SphereGeometry(1, 8, 8),
+                        new THREE.MeshBasicMaterial({color: 0xff6600})
+                    );
+                    fireball.position.copy(window.marioGroup.position);
+                    fireball.userData = {vel: mDir.clone().multiplyScalar(3), life: 100};
+                    const fireLight = new THREE.PointLight(0xff6600, 2, 20);
+                    fireball.add(fireLight);
+                    spaceScene.add(fireball);
+                    window.fireballs.push(fireball);
+                }
+                
+                // Update fireballs
+                window.fireballs = window.fireballs.filter(fb => {
+                    fb.position.add(fb.userData.vel);
+                    fb.userData.life--;
+                    if (fb.userData.life <= 0) {
+                        spaceScene.remove(fb);
+                        return false;
+                    }
+                    return true;
+                });
+            }
             
             spaceRenderer.render(spaceScene, spaceCamera);
         }
