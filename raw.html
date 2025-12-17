@@ -396,6 +396,10 @@
         let mcVelocity = {x: 0, y: 0, z: 0};
         let mcOnGround = false;
         let mcInitialized = false;
+        let coins = [];
+        let coinCount = 0;
+        let goombas = [];
+        let pipes = [];
         
         function initMinecraft() {
             if (mcInitialized) return;
@@ -441,10 +445,7 @@
                 coin: 0xffd700
             };
             
-            let coins = [];
-            let coinCount = 0;
-            let goombas = [];
-            let pipes = [];
+            // Coin and enemy arrays are now global
             
             // Create terrain
             const worldSize = 16;
