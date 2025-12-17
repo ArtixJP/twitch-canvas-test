@@ -5,2405 +5,264 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🧀 CHEESE MODE - SYSTEM DELICIOUS 🧀</title>
+<title>TwitchCraft - Community Minecraft</title>
 <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
-    body {
-        min-height: 100vh;
-        background: #0a1628;
-        font-family: 'Courier New', monospace;
-        color: #4facfe;
-        overflow: hidden;
-    }
-    
-    @keyframes glitch {
-        0% { transform: translate(0); filter: hue-rotate(0deg); }
-        20% { transform: translate(-3px, 3px); filter: hue-rotate(90deg); }
-        40% { transform: translate(3px, -3px); filter: hue-rotate(180deg); }
-        60% { transform: translate(-3px, -3px); filter: hue-rotate(270deg); }
-        80% { transform: translate(3px, 3px); filter: hue-rotate(360deg); }
-        100% { transform: translate(0); filter: hue-rotate(0deg); }
-    }
-    
-    @keyframes scanline {
-        0% { background-position: 0 0; }
-        100% { background-position: 0 100vh; }
-    }
-    
-    body::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: repeating-linear-gradient(
-            0deg,
-            rgba(79, 172, 254, 0.02) 0px,
-            rgba(79, 172, 254, 0.02) 1px,
-            transparent 1px,
-            transparent 2px
-        );
-        pointer-events: none;
-        z-index: 9999;
-        animation: scanline 8s linear infinite;
-    }
-    
-    #gameContainer {
-        width: 100vw;
-        height: 100vh;
-        position: relative;
-    }
-    
-    #instructions {
-        position: fixed;
-        top: 10px;
-        left: 10px;
-        background: rgba(0,0,0,0.7);
-        padding: 15px;
-        border-radius: 10px;
-        font-size: 14px;
-        z-index: 100;
-        max-width: 250px;
-    }
-    
-    #instructions h3 {
-        color: #4facfe;
-        margin-bottom: 10px;
-    }
-    
-    #instructions p {
-        margin: 5px 0;
-        color: #ccc;
-    }
-    
-    #crosshair {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 20px;
-        height: 20px;
-        pointer-events: none;
-        z-index: 100;
-    }
-    
-    #crosshair::before, #crosshair::after {
-        content: '';
-        position: absolute;
-        background: white;
-        box-shadow: 0 0 3px black;
-    }
-    
-    #crosshair::before {
-        width: 2px;
-        height: 20px;
-        left: 9px;
-    }
-    
-    #crosshair::after {
-        width: 20px;
-        height: 2px;
-        top: 9px;
-    }
-    
-    .stats {
-        position: fixed;
-        bottom: 10px;
-        left: 10px;
-        display: flex;
-        gap: 1rem;
-        z-index: 100;
-    }
-    
-    .stat {
-        background: rgba(0,0,0,0.7);
-        padding: 10px 15px;
-        border-radius: 10px;
-        border: 1px solid rgba(255,255,255,0.2);
-    }
-    
-    .stat-value {
-        font-size: 1.2rem;
-        color: #4facfe;
-        font-weight: bold;
-    }
-    
-    .stat-label {
-        font-size: 0.7rem;
-        color: #888;
-    }
-    
-    #blockSelector {
-        position: fixed;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        display: flex;
-        gap: 5px;
-        background: rgba(0,0,0,0.7);
-        padding: 10px;
-        border-radius: 10px;
-        z-index: 100;
-    }
-    
-    .block-option {
-        width: 40px;
-        height: 40px;
-        border: 2px solid #555;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
-    
-    .block-option.selected {
-        border-color: #fff;
-        transform: scale(1.1);
-    }
-    
-    .block-option:hover {
-        border-color: #aaa;
-    }
-</style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Courier New', monospace; 
+            min-height: 100vh; 
+            overflow: hidden;
+            background: linear-gradient(180deg, #87CEEB 0%, #E0F6FF 100%);
+            color: white;
+        }
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        #title {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2.5rem;
+            color: #3d3d3d;
+            text-shadow: 4px 4px 0 #8B4513, -2px -2px 0 #228B22;
+            z-index: 100;
+            font-weight: bold;
+            letter-spacing: 4px;
+        }
+        #world {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 70%;
+            display: flex;
+            flex-wrap: wrap;
+            align-content: flex-end;
+        }
+        .block {
+            width: 50px;
+            height: 50px;
+            image-rendering: pixelated;
+            position: absolute;
+            transition: transform 0.1s;
+            cursor: pointer;
+        }
+        .block:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+        .grass {
+            background: linear-gradient(180deg, #228B22 0%, #228B22 30%, #8B4513 30%, #8B4513 100%);
+            border: 2px solid #1a6b1a;
+        }
+        .dirt {
+            background: #8B4513;
+            border: 2px solid #6b3410;
+        }
+        .stone {
+            background: linear-gradient(135deg, #808080 25%, #696969 50%, #778899 75%);
+            border: 2px solid #505050;
+        }
+        .wood {
+            background: repeating-linear-gradient(0deg, #8B4513, #8B4513 10px, #A0522D 10px, #A0522D 20px);
+            border: 2px solid #6b3410;
+        }
+        .leaves {
+            background: #228B22;
+            border: 2px solid #1a6b1a;
+            opacity: 0.9;
+        }
+        #player {
+            position: absolute;
+            width: 40px;
+            height: 80px;
+            z-index: 50;
+            transition: left 0.15s, bottom 0.15s;
+        }
+        .player-head {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(90deg, #D2691E 0%, #D2691E 30%, #FFE4C4 30%, #FFE4C4 70%, #D2691E 70%);
+            border: 2px solid #8B4513;
+        }
+        .player-body {
+            width: 40px;
+            height: 40px;
+            background: #00CED1;
+            border: 2px solid #008B8B;
+        }
+        #hotbar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            background: rgba(0,0,0,0.7);
+            padding: 10px;
+            border-radius: 5px;
+            z-index: 100;
+        }
+        .hotbar-slot {
+            width: 50px;
+            height: 50px;
+            border: 3px solid #555;
+            cursor: pointer;
+        }
+        .hotbar-slot.selected {
+            border-color: #fff;
+            box-shadow: 0 0 10px #fff;
+        }
+        #instructions {
+            position: absolute;
+            top: 80px;
+            left: 20px;
+            background: rgba(0,0,0,0.6);
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #fff;
+        }
+        .sun {
+            position: absolute;
+            top: 50px;
+            right: 100px;
+            width: 80px;
+            height: 80px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 60px #FFD700;
+        }
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 50px;
+            opacity: 0.9;
+            animation: float 20s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(30px); }
+        }
+    </style>
 </head>
 <body>
-<div id="gameContainer"></div>
-<div id="crosshair"></div>
+<div id="game-container">
+<h1 id="title">TWITCHCRAFT</h1>
+<div class="sun"></div>
+<div class="cloud" style="top: 80px; left: 10%; width: 120px; height: 40px;"></div>
+<div class="cloud" style="top: 120px; left: 60%; width: 150px; height: 50px;"></div>
 <div id="instructions">
-<h3 style="color: #4facfe;">🛡️ SAFE MODE ACTIVE 🛡️</h3>
-<p style="color: #00ff88;">✓ SYSTEM STABILIZED</p>
-<p>INTEGRITY: 98%</p>
-<p>All threats contained...</p>
-<p style="color: #4facfe;">ENVIRONMENT: PEACEFUL</p>
-<p style="color: #ff69b4;">🌈 RAINBOW ACTIVE</p>
-<p>Click to explore safely</p>
-<p style="font-size: 10px; color: #666;">v1.0.0 - RECOVERY MODE</p>
-<p style="color: #666688; margin-top: 8px;">👻 FAMILY ECHOES LINGER...</p>
-<p style="color: #00FF00;">🍄 MARIO BROS ACTIVE!</p>
-<p style="color: #FFA500;">🍕 PIZZA SPAWNED!</p>
-<p style="color: #9400D3;">🌀 WOW PORTAL OPEN!</p>
-<p style="color: #FFD700;">👋 HELLO MO!</p>
-<p style="color: #FF4500;">🎮 POKEMON GAME ACTIVE!</p>
-<p style="color: #fff; font-size: 11px;">Press E to throw Pokeball!</p>
-<p style="color: #FF0000;">🎮 MARIO MINI-GAME ZONE!</p>
-<p style="color: #FFFF00;">⭐ Hit ? Blocks for coins!</p>
-<p style="color: #00FFFF;">🐾 +10 MORE POKEMON!</p>
-<p style="color: #87CEEB;">⛲ FOUNTAIN ADDED!</p>
-<p style="color: #FF4500;">🎬 BOWSER MOVIE THEATER!</p>
-<p style="color: #DC143C;">🍣 JAPANESE RESTAURANT!</p>
-<p style="color: #FF6347;">🍣 SUSHI CONVEYOR ADDED!</p>
-<p style="color: #FF6347;">📱 POKEDEX ACTIVE!</p>
-<p style="color: #FFA500;">🎬 Press F near theater!</p>
-<p style="color: #E52521;">💬 MARIO TALKS TO TOAD!</p>
-<p style="color: #666;">🏚️ PIZZERIA RUINS...</p>
-<p style="color: #FFD700;">🧀 CHEESE OVERFLOW!</p>
-<p style="color: #FF69B4;">🎵 JUKEBOX SINGING!</p>
-<p style="color: #00FFFF;">👋 HI CHAT!</p>
-<p style="color: #8B4513;">⛏️ HEY HO HEY HO!</p>
-<p style="color: #FFA500;">🌅 SUNSET COLORS!</p>
-<p style="color: #FFD700;">🪙 COIN COLLECTION MODE!</p>
-<p style="color: #fff; font-size: 11px;">Walk near coins to collect!</p>
-<p style="color: #FF4500;">🍔 BURGER HUT OPENED!</p>
-<p style="color: #00FF00;">🍣 MORE SUSHI!</p>
-<p style="color: #DC143C;">🍣 SUSHI ARMADA x8!</p>
-<p style="color: #FF6347;">🏚️ RESTAURANT → BOATS!</p>
-<p style="color: #FFD700;">🪙 MORE COINS!</p>
-<p style="color: #FF69B4;">👋 HI MOM! HELLO!</p>
-<p style="color: #9400D3;">🎉 YOUPI!</p>
-<p style="color: #00FFFF;">🎵 SINGING YOUPI!</p>
-<p style="color: #FF4500;">🔥 SALAMECHE SPAWNED!</p>
+            🎮 WASD/Arrows: Move<br/>
+            🖱️ Click blocks: Break<br/>
+            1-4: Select block type
+        </div>
+<div id="world"></div>
+<div id="player">
+<div class="player-head"></div>
+<div class="player-body"></div>
 </div>
-<div class="stats">
-<div class="stat">
-<div class="stat-value" id="clicks">0</div>
-<div class="stat-label">Blocks Placed</div>
-</div>
-<div class="stat">
-<div class="stat-value" id="shapes">0</div>
-<div class="stat-label">Blocks Broken</div>
-</div>
-<div class="stat">
-<div class="stat-value" id="caught">0</div>
-<div class="stat-label">Pokemon Caught</div>
-</div>
-<div class="stat">
-<div class="stat-value" id="pokedex">9</div>
-<div class="stat-label">Pokedex</div>
-</div>
-<div class="stat">
-<div class="stat-value" id="coinCount">0</div>
-<div class="stat-label">🪙 Coins</div>
+<div id="hotbar">
+<div class="hotbar-slot grass selected" data-block="grass"></div>
+<div class="hotbar-slot dirt" data-block="dirt"></div>
+<div class="hotbar-slot stone" data-block="stone"></div>
+<div class="hotbar-slot wood" data-block="wood"></div>
 </div>
 </div>
-<div id="pokedexPanel" style="position:fixed;top:10px;right:10px;background:linear-gradient(135deg,#E52521,#8B0000);padding:15px;border-radius:15px;border:3px solid #FFD700;max-width:200px;z-index:100;font-size:12px;">
-<h4 style="color:#FFD700;margin:0 0 10px 0;text-align:center;">📱 POKEDEX</h4>
-<div style="background:#1a1a2e;padding:8px;border-radius:8px;color:#4facfe;">
-<div>⚡ Pikachu - Electric</div>
-<div>🌿 Bulbasaur - Grass</div>
-<div>🔥 Charmander - Fire</div>
-<div style="color:#FF4500;">🔥 Salameche - Feu</div>
-<div>💧 Squirtle - Water</div>
-<div>🦊 Eevee - Normal</div>
-<div>🎤 Jigglypuff - Fairy</div>
-<div style="color:#FF0000;">🍄 Mario - Plumber</div>
-<div style="color:#00FF00;">🍃 Luigi - Plumber</div>
-<div style="color:#FFB6C1;">🍄 Toad - Mushroom</div>
-</div>
-</div>
-<div id="blockSelector">
-<div class="block-option selected" data-block="0" style="background: #8B4513;"></div>
-<div class="block-option" data-block="1" style="background: #228B22;"></div>
-<div class="block-option" data-block="2" style="background: #808080;"></div>
-<div class="block-option" data-block="3" style="background: #FFD700;"></div>
-<div class="block-option" data-block="4" style="background: #4169E1;"></div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
-    // Stats
-    let blocksPlaced = 0;
-    
-    // Pokemon storage
-    const pokemons = [];
-    const pokemonTypes = [
-        { name: 'Pikachu', color: 0xFFD700, size: 1.5, speed: 3 },
-        { name: 'Bulbasaur', color: 0x228B22, size: 1.8, speed: 2 },
-        { name: 'Charmander', color: 0xFF4500, size: 1.6, speed: 2.5 },
-        { name: 'Salameche', color: 0xFF4500, size: 1.6, speed: 2.5, isFire: true },
-        { name: 'Squirtle', color: 0x1E90FF, size: 1.5, speed: 2 },
-        { name: 'Eevee', color: 0xD2691E, size: 1.4, speed: 3.5 },
-        { name: 'Jigglypuff', color: 0xFFB6C1, size: 1.3, speed: 1.5 },
-        { name: 'Mario', color: 0xFF0000, size: 2.0, speed: 4, isMario: true },
-        { name: 'Luigi', color: 0x00FF00, size: 2.1, speed: 3.8, isLuigi: true },
-        { name: 'Toad', color: 0xFFFFFF, size: 1.2, speed: 5, isToad: true }
-    ];
-    let blocksBroken = 0;
-    let pokemonCaught = 0;
-    const clicksEl = document.getElementById('clicks');
-    const shapesEl = document.getElementById('shapes');
-    const caughtEl = document.getElementById('caught');
-    const pokeballs = [];
-    const caughtPokemon = [];
-    const worldCoins = [];
-    let totalCoinsCollected = 0;
-    const coinCountEl = document.getElementById('coinCount');
-    
-    // Three.js setup
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xFF6B35); // Warm sunset orange!
-    scene.fog = new THREE.Fog(0xFF8C42, 40, 120); // Sunset fog to match
-    
-    const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.set(0, 10, 20);
-    
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.shadowMap.enabled = true;
-    document.getElementById('gameContainer').appendChild(renderer.domElement);
-    
-    // Lighting
-    const ambientLight = new THREE.AmbientLight(0x4facfe, 0.4); // Calm blue glow
-    scene.add(ambientLight);
-    
-    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8); // Peaceful white sun
-    sunLight.position.set(50, 100, 50);
-    sunLight.castShadow = true;
-    scene.add(sunLight);
-    
-    // Block types
-    const blockColors = [0x8B4513, 0x228B22, 0x808080, 0xFFD700, 0x4169E1];
-    let selectedBlock = 0;
-    
-    // World blocks storage
-    const blocks = new Map();
-    const blockSize = 2;
-    
-    function getBlockKey(x, y, z) {
-        return `${Math.floor(x/blockSize)},${Math.floor(y/blockSize)},${Math.floor(z/blockSize)}`;
-    }
-    
-    function createBlock(x, y, z, colorIndex = 0) {
-        const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
-        const material = new THREE.MeshLambertMaterial({ 
-            color: blockColors[colorIndex],
-            flatShading: true
-        });
-        const block = new THREE.Mesh(geometry, material);
-        block.position.set(
-            Math.floor(x/blockSize) * blockSize + blockSize/2,
-            Math.floor(y/blockSize) * blockSize + blockSize/2,
-            Math.floor(z/blockSize) * blockSize + blockSize/2
-        );
-        block.castShadow = true;
-        block.receiveShadow = true;
-        return block;
-    }
-    
-    // Generate terrain
-    for (let x = -20; x < 20; x++) {
-        for (let z = -20; z < 20; z++) {
-            const height = Math.floor(Math.sin(x * 0.1) * 2 + Math.cos(z * 0.1) * 2);
-            for (let y = -2; y <= height; y++) {
-                const colorIndex = y === height ? 1 : (y < height - 2 ? 2 : 0);
-                const block = createBlock(x * blockSize, y * blockSize, z * blockSize, colorIndex);
-                scene.add(block);
-                blocks.set(getBlockKey(x * blockSize, y * blockSize, z * blockSize), block);
+        const world = document.getElementById('world');
+        const player = document.getElementById('player');
+        let playerX = 400;
+        let playerY = 150;
+        let selectedBlock = 'grass';
+        
+        // Generate terrain
+        function generateWorld() {
+            const groundLevel = 5;
+            for (let x = 0; x < 30; x++) {
+                const height = groundLevel + Math.floor(Math.sin(x * 0.3) * 2);
+                for (let y = 0; y < height; y++) {
+                    const block = document.createElement('div');
+                    block.className = 'block ' + (y === height - 1 ? 'grass' : (y > height - 3 ? 'dirt' : 'stone'));
+                    block.style.left = (x * 50) + 'px';
+                    block.style.bottom = (y * 50) + 'px';
+                    block.onclick = () => block.remove();
+                    world.appendChild(block);
+                }
             }
-        }
-    }
-    
-    // Create Pokemon
-    function createPokemon(type, x, z) {
-        const pokemon = new THREE.Group();
-        
-        // Body
-        const bodyGeo = new THREE.SphereGeometry(type.size * 0.5, 8, 8);
-        const bodyMat = new THREE.MeshLambertMaterial({ color: type.color });
-        const body = new THREE.Mesh(bodyGeo, bodyMat);
-        body.castShadow = true;
-        pokemon.add(body);
-        
-        // Head
-        const headGeo = new THREE.SphereGeometry(type.size * 0.35, 8, 8);
-        const head = new THREE.Mesh(headGeo, bodyMat);
-        head.position.y = type.size * 0.5;
-        head.castShadow = true;
-        pokemon.add(head);
-        
-        // Eyes
-        const eyeGeo = new THREE.SphereGeometry(type.size * 0.1, 6, 6);
-        const eyeMat = new THREE.MeshLambertMaterial({ color: 0x000000 });
-        const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
-        leftEye.position.set(-type.size * 0.15, type.size * 0.55, type.size * 0.25);
-        pokemon.add(leftEye);
-        const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
-        rightEye.position.set(type.size * 0.15, type.size * 0.55, type.size * 0.25);
-        pokemon.add(rightEye);
-        
-        // Ears/features based on type
-        if (type.name === 'Pikachu') {
-            const earGeo = new THREE.ConeGeometry(type.size * 0.15, type.size * 0.5, 4);
-            const earMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-            const leftEar = new THREE.Mesh(earGeo, earMat);
-            leftEar.position.set(-type.size * 0.2, type.size * 0.9, 0);
-            leftEar.rotation.z = 0.3;
-            pokemon.add(leftEar);
-            const rightEar = new THREE.Mesh(earGeo, earMat);
-            rightEar.position.set(type.size * 0.2, type.size * 0.9, 0);
-            rightEar.rotation.z = -0.3;
-            pokemon.add(rightEar);
+            // Add a tree
+            addTree(300, groundLevel + 1);
+            addTree(700, groundLevel + 2);
         }
         
-        // Mario special features - REALISTIC MARIO!
-        if (type.name === 'Mario') {
-            // Remove default body/head
-            pokemon.remove(body);
-            pokemon.remove(head);
-            
-            const skinMat = new THREE.MeshLambertMaterial({ color: 0xFFDBB4 });
-            const redMat = new THREE.MeshLambertMaterial({ color: 0xE52521 });
-            const blueMat = new THREE.MeshLambertMaterial({ color: 0x1D4ED8 });
-            const brownMat = new THREE.MeshLambertMaterial({ color: 0x4A3728 });
-            const whiteMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-            const goldMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-            
-            // Blue overalls (torso)
-            const torsoGeo = new THREE.BoxGeometry(type.size * 0.7, type.size * 0.6, type.size * 0.4);
-            const torso = new THREE.Mesh(torsoGeo, blueMat);
-            torso.position.y = type.size * 0.1;
-            torso.castShadow = true;
-            pokemon.add(torso);
-            
-            // Red shirt showing at top
-            const shirtGeo = new THREE.BoxGeometry(type.size * 0.72, type.size * 0.2, type.size * 0.42);
-            const shirt = new THREE.Mesh(shirtGeo, redMat);
-            shirt.position.y = type.size * 0.45;
-            pokemon.add(shirt);
-            
-            // Overalls straps
-            const strapGeo = new THREE.BoxGeometry(type.size * 0.12, type.size * 0.35, type.size * 0.08);
-            const leftStrap = new THREE.Mesh(strapGeo, blueMat);
-            leftStrap.position.set(-type.size * 0.22, type.size * 0.45, type.size * 0.18);
-            pokemon.add(leftStrap);
-            const rightStrap = new THREE.Mesh(strapGeo, blueMat);
-            rightStrap.position.set(type.size * 0.22, type.size * 0.45, type.size * 0.18);
-            pokemon.add(rightStrap);
-            
-            // Golden buttons on straps
-            const buttonGeo = new THREE.SphereGeometry(type.size * 0.05, 8, 8);
-            const leftButton = new THREE.Mesh(buttonGeo, goldMat);
-            leftButton.position.set(-type.size * 0.22, type.size * 0.35, type.size * 0.23);
-            pokemon.add(leftButton);
-            const rightButton = new THREE.Mesh(buttonGeo, goldMat);
-            rightButton.position.set(type.size * 0.22, type.size * 0.35, type.size * 0.23);
-            pokemon.add(rightButton);
-            
-            // Head (skin)
-            const headGeo = new THREE.SphereGeometry(type.size * 0.35, 12, 12);
-            const marioHead = new THREE.Mesh(headGeo, skinMat);
-            marioHead.position.y = type.size * 0.8;
-            marioHead.castShadow = true;
-            pokemon.add(marioHead);
-            
-            // Big nose
-            const noseGeo = new THREE.SphereGeometry(type.size * 0.12, 8, 8);
-            const nose = new THREE.Mesh(noseGeo, skinMat);
-            nose.position.set(0, type.size * 0.75, type.size * 0.35);
-            nose.scale.set(1, 0.8, 1.2);
-            pokemon.add(nose);
-            
-            // Mustache - curved shape
-            const mustacheGeo = new THREE.TorusGeometry(type.size * 0.15, type.size * 0.04, 8, 16, Math.PI);
-            const mustacheLeft = new THREE.Mesh(mustacheGeo, brownMat);
-            mustacheLeft.position.set(-type.size * 0.08, type.size * 0.65, type.size * 0.32);
-            mustacheLeft.rotation.set(0, 0.3, Math.PI);
-            pokemon.add(mustacheLeft);
-            const mustacheRight = new THREE.Mesh(mustacheGeo, brownMat);
-            mustacheRight.position.set(type.size * 0.08, type.size * 0.65, type.size * 0.32);
-            mustacheRight.rotation.set(0, -0.3, Math.PI);
-            pokemon.add(mustacheRight);
-            
-            // Eyes (white with black pupils)
-            const eyeWhiteGeo = new THREE.SphereGeometry(type.size * 0.08, 8, 8);
-            const leftEyeW = new THREE.Mesh(eyeWhiteGeo, whiteMat);
-            leftEyeW.position.set(-type.size * 0.12, type.size * 0.85, type.size * 0.28);
-            pokemon.add(leftEyeW);
-            const rightEyeW = new THREE.Mesh(eyeWhiteGeo, whiteMat);
-            rightEyeW.position.set(type.size * 0.12, type.size * 0.85, type.size * 0.28);
-            pokemon.add(rightEyeW);
-            
-            const pupilGeo = new THREE.SphereGeometry(type.size * 0.04, 8, 8);
-            const pupilMat = new THREE.MeshLambertMaterial({ color: 0x1E90FF });
-            const leftPupil = new THREE.Mesh(pupilGeo, pupilMat);
-            leftPupil.position.set(-type.size * 0.12, type.size * 0.85, type.size * 0.35);
-            pokemon.add(leftPupil);
-            const rightPupil = new THREE.Mesh(pupilGeo, pupilMat);
-            rightPupil.position.set(type.size * 0.12, type.size * 0.85, type.size * 0.35);
-            pokemon.add(rightPupil);
-            
-            // Red cap
-            const capGeo = new THREE.SphereGeometry(type.size * 0.38, 12, 12, 0, Math.PI * 2, 0, Math.PI / 2);
-            const cap = new THREE.Mesh(capGeo, redMat);
-            cap.position.y = type.size * 1.0;
-            cap.castShadow = true;
-            pokemon.add(cap);
-            
-            // Cap brim
-            const brimGeo = new THREE.CylinderGeometry(type.size * 0.25, type.size * 0.3, type.size * 0.08, 12);
-            const brim = new THREE.Mesh(brimGeo, redMat);
-            brim.position.set(0, type.size * 0.9, type.size * 0.25);
-            brim.rotation.x = Math.PI / 2.5;
-            pokemon.add(brim);
-            
-            // M logo on cap (white circle with M)
-            const logoGeo = new THREE.CircleGeometry(type.size * 0.12, 16);
-            const logo = new THREE.Mesh(logoGeo, whiteMat);
-            logo.position.set(0, type.size * 1.05, type.size * 0.35);
-            logo.rotation.x = -0.3;
-            pokemon.add(logo);
-            
-            // Arms (red sleeves)
-            const armGeo = new THREE.CylinderGeometry(type.size * 0.1, type.size * 0.12, type.size * 0.4, 8);
-            const leftArm = new THREE.Mesh(armGeo, redMat);
-            leftArm.position.set(-type.size * 0.45, type.size * 0.3, 0);
-            leftArm.rotation.z = Math.PI / 4;
-            pokemon.add(leftArm);
-            const rightArm = new THREE.Mesh(armGeo, redMat);
-            rightArm.position.set(type.size * 0.45, type.size * 0.3, 0);
-            rightArm.rotation.z = -Math.PI / 4;
-            pokemon.add(rightArm);
-            
-            // Hands (white gloves)
-            const handGeo = new THREE.SphereGeometry(type.size * 0.12, 8, 8);
-            const leftHand = new THREE.Mesh(handGeo, whiteMat);
-            leftHand.position.set(-type.size * 0.6, type.size * 0.15, 0);
-            pokemon.add(leftHand);
-            const rightHand = new THREE.Mesh(handGeo, whiteMat);
-            rightHand.position.set(type.size * 0.6, type.size * 0.15, 0);
-            pokemon.add(rightHand);
-            
-            // Legs (blue overalls)
-            const legGeo = new THREE.CylinderGeometry(type.size * 0.12, type.size * 0.14, type.size * 0.35, 8);
-            const leftLeg = new THREE.Mesh(legGeo, blueMat);
-            leftLeg.position.set(-type.size * 0.18, -type.size * 0.25, 0);
-            pokemon.add(leftLeg);
-            const rightLeg = new THREE.Mesh(legGeo, blueMat);
-            rightLeg.position.set(type.size * 0.18, -type.size * 0.25, 0);
-            pokemon.add(rightLeg);
-            
-            // Brown shoes
-            const shoeGeo = new THREE.BoxGeometry(type.size * 0.18, type.size * 0.12, type.size * 0.25);
-            const leftShoe = new THREE.Mesh(shoeGeo, brownMat);
-            leftShoe.position.set(-type.size * 0.18, -type.size * 0.45, type.size * 0.05);
-            pokemon.add(leftShoe);
-            const rightShoe = new THREE.Mesh(shoeGeo, brownMat);
-            rightShoe.position.set(type.size * 0.18, -type.size * 0.45, type.size * 0.05);
-            pokemon.add(rightShoe);
-        }
-        
-        pokemon.position.set(x, 5, z);
-        pokemon.userData = {
-            type: type,
-            targetX: x,
-            targetZ: z,
-            moveTimer: Math.random() * 3
-        };
-        
-        scene.add(pokemon);
-        pokemons.push(pokemon);
-        return pokemon;
-    }
-    
-    // Build Mario Tower!
-    function buildMarioTower() {
-        const towerX = 10;
-        const towerZ = 10;
-        // Tower base (red blocks)
-        for (let y = 0; y < 8; y++) {
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dz = -1; dz <= 1; dz++) {
-                    const block = createBlock((towerX + dx) * blockSize, y * blockSize, (towerZ + dz) * blockSize, 0);
-                    block.material.color.setHex(0xE52521); // Mario red
-                    scene.add(block);
-                    blocks.set(getBlockKey((towerX + dx) * blockSize, y * blockSize, (towerZ + dz) * blockSize), block);
+        function addTree(x, baseY) {
+            for (let i = 0; i < 4; i++) {
+                const trunk = document.createElement('div');
+                trunk.className = 'block wood';
+                trunk.style.left = x + 'px';
+                trunk.style.bottom = ((baseY + i) * 50) + 'px';
+                trunk.onclick = () => trunk.remove();
+                world.appendChild(trunk);
+            }
+            for (let lx = -1; lx <= 1; lx++) {
+                for (let ly = 0; ly <= 1; ly++) {
+                    const leaf = document.createElement('div');
+                    leaf.className = 'block leaves';
+                    leaf.style.left = (x + lx * 50) + 'px';
+                    leaf.style.bottom = ((baseY + 4 + ly) * 50) + 'px';
+                    leaf.onclick = () => leaf.remove();
+                    world.appendChild(leaf);
                 }
             }
         }
-        // Blue accent (overalls)
-        for (let y = 8; y < 12; y++) {
-            for (let dx = -1; dx <= 1; dx++) {
-                for (let dz = -1; dz <= 1; dz++) {
-                    const block = createBlock((towerX + dx) * blockSize, y * blockSize, (towerZ + dz) * blockSize, 4);
-                    scene.add(block);
-                    blocks.set(getBlockKey((towerX + dx) * blockSize, y * blockSize, (towerZ + dz) * blockSize), block);
-                }
+        
+        function updatePlayer() {
+            player.style.left = playerX + 'px';
+            player.style.bottom = playerY + 'px';
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft' || e.key === 'a') playerX -= 20;
+            if (e.key === 'ArrowRight' || e.key === 'd') playerX += 20;
+            if (e.key === 'ArrowUp' || e.key === 'w') playerY += 20;
+            if (e.key === 'ArrowDown' || e.key === 's') playerY -= 20;
+            if (e.key >= '1' && e.key <= '4') {
+                document.querySelectorAll('.hotbar-slot').forEach((s, i) => {
+                    s.classList.toggle('selected', i === parseInt(e.key) - 1);
+                    if (i === parseInt(e.key) - 1) selectedBlock = s.dataset.block;
+                });
             }
-        }
-        // Gold top (coin/star)
-        for (let dx = -1; dx <= 1; dx++) {
-            for (let dz = -1; dz <= 1; dz++) {
-                const block = createBlock((towerX + dx) * blockSize, 12 * blockSize, (towerZ + dz) * blockSize, 3);
-                scene.add(block);
-                blocks.set(getBlockKey((towerX + dx) * blockSize, 12 * blockSize, (towerZ + dz) * blockSize), block);
-            }
-        }
-    }
-    buildMarioTower();
-    
-    // MARIO BROS MINI-GAME ZONE!
-    function createMarioGameZone() {
-        const zoneX = -25;
-        const zoneZ = 20;
-        
-        // Question blocks that float and spin!
-        const questionBlocks = [];
-        for (let i = 0; i < 5; i++) {
-            const qBlock = new THREE.Group();
-            const blockGeo = new THREE.BoxGeometry(2.5, 2.5, 2.5);
-            const blockMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-            const block = new THREE.Mesh(blockGeo, blockMat);
-            qBlock.add(block);
-            
-            // Question mark texture
-            const canvas = document.createElement('canvas');
-            canvas.width = 64;
-            canvas.height = 64;
-            const ctx = canvas.getContext('2d');
-            ctx.fillStyle = '#FFD700';
-            ctx.fillRect(0, 0, 64, 64);
-            ctx.fillStyle = '#8B4513';
-            ctx.font = 'bold 48px Arial';
-            ctx.textAlign = 'center';
-            ctx.fillText('?', 32, 50);
-            const texture = new THREE.CanvasTexture(canvas);
-            const faceGeo = new THREE.PlaneGeometry(2.4, 2.4);
-            const faceMat = new THREE.MeshBasicMaterial({ map: texture });
-            const face = new THREE.Mesh(faceGeo, faceMat);
-            face.position.z = 1.26;
-            qBlock.add(face);
-            
-            qBlock.position.set(zoneX + i * 5, 12 + Math.random() * 3, zoneZ);
-            qBlock.userData = { baseY: qBlock.position.y, hit: false };
-            scene.add(qBlock);
-            questionBlocks.push(qBlock);
-        }
-        
-        // Green pipes!
-        for (let i = 0; i < 3; i++) {
-            const pipeGroup = new THREE.Group();
-            const pipeGeo = new THREE.CylinderGeometry(1.5, 1.5, 6, 16);
-            const pipeMat = new THREE.MeshLambertMaterial({ color: 0x228B22 });
-            const pipe = new THREE.Mesh(pipeGeo, pipeMat);
-            pipeGroup.add(pipe);
-            
-            const rimGeo = new THREE.CylinderGeometry(1.8, 1.8, 1, 16);
-            const rim = new THREE.Mesh(rimGeo, pipeMat);
-            rim.position.y = 3;
-            pipeGroup.add(rim);
-            
-            pipeGroup.position.set(zoneX + i * 8 - 3, 3, zoneZ + 10);
-            scene.add(pipeGroup);
-        }
-        
-        // Floating coins!
-        const coins = [];
-        for (let i = 0; i < 15; i++) {
-            const coinGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 16);
-            const coinMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
-            const coin = new THREE.Mesh(coinGeo, coinMat);
-            coin.position.set(
-                zoneX + (Math.random() - 0.5) * 30,
-                8 + Math.random() * 8,
-                zoneZ + (Math.random() - 0.5) * 20
-            );
-            coin.rotation.x = Math.PI / 2;
-            coin.userData = { collected: false };
-            scene.add(coin);
-            coins.push(coin);
-        }
-        
-        return { questionBlocks, coins };
-    }
-    const marioZone = createMarioGameZone();
-    
-    // MEGA COIN SPAWNER - Community requested!
-    function spawnWorldCoins() {
-        for (let i = 0; i < 50; i++) {
-            const coinGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.12, 16);
-            const coinMat = new THREE.MeshBasicMaterial({ color: 0xFFD700, emissive: 0xFFAA00 });
-            const coin = new THREE.Mesh(coinGeo, coinMat);
-            coin.position.set(
-                (Math.random() - 0.5) * 80,
-                4 + Math.random() * 15,
-                (Math.random() - 0.5) * 80
-            );
-            coin.rotation.x = Math.PI / 2;
-            coin.userData = { collected: false, baseY: coin.position.y, sparkle: Math.random() * Math.PI * 2 };
-            
-            // Add golden glow ring
-            const glowGeo = new THREE.TorusGeometry(0.7, 0.08, 8, 16);
-            const glowMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00, transparent: true, opacity: 0.5 });
-            const glow = new THREE.Mesh(glowGeo, glowMat);
-            coin.add(glow);
-            
-            scene.add(coin);
-            worldCoins.push(coin);
-        }
-    }
-    spawnWorldCoins();
-    // BONUS COINS - Community wants more!
-    // MEGA EXTRA COINS - Community keeps asking!
-    for (let mc = 0; mc < 30; mc++) {
-        const megaCoinGeo = new THREE.CylinderGeometry(1.0, 1.0, 0.2, 16);
-        const megaCoinMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
-        const megaCoin = new THREE.Mesh(megaCoinGeo, megaCoinMat);
-        megaCoin.position.set(
-            (Math.random() - 0.5) * 120,
-            6 + Math.random() * 25,
-            (Math.random() - 0.5) * 120
-        );
-        megaCoin.rotation.x = Math.PI / 2;
-        megaCoin.userData = { collected: false, baseY: megaCoin.position.y, sparkle: Math.random() * Math.PI * 2 };
-        scene.add(megaCoin);
-        worldCoins.push(megaCoin);
-    }
-    for (let b = 0; b < 25; b++) {
-        const bonusCoinGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.15, 16);
-        const bonusCoinMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
-        const bonusCoin = new THREE.Mesh(bonusCoinGeo, bonusCoinMat);
-        bonusCoin.position.set(
-            (Math.random() - 0.5) * 100,
-            5 + Math.random() * 20,
-            (Math.random() - 0.5) * 100
-        );
-        bonusCoin.rotation.x = Math.PI / 2;
-        bonusCoin.userData = { collected: false, baseY: bonusCoin.position.y, sparkle: Math.random() * Math.PI * 2 };
-        scene.add(bonusCoin);
-        worldCoins.push(bonusCoin);
-    }
-    
-    // Create Fountain!
-    function createFountain() {
-        const fountainGroup = new THREE.Group();
-        
-        // Base pool
-        const poolGeo = new THREE.CylinderGeometry(6, 7, 1, 24);
-        const poolMat = new THREE.MeshLambertMaterial({ color: 0x4682B4 });
-        const pool = new THREE.Mesh(poolGeo, poolMat);
-        pool.position.y = 0.5;
-        fountainGroup.add(pool);
-        
-        // Water surface
-        const waterGeo = new THREE.CylinderGeometry(5.5, 5.5, 0.2, 24);
-        const waterMat = new THREE.MeshBasicMaterial({ color: 0x00BFFF, transparent: true, opacity: 0.7 });
-        const water = new THREE.Mesh(waterGeo, waterMat);
-        water.position.y = 0.9;
-        water.name = 'fountainWater';
-        fountainGroup.add(water);
-        
-        // Center pillar
-        const pillarGeo = new THREE.CylinderGeometry(0.8, 1.2, 4, 12);
-        const pillarMat = new THREE.MeshLambertMaterial({ color: 0xD3D3D3 });
-        const pillar = new THREE.Mesh(pillarGeo, pillarMat);
-        pillar.position.y = 2.5;
-        fountainGroup.add(pillar);
-        
-        // Top basin
-        const basinGeo = new THREE.CylinderGeometry(2, 1.5, 0.5, 16);
-        const basin = new THREE.Mesh(basinGeo, pillarMat);
-        basin.position.y = 4.5;
-        fountainGroup.add(basin);
-        
-        // Water spout particles
-        for (let i = 0; i < 20; i++) {
-            const dropGeo = new THREE.SphereGeometry(0.15, 8, 8);
-            const dropMat = new THREE.MeshBasicMaterial({ color: 0x87CEEB, transparent: true, opacity: 0.8 });
-            const drop = new THREE.Mesh(dropGeo, dropMat);
-            drop.userData = { angle: (i / 20) * Math.PI * 2, speed: 0.5 + Math.random() * 0.5, height: Math.random() };
-            drop.name = 'waterDrop';
-            fountainGroup.add(drop);
-        }
-        
-        fountainGroup.position.set(0, 1, 0);
-        scene.add(fountainGroup);
-        return fountainGroup;
-    }
-    const fountain = createFountain();
-    
-    // Create Bowser Movie Theater!
-    function createBowserTheater() {
-        const theaterGroup = new THREE.Group();
-        
-        // Screen frame
-        const frameGeo = new THREE.BoxGeometry(16, 10, 0.5);
-        const frameMat = new THREE.MeshLambertMaterial({ color: 0x2F2F2F });
-        const frame = new THREE.Mesh(frameGeo, frameMat);
-        theaterGroup.add(frame);
-        
-        // Movie screen with Bowser
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 320;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#1a0a00';
-        ctx.fillRect(0, 0, 512, 320);
-        ctx.fillStyle = '#FF4500';
-        ctx.font = 'bold 36px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('🎬 BOWSER MOVIE 🎬', 256, 50);
-        ctx.fillStyle = '#228B22';
-        ctx.beginPath();
-        ctx.arc(256, 180, 80, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#FFD700';
-        ctx.beginPath();
-        ctx.arc(230, 160, 15, 0, Math.PI * 2);
-        ctx.arc(282, 160, 15, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.fillStyle = '#FF0000';
-        ctx.font = 'bold 24px Arial';
-        ctx.fillText('KING KOOPA', 256, 290);
-        ctx.fillStyle = '#FFA500';
-        for (let i = 0; i < 5; i++) {
-            ctx.beginPath();
-            ctx.moveTo(200 + i * 28, 100);
-            ctx.lineTo(210 + i * 28, 70);
-            ctx.lineTo(220 + i * 28, 100);
-            ctx.fill();
-        }
-        
-        const texture = new THREE.CanvasTexture(canvas);
-        const screenGeo = new THREE.PlaneGeometry(15, 9);
-        const screenMat = new THREE.MeshBasicMaterial({ map: texture });
-        const screen = new THREE.Mesh(screenGeo, screenMat);
-        screen.position.z = 0.3;
-        theaterGroup.add(screen);
-        
-        // Theater seats
-        for (let row = 0; row < 3; row++) {
-            for (let seat = 0; seat < 5; seat++) {
-                const seatGeo = new THREE.BoxGeometry(1.5, 1.5, 1.5);
-                const seatMat = new THREE.MeshLambertMaterial({ color: 0x8B0000 });
-                const seatMesh = new THREE.Mesh(seatGeo, seatMat);
-                seatMesh.position.set(-6 + seat * 3, -3 - row * 2, 8 + row * 3);
-                theaterGroup.add(seatMesh);
-            }
-        }
-        
-        theaterGroup.position.set(-30, 8, -30);
-        scene.add(theaterGroup);
-        return theaterGroup;
-    }
-    const bowserTheater = createBowserTheater();
-    
-    // Create Japanese Restaurant!
-    function createJapaneseRestaurant() {
-        const restaurantGroup = new THREE.Group();
-        
-        // Main building
-        const buildingGeo = new THREE.BoxGeometry(12, 8, 10);
-        const buildingMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        const building = new THREE.Mesh(buildingGeo, buildingMat);
-        building.position.y = 4;
-        restaurantGroup.add(building);
-        
-        // Traditional roof
-        const roofGeo = new THREE.ConeGeometry(10, 4, 4);
-        const roofMat = new THREE.MeshLambertMaterial({ color: 0x2F4F4F });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.position.y = 10;
-        roof.rotation.y = Math.PI / 4;
-        restaurantGroup.add(roof);
-        
-        // Paper lanterns
-        const lanternColors = [0xFF0000, 0xFFD700, 0xFF69B4];
-        for (let i = 0; i < 3; i++) {
-            const lanternGeo = new THREE.SphereGeometry(0.8, 12, 12);
-            const lanternMat = new THREE.MeshBasicMaterial({ color: lanternColors[i], transparent: true, opacity: 0.9 });
-            const lantern = new THREE.Mesh(lanternGeo, lanternMat);
-            lantern.position.set(-3 + i * 3, 7, 5.5);
-            lantern.name = 'lantern';
-            restaurantGroup.add(lantern);
-        }
-        
-        // Noren (curtain) entrance
-        const norenGeo = new THREE.PlaneGeometry(4, 3);
-        const norenCanvas = document.createElement('canvas');
-        norenCanvas.width = 128;
-        norenCanvas.height = 96;
-        const nctx = norenCanvas.getContext('2d');
-        nctx.fillStyle = '#DC143C';
-        nctx.fillRect(0, 0, 128, 96);
-        nctx.fillStyle = '#FFFFFF';
-        nctx.font = 'bold 32px Arial';
-        nctx.textAlign = 'center';
-        nctx.fillText('寿司', 64, 55);
-        const norenTex = new THREE.CanvasTexture(norenCanvas);
-        const norenMat = new THREE.MeshBasicMaterial({ map: norenTex, side: THREE.DoubleSide });
-        const noren = new THREE.Mesh(norenGeo, norenMat);
-        noren.position.set(0, 3.5, 5.1);
-        restaurantGroup.add(noren);
-        
-        // Sushi display
-        const sushiColors = [0xFF6347, 0xFFA07A, 0xFFD700, 0xFF69B4];
-        for (let i = 0; i < 4; i++) {
-            const sushiGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.5, 8);
-            const sushiMat = new THREE.MeshLambertMaterial({ color: sushiColors[i] });
-            const sushi = new THREE.Mesh(sushiGeo, sushiMat);
-            sushi.position.set(-2 + i * 1.5, 0.5, 6);
-            sushi.rotation.x = Math.PI / 2;
-            restaurantGroup.add(sushi);
-        }
-        
-        restaurantGroup.position.set(35, 0, 25);
-        scene.add(restaurantGroup);
-        return restaurantGroup;
-    }
-    const japaneseRestaurant = createJapaneseRestaurant();
-    // Community voted: Remove restaurant but ADD MORE SUSHI!
-    japaneseRestaurant.visible = false;
-    
-    // FLOATING SUSHI CONVEYOR BELT - Community requested!
-    function createSushiConveyor() {
-        const conveyorGroup = new THREE.Group();
-        
-        // Conveyor belt base
-        const beltGeo = new THREE.TorusGeometry(8, 0.5, 8, 32);
-        const beltMat = new THREE.MeshLambertMaterial({ color: 0x2F2F2F });
-        const belt = new THREE.Mesh(beltGeo, beltMat);
-        belt.rotation.x = Math.PI / 2;
-        belt.position.y = 0.5;
-        conveyorGroup.add(belt);
-        
-        // Sushi pieces on plates!
-        const sushiTypes = [
-            { name: 'Salmon', fishColor: 0xFF6347, riceColor: 0xFFFAF0 },
-            { name: 'Tuna', fishColor: 0xDC143C, riceColor: 0xFFFAF0 },
-            { name: 'Shrimp', fishColor: 0xFFA07A, riceColor: 0xFFFAF0 },
-            { name: 'Tamago', fishColor: 0xFFD700, riceColor: 0xFFFAF0 },
-            { name: 'Unagi', fishColor: 0x8B4513, riceColor: 0xFFFAF0 },
-            { name: 'Ikura', fishColor: 0xFF4500, riceColor: 0xFFFAF0 }
-        ];
-        
-        const sushiPieces = [];
-        for (let i = 0; i < 12; i++) {
-            const sushiGroup = new THREE.Group();
-            const type = sushiTypes[i % sushiTypes.length];
-            
-            // Plate
-            const plateGeo = new THREE.CylinderGeometry(0.6, 0.5, 0.1, 16);
-            const plateMat = new THREE.MeshLambertMaterial({ color: 0xE0E0E0 });
-            const plate = new THREE.Mesh(plateGeo, plateMat);
-            sushiGroup.add(plate);
-            
-            // Rice base
-            const riceGeo = new THREE.BoxGeometry(0.4, 0.25, 0.8);
-            const riceMat = new THREE.MeshLambertMaterial({ color: type.riceColor });
-            const rice = new THREE.Mesh(riceGeo, riceMat);
-            rice.position.y = 0.2;
-            sushiGroup.add(rice);
-            
-            // Fish topping
-            const fishGeo = new THREE.BoxGeometry(0.45, 0.1, 0.85);
-            const fishMat = new THREE.MeshLambertMaterial({ color: type.fishColor });
-            const fish = new THREE.Mesh(fishGeo, fishMat);
-            fish.position.y = 0.38;
-            fish.rotation.x = 0.1;
-            sushiGroup.add(fish);
-            
-            // Nori wrap for some
-            if (i % 3 === 0) {
-                const noriGeo = new THREE.BoxGeometry(0.48, 0.35, 0.15);
-                const noriMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
-                const nori = new THREE.Mesh(noriGeo, noriMat);
-                nori.position.set(0, 0.2, 0);
-                sushiGroup.add(nori);
-            }
-            
-            sushiGroup.userData = { angle: (i / 12) * Math.PI * 2, type: type.name };
-            sushiGroup.name = 'sushiPiece';
-            conveyorGroup.add(sushiGroup);
-            sushiPieces.push(sushiGroup);
-        }
-        
-        // Giant sushi chef statue
-        const chefGroup = new THREE.Group();
-        const chefBodyGeo = new THREE.CylinderGeometry(1, 1.2, 3, 8);
-        const chefBodyMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        const chefBody = new THREE.Mesh(chefBodyGeo, chefBodyMat);
-        chefBody.position.y = 1.5;
-        chefGroup.add(chefBody);
-        
-        const chefHeadGeo = new THREE.SphereGeometry(0.8, 12, 12);
-        const chefHeadMat = new THREE.MeshLambertMaterial({ color: 0xFFDBB4 });
-        const chefHead = new THREE.Mesh(chefHeadGeo, chefHeadMat);
-        chefHead.position.y = 3.5;
-        chefGroup.add(chefHead);
-        
-        const chefHatGeo = new THREE.CylinderGeometry(0.6, 0.8, 1.2, 8);
-        const chefHat = new THREE.Mesh(chefHatGeo, chefBodyMat);
-        chefHat.position.y = 4.5;
-        chefGroup.add(chefHat);
-        
-        chefGroup.position.set(0, 0, 0);
-        conveyorGroup.add(chefGroup);
-        
-        // Sushi sign
-        const signCanvas = document.createElement('canvas');
-        signCanvas.width = 256;
-        signCanvas.height = 128;
-        const sctx = signCanvas.getContext('2d');
-        sctx.fillStyle = '#DC143C';
-        sctx.fillRect(0, 0, 256, 128);
-        sctx.fillStyle = '#FFFFFF';
-        sctx.font = 'bold 32px Arial';
-        sctx.textAlign = 'center';
-        sctx.fillText('🍣 SUSHI 🍣', 128, 50);
-        sctx.font = '20px Arial';
-        sctx.fillText('FRESH & DELICIOUS!', 128, 90);
-        const signTex = new THREE.CanvasTexture(signCanvas);
-        const signGeo = new THREE.PlaneGeometry(4, 2);
-        const signMat = new THREE.MeshBasicMaterial({ map: signTex, side: THREE.DoubleSide });
-        const sushiSign = new THREE.Mesh(signGeo, signMat);
-        sushiSign.position.set(0, 7, 0);
-        sushiSign.name = 'sushiSign';
-        conveyorGroup.add(sushiSign);
-        
-        conveyorGroup.position.set(35, 1, 35);
-        conveyorGroup.userData = { sushiPieces: sushiPieces };
-        scene.add(conveyorGroup);
-        return conveyorGroup;
-    }
-    const sushiConveyor = createSushiConveyor();
-    
-    // Create Rainbow in the sky
-    function createRainbow() {
-        const rainbowGroup = new THREE.Group();
-        const rainbowColors = [0xFF0000, 0xFF7F00, 0xFFFF00, 0x00FF00, 0x0000FF, 0x4B0082, 0x9400D3];
-        
-        for (let i = 0; i < 7; i++) {
-            const curve = new THREE.EllipseCurve(
-                0, 0,
-                50 + i * 3, 35 + i * 2,
-                0, Math.PI,
-                false,
-                0
-            );
-            const points = curve.getPoints(50);
-            const geometry = new THREE.BufferGeometry().setFromPoints(points);
-            const material = new THREE.LineBasicMaterial({ 
-                color: rainbowColors[i],
-                linewidth: 3,
-                transparent: true,
-                opacity: 0.8
-            });
-            const arc = new THREE.Line(geometry, material);
-            arc.rotation.x = -Math.PI / 2;
-            rainbowGroup.add(arc);
-        }
-        
-        // Add glowing tubes for more visible rainbow
-        for (let i = 0; i < 7; i++) {
-            const curve = new THREE.EllipseCurve(
-                0, 0,
-                50 + i * 3, 35 + i * 2,
-                0, Math.PI,
-                false,
-                0
-            );
-            const points = curve.getPoints(50);
-            const path = new THREE.CatmullRomCurve3(
-                points.map(p => new THREE.Vector3(p.x, 0, p.y))
-            );
-            const tubeGeo = new THREE.TubeGeometry(path, 50, 0.8, 8, false);
-            const tubeMat = new THREE.MeshBasicMaterial({
-                color: rainbowColors[i],
-                transparent: true,
-                opacity: 0.5
-            });
-            const tube = new THREE.Mesh(tubeGeo, tubeMat);
-            rainbowGroup.add(tube);
-        }
-        
-        rainbowGroup.position.set(-20, 25, -60);
-        rainbowGroup.rotation.y = Math.PI / 6;
-        scene.add(rainbowGroup);
-        return rainbowGroup;
-    }
-    const rainbow = createRainbow();
-    
-    // Create Thank You Mario panel
-    function createThankYouPanel() {
-        const panelGroup = new THREE.Group();
-        
-        // Panel background
-        const panelGeo = new THREE.BoxGeometry(8, 4, 0.3);
-        const panelMat = new THREE.MeshLambertMaterial({ color: 0xE52521 });
-        const panel = new THREE.Mesh(panelGeo, panelMat);
-        panelGroup.add(panel);
-        
-        // Gold border
-        const borderGeo = new THREE.BoxGeometry(8.5, 4.5, 0.2);
-        const borderMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        const border = new THREE.Mesh(borderGeo, borderMat);
-        border.position.z = -0.1;
-        panelGroup.add(border);
-        
-        // Create text using canvas texture
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 256;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#E52521';
-        ctx.fillRect(0, 0, 512, 256);
-        ctx.fillStyle = '#FFFFFF';
-        ctx.font = 'bold 40px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('THANK YOU MARIO!', 256, 100);
-        ctx.font = '24px Arial';
-        ctx.fillText('For your great work! 🍄⭐', 256, 160);
-        ctx.fillText('- The Community', 256, 200);
-        
-        const texture = new THREE.CanvasTexture(canvas);
-        const textGeo = new THREE.PlaneGeometry(7.5, 3.75);
-        const textMat = new THREE.MeshBasicMaterial({ map: texture });
-        const textMesh = new THREE.Mesh(textGeo, textMat);
-        textMesh.position.z = 0.2;
-        panelGroup.add(textMesh);
-        
-        // Position above Mario tower
-        panelGroup.position.set(10 * blockSize, 35, 10 * blockSize);
-        
-        scene.add(panelGroup);
-        return panelGroup;
-    }
-    const thankYouPanel = createThankYouPanel();
-    
-    // Mario speaks to Todd (Toad) dialogue system!
-    function createDialogueBubble(speaker, text, x, y, z, color) {
-        const bubbleGroup = new THREE.Group();
-        
-        // Speech bubble background
-        const bubbleGeo = new THREE.PlaneGeometry(5, 2.5);
-        const canvas = document.createElement('canvas');
-        canvas.width = 320;
-        canvas.height = 160;
-        const ctx = canvas.getContext('2d');
-        
-        // Bubble shape
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.roundRect(10, 10, 300, 120, 20);
-        ctx.fill();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 4;
-        ctx.stroke();
-        
-        // Speech tail
-        ctx.fillStyle = '#FFFFFF';
-        ctx.beginPath();
-        ctx.moveTo(50, 130);
-        ctx.lineTo(30, 155);
-        ctx.lineTo(80, 130);
-        ctx.fill();
-        ctx.strokeStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(50, 130);
-        ctx.lineTo(30, 155);
-        ctx.lineTo(80, 130);
-        ctx.stroke();
-        
-        // Speaker name
-        ctx.fillStyle = color;
-        ctx.font = 'bold 18px Arial';
-        ctx.fillText(speaker + ':', 25, 45);
-        
-        // Dialogue text
-        ctx.fillStyle = '#333333';
-        ctx.font = '16px Arial';
-        const words = text.split(' ');
-        let line = '';
-        let lineY = 70;
-        words.forEach(word => {
-            if (ctx.measureText(line + word).width > 270) {
-                ctx.fillText(line, 25, lineY);
-                line = word + ' ';
-                lineY += 22;
-            } else {
-                line += word + ' ';
-            }
-        });
-        ctx.fillText(line, 25, lineY);
-        
-        const texture = new THREE.CanvasTexture(canvas);
-        const bubbleMat = new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide });
-        const bubble = new THREE.Mesh(bubbleGeo, bubbleMat);
-        bubbleGroup.add(bubble);
-        
-        bubbleGroup.position.set(x, y, z);
-        scene.add(bubbleGroup);
-        return bubbleGroup;
-    }
-    
-    // Mario and Todd conversation!
-    const marioDialogue = createDialogueBubble('MARIO', 'Hey Todd! Its-a me, Mario! How are you doing today, my mushroom friend?', 8, 12, 8, '#E52521');
-    const toddDialogue = createDialogueBubble('TOAD', 'Mario! The princess needs your help! Also, I found some extra lives in World 1-1!', 3, 10, 10, '#FF69B4');
-    
-    // Community Greeting Panels!
-    function createGreetingPanel(text, x, y, z, color) {
-        const panelGroup = new THREE.Group();
-        
-        const panelGeo = new THREE.BoxGeometry(6, 2.5, 0.2);
-        const panelMat = new THREE.MeshLambertMaterial({ color: color });
-        const panel = new THREE.Mesh(panelGeo, panelMat);
-        panelGroup.add(panel);
-        
-        const canvas = document.createElement('canvas');
-        canvas.width = 384;
-        canvas.height = 160;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, 384, 160);
-        ctx.fillStyle = '#333333';
-        ctx.font = 'bold 28px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText(text, 192, 90);
-        ctx.font = '16px Arial';
-        ctx.fillText('💖 From Twitch Chat 💖', 192, 130);
-        
-        const texture = new THREE.CanvasTexture(canvas);
-        const textGeo = new THREE.PlaneGeometry(5.5, 2.2);
-        const textMat = new THREE.MeshBasicMaterial({ map: texture });
-        const textMesh = new THREE.Mesh(textGeo, textMat);
-        textMesh.position.z = 0.15;
-        panelGroup.add(textMesh);
-        
-        panelGroup.position.set(x, y, z);
-        scene.add(panelGroup);
-        return panelGroup;
-    }
-    
-    const hiMomPanel = createGreetingPanel('👻 MOM WAS HERE 👻', -15, 20, -20, 0x444466);
-    const hiGrandmaPanel = createGreetingPanel('👻 GRANDMA REMEMBERS 👻', 15, 22, -25, 0x444466);
-    const helloMoPanel = createGreetingPanel('HELLO MO! 👋✨', 0, 18, -30, 0xFFD700);
-    
-    // Create floating pizza!
-    function createPizza() {
-        const pizzaGroup = new THREE.Group();
-        
-        // Pizza base (cheese)
-        const baseGeo = new THREE.CylinderGeometry(2.5, 2.5, 0.3, 16);
-        const baseMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        const base = new THREE.Mesh(baseGeo, baseMat);
-        pizzaGroup.add(base);
-        
-        // Crust ring
-        const crustGeo = new THREE.TorusGeometry(2.3, 0.25, 8, 16);
-        const crustMat = new THREE.MeshLambertMaterial({ color: 0xD2691E });
-        const crust = new THREE.Mesh(crustGeo, crustMat);
-        crust.rotation.x = Math.PI / 2;
-        crust.position.y = 0.1;
-        pizzaGroup.add(crust);
-        
-        // Pepperoni!
-        const pepGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 8);
-        const pepMat = new THREE.MeshLambertMaterial({ color: 0xCC0000 });
-        for (let i = 0; i < 8; i++) {
-            const pep = new THREE.Mesh(pepGeo, pepMat);
-            const angle = (i / 8) * Math.PI * 2;
-            pep.position.set(Math.cos(angle) * 1.3, 0.2, Math.sin(angle) * 1.3);
-            pizzaGroup.add(pep);
-        }
-        
-        pizzaGroup.position.set(-20, 15, 5);
-        scene.add(pizzaGroup);
-        return pizzaGroup;
-    }
-    const pizza = createPizza();
-    
-    // Pizzeria Ruins - What remains after the community's request
-    function createPizzeriaRuins() {
-        const ruinsGroup = new THREE.Group();
-        
-        // Scattered rubble blocks
-        const rubbleMat = new THREE.MeshLambertMaterial({ color: 0x8B7355 });
-        for (let i = 0; i < 15; i++) {
-            const rubbleGeo = new THREE.BoxGeometry(
-                0.5 + Math.random() * 1.5,
-                0.3 + Math.random() * 0.8,
-                0.5 + Math.random() * 1.5
-            );
-            const rubble = new THREE.Mesh(rubbleGeo, rubbleMat);
-            rubble.position.set(
-                (Math.random() - 0.5) * 12,
-                Math.random() * 0.5,
-                (Math.random() - 0.5) * 10
-            );
-            rubble.rotation.set(
-                Math.random() * 0.5,
-                Math.random() * Math.PI,
-                Math.random() * 0.5
-            );
-            ruinsGroup.add(rubble);
-        }
-        
-        // Broken oven remains
-        const ovenRuinGeo = new THREE.SphereGeometry(1.5, 8, 8, 0, Math.PI, 0, Math.PI / 2);
-        const ovenRuinMat = new THREE.MeshLambertMaterial({ color: 0x5C4033 });
-        const ovenRuin = new THREE.Mesh(ovenRuinGeo, ovenRuinMat);
-        ovenRuin.position.set(3, 0.3, -2);
-        ovenRuin.rotation.y = Math.random() * Math.PI;
-        ruinsGroup.add(ovenRuin);
-        
-        // Memorial sign
-        const memorialCanvas = document.createElement('canvas');
-        memorialCanvas.width = 256;
-        memorialCanvas.height = 128;
-        const mctx = memorialCanvas.getContext('2d');
-        mctx.fillStyle = '#4A4A4A';
-        mctx.fillRect(0, 0, 256, 128);
-        mctx.fillStyle = '#CCCCCC';
-        mctx.font = 'bold 20px Arial';
-        mctx.textAlign = 'center';
-        mctx.fillText('🏚️ HERE STOOD', 128, 35);
-        mctx.fillText('THE PIZZERIA', 128, 60);
-        mctx.font = '14px Arial';
-        mctx.fillStyle = '#999999';
-        mctx.fillText('Removed by community vote', 128, 90);
-        mctx.fillText('🍕 R.I.P. 🍕', 128, 115);
-        const memorialTex = new THREE.CanvasTexture(memorialCanvas);
-        const memorialGeo = new THREE.PlaneGeometry(4, 2);
-        const memorialMat = new THREE.MeshBasicMaterial({ map: memorialTex });
-        const memorial = new THREE.Mesh(memorialGeo, memorialMat);
-        memorial.position.set(0, 3, 4);
-        ruinsGroup.add(memorial);
-        
-        // Sad broken flag pole
-        const brokenPoleGeo = new THREE.CylinderGeometry(0.08, 0.1, 2, 6);
-        const brokenPoleMat = new THREE.MeshLambertMaterial({ color: 0x666666 });
-        const brokenPole = new THREE.Mesh(brokenPoleGeo, brokenPoleMat);
-        brokenPole.position.set(5, 1, 4);
-        brokenPole.rotation.z = 0.4;
-        ruinsGroup.add(brokenPole);
-        
-        ruinsGroup.position.set(-25, 0, 0);
-        scene.add(ruinsGroup);
-        return ruinsGroup;
-    }
-    const pizzeria = createPizzeriaRuins();
-    
-    // Create Hamburger Restaurant!
-    function createBurgerPlace() {
-        const burgerGroup = new THREE.Group();
-        
-        // Main building - American diner style
-        const buildingGeo = new THREE.BoxGeometry(12, 8, 10);
-        const buildingMat = new THREE.MeshLambertMaterial({ color: 0xB22222 });
-        const building = new THREE.Mesh(buildingGeo, buildingMat);
-        building.position.y = 4;
-        building.castShadow = true;
-        burgerGroup.add(building);
-        
-        // Chrome/silver roof trim (diner style)
-        const roofGeo = new THREE.BoxGeometry(13, 1, 11);
-        const roofMat = new THREE.MeshLambertMaterial({ color: 0xC0C0C0 });
-        const roof = new THREE.Mesh(roofGeo, roofMat);
-        roof.position.y = 8.5;
-        burgerGroup.add(roof);
-        
-        // Neon sign frame
-        const signFrameGeo = new THREE.BoxGeometry(10, 4, 0.5);
-        const signFrameMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        const signFrame = new THREE.Mesh(signFrameGeo, signFrameMat);
-        signFrame.position.set(0, 11, 5);
-        burgerGroup.add(signFrame);
-        
-        // Burger sign with canvas
-        const signCanvas = document.createElement('canvas');
-        signCanvas.width = 320;
-        signCanvas.height = 128;
-        const sctx = signCanvas.getContext('2d');
-        sctx.fillStyle = '#8B0000';
-        sctx.fillRect(0, 0, 320, 128);
-        sctx.fillStyle = '#FFD700';
-        sctx.font = 'bold 36px Arial';
-        sctx.textAlign = 'center';
-        sctx.fillText('🍔 BURGER HUT 🍔', 160, 50);
-        sctx.font = '24px Arial';
-        sctx.fillStyle = '#FFFFFF';
-        sctx.fillText('BEST IN MUSHROOM KINGDOM!', 160, 90);
-        const signTex = new THREE.CanvasTexture(signCanvas);
-        const signGeo = new THREE.PlaneGeometry(9, 3.5);
-        const signMat = new THREE.MeshBasicMaterial({ map: signTex });
-        const sign = new THREE.Mesh(signGeo, signMat);
-        sign.position.set(0, 11, 5.3);
-        burgerGroup.add(sign);
-        
-        // Giant rotating burger on roof!
-        const burgerDisplay = new THREE.Group();
-        // Bottom bun
-        const bunBottomGeo = new THREE.CylinderGeometry(2, 2.2, 0.6, 16);
-        const bunMat = new THREE.MeshLambertMaterial({ color: 0xD2691E });
-        const bunBottom = new THREE.Mesh(bunBottomGeo, bunMat);
-        burgerDisplay.add(bunBottom);
-        // Patty
-        const pattyGeo = new THREE.CylinderGeometry(1.8, 1.8, 0.5, 16);
-        const pattyMat = new THREE.MeshLambertMaterial({ color: 0x4A2C2A });
-        const patty = new THREE.Mesh(pattyGeo, pattyMat);
-        patty.position.y = 0.5;
-        burgerDisplay.add(patty);
-        // Cheese
-        const cheeseGeo = new THREE.BoxGeometry(2.2, 0.15, 2.2);
-        const cheeseMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        const cheese = new THREE.Mesh(cheeseGeo, cheeseMat);
-        cheese.position.y = 0.8;
-        cheese.rotation.y = 0.785;
-        burgerDisplay.add(cheese);
-        // Lettuce
-        const lettuceGeo = new THREE.CylinderGeometry(1.9, 1.9, 0.2, 16);
-        const lettuceMat = new THREE.MeshLambertMaterial({ color: 0x228B22 });
-        const lettuce = new THREE.Mesh(lettuceGeo, lettuceMat);
-        lettuce.position.y = 1.0;
-        burgerDisplay.add(lettuce);
-        // Tomato
-        const tomatoGeo = new THREE.CylinderGeometry(1.6, 1.6, 0.2, 16);
-        const tomatoMat = new THREE.MeshLambertMaterial({ color: 0xFF6347 });
-        const tomato = new THREE.Mesh(tomatoGeo, tomatoMat);
-        tomato.position.y = 1.2;
-        burgerDisplay.add(tomato);
-        // Top bun
-        const bunTopGeo = new THREE.SphereGeometry(2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const bunTop = new THREE.Mesh(bunTopGeo, bunMat);
-        bunTop.position.y = 1.4;
-        burgerDisplay.add(bunTop);
-        // Sesame seeds
-        const seedGeo = new THREE.SphereGeometry(0.1, 8, 8);
-        const seedMat = new THREE.MeshLambertMaterial({ color: 0xFFFACD });
-        for (let i = 0; i < 12; i++) {
-            const seed = new THREE.Mesh(seedGeo, seedMat);
-            const angle = (i / 12) * Math.PI * 2;
-            seed.position.set(Math.cos(angle) * 1.2, 2.2 + Math.random() * 0.3, Math.sin(angle) * 1.2);
-            burgerDisplay.add(seed);
-        }
-        burgerDisplay.position.set(0, 14, 0);
-        burgerDisplay.name = 'giantBurger';
-        burgerGroup.add(burgerDisplay);
-        
-        // Door
-        const doorGeo = new THREE.BoxGeometry(3, 5, 0.3);
-        const doorMat = new THREE.MeshLambertMaterial({ color: 0x2F2F2F });
-        const door = new THREE.Mesh(doorGeo, doorMat);
-        door.position.set(0, 2.5, 5.2);
-        burgerGroup.add(door);
-        
-        // Windows with neon glow effect
-        const windowMat = new THREE.MeshBasicMaterial({ color: 0xFF4500, transparent: true, opacity: 0.8 });
-        for (let i = 0; i < 2; i++) {
-            const windowGeo = new THREE.BoxGeometry(2.5, 3, 0.2);
-            const windowMesh = new THREE.Mesh(windowGeo, windowMat);
-            windowMesh.position.set(-4 + i * 8, 5, 5.2);
-            windowMesh.name = 'neonWindow';
-            burgerGroup.add(windowMesh);
-        }
-        
-        // Outdoor picnic tables
-        for (let t = 0; t < 2; t++) {
-            const tableGeo = new THREE.BoxGeometry(3, 0.2, 1.5);
-            const tableMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-            const table = new THREE.Mesh(tableGeo, tableMat);
-            table.position.set(-3 + t * 6, 1.5, 9);
-            burgerGroup.add(table);
-            // Benches
-            for (let b = 0; b < 2; b++) {
-                const benchGeo = new THREE.BoxGeometry(3, 0.15, 0.5);
-                const bench = new THREE.Mesh(benchGeo, tableMat);
-                bench.position.set(-3 + t * 6, 1, 8 + b * 2);
-                burgerGroup.add(bench);
-            }
-        }
-        
-        // Fries bucket decoration
-        const friesGroup = new THREE.Group();
-        const bucketGeo = new THREE.CylinderGeometry(0.6, 0.4, 1, 8);
-        const bucketMat = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-        const bucket = new THREE.Mesh(bucketGeo, bucketMat);
-        friesGroup.add(bucket);
-        // Fries sticking out
-        const frieMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        for (let f = 0; f < 8; f++) {
-            const frieGeo = new THREE.BoxGeometry(0.1, 0.8, 0.1);
-            const frie = new THREE.Mesh(frieGeo, frieMat);
-            frie.position.set((Math.random() - 0.5) * 0.6, 0.7, (Math.random() - 0.5) * 0.6);
-            frie.rotation.z = (Math.random() - 0.5) * 0.5;
-            friesGroup.add(frie);
-        }
-        friesGroup.position.set(5.5, 1, 5);
-        burgerGroup.add(friesGroup);
-        
-        burgerGroup.position.set(30, 0, -20);
-        scene.add(burgerGroup);
-        return burgerGroup;
-    }
-    const burgerPlace = createBurgerPlace();
-    // Community requested burger removal - converting to ruins!
-    burgerPlace.visible = false;
-    
-    // BURGER RUINS MEMORIAL
-    const burgerRuinsSign = createGreetingPanel('🍔 BURGER HUT RUINS 🍔', 30, 8, -20, 0x8B4513);
-    
-    // EXTRA SUSHI BOATS - Community wants more sushi!
-    function createFloatingSushiBoat(x, y, z) {
-        const boat = new THREE.Group();
-        const boatGeo = new THREE.BoxGeometry(3, 0.5, 1.5);
-        const boatMat = new THREE.MeshLambertMaterial({ color: 0x8B4513 });
-        const boatMesh = new THREE.Mesh(boatGeo, boatMat);
-        boat.add(boatMesh);
-        
-        // Sushi pieces on boat
-        const sushiColors = [0xFF6347, 0xFFA07A, 0xFFD700];
-        for (let s = 0; s < 3; s++) {
-            const sushiGeo = new THREE.CylinderGeometry(0.25, 0.25, 0.4, 8);
-            const sushiMat = new THREE.MeshLambertMaterial({ color: sushiColors[s] });
-            const sushi = new THREE.Mesh(sushiGeo, sushiMat);
-            sushi.position.set(-1 + s, 0.4, 0);
-            sushi.rotation.x = Math.PI / 2;
-            boat.add(sushi);
-        }
-        boat.position.set(x, y, z);
-        boat.name = 'sushiBoat';
-        scene.add(boat);
-        return boat;
-    }
-    const sushiBoat1 = createFloatingSushiBoat(-15, 10, 25);
-    const sushiBoat2 = createFloatingSushiBoat(5, 12, 30);
-    const sushiBoat3 = createFloatingSushiBoat(20, 8, 20);
-    
-    // MEGA SUSHI EXPANSION - Community wants MORE!
-    const sushiBoat4 = createFloatingSushiBoat(-25, 14, -15);
-    const sushiBoat5 = createFloatingSushiBoat(0, 16, -25);
-    const sushiBoat6 = createFloatingSushiBoat(30, 11, 10);
-    const sushiBoat7 = createFloatingSushiBoat(-30, 9, 30);
-    const sushiBoat8 = createFloatingSushiBoat(15, 18, -35);
-    
-    // SUSHI MEMORIAL where restaurant stood
-    const sushiMemorial = createGreetingPanel('🍣 SUSHI PARADISE LIVES ON! 🍣', 35, 12, 25, 0xDC143C);
-    
-    // GIANT FLOATING CHEESE - Community requested!
-    function createGiantCheese() {
-        const cheeseGroup = new THREE.Group();
-        
-        // Cheese wedge shape
-        const cheeseGeo = new THREE.CylinderGeometry(0, 4, 3, 3);
-        const cheeseMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        const cheese = new THREE.Mesh(cheeseGeo, cheeseMat);
-        cheese.rotation.x = Math.PI / 2;
-        cheese.rotation.z = Math.PI / 6;
-        cheeseGroup.add(cheese);
-        
-        // Cheese holes
-        const holeMat = new THREE.MeshLambertMaterial({ color: 0xFFA500 });
-        for (let h = 0; h < 5; h++) {
-            const holeGeo = new THREE.SphereGeometry(0.3 + Math.random() * 0.3, 8, 8);
-            const hole = new THREE.Mesh(holeGeo, holeMat);
-            hole.position.set(
-                (Math.random() - 0.5) * 2,
-                (Math.random() - 0.5) * 2,
-                (Math.random() - 0.5) * 1.5
-            );
-            cheeseGroup.add(hole);
-        }
-        
-        cheeseGroup.position.set(0, 25, 15);
-        cheeseGroup.name = 'giantCheese';
-        scene.add(cheeseGroup);
-        return cheeseGroup;
-    }
-    const giantCheese = createGiantCheese();
-    
-    // SINGING JUKEBOX NPC!
-    function createJukebox() {
-        const jukeboxGroup = new THREE.Group();
-        
-        const bodyGeo = new THREE.BoxGeometry(2, 3, 1.5);
-        const bodyMat = new THREE.MeshLambertMaterial({ color: 0x8B0000 });
-        const body = new THREE.Mesh(bodyGeo, bodyMat);
-        body.position.y = 1.5;
-        jukeboxGroup.add(body);
-        
-        const topGeo = new THREE.BoxGeometry(2.2, 1, 1.7);
-        const topMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
-        const top = new THREE.Mesh(topGeo, topMat);
-        top.position.y = 3.5;
-        jukeboxGroup.add(top);
-        
-        // Music notes floating
-        const noteMat = new THREE.MeshBasicMaterial({ color: 0xFF69B4 });
-        for (let n = 0; n < 4; n++) {
-            const noteGeo = new THREE.SphereGeometry(0.2, 8, 8);
-            const note = new THREE.Mesh(noteGeo, noteMat);
-            note.position.set((Math.random() - 0.5) * 2, 4 + n * 0.5, (Math.random() - 0.5) * 2);
-            note.name = 'musicNote';
-            note.userData = { offset: n, baseY: 4 + n * 0.5 };
-            jukeboxGroup.add(note);
-        }
-        
-        // Song lyrics sign
-        const lyricsCanvas = document.createElement('canvas');
-        lyricsCanvas.width = 256;
-        lyricsCanvas.height = 128;
-        const lctx = lyricsCanvas.getContext('2d');
-        lctx.fillStyle = '#1a1a2e';
-        lctx.fillRect(0, 0, 256, 128);
-        lctx.fillStyle = '#FF69B4';
-        lctx.font = 'bold 20px Arial';
-        lctx.textAlign = 'center';
-        lctx.fillText('🎵 SINGING 🎵', 128, 35);
-        lctx.fillStyle = '#FFFFFF';
-        lctx.font = '16px Arial';
-        lctx.fillText('La la la~', 128, 65);
-        lctx.fillText('YOUPI YOUPI!', 128, 90);
-        lctx.fillText('HI MOM! HELLO ALL!', 128, 115);
-        const lyricsTex = new THREE.CanvasTexture(lyricsCanvas);
-        const lyricsGeo = new THREE.PlaneGeometry(3, 1.5);
-        const lyricsMat = new THREE.MeshBasicMaterial({ map: lyricsTex });
-        const lyrics = new THREE.Mesh(lyricsGeo, lyricsMat);
-        lyrics.position.set(0, 5.5, 0);
-        lyrics.name = 'lyricsSign';
-        jukeboxGroup.add(lyrics);
-        
-        jukeboxGroup.position.set(-10, 1, 20);
-        scene.add(jukeboxGroup);
-        return jukeboxGroup;
-    }
-    const jukebox = createJukebox();
-    
-    // HI CHAT greeting panel!
-    const hiChatPanel = createGreetingPanel('HI CHAT! 👋💖', 20, 15, 10, 0x00FFFF);
-    
-    // YOUPI celebration panel!
-    const youpiPanel = createGreetingPanel('🎉 YOUPI! 🎉', -5, 25, 5, 0x9400D3);
-    
-    // Extra HI MOM panel (community keeps asking!)
-    const hiMomPanel2 = createGreetingPanel('👋 HI MOM! 💖', 25, 20, -5, 0xFF69B4);
-    
-    // HELLO panel
-    const helloPanel = createGreetingPanel('HELLO EVERYONE! 🌟', -25, 18, 15, 0x00FF00);
-    
-    // HEY HO mining sign
-    const heyHoPanel = createGreetingPanel('⛏️ HEY HO HEY HO! ⛏️', -20, 12, -15, 0x8B4513);
-    
-    // Create WoW Portal!
-    function createWoWPortal() {
-        const portalGroup = new THREE.Group();
-        
-        // Portal frame (dark stone)
-        const frameGeo = new THREE.TorusGeometry(4, 0.8, 8, 32);
-        const frameMat = new THREE.MeshLambertMaterial({ color: 0x2F2F4F });
-        const frame = new THREE.Mesh(frameGeo, frameMat);
-        portalGroup.add(frame);
-        
-        // Swirling portal energy
-        const portalGeo = new THREE.CircleGeometry(3.5, 32);
-        const portalMat = new THREE.MeshBasicMaterial({ 
-            color: 0x9400D3, 
-            transparent: true, 
-            opacity: 0.7,
-            side: THREE.DoubleSide
-        });
-        const portal = new THREE.Mesh(portalGeo, portalMat);
-        portal.name = 'portalEnergy';
-        portalGroup.add(portal);
-        
-        // Inner glow rings
-        for (let i = 0; i < 3; i++) {
-            const ringGeo = new THREE.TorusGeometry(2.5 - i * 0.7, 0.15, 8, 32);
-            const ringMat = new THREE.MeshBasicMaterial({ 
-                color: i % 2 === 0 ? 0x00FFFF : 0xFF00FF,
-                transparent: true,
-                opacity: 0.6
-            });
-            const ring = new THREE.Mesh(ringGeo, ringMat);
-            ring.name = 'portalRing' + i;
-            portalGroup.add(ring);
-        }
-        
-        // Runes around frame
-        const runeGeo = new THREE.BoxGeometry(0.5, 0.8, 0.2);
-        const runeMat = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
-        for (let i = 0; i < 8; i++) {
-            const rune = new THREE.Mesh(runeGeo, runeMat);
-            const angle = (i / 8) * Math.PI * 2;
-            rune.position.set(Math.cos(angle) * 4.5, Math.sin(angle) * 4.5, 0.5);
-            rune.rotation.z = angle;
-            portalGroup.add(rune);
-        }
-        
-        portalGroup.position.set(25, 8, -10);
-        portalGroup.rotation.y = -0.5;
-        scene.add(portalGroup);
-        return portalGroup;
-    }
-    const wowPortal = createWoWPortal();
-    
-    // Spawn initial Pokemon
-    // Spawn extra Mario Bros characters!
-    createPokemon(pokemonTypes.find(p => p.name === 'Mario'), 5, 5);
-    createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -5, 5);
-    createPokemon(pokemonTypes.find(p => p.name === 'Toad'), 0, 8);
-    createPokemon(pokemonTypes.find(p => p.name === 'Mario'), 15, -10);
-    createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -15, -10);
-    
-    // SALAMECHE - Community requested fire Pokemon!
-    const salamecheType = pokemonTypes.find(p => p.name === 'Salameche');
-    const salameche = salamecheType ? createPokemon(salamecheType, 12, 15) : null;
-    
-    // Add special fire tail to Salameche!
-    function addFireTail(pokemon) {
-        const fireGroup = new THREE.Group();
-        const flameGeo = new THREE.ConeGeometry(0.3, 1.2, 8);
-        const flameMat = new THREE.MeshBasicMaterial({ color: 0xFF4500 });
-        const flame = new THREE.Mesh(flameGeo, flameMat);
-        flame.rotation.x = Math.PI;
-        fireGroup.add(flame);
-        
-        const innerFlameGeo = new THREE.ConeGeometry(0.15, 0.8, 8);
-        const innerFlameMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
-        const innerFlame = new THREE.Mesh(innerFlameGeo, innerFlameMat);
-        innerFlame.rotation.x = Math.PI;
-        innerFlame.position.y = 0.1;
-        fireGroup.add(innerFlame);
-        
-        fireGroup.position.set(0, 0.2, -0.8);
-        fireGroup.name = 'fireTail';
-        pokemon.add(fireGroup);
-    }
-    if (salameche) addFireTail(salameche);
-    
-    // MEGA POKEMON SPAWN - Community requested!
-    // Extra Pokemon types for Pokedex!
-    pokemonTypes.push(
-        { name: 'Gengar', color: 0x663399, size: 1.7, speed: 4 },
-        { name: 'Snorlax', color: 0x4682B4, size: 2.5, speed: 0.5 },
-        { name: 'Mewtwo', color: 0x9370DB, size: 2.2, speed: 5 }
-    );
-    
-    for (let i = 0; i < 25; i++) {
-        const type = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
-        const x = (Math.random() - 0.5) * 60;
-        const z = (Math.random() - 0.5) * 60;
-        createPokemon(type, x, z);
-    }
-    
-    // Player controls
-    const velocity = new THREE.Vector3();
-    const direction = new THREE.Vector3();
-    let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-    let canJump = true;
-    let isLocked = false;
-    
-    // Euler for camera rotation
-    const euler = new THREE.Euler(0, 0, 0, 'YXZ');
-    
-    // Pointer lock
-    renderer.domElement.addEventListener('click', () => {
-        if (!isLocked) {
-            renderer.domElement.requestPointerLock();
-        }
-    });
-    
-    document.addEventListener('pointerlockchange', () => {
-        isLocked = document.pointerLockElement === renderer.domElement;
-    });
-    
-    // Mouse movement
-    document.addEventListener('mousemove', (e) => {
-        if (!isLocked) return;
-        
-        euler.setFromQuaternion(camera.quaternion);
-        euler.y -= e.movementX * 0.002;
-        euler.x -= e.movementY * 0.002;
-        euler.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, euler.x));
-        camera.quaternion.setFromEuler(euler);
-    });
-    
-    // Keyboard controls
-    document.addEventListener('keydown', (e) => {
-        switch(e.code) {
-            case 'ArrowUp': case 'KeyW': moveForward = true; break;
-            case 'ArrowDown': case 'KeyS': moveBackward = true; break;
-            case 'ArrowLeft': case 'KeyA': moveLeft = true; break;
-            case 'ArrowRight': case 'KeyD': moveRight = true; break;
-            case 'Space':
-                if (canJump) {
-                    velocity.y = 15;
-                    canJump = false;
-                }
-                break;
-            case 'KeyM': placeBlock(); break;
-            case 'Digit1': selectBlock(0); break;
-            case 'Digit2': selectBlock(1); break;
-            case 'Digit3': selectBlock(2); break;
-            case 'Digit4': selectBlock(3); break;
-            case 'Digit5': selectBlock(4); break;
-            case 'KeyE': throwPokeball(); break;
-            case 'KeyF': interactWithTheater(); break;
-        }
-    });
-    
-    document.addEventListener('keyup', (e) => {
-        switch(e.code) {
-            case 'ArrowUp': case 'KeyW': moveForward = false; break;
-            case 'ArrowDown': case 'KeyS': moveBackward = false; break;
-            case 'ArrowLeft': case 'KeyA': moveLeft = false; break;
-            case 'ArrowRight': case 'KeyD': moveRight = false; break;
-        }
-    });
-    
-    // Block selection UI
-    document.querySelectorAll('.block-option').forEach(el => {
-        el.addEventListener('click', () => {
-            selectBlock(parseInt(el.dataset.block));
-        });
-    });
-    
-    function selectBlock(index) {
-        selectedBlock = index;
-        document.querySelectorAll('.block-option').forEach((el, i) => {
-            el.classList.toggle('selected', i === index);
-        });
-    }
-    
-    // Raycaster for block interaction
-    const raycaster = new THREE.Raycaster();
-    raycaster.far = 20;
-    
-    function placeBlock() {
-        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-        const intersects = raycaster.intersectObjects(scene.children);
-        
-        if (intersects.length > 0) {
-            const hit = intersects[0];
-            const normal = hit.face.normal;
-            const pos = hit.point.clone().add(normal.multiplyScalar(blockSize/2));
-            
-            const key = getBlockKey(pos.x, pos.y, pos.z);
-            if (!blocks.has(key)) {
-                const block = createBlock(pos.x, pos.y, pos.z, selectedBlock);
-                scene.add(block);
-                blocks.set(key, block);
-                blocksPlaced++;
-                clicksEl.textContent = blocksPlaced;
-            }
-        }
-    }
-    
-    // Left click to break
-    document.addEventListener('mousedown', (e) => {
-        if (!isLocked || e.button !== 0) return;
-        
-        raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-        const intersects = raycaster.intersectObjects(scene.children);
-        
-        if (intersects.length > 0) {
-            const block = intersects[0].object;
-            const key = getBlockKey(block.position.x, block.position.y, block.position.z);
-            if (blocks.has(key)) {
-                scene.remove(block);
-                blocks.delete(key);
-                blocksBroken++;
-                shapesEl.textContent = blocksBroken;
-            }
-        }
-    });
-    
-    // Pokeball throwing function
-    function throwPokeball() {
-        const pokeballGroup = new THREE.Group();
-        
-        // Red top half
-        const topGeo = new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-        const topMat = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-        const top = new THREE.Mesh(topGeo, topMat);
-        pokeballGroup.add(top);
-        
-        // White bottom half
-        const bottomGeo = new THREE.SphereGeometry(0.4, 16, 16, 0, Math.PI * 2, Math.PI / 2, Math.PI / 2);
-        const bottomMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        const bottom = new THREE.Mesh(bottomGeo, bottomMat);
-        pokeballGroup.add(bottom);
-        
-        // Black band
-        const bandGeo = new THREE.TorusGeometry(0.38, 0.05, 8, 32);
-        const bandMat = new THREE.MeshLambertMaterial({ color: 0x000000 });
-        const band = new THREE.Mesh(bandGeo, bandMat);
-        band.rotation.x = Math.PI / 2;
-        pokeballGroup.add(band);
-        
-        // Center button
-        const buttonGeo = new THREE.SphereGeometry(0.12, 16, 16);
-        const buttonMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
-        const button = new THREE.Mesh(buttonGeo, buttonMat);
-        button.position.z = 0.35;
-        pokeballGroup.add(button);
-        
-        // Position at camera
-        pokeballGroup.position.copy(camera.position);
-        
-        // Get throw direction
-        const throwDir = new THREE.Vector3();
-        camera.getWorldDirection(throwDir);
-        
-        pokeballGroup.userData = {
-            velocity: throwDir.multiplyScalar(40),
-            life: 3,
-            active: true
-        };
-        
-        scene.add(pokeballGroup);
-        pokeballs.push(pokeballGroup);
-    }
-    
-    // Theater interaction
-    let moviePlaying = false;
-    let movieFrame = 0;
-    
-    function interactWithTheater() {
-        const distToTheater = camera.position.distanceTo(new THREE.Vector3(-30, 8, -30));
-        if (distToTheater < 25 && !moviePlaying) {
-            startBowserMovie();
-        }
-    }
-    
-    function startBowserMovie() {
-        moviePlaying = true;
-        movieFrame = 0;
-        
-        // Create movie overlay
-        const overlay = document.createElement('div');
-        overlay.id = 'movieOverlay';
-        overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;height:60%;background:#000;border:4px solid #FFD700;border-radius:10px;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
-        
-        const screen = document.createElement('div');
-        screen.id = 'movieScreen';
-        screen.style.cssText = 'width:90%;height:80%;background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#FF4500;font-size:24px;font-family:Arial;';
-        screen.innerHTML = '<div style="font-size:32px;">🎬 BOWSER MOVIE 🎬</div><div style="margin-top:20px;">Loading...</div>';
-        
-        const closeBtn = document.createElement('button');
-        closeBtn.textContent = '✕ CLOSE';
-        closeBtn.style.cssText = 'margin-top:10px;padding:10px 20px;background:#E52521;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px;';
-        closeBtn.onclick = () => { document.body.removeChild(overlay); moviePlaying = false; };
-        
-        overlay.appendChild(screen);
-        overlay.appendChild(closeBtn);
-        document.body.appendChild(overlay);
-        
-        // Movie scenes
-        const scenes = [
-            { text: '🏰 In the Mushroom Kingdom...', bg: '#1a1a4a' },
-            { text: '👸 Princess Peach was captured!', bg: '#FFB6C1' },
-            { text: '🐢 BOWSER: "BWAHAHA!"', bg: '#228B22' },
-            { text: '🔥 "The princess is MINE!"', bg: '#FF4500' },
-            { text: '🍄 But Mario heard the news...', bg: '#E52521' },
-            { text: '🏃 "Here we go!"', bg: '#4169E1' },
-            { text: '⭐ Mario collected power stars!', bg: '#FFD700' },
-            { text: '🐢 BOWSER: "You\'ll never win!"', bg: '#228B22' },
-            { text: '💥 EPIC BATTLE BEGINS!', bg: '#FF0000' },
-            { text: '🎉 Mario saves the day!', bg: '#00FF00' },
-            { text: '👸❤️🍄 THE END', bg: '#FF69B4' }
-        ];
-        
-        let sceneIndex = 0;
-        const playScene = () => {
-            if (sceneIndex < scenes.length && moviePlaying) {
-                const scene = scenes[sceneIndex];
-                screen.style.background = scene.bg;
-                screen.innerHTML = `<div style="font-size:28px;text-align:center;padding:20px;text-shadow:2px 2px 4px black;">${scene.text}</div><div style="font-size:14px;margin-top:20px;">Scene ${sceneIndex + 1}/${scenes.length}</div>`;
-                sceneIndex++;
-                setTimeout(playScene, 2500);
-            } else if (moviePlaying) {
-                screen.innerHTML = '<div style="font-size:32px;">🎬 THE END 🎬</div><div style="margin-top:20px;font-size:18px;">Thanks for watching!</div><div style="margin-top:10px;">⭐⭐⭐⭐⭐</div>';
-            }
-        };
-        
-        setTimeout(playScene, 1000);
-    }
-    
-    // Check pokeball collisions
-    function checkPokeballCollisions(pokeball, delta) {
-        if (!pokeball.userData.active) return;
-        
-        pokemons.forEach((pokemon, index) => {
-            if (caughtPokemon.includes(pokemon)) return;
-            
-            const dist = pokeball.position.distanceTo(pokemon.position);
-            if (dist < 3) {
-                // Caught!
-                pokeball.userData.active = false;
-                caughtPokemon.push(pokemon);
-                pokemonCaught++;
-                caughtEl.textContent = pokemonCaught;
-                
-                // Celebration effect
-                pokemon.scale.set(0.1, 0.1, 0.1);
-                
-                // Create catch particles
-                for (let i = 0; i < 10; i++) {
-                    const sparkGeo = new THREE.SphereGeometry(0.2, 8, 8);
-                    const sparkMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
-                    const spark = new THREE.Mesh(sparkGeo, sparkMat);
-                    spark.position.copy(pokemon.position);
-                    spark.userData = {
-                        velocity: new THREE.Vector3(
-                            (Math.random() - 0.5) * 10,
-                            Math.random() * 10,
-                            (Math.random() - 0.5) * 10
-                        ),
-                        life: 1
-                    };
-                    scene.add(spark);
-                    pokeballs.push(spark);
-                }
-                
-                // Remove pokemon after delay
-                setTimeout(() => {
-                    scene.remove(pokemon);
-                    const idx = pokemons.indexOf(pokemon);
-                    if (idx > -1) pokemons.splice(idx, 1);
-                    
-                    // Spawn new pokemon
-                    const type = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
-                    createPokemon(type, (Math.random() - 0.5) * 60, (Math.random() - 0.5) * 60);
-                }, 500);
-            }
-        });
-    }
-
-    // Animation loop
-    const clock = new THREE.Clock();
-    
-    function animate() {
-        requestAnimationFrame(animate);
-        
-        const delta = clock.getDelta();
-        
-        // Movement
-        velocity.x *= 0.9;
-        velocity.z *= 0.9;
-        velocity.y -= 30 * delta; // Gravity
-        
-        direction.z = Number(moveForward) - Number(moveBackward);
-        direction.x = Number(moveRight) - Number(moveLeft);
-        direction.normalize();
-        
-        if (moveForward || moveBackward) velocity.z -= direction.z * 50 * delta;
-        if (moveLeft || moveRight) velocity.x -= direction.x * 50 * delta;
-        
-        // Apply movement in camera direction
-        const forward = new THREE.Vector3();
-        camera.getWorldDirection(forward);
-        forward.y = 0;
-        forward.normalize();
-        
-        const right = new THREE.Vector3();
-        right.crossVectors(forward, new THREE.Vector3(0, 1, 0));
-        
-        camera.position.addScaledVector(forward, -velocity.z * delta);
-        camera.position.addScaledVector(right, -velocity.x * delta);
-        camera.position.y += velocity.y * delta;
-        
-        // Ground collision
-        if (camera.position.y < 5) {
-            camera.position.y = 5;
-            velocity.y = 0;
-            canJump = true;
-        }
-        
-        // Update Pokemon
-        pokemons.forEach(pokemon => {
-            const data = pokemon.userData;
-            data.moveTimer -= delta;
-            
-            if (data.moveTimer <= 0) {
-                data.targetX = pokemon.position.x + (Math.random() - 0.5) * 20;
-                data.targetZ = pokemon.position.z + (Math.random() - 0.5) * 20;
-                data.targetX = Math.max(-35, Math.min(35, data.targetX));
-                data.targetZ = Math.max(-35, Math.min(35, data.targetZ));
-                data.moveTimer = 2 + Math.random() * 3;
-            }
-            
-            const dx = data.targetX - pokemon.position.x;
-            const dz = data.targetZ - pokemon.position.z;
-            const dist = Math.sqrt(dx * dx + dz * dz);
-            
-            if (dist > 0.5) {
-                pokemon.position.x += (dx / dist) * data.type.speed * delta;
-                pokemon.position.z += (dz / dist) * data.type.speed * delta;
-                pokemon.rotation.y = Math.atan2(dx, dz);
-            }
-            
-            // SAFE MODE - Pokemon are peaceful and stable
-            pokemon.position.y = 5 + Math.sin(Date.now() * 0.002 + pokemon.id) * 0.3;
-            pokemon.scale.x = 1;
-            pokemon.visible = true; // Stable existence
-            
-            // Slight rotation animation
-            pokemon.children[0].rotation.z = Math.sin(Date.now() * 0.003) * 0.1;
-            
-            // Animate fire tail for Salameche!
-            pokemon.children.forEach(child => {
-                if (child.name === 'fireTail') {
-                    child.rotation.z = Math.sin(Date.now() * 0.01) * 0.3;
-                    child.scale.y = 0.8 + Math.sin(Date.now() * 0.015) * 0.3;
-                    child.children.forEach(flame => {
-                        flame.material.opacity = 0.7 + Math.sin(Date.now() * 0.02) * 0.3;
-                        flame.material.transparent = true;
-                    });
-                }
-            });
+            playerX = Math.max(0, Math.min(playerX, window.innerWidth - 40));
+            playerY = Math.max(0, Math.min(playerY, 500));
+            updatePlayer();
         });
         
-        // Animate thank you panel
-        if (thankYouPanel) {
-            thankYouPanel.position.y = 35 + Math.sin(Date.now() * 0.002) * 0.5;
-            thankYouPanel.rotation.y = Math.sin(Date.now() * 0.001) * 0.2;
-        }
+        document.querySelectorAll('.hotbar-slot').forEach(slot => {
+            slot.onclick = () => {
+                document.querySelectorAll('.hotbar-slot').forEach(s => s.classList.remove('selected'));
+                slot.classList.add('selected');
+                selectedBlock = slot.dataset.block;
+            };
+        });
         
-        // Animate greeting panels
-        if (hiMomPanel) {
-            hiMomPanel.position.y = 20 + Math.sin(Date.now() * 0.0015) * 0.8;
-            hiMomPanel.rotation.y = Math.sin(Date.now() * 0.0008) * 0.3;
-            hiMomPanel.children.forEach(c => { if(c.material) c.material.opacity = 0.3 + Math.sin(Date.now() * 0.002) * 0.2; c.material && (c.material.transparent = true); });
-        }
-        if (hiGrandmaPanel) {
-            hiGrandmaPanel.position.y = 22 + Math.sin(Date.now() * 0.0018 + 1) * 0.6;
-            hiGrandmaPanel.rotation.y = Math.sin(Date.now() * 0.001 + 2) * 0.25;
-            hiGrandmaPanel.children.forEach(c => { if(c.material) c.material.opacity = 0.3 + Math.sin(Date.now() * 0.0025 + 1) * 0.2; c.material && (c.material.transparent = true); });
-        }
-        
-        // Animate Mario-Todd dialogue bubbles!
-        if (marioDialogue) {
-            marioDialogue.position.y = 12 + Math.sin(Date.now() * 0.002) * 0.3;
-            marioDialogue.lookAt(camera.position);
-        }
-        if (toddDialogue) {
-            toddDialogue.position.y = 10 + Math.sin(Date.now() * 0.0025 + 1) * 0.3;
-            toddDialogue.lookAt(camera.position);
-        }
-        
-        // Animate Hello Mo panel
-        if (helloMoPanel) {
-            helloMoPanel.position.y = 18 + Math.sin(Date.now() * 0.002 + 3) * 0.5;
-            helloMoPanel.rotation.y = Math.sin(Date.now() * 0.0012) * 0.2;
-        }
-        
-        // Animate floating pizza - spinning deliciously!
-        if (pizza) {
-            pizza.rotation.y += delta * 0.8;
-            pizza.position.y = 15 + Math.sin(Date.now() * 0.003) * 2;
-        }
-        
-        // Pizzeria ruins - gentle dust settling animation
-        if (pizzeria) {
-            pizzeria.children.forEach((child, i) => {
-                if (child.geometry && child.geometry.type === 'BoxGeometry') {
-                    child.position.y += Math.sin(Date.now() * 0.001 + i) * 0.001;
-                }
-            });
-        }
-        
-        // Animate WoW portal - swirling energy!
-        if (wowPortal) {
-            wowPortal.children.forEach((child, i) => {
-                if (child.name && child.name.includes('portalRing')) {
-                    child.rotation.z += delta * (2 + i);
-                }
-                if (child.name === 'portalEnergy') {
-                    child.rotation.z -= delta * 0.5;
-                    child.material.opacity = 0.5 + Math.sin(Date.now() * 0.004) * 0.3;
-                }
-            });
-        }
-        
-        // Animate fountain water!
-        if (fountain) {
-            fountain.children.forEach(child => {
-                if (child.name === 'fountainWater') {
-                    child.material.opacity = 0.5 + Math.sin(Date.now() * 0.005) * 0.2;
-                }
-                if (child.name === 'waterDrop') {
-                    const d = child.userData;
-                    const t = Date.now() * 0.003;
-                    child.position.x = Math.cos(d.angle + t * d.speed) * 1.5;
-                    child.position.z = Math.sin(d.angle + t * d.speed) * 1.5;
-                    child.position.y = 4.5 + Math.sin(t * 2 + d.height * 5) * 2;
-                }
-            });
-        }
-        
-        // Animate Burger Place giant burger spinning!
-        if (burgerPlace) {
-            burgerPlace.children.forEach(child => {
-                if (child.name === 'giantBurger') {
-                    child.rotation.y += delta * 0.5;
-                    child.position.y = 14 + Math.sin(Date.now() * 0.002) * 0.3;
-                }
-                if (child.name === 'neonWindow') {
-                    child.material.opacity = 0.5 + Math.sin(Date.now() * 0.006) * 0.4;
-                }
-            });
-        }
-        
-        // Animate Sushi Conveyor Belt!
-        if (sushiConveyor && sushiConveyor.userData.sushiPieces) {
-            sushiConveyor.userData.sushiPieces.forEach((sushi, i) => {
-                sushi.userData.angle += delta * 0.5;
-                sushi.position.x = Math.cos(sushi.userData.angle) * 8;
-                sushi.position.z = Math.sin(sushi.userData.angle) * 8;
-                sushi.position.y = 1 + Math.sin(Date.now() * 0.003 + i) * 0.1;
-                sushi.rotation.y = -sushi.userData.angle + Math.PI / 2;
-            });
-            // Animate sushi sign
-            sushiConveyor.children.forEach(child => {
-                if (child.name === 'sushiSign') {
-                    child.lookAt(camera.position);
-                    child.position.y = 7 + Math.sin(Date.now() * 0.002) * 0.3;
-                }
-            });
-        }
-        
-        // Animate Japanese restaurant lanterns
-        if (japaneseRestaurant) {
-            japaneseRestaurant.children.forEach((child, i) => {
-                if (child.name === 'lantern') {
-                    child.position.y = 7 + Math.sin(Date.now() * 0.003 + i) * 0.3;
-                    child.material.opacity = 0.7 + Math.sin(Date.now() * 0.005 + i) * 0.3;
-                }
-            });
-        }
-        
-        // Animate giant cheese spinning!
-        if (giantCheese) {
-            giantCheese.rotation.y += delta * 0.3;
-            giantCheese.rotation.z = Math.sin(Date.now() * 0.001) * 0.2;
-            giantCheese.position.y = 25 + Math.sin(Date.now() * 0.002) * 2;
-        }
-        
-        // Animate jukebox music notes!
-        if (jukebox) {
-            jukebox.children.forEach(child => {
-                if (child.name === 'musicNote') {
-                    child.position.y = child.userData.baseY + Math.sin(Date.now() * 0.005 + child.userData.offset) * 1;
-                    child.position.x = Math.sin(Date.now() * 0.003 + child.userData.offset * 2) * 1.5;
-                }
-                if (child.name === 'lyricsSign') {
-                    child.lookAt(camera.position);
-                }
-            });
-        }
-        
-        // Animate HI CHAT panel
-        if (hiChatPanel) {
-            hiChatPanel.position.y = 15 + Math.sin(Date.now() * 0.003) * 0.5;
-            hiChatPanel.rotation.y = Math.sin(Date.now() * 0.001) * 0.3;
-        }
-        
-        // Animate YOUPI panel
-        if (youpiPanel) {
-            youpiPanel.position.y = 25 + Math.sin(Date.now() * 0.005) * 1.5;
-            youpiPanel.rotation.y += delta * 0.5;
-        }
-        
-        // Animate sushi boats floating
-        if (typeof sushiBoat1 !== 'undefined' && sushiBoat1) {
-            sushiBoat1.position.y = 10 + Math.sin(Date.now() * 0.002) * 1;
-            sushiBoat1.rotation.y += delta * 0.3;
-        }
-        if (typeof sushiBoat2 !== 'undefined' && sushiBoat2) {
-            sushiBoat2.position.y = 12 + Math.sin(Date.now() * 0.0025 + 1) * 1;
-            sushiBoat2.rotation.y += delta * 0.25;
-        }
-        if (typeof sushiBoat3 !== 'undefined' && sushiBoat3) {
-            sushiBoat3.position.y = 8 + Math.sin(Date.now() * 0.003 + 2) * 1;
-            sushiBoat3.rotation.y += delta * 0.35;
-        }
-        // MEGA SUSHI FLEET ANIMATION!
-        if (typeof sushiBoat4 !== 'undefined' && sushiBoat4) {
-            sushiBoat4.position.y = 14 + Math.sin(Date.now() * 0.0028 + 3) * 1.2;
-            sushiBoat4.rotation.y += delta * 0.4;
-        }
-        if (typeof sushiBoat5 !== 'undefined' && sushiBoat5) {
-            sushiBoat5.position.y = 16 + Math.sin(Date.now() * 0.0032 + 4) * 1.5;
-            sushiBoat5.rotation.y += delta * 0.28;
-        }
-        if (typeof sushiBoat6 !== 'undefined' && sushiBoat6) {
-            sushiBoat6.position.y = 11 + Math.sin(Date.now() * 0.0024 + 5) * 0.9;
-            sushiBoat6.rotation.y += delta * 0.45;
-        }
-        if (typeof sushiBoat7 !== 'undefined' && sushiBoat7) {
-            sushiBoat7.position.y = 9 + Math.sin(Date.now() * 0.0035 + 6) * 1.1;
-            sushiBoat7.rotation.y += delta * 0.32;
-        }
-        if (typeof sushiBoat8 !== 'undefined' && sushiBoat8) {
-            sushiBoat8.position.y = 18 + Math.sin(Date.now() * 0.0022 + 7) * 1.8;
-            sushiBoat8.rotation.y += delta * 0.38;
-        }
-        
-        // Animate HEY HO panel
-        if (heyHoPanel) {
-            heyHoPanel.position.y = 12 + Math.sin(Date.now() * 0.004 + 2) * 0.4;
-            heyHoPanel.rotation.y = Math.sin(Date.now() * 0.0015) * 0.25;
-        }
-        
-        // Rainbow with gentle shimmer
-        if (rainbow) {
-            rainbow.children.forEach((child, i) => {
-                if (child.material) {
-                    child.material.opacity = 0.4 + Math.sin(Date.now() * 0.001 + i * 0.5) * 0.2;
-                }
-            });
-        }
-        
-        // Animate Mario Game Zone!
-        if (marioZone) {
-            marioZone.questionBlocks.forEach((qBlock, i) => {
-                if (!qBlock.userData.hit) {
-                    qBlock.position.y = qBlock.userData.baseY + Math.sin(Date.now() * 0.003 + i) * 0.5;
-                    qBlock.rotation.y += delta * 0.5;
-                }
-            });
-            marioZone.coins.forEach((coin, i) => {
-                if (!coin.userData.collected) {
-                    coin.rotation.z += delta * 3;
-                    coin.position.y += Math.sin(Date.now() * 0.005 + i) * 0.01;
-                }
-            });
-        }
-        
-        // COIN COLLECTION SYSTEM!
-        worldCoins.forEach((coin, index) => {
-            if (coin.userData.collected) return;
-            
-            // Spinning animation
-            coin.rotation.z += delta * 3;
-            coin.position.y = coin.userData.baseY + Math.sin(Date.now() * 0.003 + coin.userData.sparkle) * 0.8;
-            
-            // Glow pulse
-            if (coin.children[0]) {
-                coin.children[0].material.opacity = 0.3 + Math.sin(Date.now() * 0.005 + index) * 0.3;
-                coin.children[0].rotation.z -= delta * 2;
-            }
-            
-            // Check if player is close enough to collect
-            const distToCoin = camera.position.distanceTo(coin.position);
-            if (distToCoin < 3) {
-                // COLLECTED!
-                coin.userData.collected = true;
-                totalCoinsCollected++;
-                coinCountEl.textContent = totalCoinsCollected;
-                
-                // Celebration particles!
-                for (let p = 0; p < 8; p++) {
-                    const sparkGeo = new THREE.SphereGeometry(0.15, 8, 8);
-                    const sparkMat = new THREE.MeshBasicMaterial({ color: Math.random() > 0.5 ? 0xFFD700 : 0xFFFF00 });
-                    const spark = new THREE.Mesh(sparkGeo, sparkMat);
-                    spark.position.copy(coin.position);
-                    spark.userData = {
-                        velocity: new THREE.Vector3(
-                            (Math.random() - 0.5) * 8,
-                            Math.random() * 8 + 2,
-                            (Math.random() - 0.5) * 8
-                        ),
-                        life: 0.8
-                    };
-                    scene.add(spark);
-                    pokeballs.push(spark);
-                }
-                
-                // Remove coin and respawn after delay
-                scene.remove(coin);
-                setTimeout(() => {
-                    coin.position.set(
-                        (Math.random() - 0.5) * 80,
-                        4 + Math.random() * 15,
-                        (Math.random() - 0.5) * 80
-                    );
-                    coin.userData.collected = false;
-                    coin.userData.baseY = coin.position.y;
-                    scene.add(coin);
-                }, 5000);
+        world.addEventListener('click', (e) => {
+            if (e.target === world) {
+                const rect = world.getBoundingClientRect();
+                const x = Math.floor((e.clientX - rect.left) / 50) * 50;
+                const y = Math.floor((rect.bottom - e.clientY) / 50) * 50;
+                const block = document.createElement('div');
+                block.className = 'block ' + selectedBlock;
+                block.style.left = x + 'px';
+                block.style.bottom = y + 'px';
+                block.onclick = () => block.remove();
+                world.appendChild(block);
             }
         });
         
-        // Update pokeballs
-        for (let i = pokeballs.length - 1; i >= 0; i--) {
-            const ball = pokeballs[i];
-            if (ball.userData.velocity) {
-                ball.position.add(ball.userData.velocity.clone().multiplyScalar(delta));
-                ball.userData.velocity.y -= 20 * delta; // Gravity
-                ball.rotation.x += delta * 10;
-                ball.rotation.z += delta * 8;
-                
-                checkPokeballCollisions(ball, delta);
-                
-                ball.userData.life -= delta;
-                if (ball.userData.life <= 0 || ball.position.y < -10) {
-                    scene.remove(ball);
-                    pokeballs.splice(i, 1);
-                }
-            }
-        }
-        
-        renderer.render(scene, camera);
-    }
-    
-    // Handle resize
-    window.addEventListener('resize', () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-    });
-    
-    animate();
-</script>
+        generateWorld();
+        updatePlayer();
+    </script>
 </body>
 </html>
