@@ -91,7 +91,8 @@
 <body>
 <h1 style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:150;background:transparent;padding:20px 40px;font-size:3rem;margin:0;color:#fff;text-shadow:0 0 30px #fff,0 0 60px #888;animation:fadeIn 3s ease-out;">✨ A New Beginning ✨</h1>
 <style>@keyframes fadeIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 100% { opacity:1; transform:translate(-50%,-50%) scale(1); } }</style>
-<p style="position:fixed;bottom:20%;left:50%;transform:translateX(-50%);color:#666;font-size:1.2rem;text-align:center;z-index:100;">Use WASD or Arrow Keys to explore the void...</p>
+<p style="position:fixed;bottom:20%;left:50%;transform:translateX(-50%);color:#666;font-size:1.2rem;text-align:center;z-index:100;">Use WASD or Arrow Keys to explore • Click cosmic objects for battles!</p>
+<div id="captured-display" style="position:fixed;top:70px;left:20px;color:#f0f;font-family:monospace;font-size:12px;z-index:100;background:rgba(0,0,0,0.5);padding:8px;border-radius:5px;border:1px solid #f0f;">🔮 Captured: <span id="capture-count">0</span></div>
 <div id="spaceship" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:48px;z-index:50;transition:transform 0.1s;filter:drop-shadow(0 0 20px #0ff);cursor:pointer;">🚀</div>
 <div id="coordinates" style="position:fixed;top:20px;left:20px;color:#0ff;font-family:monospace;font-size:14px;z-index:100;background:rgba(0,0,0,0.5);padding:10px;border-radius:5px;border:1px solid #0ff;">X: 0 | Y: 0 | SECTOR: ALPHA</div>
 <div id="space-objects"></div>
@@ -102,6 +103,19 @@
 </div>
 <div id="shooting-star-container" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:15;overflow:hidden;"></div>
 <button id="bigbang-btn" style="position:fixed;bottom:20px;right:20px;z-index:200;padding:15px 25px;background:radial-gradient(circle,#ff6600,#ff0000);border:2px solid #ffd700;color:#fff;font-weight:bold;cursor:pointer;border-radius:50%;font-size:12px;box-shadow:0 0 20px #ff4400;">💥 BIG BANG</button>
+<div id="pokemon-battle" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:250;background:linear-gradient(180deg,#1a2a4a,#0a1020);border:4px solid #4a90d9;border-radius:15px;padding:20px;width:400px;box-shadow:0 0 40px rgba(74,144,217,0.6);">
+<div style="display:flex;justify-content:space-between;margin-bottom:15px;">
+<div id="enemy-pokemon" style="text-align:center;"><div id="enemy-sprite-poke" style="font-size:60px;">👾</div><div id="enemy-name-poke" style="color:#fff;font-weight:bold;">Wild Nebulax</div><div style="background:#333;border-radius:10px;height:12px;width:120px;margin-top:5px;"><div id="enemy-hp-bar" style="background:linear-gradient(90deg,#4f4,#0a0);height:100%;width:100%;border-radius:10px;transition:width 0.3s;"></div></div></div>
+<div id="player-pokemon" style="text-align:center;"><div style="font-size:60px;">🚀</div><div style="color:#0ff;font-weight:bold;">Your Ship</div><div style="background:#333;border-radius:10px;height:12px;width:120px;margin-top:5px;"><div id="player-hp-bar" style="background:linear-gradient(90deg,#4af,#08f);height:100%;width:100%;border-radius:10px;transition:width 0.3s;"></div></div></div>
+</div>
+<div id="battle-log" style="background:#000;color:#0f0;font-family:monospace;padding:10px;border-radius:5px;height:60px;overflow-y:auto;margin-bottom:10px;font-size:12px;">A wild cosmic creature appeared!</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+<button onclick="pokeBattleAction('laser')" style="padding:10px 20px;background:#e44;border:2px solid #f66;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">⚡ LASER</button>
+<button onclick="pokeBattleAction('shield')" style="padding:10px 20px;background:#44e;border:2px solid #66f;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">🛡️ SHIELD</button>
+<button onclick="pokeBattleAction('capture')" style="padding:10px 20px;background:#e4e;border:2px solid #f6f;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">🔮 CAPTURE</button>
+<button onclick="pokeBattleAction('flee')" style="padding:10px 20px;background:#444;border:2px solid #666;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">🏃 FLEE</button>
+</div>
+</div>
 <div id="canon-panel" style="position:fixed;bottom:20px;left:20px;z-index:200;background:rgba(10,10,30,0.9);border:2px solid #4a90d9;border-radius:10px;padding:15px;max-width:320px;color:#a0d0ff;font-size:13px;box-shadow:0 0 20px rgba(74,144,217,0.4);backdrop-filter:blur(5px);">
 <h3 style="margin:0 0 10px 0;color:#fff;text-shadow:0 0 10px #4a90d9;font-size:14px;">📜 COSMIC CANON</h3>
 <p style="margin:5px 0;color:#ffd700;"><strong>Premise:</strong></p>
@@ -173,7 +187,7 @@ const cosmicEmojis = ['🌟', '🌙', '☄️', '🪐', '🌌', '💫', '⭐', '
 for(let i = 0; i < 30; i++) {
   const obj = document.createElement('div');
   obj.className = 'cosmic-object';
-  obj.style.cssText = `position:fixed;font-size:${20+Math.random()*40}px;left:${Math.random()*100}%;top:${Math.random()*100}%;z-index:5;opacity:0.7;transition:transform 0.3s;pointer-events:none;`;
+  obj.style.cssText = `position:fixed;font-size:${20+Math.random()*40}px;left:${Math.random()*100}%;top:${Math.random()*100}%;z-index:5;opacity:0.7;transition:transform 0.3s;pointer-events:auto;cursor:pointer;`;obj.title='Click to encounter!';
   obj.textContent = cosmicEmojis[Math.floor(Math.random()*cosmicEmojis.length)];
   obj.dataset.parallax = (Math.random()*0.5+0.2).toFixed(2);
   spaceObjects.appendChild(obj);
@@ -226,6 +240,96 @@ setInterval(createShootingStar, 4000 + Math.random() * 3000);
 setTimeout(createShootingStar, 1000);
 
 // Big Bang Effect moved to earlier in page load
+
+// Pokemon-style Battle System
+const cosmicCreatures = [
+  {name:'Nebulax',sprite:'👾',hp:40,atk:8},
+  {name:'Stardust',sprite:'✨',hp:30,atk:12},
+  {name:'Voidling',sprite:'👻',hp:50,atk:6},
+  {name:'Cosmog',sprite:'🌀',hp:35,atk:10},
+  {name:'Astraleon',sprite:'🦄',hp:60,atk:15}
+];
+let battleState = {active:false, playerHp:100, enemyHp:100, enemy:null, captured:[]};
+
+function startBattle() {
+  if(battleState.active) return;
+  battleState.active = true;
+  battleState.playerHp = 100;
+  battleState.enemy = cosmicCreatures[Math.floor(Math.random()*cosmicCreatures.length)];
+  battleState.enemyHp = battleState.enemy.hp;
+  document.getElementById('pokemon-battle').style.display = 'block';
+  document.getElementById('enemy-sprite-poke').textContent = battleState.enemy.sprite;
+  document.getElementById('enemy-name-poke').textContent = 'Wild ' + battleState.enemy.name;
+  document.getElementById('enemy-hp-bar').style.width = '100%';
+  document.getElementById('player-hp-bar').style.width = '100%';
+  document.getElementById('battle-log').innerHTML = 'A wild ' + battleState.enemy.name + ' appeared!';
+}
+
+function pokeBattleAction(action) {
+  if(!battleState.active) return;
+  const log = document.getElementById('battle-log');
+  if(action === 'laser') {
+    const dmg = 15 + Math.floor(Math.random()*10);
+    battleState.enemyHp -= dmg;
+    log.innerHTML += '<br>⚡ Laser dealt ' + dmg + ' damage!';
+  } else if(action === 'shield') {
+    battleState.playerHp = Math.min(100, battleState.playerHp + 20);
+    log.innerHTML += '<br>🛡️ Shield restored 20 HP!';
+  } else if(action === 'capture') {
+    const chance = (1 - battleState.enemyHp/battleState.enemy.hp) * 80;
+    if(Math.random()*100 < chance) {
+      log.innerHTML += '<br>🔮 Captured ' + battleState.enemy.name + '!';
+      battleState.captured.push(battleState.enemy.name);
+      setTimeout(endBattle, 1500);
+      return;
+    } else {
+      log.innerHTML += '<br>🔮 Capture failed!';
+    }
+  } else if(action === 'flee') {
+    log.innerHTML += '<br>🏃 Escaped safely!';
+    setTimeout(endBattle, 1000);
+    return;
+  }
+  // Enemy turn
+  if(battleState.enemyHp > 0) {
+    const eDmg = battleState.enemy.atk + Math.floor(Math.random()*5);
+    battleState.playerHp -= eDmg;
+    log.innerHTML += '<br>' + battleState.enemy.sprite + ' dealt ' + eDmg + ' damage!';
+  }
+  updateBattleUI();
+  if(battleState.enemyHp <= 0) {
+    log.innerHTML += '<br>🎉 ' + battleState.enemy.name + ' defeated!';
+    setTimeout(endBattle, 1500);
+  } else if(battleState.playerHp <= 0) {
+    log.innerHTML += '<br>💥 Your ship was destroyed!';
+    setTimeout(endBattle, 1500);
+  }
+  log.scrollTop = log.scrollHeight;
+}
+
+function updateBattleUI() {
+  document.getElementById('enemy-hp-bar').style.width = Math.max(0,battleState.enemyHp/battleState.enemy.hp*100) + '%';
+  document.getElementById('player-hp-bar').style.width = Math.max(0,battleState.playerHp) + '%';
+}
+
+function endBattle() {
+  battleState.active = false;
+  document.getElementById('pokemon-battle').style.display = 'none';
+}
+
+// Random encounters while exploring
+setInterval(() => {
+  if(!battleState.active && Math.random() < 0.03) {
+    startBattle();
+  }
+}, 2000);
+
+// Click on cosmic objects to trigger battles
+document.addEventListener('click', (e) => {
+  if(e.target.classList.contains('cosmic-object') && !battleState.active) {
+    startBattle();
+  }
+});
 </script>
 <script>
         // Legacy code preserved but inactive - awaiting new purpose
