@@ -296,7 +296,20 @@
 </div>
 <section class="section active" id="space">
 <div class="solar-system">
-<h1>Hello World</h1>
+<h1 class="dissolving-text">✨ Goodbye World ✨</h1>
+<style>
+.dissolving-text {
+    animation: dissolve 3s ease-in-out infinite alternate;
+    opacity: 0.3;
+    font-size: 1.5rem !important;
+    letter-spacing: 8px;
+}
+@keyframes dissolve {
+    0% { opacity: 0.1; transform: scale(0.95); filter: blur(2px); }
+    50% { opacity: 0.4; transform: scale(1); filter: blur(0px); }
+    100% { opacity: 0.1; transform: scale(1.05); filter: blur(3px); }
+}
+</style>
 <div class="sun"></div>
 <div class="orbit">
 <div class="planet" title="Planet Twitch">
