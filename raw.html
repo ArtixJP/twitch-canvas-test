@@ -56,6 +56,17 @@
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 14px; margin: 10px 0; }
         .stat-item { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 3px; }
         .gold-display { color: #ffd700; font-size: 18px; text-align: center; margin: 10px 0; }
+        .world-panel { width: 100%; max-width: 600px; height: 400px; position: relative; overflow: hidden; background: linear-gradient(180deg, #1a3a1a 0%, #0d2a0d 100%); border: 3px solid #5a4a3a; }
+        .world-floor { position: absolute; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,50,0,0.3) 40px, rgba(0,50,0,0.3) 41px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,50,0,0.3) 40px, rgba(0,50,0,0.3) 41px); }
+        .player-char { position: absolute; font-size: 40px; transition: left 0.15s, top 0.15s; z-index: 10; filter: drop-shadow(0 0 5px #ffd700); cursor: pointer; }
+        .world-enemy { position: absolute; font-size: 35px; cursor: pointer; animation: enemyFloat 2s infinite; z-index: 5; }
+        .world-chest { position: absolute; font-size: 30px; cursor: pointer; z-index: 5; }
+        .world-chest:hover, .world-enemy:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px gold); }
+        @keyframes enemyFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+        .daggers { position: absolute; font-size: 20px; opacity: 0; transition: all 0.2s; }
+        .daggers.attack-left { opacity: 1; transform: translateX(-30px) rotate(-45deg); }
+        .daggers.attack-right { opacity: 1; transform: translateX(30px) rotate(45deg); }
+        .world-controls { text-align: center; margin-top: 10px; font-size: 12px; color: #aaa; }
         .level-display { font-size: 24px; color: #ffd700; text-align: center; }
         @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
         .shake { animation: shake 0.3s; }
@@ -98,6 +109,16 @@
 <button class="action-btn skill-btn" onclick="useSkill()">✨ Skill (20 MP)</button>
 <button class="action-btn heal-btn" onclick="heal()">💚 Heal (15 MP)</button>
 </div>
+</div>
+<div class="panel world-panel" id="game-world">
+<h3 style="text-align:center;color:#4a4;margin:5px 0;position:relative;z-index:20;">🗺️ Explore the World</h3>
+<div class="world-floor"></div>
+<div class="player-char" id="player-sprite">🗡️<span class="daggers" id="dagger-left">🗡️</span><span class="daggers" id="dagger-right">🗡️</span></div>
+<div class="world-enemy" data-hp="30" data-name="Goblin" id="world-enemy-1" style="left:400px;top:150px;">👺</div>
+<div class="world-enemy" data-hp="45" data-name="Wolf" id="world-enemy-2" style="left:200px;top:280px;">🐺</div>
+<div class="world-chest" id="chest-1" onclick="openChest(this)" style="left:500px;top:300px;">📦</div>
+<div class="world-chest" id="chest-2" onclick="openChest(this)" style="left:100px;top:100px;">📦</div>
+<div class="world-controls">Use WASD or Arrow Keys to move • Click enemies to attack</div>
 </div>
 <div class="panel log-panel">
 <h3 style="text-align:center;color:#aaa;margin:0 0 10px 0;">📜 Battle Log</h3>
@@ -230,6 +251,84 @@
         
         updateUI();
         addLog('Welcome, Hero! Choose your class and begin your adventure!', 'log-level');
+        
+        // 2D World Movement System
+        let playerX = 280, playerY = 180;
+        const playerSprite = document.getElementById('player-sprite');
+        playerSprite.style.left = playerX + 'px';
+        playerSprite.style.top = playerY + 'px';
+        
+        document.addEventListener('keydown', (e) => {
+            const speed = 15;
+            if(e.key === 'w' || e.key === 'ArrowUp') playerY = Math.max(40, playerY - speed);
+            if(e.key === 's' || e.key === 'ArrowDown') playerY = Math.min(350, playerY + speed);
+            if(e.key === 'a' || e.key === 'ArrowLeft') playerX = Math.max(10, playerX - speed);
+            if(e.key === 'd' || e.key === 'ArrowRight') playerX = Math.min(550, playerX + speed);
+            playerSprite.style.left = playerX + 'px';
+            playerSprite.style.top = playerY + 'px';
+            checkProximity();
+        });
+        
+        function checkProximity() {
+            document.querySelectorAll('.world-enemy').forEach(en => {
+                const ex = parseInt(en.style.left), ey = parseInt(en.style.top);
+                if(Math.abs(playerX - ex) < 50 && Math.abs(playerY - ey) < 50) {
+                    en.style.filter = 'drop-shadow(0 0 15px red)';
+                }
+            });
+        }
+        
+        document.querySelectorAll('.world-enemy').forEach(en => {
+            en.addEventListener('click', () => attackWorldEnemy(en));
+        });
+        
+        function attackWorldEnemy(en) {
+            const ex = parseInt(en.style.left), ey = parseInt(en.style.top);
+            if(Math.abs(playerX - ex) < 80 && Math.abs(playerY - ey) < 80) {
+                const dl = document.getElementById('dagger-left');
+                const dr = document.getElementById('dagger-right');
+                dl.classList.add('attack-left');
+                dr.classList.add('attack-right');
+                setTimeout(() => { dl.classList.remove('attack-left'); dr.classList.remove('attack-right'); }, 200);
+                
+                let hp = parseInt(en.dataset.hp) || 30;
+                let dmg = player.atk + Math.floor(Math.random() * 10);
+                if(player.class === 'rogue') dmg = Math.floor(dmg * 1.5);
+                hp -= dmg;
+                en.dataset.hp = hp;
+                addLog(`🗡️ Dual strike on ${en.dataset.name} for ${dmg} damage!`, 'log-damage');
+                en.classList.add('shake');
+                setTimeout(() => en.classList.remove('shake'), 300);
+                if(hp <= 0) {
+                    addLog(`${en.dataset.name} defeated in the world! +25 XP, +15 Gold`, 'log-xp');
+                    player.xp += 25; player.gold += 15;
+                    if(player.xp >= player.level * 100) levelUp();
+                    en.style.opacity = '0';
+                    setTimeout(() => en.remove(), 500);
+                    updateUI();
+                }
+            } else {
+                addLog('Too far away! Move closer to attack.', '');
+            }
+        }
+        
+        function openChest(chest) {
+            const cx = parseInt(chest.style.left), cy = parseInt(chest.style.top);
+            if(Math.abs(playerX - cx) < 60 && Math.abs(playerY - cy) < 60) {
+                const goldFound = 10 + Math.floor(Math.random() * 30);
+                player.gold += goldFound;
+                addLog(`📦 Opened chest! Found ${goldFound} gold!`, 'log-xp');
+                chest.textContent = '📭';
+                chest.style.opacity = '0.5';
+                chest.onclick = null;
+                updateUI();
+            } else {
+                addLog('Move closer to open the chest!', '');
+            }
+        }
+        
+        // Auto-select rogue for the dual dagger experience
+        selectClass('rogue');
     </script>
 </body>
 </html>
