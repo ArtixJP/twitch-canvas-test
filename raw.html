@@ -88,6 +88,115 @@
             z-index: 45;
             animation: mario-bounce 0.5s infinite ease-in-out, mario-walk 8s infinite linear;
             image-rendering: pixelated;
+            opacity: 0.3;
+            filter: grayscale(100%) brightness(1.5);
+        }
+        #peach {
+            position: absolute;
+            width: 44px;
+            height: 72px;
+            z-index: 46;
+            animation: peach-float 3s infinite ease-in-out, peach-walk 12s infinite linear;
+        }
+        @keyframes peach-float {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+        }
+        @keyframes peach-walk {
+            0% { left: calc(100vw + 50px); }
+            100% { left: -60px; }
+        }
+        .peach-crown {
+            width: 24px;
+            height: 14px;
+            background: #FFD700;
+            margin: 0 auto;
+            clip-path: polygon(0% 100%, 15% 0%, 30% 60%, 50% 0%, 70% 60%, 85% 0%, 100% 100%);
+        }
+        .peach-hair {
+            width: 36px;
+            height: 16px;
+            background: #FFD700;
+            margin: 0 auto;
+            border-radius: 50% 50% 0 0;
+        }
+        .peach-face {
+            width: 28px;
+            height: 18px;
+            background: #FFE4C4;
+            margin: 0 auto;
+            border-radius: 50%;
+        }
+        .peach-dress {
+            width: 44px;
+            height: 28px;
+            background: linear-gradient(180deg, #FF69B4 0%, #FF1493 100%);
+            border-radius: 0 0 50% 50%;
+        }
+        #bowser {
+            position: absolute;
+            width: 70px;
+            height: 80px;
+            z-index: 47;
+            animation: bowser-stomp 0.3s infinite steps(2), bowser-patrol 6s infinite linear;
+        }
+        @keyframes bowser-stomp {
+            0%, 100% { transform: translateY(0) scaleY(1); }
+            50% { transform: translateY(-5px) scaleY(0.95); }
+        }
+        @keyframes bowser-patrol {
+            0% { left: 60%; }
+            25% { left: 75%; }
+            50% { left: 75%; transform: scaleX(-1); }
+            75% { left: 60%; transform: scaleX(-1); }
+            100% { left: 60%; transform: scaleX(1); }
+        }
+        .bowser-shell {
+            width: 60px;
+            height: 45px;
+            background: radial-gradient(circle at 30% 30%, #228B22 0%, #006400 100%);
+            border-radius: 50% 50% 40% 40%;
+            margin: 0 auto;
+            position: relative;
+            border: 4px solid #8B4513;
+        }
+        .bowser-shell::before {
+            content: '';
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #FFD700;
+            border-radius: 3px;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            box-shadow: -18px 8px 0 #FFD700, 18px 8px 0 #FFD700;
+        }
+        .bowser-head {
+            width: 50px;
+            height: 35px;
+            background: #DAA520;
+            margin: -10px auto 0;
+            border-radius: 30% 30% 50% 50%;
+            position: relative;
+        }
+        .bowser-head::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 12px;
+            background: #FF4500;
+            top: -8px;
+            left: 10px;
+            border-radius: 50% 50% 0 0;
+            box-shadow: 12px 0 0 #FF4500, 24px 0 0 #FF4500;
+        }
+        .bowser-snout {
+            width: 30px;
+            height: 15px;
+            background: #F0E68C;
+            margin: 15px auto 0;
+            border-radius: 50%;
         }
         @keyframes mario-bounce {
             0%, 100% { transform: translateY(0); }
@@ -220,18 +329,31 @@
             🎮 WASD/Arrows: Move<br/>
             🖱️ Click blocks: Break<br/>
             1-4: Select block type<br/>
-            🍄 Mario is visiting!
+            👻 Mario's ghost lingers...<br/>
+            👸 Peach floats gracefully!<br/>
+            🐢 Bowser patrols the land!
         </div>
 <div id="world"></div>
 <div id="player">
 <div class="player-head"></div>
 <div class="player-body"></div>
 </div>
-<div id="mario" style="bottom: 250px;">
+<div id="mario" style="bottom: 250px;" title="👻 Ghost Mario - He was here once...">
 <div class="mario-hat"></div>
 <div class="mario-head"></div>
 <div class="mario-body"></div>
 <div class="mario-overalls"></div>
+</div>
+<div id="peach" style="bottom: 280px;">
+<div class="peach-crown"></div>
+<div class="peach-hair"></div>
+<div class="peach-face"></div>
+<div class="peach-dress"></div>
+</div>
+<div id="bowser" style="bottom: 220px;">
+<div class="bowser-head"></div>
+<div class="bowser-snout"></div>
+<div class="bowser-shell"></div>
 </div>
 <div id="hotbar">
 <div class="hotbar-slot grass selected" data-block="grass"></div>
