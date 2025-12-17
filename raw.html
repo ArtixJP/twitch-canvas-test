@@ -22,12 +22,18 @@
         h1 { font-size: 3rem; text-align: center; }
         .planet-container {
             position: relative;
-            width: 150px;
-            height: 150px;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center
         }
         .planet {
-            width: 150px;
-            height: 150px;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center
             border-radius: 50%;
             background: linear-gradient(135deg, #ff6b6b 0%, #c44569 50%, #6b2d5c 100%);
             box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 0 60px rgba(255,107,107,0.3);
@@ -59,6 +65,46 @@
             0%, 100% { box-shadow: 0 4px 15px rgba(255,107,107,0.4); }
             50% { box-shadow: 0 4px 25px rgba(255,107,107,0.8); }
         }
+        .moon {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0e0e0 0%, #a0a0a0 100%);
+            box-shadow: inset -5px -5px 10px rgba(0,0,0,0.3), 0 0 15px rgba(255,255,255,0.3);
+            animation: orbit-moon 8s linear infinite;
+        }
+        .kitty {
+            position: absolute;
+            font-size: 20px;
+            animation: orbit-kitty 12s linear infinite;
+            filter: drop-shadow(0 0 5px rgba(255,200,200,0.5));
+        }
+        .sun {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #fff700 0%, #ff9500 60%, #ff5500 100%);
+            box-shadow: 0 0 40px 15px rgba(255,200,0,0.6), 0 0 80px 30px rgba(255,150,0,0.3);
+            animation: orbit-sun 15s linear infinite, sun-glow 2s ease-in-out infinite;
+        }
+        @keyframes orbit-moon {
+            from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
+        }
+        @keyframes orbit-kitty {
+            from { transform: rotate(0deg) translateX(130px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(130px) rotate(-360deg); }
+        }
+        @keyframes orbit-sun {
+            from { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+        }
+        @keyframes sun-glow {
+            0%, 100% { box-shadow: 0 0 40px 15px rgba(255,200,0,0.6), 0 0 80px 30px rgba(255,150,0,0.3); }
+            50% { box-shadow: 0 0 60px 25px rgba(255,220,0,0.8), 0 0 100px 40px rgba(255,180,0,0.4); }
+        }
         .ring {
             position: absolute;
             top: 50%;
@@ -80,9 +126,11 @@
 <div class="planet-container">
 <div class="planet"></div>
 <div class="ring"></div>
+<div class="moon"></div>
+<div class="kitty">🐱</div>
+<div class="sun"></div>
 </div>
 <h1>Hello World</h1>
-
 <button class="music-btn playing" id="musicToggle">⏸️ Pause</button>
 <script>
     const music = document.getElementById('bgMusic');
