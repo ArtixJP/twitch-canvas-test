@@ -292,38 +292,151 @@
             pokemon.add(rightEar);
         }
         
-        // Mario special features
+        // Mario special features - REALISTIC MARIO!
         if (type.name === 'Mario') {
-            // Blue overalls body
-            body.material = new THREE.MeshLambertMaterial({ color: 0x0000FF });
-            // Red shirt/head
-            head.material = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-            // Mario's cap
-            const capGeo = new THREE.SphereGeometry(type.size * 0.4, 8, 8, 0, Math.PI * 2, 0, Math.PI / 2);
-            const capMat = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
-            const cap = new THREE.Mesh(capGeo, capMat);
-            cap.position.y = type.size * 0.75;
-            cap.rotation.x = -0.2;
+            // Remove default body/head
+            pokemon.remove(body);
+            pokemon.remove(head);
+            
+            const skinMat = new THREE.MeshLambertMaterial({ color: 0xFFDBB4 });
+            const redMat = new THREE.MeshLambertMaterial({ color: 0xE52521 });
+            const blueMat = new THREE.MeshLambertMaterial({ color: 0x1D4ED8 });
+            const brownMat = new THREE.MeshLambertMaterial({ color: 0x4A3728 });
+            const whiteMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+            const goldMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
+            
+            // Blue overalls (torso)
+            const torsoGeo = new THREE.BoxGeometry(type.size * 0.7, type.size * 0.6, type.size * 0.4);
+            const torso = new THREE.Mesh(torsoGeo, blueMat);
+            torso.position.y = type.size * 0.1;
+            torso.castShadow = true;
+            pokemon.add(torso);
+            
+            // Red shirt showing at top
+            const shirtGeo = new THREE.BoxGeometry(type.size * 0.72, type.size * 0.2, type.size * 0.42);
+            const shirt = new THREE.Mesh(shirtGeo, redMat);
+            shirt.position.y = type.size * 0.45;
+            pokemon.add(shirt);
+            
+            // Overalls straps
+            const strapGeo = new THREE.BoxGeometry(type.size * 0.12, type.size * 0.35, type.size * 0.08);
+            const leftStrap = new THREE.Mesh(strapGeo, blueMat);
+            leftStrap.position.set(-type.size * 0.22, type.size * 0.45, type.size * 0.18);
+            pokemon.add(leftStrap);
+            const rightStrap = new THREE.Mesh(strapGeo, blueMat);
+            rightStrap.position.set(type.size * 0.22, type.size * 0.45, type.size * 0.18);
+            pokemon.add(rightStrap);
+            
+            // Golden buttons on straps
+            const buttonGeo = new THREE.SphereGeometry(type.size * 0.05, 8, 8);
+            const leftButton = new THREE.Mesh(buttonGeo, goldMat);
+            leftButton.position.set(-type.size * 0.22, type.size * 0.35, type.size * 0.23);
+            pokemon.add(leftButton);
+            const rightButton = new THREE.Mesh(buttonGeo, goldMat);
+            rightButton.position.set(type.size * 0.22, type.size * 0.35, type.size * 0.23);
+            pokemon.add(rightButton);
+            
+            // Head (skin)
+            const headGeo = new THREE.SphereGeometry(type.size * 0.35, 12, 12);
+            const marioHead = new THREE.Mesh(headGeo, skinMat);
+            marioHead.position.y = type.size * 0.8;
+            marioHead.castShadow = true;
+            pokemon.add(marioHead);
+            
+            // Big nose
+            const noseGeo = new THREE.SphereGeometry(type.size * 0.12, 8, 8);
+            const nose = new THREE.Mesh(noseGeo, skinMat);
+            nose.position.set(0, type.size * 0.75, type.size * 0.35);
+            nose.scale.set(1, 0.8, 1.2);
+            pokemon.add(nose);
+            
+            // Mustache - curved shape
+            const mustacheGeo = new THREE.TorusGeometry(type.size * 0.15, type.size * 0.04, 8, 16, Math.PI);
+            const mustacheLeft = new THREE.Mesh(mustacheGeo, brownMat);
+            mustacheLeft.position.set(-type.size * 0.08, type.size * 0.65, type.size * 0.32);
+            mustacheLeft.rotation.set(0, 0.3, Math.PI);
+            pokemon.add(mustacheLeft);
+            const mustacheRight = new THREE.Mesh(mustacheGeo, brownMat);
+            mustacheRight.position.set(type.size * 0.08, type.size * 0.65, type.size * 0.32);
+            mustacheRight.rotation.set(0, -0.3, Math.PI);
+            pokemon.add(mustacheRight);
+            
+            // Eyes (white with black pupils)
+            const eyeWhiteGeo = new THREE.SphereGeometry(type.size * 0.08, 8, 8);
+            const leftEyeW = new THREE.Mesh(eyeWhiteGeo, whiteMat);
+            leftEyeW.position.set(-type.size * 0.12, type.size * 0.85, type.size * 0.28);
+            pokemon.add(leftEyeW);
+            const rightEyeW = new THREE.Mesh(eyeWhiteGeo, whiteMat);
+            rightEyeW.position.set(type.size * 0.12, type.size * 0.85, type.size * 0.28);
+            pokemon.add(rightEyeW);
+            
+            const pupilGeo = new THREE.SphereGeometry(type.size * 0.04, 8, 8);
+            const pupilMat = new THREE.MeshLambertMaterial({ color: 0x1E90FF });
+            const leftPupil = new THREE.Mesh(pupilGeo, pupilMat);
+            leftPupil.position.set(-type.size * 0.12, type.size * 0.85, type.size * 0.35);
+            pokemon.add(leftPupil);
+            const rightPupil = new THREE.Mesh(pupilGeo, pupilMat);
+            rightPupil.position.set(type.size * 0.12, type.size * 0.85, type.size * 0.35);
+            pokemon.add(rightPupil);
+            
+            // Red cap
+            const capGeo = new THREE.SphereGeometry(type.size * 0.38, 12, 12, 0, Math.PI * 2, 0, Math.PI / 2);
+            const cap = new THREE.Mesh(capGeo, redMat);
+            cap.position.y = type.size * 1.0;
+            cap.castShadow = true;
             pokemon.add(cap);
+            
             // Cap brim
-            const brimGeo = new THREE.CylinderGeometry(type.size * 0.35, type.size * 0.35, 0.1, 8);
-            const brim = new THREE.Mesh(brimGeo, capMat);
-            brim.position.set(0, type.size * 0.6, type.size * 0.25);
-            brim.rotation.x = Math.PI / 2;
+            const brimGeo = new THREE.CylinderGeometry(type.size * 0.25, type.size * 0.3, type.size * 0.08, 12);
+            const brim = new THREE.Mesh(brimGeo, redMat);
+            brim.position.set(0, type.size * 0.9, type.size * 0.25);
+            brim.rotation.x = Math.PI / 2.5;
             pokemon.add(brim);
-            // Mustache
-            const mustacheGeo = new THREE.BoxGeometry(type.size * 0.4, type.size * 0.1, type.size * 0.1);
-            const mustacheMat = new THREE.MeshLambertMaterial({ color: 0x4a3728 });
-            const mustache = new THREE.Mesh(mustacheGeo, mustacheMat);
-            mustache.position.set(0, type.size * 0.4, type.size * 0.3);
-            pokemon.add(mustache);
-            // Skin tone face
-            const faceGeo = new THREE.SphereGeometry(type.size * 0.2, 8, 8);
-            const faceMat = new THREE.MeshLambertMaterial({ color: 0xFFDBB4 });
-            const face = new THREE.Mesh(faceGeo, faceMat);
-            face.position.set(0, type.size * 0.5, type.size * 0.2);
-            face.scale.set(1.2, 1, 0.5);
-            pokemon.add(face);
+            
+            // M logo on cap (white circle with M)
+            const logoGeo = new THREE.CircleGeometry(type.size * 0.12, 16);
+            const logo = new THREE.Mesh(logoGeo, whiteMat);
+            logo.position.set(0, type.size * 1.05, type.size * 0.35);
+            logo.rotation.x = -0.3;
+            pokemon.add(logo);
+            
+            // Arms (red sleeves)
+            const armGeo = new THREE.CylinderGeometry(type.size * 0.1, type.size * 0.12, type.size * 0.4, 8);
+            const leftArm = new THREE.Mesh(armGeo, redMat);
+            leftArm.position.set(-type.size * 0.45, type.size * 0.3, 0);
+            leftArm.rotation.z = Math.PI / 4;
+            pokemon.add(leftArm);
+            const rightArm = new THREE.Mesh(armGeo, redMat);
+            rightArm.position.set(type.size * 0.45, type.size * 0.3, 0);
+            rightArm.rotation.z = -Math.PI / 4;
+            pokemon.add(rightArm);
+            
+            // Hands (white gloves)
+            const handGeo = new THREE.SphereGeometry(type.size * 0.12, 8, 8);
+            const leftHand = new THREE.Mesh(handGeo, whiteMat);
+            leftHand.position.set(-type.size * 0.6, type.size * 0.15, 0);
+            pokemon.add(leftHand);
+            const rightHand = new THREE.Mesh(handGeo, whiteMat);
+            rightHand.position.set(type.size * 0.6, type.size * 0.15, 0);
+            pokemon.add(rightHand);
+            
+            // Legs (blue overalls)
+            const legGeo = new THREE.CylinderGeometry(type.size * 0.12, type.size * 0.14, type.size * 0.35, 8);
+            const leftLeg = new THREE.Mesh(legGeo, blueMat);
+            leftLeg.position.set(-type.size * 0.18, -type.size * 0.25, 0);
+            pokemon.add(leftLeg);
+            const rightLeg = new THREE.Mesh(legGeo, blueMat);
+            rightLeg.position.set(type.size * 0.18, -type.size * 0.25, 0);
+            pokemon.add(rightLeg);
+            
+            // Brown shoes
+            const shoeGeo = new THREE.BoxGeometry(type.size * 0.18, type.size * 0.12, type.size * 0.25);
+            const leftShoe = new THREE.Mesh(shoeGeo, brownMat);
+            leftShoe.position.set(-type.size * 0.18, -type.size * 0.45, type.size * 0.05);
+            pokemon.add(leftShoe);
+            const rightShoe = new THREE.Mesh(shoeGeo, brownMat);
+            rightShoe.position.set(type.size * 0.18, -type.size * 0.45, type.size * 0.05);
+            pokemon.add(rightShoe);
         }
         
         pokemon.position.set(x, 5, z);
