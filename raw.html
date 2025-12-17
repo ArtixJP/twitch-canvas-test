@@ -271,7 +271,7 @@
 </div>
 <p>The elephant is happy to see you! 🌊</p>
 </section>
-<section class="section" id="games">
+<section class="section" id="games" onmouseover="if(typeof tryInitWow3D==='function')tryInitWow3D()">
 <h1>🎮 Mini Games</h1>
 <h2 style="color:#ffd700;text-shadow:0 0 10px #ffd700;">⚔️ 3D World of Warcraft Arena ⚔️</h2>
 <div class="game-area">
@@ -351,6 +351,8 @@
         const container = document.getElementById('wow3dScene');
         if (!container) return;
         if (container.children.length > 0) return;
+        if (typeof THREE === 'undefined') { setTimeout(initWow3D, 100); return; }
+        container.innerHTML = '';
         const scene = new THREE.Scene();
         // Gradient sky
         scene.background = new THREE.Color(0x1a0533);
@@ -502,14 +504,21 @@
         }
         animate();
     }
-    setTimeout(initWow3D, 500);
+    // Initialize 3D scene when page loads or when games tab is shown
+    function tryInitWow3D() {
+        const container = document.getElementById('wow3dScene');
+        const gamesSection = document.getElementById('games');
+        if (container && gamesSection && gamesSection.classList.contains('active')) {
+            initWow3D();
+        }
+    }
+    setTimeout(tryInitWow3D, 800);
     // Re-init when games tab is shown
     document.querySelectorAll('.nav-btn')[2].addEventListener('click', () => {
-        setTimeout(() => {
-            const container = document.getElementById('wow3dScene');
-            if (container && container.children.length === 0) initWow3D();
-        }, 200);
+        setTimeout(tryInitWow3D, 300);
     });
+    // Also try on window load
+    window.addEventListener('load', () => setTimeout(tryInitWow3D, 500));
     const music = document.getElementById('bgMusic');
     const kitty = document.querySelector('.kitty');
     const dog = document.querySelector('.dog');
