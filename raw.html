@@ -9,14 +9,49 @@
 <style>
         body { 
             font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
             min-height: 100vh; 
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
-            overflow: hidden;
+            overflow-x: hidden;
+        }
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 15px;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            border-bottom: 2px solid rgba(255,204,0,0.4);
+        }
+        .nav-btn {
+            padding: 10px 25px;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            border: 2px solid rgba(255,204,0,0.6);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        .nav-btn:hover, .nav-btn.active {
+            background: linear-gradient(135deg, #ffcc00, #ff9900);
+            color: #1a1a2e;
+            transform: scale(1.05);
+        }
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding-top: 80px;
+            justify-content: center;
+            align-items: center;
+        }
+        .section.active {
+            display: flex;
         }
         h1 { 
             font-size: 3rem; 
@@ -48,6 +83,76 @@
             left: 50%;
             transform: translateX(-50%);
             box-shadow: 0 0 20px rgba(79, 172, 254, 0.6), inset -5px -5px 10px rgba(0,0,0,0.3);
+            transition: background 0.5s ease;
+        }
+        .elephant-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .elephant {
+            font-size: 100px;
+            animation: elephantBob 2s ease-in-out infinite;
+        }
+        @keyframes elephantBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .water-spray {
+            position: absolute;
+            top: -30px;
+            font-size: 30px;
+            animation: spray 1s ease-out infinite;
+            opacity: 0;
+        }
+        @keyframes spray {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-80px) scale(1.5); opacity: 0; }
+        }
+        .water-drop {
+            position: absolute;
+            animation: fall 1.5s ease-in infinite;
+        }
+        @keyframes fall {
+            0% { transform: translateY(-50px); opacity: 1; }
+            100% { transform: translateY(100px); opacity: 0; }
+        }
+        .clicker-game {
+            text-align: center;
+            padding: 20px;
+        }
+        .click-target {
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, #ff6b6b, #ee5a24);
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            color: white;
+            transition: transform 0.1s, box-shadow 0.1s;
+            box-shadow: 0 10px 30px rgba(238,90,36,0.5);
+        }
+        .click-target:hover {
+            transform: scale(1.1);
+        }
+        .click-target:active {
+            transform: scale(0.95);
+        }
+        .click-score {
+            font-size: 3rem;
+            margin: 20px 0;
+            color: #ffcc00;
+            text-shadow: 0 0 20px rgba(255,204,0,0.5);
+        }
+        .timer-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ffcc00, #ff9900);
+            transition: width 0.1s linear;
         }
         .planet::after {
             content: '';
@@ -110,7 +215,7 @@
         }
         .scoreboard {
             position: fixed;
-            top: 20px;
+            top: 80px;
             right: 20px;
             background: rgba(0,0,0,0.5);
             padding: 10px 20px;
@@ -173,6 +278,12 @@
     </style>
 </head>
 <body>
+<nav class="nav-menu">
+<button class="nav-btn active" onclick="showSection('space')">🌌 Espace</button>
+<button class="nav-btn" onclick="showSection('animals')">🐾 Animaux</button>
+<button class="nav-btn" onclick="showSection('games')">🎮 Jeux</button>
+</nav>
+<div class="timer-bar" id="timerBar"></div>
 <div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
 <button id="musicToggle" onclick="toggleMusic()" title="Toggle Music">🎵</button>
 <div class="stars">
@@ -183,6 +294,7 @@
 <div class="star" style="top: 45%; left: 90%; animation-delay: 0.8s;"></div>
 <div class="star" style="top: 20%; left: 50%; animation-delay: 0.3s;"></div>
 </div>
+<section class="section active" id="space">
 <div class="solar-system">
 <h1>Hello World</h1>
 <div class="sun"></div>
@@ -196,6 +308,23 @@
 <div class="cat" id="cat">🐱</div>
 <div class="dog" id="dog">🐕</div>
 </div>
+</section>
+<section class="section" id="animals">
+<div class="elephant-container">
+<div class="water-spray" id="waterSpray">💦</div>
+<div class="elephant" id="elephant" onclick="sprayWater()">🐘</div>
+<p style="margin-top: 20px; opacity: 0.7;">Cliquez sur l'éléphant pour l'eau!</p>
+</div>
+</section>
+<section class="section" id="games">
+<div class="clicker-game">
+<h2>🎯 Speed Clicker Challenge!</h2>
+<p>Cliquez le plus vite possible en 10 secondes!</p>
+<div class="click-score">Score: <span id="clickScore">0</span></div>
+<button class="click-target" id="clickTarget" onclick="handleClick()">👆</button>
+<p id="gameStatus" style="margin-top: 20px;">Cliquez pour commencer!</p>
+</div>
+</section>
 <script>
     const audio = document.getElementById('bgMusic');
     const btn = document.getElementById('musicToggle');
@@ -265,6 +394,7 @@
             scoreEl.textContent = dogScore;
             catAngle = dogAngle + Math.PI; // Teleport cat away
             cat.style.animation = 'twinkle 0.2s ease 3';
+            if (typeof changePlanetColor === 'function') changePlanetColor();
         }
         
         // Update angles (dog chases cat direction)
@@ -280,6 +410,103 @@
         requestAnimationFrame(updateChase);
     }
     updateChase();
+    
+    // Section Navigation
+    const sections = ['space', 'animals', 'games'];
+    let currentSectionIndex = 0;
+    let sectionTimer = 0;
+    const SECTION_DURATION = 30000;
+    
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(sectionId).classList.add('active');
+        document.querySelector(`[onclick="showSection('${sectionId}')"]`).classList.add('active');
+        currentSectionIndex = sections.indexOf(sectionId);
+        sectionTimer = 0;
+    }
+    
+    // Auto-rotate sections
+    setInterval(() => {
+        sectionTimer += 100;
+        const progress = (sectionTimer / SECTION_DURATION) * 100;
+        document.getElementById('timerBar').style.width = progress + '%';
+        
+        if (sectionTimer >= SECTION_DURATION) {
+            currentSectionIndex = (currentSectionIndex + 1) % sections.length;
+            showSection(sections[currentSectionIndex]);
+        }
+    }, 100);
+    
+    // Planet color change on catch
+    const planetColors = [
+        'linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%)',
+        'linear-gradient(135deg, #a55eea 0%, #8854d0 100%)',
+        'linear-gradient(135deg, #26de81 0%, #20bf6b 100%)',
+        'linear-gradient(135deg, #fd79a8 0%, #e84393 100%)',
+        'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+    ];
+    let colorIndex = 0;
+    
+    function changePlanetColor() {
+        colorIndex = (colorIndex + 1) % planetColors.length;
+        document.querySelector('.planet').style.background = planetColors[colorIndex];
+    }
+    
+    // Elephant water spray
+    function sprayWater() {
+        const spray = document.getElementById('waterSpray');
+        spray.style.animation = 'none';
+        spray.offsetHeight;
+        spray.style.animation = 'spray 1s ease-out';
+        
+        // Create falling drops
+        for (let i = 0; i < 5; i++) {
+            setTimeout(() => {
+                const drop = document.createElement('div');
+                drop.className = 'water-drop';
+                drop.textContent = '💧';
+                drop.style.left = (Math.random() * 100 - 50) + 'px';
+                drop.style.animationDelay = (Math.random() * 0.5) + 's';
+                document.querySelector('.elephant-container').appendChild(drop);
+                setTimeout(() => drop.remove(), 1500);
+            }, i * 100);
+        }
+    }
+    
+    // Clicker Game
+    let clickScore = 0;
+    let gameActive = false;
+    let gameTimer = null;
+    
+    function handleClick() {
+        if (!gameActive) {
+            startGame();
+            return;
+        }
+        clickScore++;
+        document.getElementById('clickScore').textContent = clickScore;
+        document.getElementById('clickTarget').style.transform = 'scale(0.9)';
+        setTimeout(() => document.getElementById('clickTarget').style.transform = '', 50);
+    }
+    
+    function startGame() {
+        clickScore = 0;
+        gameActive = true;
+        document.getElementById('clickScore').textContent = '0';
+        document.getElementById('gameStatus').textContent = '10 secondes restantes!';
+        
+        let timeLeft = 10;
+        gameTimer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('gameStatus').textContent = timeLeft + ' secondes restantes!';
+            if (timeLeft <= 0) {
+                clearInterval(gameTimer);
+                gameActive = false;
+                document.getElementById('gameStatus').textContent = 'Terminé! Score final: ' + clickScore + ' clics! Cliquez pour rejouer.';
+            }
+        }, 1000);
+    }
 </script>
 </body>
 </html>
