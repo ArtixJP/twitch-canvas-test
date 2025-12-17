@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🍄 Mario Minecraft Builder 🧱</title>
+<title>⚔️ Fantasy Minecraft Builder 🧱</title>
 <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -28,8 +28,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>🍄 Mario Minecraft Builder 🧱⛏️ 🎬</h1>
-<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.7);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;">🎬 Mario: A Love Story<br/>Part 1: Peach Captured!<br/>Part 2: Hero's Battle<br/>Part 3: Wedding Day 💒<br/>Look at X:-25, Z:-40</div>
+<h1>⚔️ Fantasy Minecraft Builder 🧱⛏️ 🎬</h1>
+<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.7);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;">🎬 Fantasy: A Love Story<br/>Part 1: Princess Captured!<br/>Part 2: Knight's Battle<br/>Part 3: Wedding Day 💒<br/>Look at X:-25, Z:-40</div>
 <canvas id="game" tabindex="0"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
 <div id="hotbar">
@@ -105,7 +105,7 @@
         trees.push({trunk, leaves});
     }
     
-    // Mario coins floating in space
+    // Gold coins floating in space
     const coins = [];
     for(let i = 0; i < 20; i++) {
         const coinGeo = new THREE.CylinderGeometry(0.3, 0.3, 0.1, 16);
@@ -200,7 +200,7 @@
     // 3D Mario vs Bowser Scene (Minecraft style)
     const theaterGroup = new THREE.Group();
     
-    // 3D Mario character (more realistic)
+    // 3D Knight character (more realistic)
     const marioGroup = new THREE.Group();
     const marioBody = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.1, 0.5), new THREE.MeshLambertMaterial({color: 0xff0000}));
     const marioHead = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.7), new THREE.MeshLambertMaterial({color: 0xffcc99}));
@@ -241,7 +241,7 @@
     peachGroup.position.set(-22, 2, -40);
     theaterGroup.add(peachGroup);
     
-    // 3D Bowser character (more realistic)
+    // 3D Dragon character (more realistic)
     const bowserGroup = new THREE.Group();
     const bowserBody = new THREE.Mesh(new THREE.BoxGeometry(1.6, 1.6, 1.1), new THREE.MeshLambertMaterial({color: 0x228B22}));
     const bowserBelly = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 0.4), new THREE.MeshLambertMaterial({color: 0xffdd88}));
@@ -381,14 +381,14 @@
             c.position.x += 0.01;
             if(c.position.x > 30) c.position.x = -30;
         });
-        // Animate Mario coins
+        // Animate gold coins
         coins.forEach((coin, i) => {
             coin.rotation.z += 0.05;
             coin.position.y = coin.userData.baseY + Math.sin(Date.now() * 0.003 + i) * 0.3;
         });
         // Animate piranha plant
         plantHead.position.y = 2.5 + Math.sin(Date.now() * 0.002) * 0.8;
-        // Update 3D Mario movie scene
+        // Update 3D Fantasy movie scene
         updateMovie();
         // Slight theater rotation for dynamic feel
         theaterGroup.rotation.y = Math.sin(Date.now() * 0.0003) * 0.05;
