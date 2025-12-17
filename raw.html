@@ -210,6 +210,7 @@
 <p style="color: #FF69B4;">👋 HI MOM! HELLO!</p>
 <p style="color: #9400D3;">🎉 YOUPI!</p>
 <p style="color: #00FFFF;">🎵 SINGING YOUPI!</p>
+<p style="color: #FF4500;">🔥 SALAMECHE SPAWNED!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -239,6 +240,7 @@
 <div>⚡ Pikachu - Electric</div>
 <div>🌿 Bulbasaur - Grass</div>
 <div>🔥 Charmander - Fire</div>
+<div style="color:#FF4500;">🔥 Salameche - Feu</div>
 <div>💧 Squirtle - Water</div>
 <div>🦊 Eevee - Normal</div>
 <div>🎤 Jigglypuff - Fairy</div>
@@ -1676,6 +1678,31 @@
     createPokemon(pokemonTypes.find(p => p.name === 'Mario'), 15, -10);
     createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -15, -10);
     
+    // SALAMECHE - Community requested fire Pokemon!
+    const salameche = createPokemon(pokemonTypes.find(p => p.name === 'Salameche'), 12, 15);
+    
+    // Add special fire tail to Salameche!
+    function addFireTail(pokemon) {
+        const fireGroup = new THREE.Group();
+        const flameGeo = new THREE.ConeGeometry(0.3, 1.2, 8);
+        const flameMat = new THREE.MeshBasicMaterial({ color: 0xFF4500 });
+        const flame = new THREE.Mesh(flameGeo, flameMat);
+        flame.rotation.x = Math.PI;
+        fireGroup.add(flame);
+        
+        const innerFlameGeo = new THREE.ConeGeometry(0.15, 0.8, 8);
+        const innerFlameMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
+        const innerFlame = new THREE.Mesh(innerFlameGeo, innerFlameMat);
+        innerFlame.rotation.x = Math.PI;
+        innerFlame.position.y = 0.1;
+        fireGroup.add(innerFlame);
+        
+        fireGroup.position.set(0, 0.2, -0.8);
+        fireGroup.name = 'fireTail';
+        pokemon.add(fireGroup);
+    }
+    if (salameche) addFireTail(salameche);
+    
     // MEGA POKEMON SPAWN - Community requested!
     // Extra Pokemon types for Pokedex!
     pokemonTypes.push(
@@ -2045,6 +2072,18 @@
             
             // Slight rotation animation
             pokemon.children[0].rotation.z = Math.sin(Date.now() * 0.003) * 0.1;
+            
+            // Animate fire tail for Salameche!
+            pokemon.children.forEach(child => {
+                if (child.name === 'fireTail') {
+                    child.rotation.z = Math.sin(Date.now() * 0.01) * 0.3;
+                    child.scale.y = 0.8 + Math.sin(Date.now() * 0.015) * 0.3;
+                    child.children.forEach(flame => {
+                        flame.material.opacity = 0.7 + Math.sin(Date.now() * 0.02) * 0.3;
+                        flame.material.transparent = true;
+                    });
+                }
+            });
         });
         
         // Animate thank you panel
