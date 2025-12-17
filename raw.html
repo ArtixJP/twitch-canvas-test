@@ -143,6 +143,100 @@
         .kitty {
             z-index: 11;
         }
+        .wow-game {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .wow-title {
+            font-size: 2rem;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        .wow-arena {
+            width: 400px;
+            height: 200px;
+            background: linear-gradient(to bottom, #2d1b0e 0%, #4a3020 100%);
+            border: 3px solid #8b4513;
+            border-radius: 10px;
+            position: relative;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .warrior {
+            font-size: 50px;
+            animation: warrior-idle 1s ease-in-out infinite;
+            cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .warrior.attacking {
+            animation: warrior-attack 0.3s ease-out;
+        }
+        .enemy {
+            font-size: 50px;
+            animation: enemy-idle 1.2s ease-in-out infinite;
+        }
+        .enemy.hit {
+            animation: enemy-hit 0.2s ease-out;
+        }
+        @keyframes warrior-idle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        @keyframes warrior-attack {
+            0% { transform: translateX(0); }
+            50% { transform: translateX(80px) scale(1.2); }
+            100% { transform: translateX(0); }
+        }
+        @keyframes enemy-idle {
+            0%, 100% { transform: translateY(0) scaleX(-1); }
+            50% { transform: translateY(-8px) scaleX(-1); }
+        }
+        @keyframes enemy-hit {
+            0%, 100% { transform: scaleX(-1); filter: brightness(1); }
+            50% { transform: translateX(20px) scaleX(-1); filter: brightness(2); }
+        }
+        .wow-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 1.1rem;
+        }
+        .wow-controls {
+            display: flex;
+            gap: 10px;
+        }
+        .wow-btn {
+            padding: 10px 20px;
+            background: linear-gradient(to bottom, #8b0000 0%, #4a0000 100%);
+            border: 2px solid #ffd700;
+            border-radius: 5px;
+            color: #ffd700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .wow-btn:hover {
+            background: linear-gradient(to bottom, #a00000 0%, #600000 100%);
+            transform: scale(1.05);
+        }
+        .wow-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .combat-log {
+            width: 350px;
+            height: 80px;
+            background: rgba(0,0,0,0.5);
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 10px;
+            overflow-y: auto;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
         .planet {
             width: 200px;
             height: 200px;
@@ -313,6 +407,25 @@
 </section>
 <section class="section" id="games-section">
 <div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
+<div class="wow-game">
+<div class="wow-title">⚔️ Warrior Simulator ⚔️</div>
+<div class="wow-arena">
+<div class="warrior" id="warrior">🧔⚔️</div>
+<div class="enemy" id="enemy">👹</div>
+</div>
+<div class="wow-stats">
+<div>❤️ HP: <span id="warrior-hp">100</span>/100</div>
+<div>⚡ Rage: <span id="warrior-rage">0</span>/100</div>
+<div>✨ XP: <span id="warrior-xp">0</span></div>
+<div>🎖️ Level: <span id="warrior-level">1</span></div>
+</div>
+<div class="wow-controls">
+<button class="wow-btn" id="attack-btn">⚔️ Heroic Strike</button>
+<button class="wow-btn" id="charge-btn">🏃 Charge</button>
+<button class="wow-btn" id="heal-btn">🧪 Health Potion</button>
+</div>
+<div class="combat-log" id="combat-log"></div>
+</div>
 </section>
 <h1 style="position:fixed;bottom:100px;z-index:50;">Hello World</h1>
 <script>
@@ -439,6 +552,76 @@
     currentSectionIndex = (currentSectionIndex + 1) % sectionIds.length;
     showSection(sectionIds[currentSectionIndex]);
   }, 30000);
+
+  // WoW Warrior Game
+  const wowState = {
+    hp: 100, maxHp: 100, rage: 0, xp: 0, level: 1,
+    enemyHp: 50, enemyMaxHp: 50, enemyDamage: 8
+  };
+  const warrior = document.getElementById('warrior');
+  const enemy = document.getElementById('enemy');
+  const combatLog = document.getElementById('combat-log');
+  
+  function updateWowUI() {
+    document.getElementById('warrior-hp').textContent = wowState.hp;
+    document.getElementById('warrior-rage').textContent = wowState.rage;
+    document.getElementById('warrior-xp').textContent = wowState.xp;
+    document.getElementById('warrior-level').textContent = wowState.level;
+  }
+  
+  function logCombat(msg) {
+    combatLog.innerHTML = `<div>${msg}</div>` + combatLog.innerHTML;
+  }
+  
+  function spawnEnemy() {
+    wowState.enemyHp = 30 + wowState.level * 20;
+    wowState.enemyMaxHp = wowState.enemyHp;
+    enemy.style.opacity = '1';
+    logCombat('👹 A new enemy appears!');
+  }
+  
+  document.getElementById('attack-btn').addEventListener('click', () => {
+    if (wowState.enemyHp <= 0) return;
+    const dmg = 10 + Math.floor(Math.random() * 10) + wowState.level * 2;
+    wowState.enemyHp -= dmg;
+    wowState.rage = Math.min(100, wowState.rage + 10);
+    warrior.classList.add('attacking');
+    enemy.classList.add('hit');
+    setTimeout(() => { warrior.classList.remove('attacking'); enemy.classList.remove('hit'); }, 300);
+    logCombat(`⚔️ Heroic Strike deals ${dmg} damage!`);
+    if (wowState.enemyHp <= 0) {
+      wowState.xp += 25 * wowState.level;
+      if (wowState.xp >= wowState.level * 100) { wowState.level++; wowState.xp = 0; logCombat('🎖️ LEVEL UP!'); }
+      enemy.style.opacity = '0.3';
+      logCombat('💀 Enemy defeated!');
+      setTimeout(spawnEnemy, 2000);
+    } else {
+      setTimeout(() => {
+        const eDmg = wowState.enemyDamage + Math.floor(Math.random() * 5);
+        wowState.hp = Math.max(0, wowState.hp - eDmg);
+        logCombat(`👹 Enemy hits you for ${eDmg}!`);
+        updateWowUI();
+      }, 500);
+    }
+    updateWowUI();
+  });
+  
+  document.getElementById('charge-btn').addEventListener('click', () => {
+    if (wowState.rage < 20 || wowState.enemyHp <= 0) return;
+    wowState.rage -= 20;
+    const dmg = 25 + wowState.level * 5;
+    wowState.enemyHp -= dmg;
+    logCombat(`🏃 Charge! ${dmg} damage!`);
+    updateWowUI();
+  });
+  
+  document.getElementById('heal-btn').addEventListener('click', () => {
+    wowState.hp = Math.min(wowState.maxHp, wowState.hp + 30);
+    logCombat('🧪 Healed for 30 HP!');
+    updateWowUI();
+  });
+  
+  spawnEnemy();
 </script>
 </body>
 </html>
