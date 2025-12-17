@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🍕 NEW: Pizzeria + Pizzaiolo! | 🍔 Burger Joint! | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -168,6 +168,9 @@
             
             // Add Fireflies!
             createFireflies();
+            
+            // Add GIANT MARIO STATUE with Thank You Panel!
+            createMarioStatue();
             
             // Add Weather Particles!
             createWeatherEffects();
@@ -1272,6 +1275,179 @@
                     // Blinking effect
                     f.material.emissiveIntensity = 0.5 + Math.sin(fireflyTime * 5 + i) * 0.5;
                     f.visible = Math.sin(fireflyTime * 3 + i * 0.5) > -0.3;
+                });
+            }, 50);
+        }
+        
+        function createMarioStatue() {
+            // 🗽 GIANT MARIO STATUE - A tribute to the hero! 🍄
+            const sx = 16, sy = 5, sz = 25;
+            
+            // MASSIVE PEDESTAL (marble white with gold trim)
+            for (let x = -3; x <= 3; x++) {
+                for (let z = -3; z <= 3; z++) {
+                    createBlock(sx + x, sy, sz + z, 0xF5F5F5);
+                    createBlock(sx + x, sy + 1, sz + z, 0xF5F5F5);
+                }
+            }
+            // Gold trim on pedestal
+            for (let x = -3; x <= 3; x++) {
+                createBlock(sx + x, sy + 2, sz - 3, 0xFFD700);
+                createBlock(sx + x, sy + 2, sz + 3, 0xFFD700);
+            }
+            for (let z = -2; z <= 2; z++) {
+                createBlock(sx - 3, sy + 2, sz + z, 0xFFD700);
+                createBlock(sx + 3, sy + 2, sz + z, 0xFFD700);
+            }
+            
+            // GIANT MARIO BOOTS (brown)
+            for (let x = -1; x <= 0; x++) {
+                for (let z = -1; z <= 0; z++) {
+                    createBlock(sx + x - 1, sy + 3, sz + z, 0x5C4033);
+                    createBlock(sx + x + 2, sy + 3, sz + z, 0x5C4033);
+                }
+            }
+            
+            // GIANT MARIO LEGS (blue overalls)
+            for (let y = 4; y <= 6; y++) {
+                createBlock(sx - 1, sy + y, sz, 0x3b5998);
+                createBlock(sx, sy + y, sz, 0x3b5998);
+                createBlock(sx + 1, sy + y, sz, 0x3b5998);
+                createBlock(sx + 2, sy + y, sz, 0x3b5998);
+            }
+            
+            // GIANT MARIO BODY (red shirt)
+            for (let y = 7; y <= 10; y++) {
+                for (let x = -1; x <= 2; x++) {
+                    for (let z = -1; z <= 1; z++) {
+                        createBlock(sx + x, sy + y, sz + z, 0xCC0000);
+                    }
+                }
+            }
+            // Overall straps
+            createBlock(sx, sy + 9, sz - 1, 0x3b5998);
+            createBlock(sx + 1, sy + 9, sz - 1, 0x3b5998);
+            
+            // GIANT MARIO ARMS (raised in victory!)
+            for (let y = 8; y <= 13; y++) {
+                createBlock(sx - 2, sy + y, sz, 0xC69C6D);
+                createBlock(sx + 3, sy + y, sz, 0xC69C6D);
+            }
+            // Gloves
+            createBlock(sx - 2, sy + 14, sz, 0xFFFFFF);
+            createBlock(sx + 3, sy + 14, sz, 0xFFFFFF);
+            
+            // GIANT MARIO HEAD (4x4x4 blocky)
+            for (let x = -1; x <= 2; x++) {
+                for (let z = -1; z <= 1; z++) {
+                    for (let y = 11; y <= 14; y++) {
+                        createBlock(sx + x, sy + y, sz + z, 0xC69C6D);
+                    }
+                }
+            }
+            // Eyes (black)
+            createBlock(sx, sy + 13, sz - 2, 0x000000);
+            createBlock(sx + 1, sy + 13, sz - 2, 0x000000);
+            // Nose
+            createBlock(sx, sy + 12, sz - 2, 0xC69C6D);
+            createBlock(sx + 1, sy + 12, sz - 2, 0xC69C6D);
+            // Mustache (iconic!)
+            for (let x = -1; x <= 2; x++) {
+                createBlock(sx + x, sy + 11, sz - 2, 0x3D2314);
+            }
+            
+            // GIANT MARIO HAT (red cap)
+            for (let x = -2; x <= 3; x++) {
+                for (let z = -2; z <= 2; z++) {
+                    createBlock(sx + x, sy + 15, sz + z, 0xCC0000);
+                }
+            }
+            createBlock(sx, sy + 16, sz, 0xCC0000);
+            createBlock(sx + 1, sy + 16, sz, 0xCC0000);
+            // M logo (white)
+            createBlock(sx, sy + 15, sz - 3, 0xFFFFFF);
+            createBlock(sx + 1, sy + 15, sz - 3, 0xFFFFFF);
+            
+            // THANK YOU PANEL (golden plaque)
+            for (let x = -4; x <= 4; x++) {
+                for (let y = 0; y <= 2; y++) {
+                    createBlock(sx + x, sy + y, sz - 5, 0xFFD700);
+                }
+            }
+            // Text blocks spelling THANK YOU MARIO!
+            // T
+            createBlock(sx - 3, sy + 1, sz - 6, 0xCC0000);
+            // H
+            createBlock(sx - 2, sy + 1, sz - 6, 0xCC0000);
+            // A
+            createBlock(sx - 1, sy + 1, sz - 6, 0xCC0000);
+            // N
+            createBlock(sx, sy + 1, sz - 6, 0xCC0000);
+            // K
+            createBlock(sx + 1, sy + 1, sz - 6, 0xCC0000);
+            // Heart
+            createBlock(sx + 2, sy + 1, sz - 6, 0xFF69B4);
+            createBlock(sx + 3, sy + 1, sz - 6, 0xFF69B4);
+            
+            // Flowers at base
+            const flowerColors = [0xFF69B4, 0xFFFF00, 0xFF6347, 0x00CED1];
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const fx = sx + Math.cos(angle) * 5;
+                const fz = sz + Math.sin(angle) * 5;
+                createBlock(fx, sy, fz, flowerColors[i % flowerColors.length]);
+                createBlock(fx, sy + 1, fz, 0x228B22); // Stem
+            }
+            
+            // Spinning star above Mario's head!
+            const star = createBlock(sx + 0.5, sy + 20, sz, 0xFFFF00);
+            star.userData.isStar = true;
+            star.material.emissive = new THREE.Color(0xFFFF00);
+            star.material.emissiveIntensity = 1;
+            
+            // Animate the star
+            let starTime = 0;
+            setInterval(() => {
+                starTime += 0.05;
+                blocks.forEach(b => {
+                    if (b.userData.isStar) {
+                        b.rotation.y = starTime * 2;
+                        b.position.y = sy + 20 + Math.sin(starTime * 2) * 0.5;
+                        b.material.emissiveIntensity = 0.7 + Math.sin(starTime * 3) * 0.3;
+                    }
+                });
+            }, 50);
+            
+            // Confetti particles around statue!
+            const confetti = [];
+            const confettiColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF69B4, 0xFFFFFF];
+            for (let i = 0; i < 30; i++) {
+                const c = createBlock(
+                    sx + (Math.random() - 0.5) * 10,
+                    sy + 10 + Math.random() * 15,
+                    sz + (Math.random() - 0.5) * 10,
+                    confettiColors[Math.floor(Math.random() * confettiColors.length)]
+                );
+                c.scale.set(0.2, 0.2, 0.2);
+                c.userData.isConfetti = true;
+                c.userData.baseY = c.position.y;
+                c.userData.speed = 0.02 + Math.random() * 0.03;
+                c.userData.drift = (Math.random() - 0.5) * 0.1;
+                confetti.push(c);
+            }
+            
+            // Animate confetti
+            setInterval(() => {
+                confetti.forEach(c => {
+                    c.position.y -= c.userData.speed;
+                    c.position.x += c.userData.drift;
+                    c.rotation.x += 0.1;
+                    c.rotation.z += 0.1;
+                    if (c.position.y < sy) {
+                        c.position.y = sy + 25;
+                        c.position.x = sx + (Math.random() - 0.5) * 10;
+                        c.position.z = sz + (Math.random() - 0.5) * 10;
+                    }
                 });
             }, 50);
         }
