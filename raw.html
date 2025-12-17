@@ -82,6 +82,19 @@
     player.castShadow = true;
     scene.add(player);
     
+    // Pokeball weapon
+    const pokeballGeo = new THREE.SphereGeometry(0.25, 16, 16);
+    const pokeballMat = new THREE.MeshStandardMaterial({color: 0xff0000, emissive: 0x000000});
+    const pokeball = new THREE.Mesh(pokeballGeo, pokeballMat);
+    pokeball.position.set(0.8, 0.2, 0);
+    player.add(pokeball);
+    // White stripe on pokeball
+    const stripeGeo = new THREE.TorusGeometry(0.25, 0.03, 8, 16);
+    const stripeMat = new THREE.MeshStandardMaterial({color: 0xffffff});
+    const stripe = new THREE.Mesh(stripeGeo, stripeMat);
+    stripe.rotation.x = Math.PI/2;
+    pokeball.add(stripe);
+    
     // Pikachu companion
     const pikachuBody = new THREE.SphereGeometry(0.4, 8, 8);
     const pikachuMat = new THREE.MeshStandardMaterial({color: 0xffdd00});
