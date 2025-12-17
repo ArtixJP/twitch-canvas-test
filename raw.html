@@ -420,7 +420,7 @@
 <button onclick="toggleMode()" style="background:linear-gradient(135deg,#667eea,#764ba2);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(102,126,234,0.4);transition:all 0.3s;">🚀 Switch to Space</button>
 <button onclick="toggleBakery()" style="background:linear-gradient(135deg,#f5af19,#f12711);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(245,175,25,0.4);transition:all 0.3s;margin-left:10px;">🥐 Bakery Mode</button>
 <button onclick="toggleApocalypse()" style="background:linear-gradient(135deg,#4a0080,#ff0040);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(255,0,64,0.6);transition:all 0.3s;margin-left:10px;animation:pulse-btn 1s infinite alternate;">💀 VOID MODE</button>
-<button onclick="toggleSnake()" style="background:linear-gradient(135deg,#00ff88,#00aa55);border:none;color:white;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(0,255,136,0.4);transition:all 0.3s;margin-left:10px;">🐍 Snake Game</button>
+<button onclick="toggleSnake()" style="background:linear-gradient(135deg,#333,#222);border:none;color:#666;padding:12px 24px;border-radius:25px;cursor:not-allowed;font-size:1rem;font-weight:bold;box-shadow:0 4px 15px rgba(0,0,0,0.2);transition:all 0.3s;margin-left:10px;opacity:0.5;text-decoration:line-through;" title="The snake has slithered away...">🐍 Snake Game (Gone)</button>
 </div>
 <div id="apocalypse-overlay" style="display:none;"></div>
 <div id="void-text" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:10000;font-size:4rem;color:#ff0040;text-shadow:0 0 30px #ff0040,0 0 60px #4a0080;font-family:monospace;animation:void-collapse 2s infinite;">DELETING REALITY...</div>
@@ -440,7 +440,7 @@
 </div>
 <div id="minecraft-container" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:500;"></div>
 <div id="space-container" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;"></div>
-<div id="snake-container" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(135deg,#0a0a1a 0%,#1a0a2e 100%);z-index:650;display:none;flex-direction:column;align-items:center;justify-content:center;">
+<div id="snake-container" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(135deg,#0a0a1a 0%,#1a0a2e 100%);z-index:650;display:none;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;opacity:0;visibility:hidden;">
 <h2 style="color:#00ff88;text-shadow:0 0 20px #00ff88;margin-bottom:20px;font-size:2rem;">🐍 NEON SNAKE 🐍</h2>
 <p style="color:#aaa;margin-bottom:10px;">Use Arrow Keys to move | Don't hit walls or yourself!</p>
 <canvas height="400" id="snakeCanvas" style="border:3px solid #00ff88;border-radius:10px;box-shadow:0 0 30px rgba(0,255,136,0.3);" width="400"></canvas>
@@ -1146,6 +1146,11 @@
         let snakeInterval = null;
         
         function toggleSnake() {
+            // The snake has departed to a better place 🐍💀
+            const btn = event.target;
+            btn.style.animation = 'shake 0.5s';
+            setTimeout(() => btn.style.animation = '', 500);
+            return; // Snake game removed by community request
             snakeActive = !snakeActive;
             const snakeContainer = document.getElementById('snake-container');
             const mcContainer = document.getElementById('minecraft-container');
