@@ -197,6 +197,72 @@
         }
     });
     
+    // Floating Movie Theater in the sky
+    const theaterGroup = new THREE.Group();
+    const screenGeo = new THREE.PlaneGeometry(8, 5);
+    const screenCanvas = document.createElement('canvas');
+    screenCanvas.width = 512;
+    screenCanvas.height = 320;
+    const screenCtx = screenCanvas.getContext('2d');
+    const screenTexture = new THREE.CanvasTexture(screenCanvas);
+    const screenMat = new THREE.MeshBasicMaterial({map: screenTexture, side: THREE.DoubleSide});
+    const screen = new THREE.Mesh(screenGeo, screenMat);
+    theaterGroup.add(screen);
+    
+    // Theater frame
+    const frameGeo = new THREE.BoxGeometry(9, 6, 0.3);
+    const frameMat = new THREE.MeshLambertMaterial({color: 0x8B0000});
+    const frame = new THREE.Mesh(frameGeo, frameMat);
+    frame.position.z = -0.2;
+    theaterGroup.add(frame);
+    
+    theaterGroup.position.set(0, 25, -20);
+    scene.add(theaterGroup);
+    
+    let movieFrame = 0;
+    function updateMovie() {
+        movieFrame++;
+        screenCtx.fillStyle = '#1a1a2e';
+        screenCtx.fillRect(0, 0, 512, 320);
+        
+        // Draw Mario
+        const marioX = 150 + Math.sin(movieFrame * 0.05) * 30;
+        const marioY = 200 + Math.abs(Math.sin(movieFrame * 0.1)) * -50;
+        screenCtx.fillStyle = '#ff0000';
+        screenCtx.fillRect(marioX, marioY, 40, 50);
+        screenCtx.fillStyle = '#ffcc99';
+        screenCtx.fillRect(marioX + 10, marioY - 15, 20, 20);
+        screenCtx.fillStyle = '#ff0000';
+        screenCtx.fillRect(marioX + 5, marioY - 25, 30, 12);
+        
+        // Draw Bowser
+        const bowserX = 320 + Math.cos(movieFrame * 0.03) * 20;
+        screenCtx.fillStyle = '#228B22';
+        screenCtx.fillRect(bowserX, 160, 60, 70);
+        screenCtx.fillStyle = '#ffcc00';
+        screenCtx.fillRect(bowserX + 10, 145, 40, 25);
+        screenCtx.fillStyle = '#ff4500';
+        for(let i = 0; i < 5; i++) {
+            screenCtx.fillRect(bowserX + 5 + i*10, 130, 8, 15);
+        }
+        
+        // Fireball from Mario
+        if(movieFrame % 60 < 30) {
+            const fireX = marioX + 50 + (movieFrame % 60) * 5;
+            screenCtx.fillStyle = '#ff6600';
+            screenCtx.beginPath();
+            screenCtx.arc(fireX, marioY + 20, 10, 0, Math.PI * 2);
+            screenCtx.fill();
+        }
+        
+        // Title
+        screenCtx.fillStyle = '#ffd700';
+        screenCtx.font = 'bold 24px Arial';
+        screenCtx.fillText('MARIO vs BOWSER', 150, 40);
+        
+        screenTexture.needsUpdate = true;
+    }
+    
     // Snake creature
     const snakeSegments = [];
     const snakeLength = 8;
