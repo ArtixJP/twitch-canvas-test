@@ -5,1802 +5,483 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>TwitchCraft - Voxel World</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<title>🥐 La Maison du Pain - Artisan Bakery 🥖</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Courier New', monospace; 
-            overflow: hidden;
-            background: #87CEEB;
+        
+        :root {
+            --cream: #FFF8E7;
+            --warm-brown: #8B4513;
+            --golden: #DAA520;
+            --dark-brown: #3D2914;
+            --soft-pink: #FFE4E1;
+            --crust: #D2691E;
         }
-        #game-container { width: 100vw; height: 100vh; }
-        #ui {
+        
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--cream);
+            color: var(--dark-brown);
+            overflow-x: hidden;
+        }
+        
+        /* Floating voxel bread decorations - echoes of the old world */
+        .voxel-decoration {
             position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F4A460 100%);
-            padding: 15px 30px;
-            border-radius: 12px;
-            color: #FFF8DC;
-            font-size: 14px;
-            z-index: 100;
-            text-align: center;
-            border: 3px solid #DAA520;
-            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.5);
-            font-family: 'Georgia', serif;
-        }
-        #ui::before {
-            content: '🥐 BAKERY WORLD 🥖';
-            display: block;
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #FFE4B5;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        #crosshair {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             width: 20px;
             height: 20px;
-            z-index: 100;
+            background: var(--golden);
+            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+            z-index: 0;
+            border-radius: 2px;
+            box-shadow: 2px 2px 0 var(--crust);
         }
-        #crosshair::before, #crosshair::after {
-            content: '';
-            position: absolute;
-            background: white;
-            box-shadow: 0 0 3px rgba(0,0,0,0.5);
+        .voxel-decoration:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; background: #F4A460; }
+        .voxel-decoration:nth-child(2) { top: 20%; right: 8%; animation-delay: 1s; background: #DEB887; }
+        .voxel-decoration:nth-child(3) { top: 60%; left: 3%; animation-delay: 2s; background: #D2691E; }
+        .voxel-decoration:nth-child(4) { top: 80%; right: 5%; animation-delay: 3s; background: #DAA520; }
+        .voxel-decoration:nth-child(5) { top: 40%; right: 2%; animation-delay: 4s; background: #FFDEAB; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
         }
-        #crosshair::before { width: 2px; height: 100%; left: 50%; transform: translateX(-50%); }
-        #crosshair::after { height: 2px; width: 100%; top: 50%; transform: translateY(-50%); }
-        #click-to-play {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.85);
-            padding: 40px 60px;
-            border-radius: 12px;
+        
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--warm-brown) 0%, var(--crust) 50%, var(--golden) 100%);
+            padding: 20px 0;
             text-align: center;
-            z-index: 200;
-            cursor: pointer;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(139, 69, 19, 0.3);
         }
-        #click-to-play h1 { color: #4ade80; font-size: 2.5rem; margin-bottom: 15px; }
-        #click-to-play p { color: #aaa; font-size: 1rem; }
-        .hidden { display: none !important; }
+        
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--cream);
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+        
+        .tagline {
+            font-style: italic;
+            color: #FFE4B5;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        nav {
+            background: var(--dark-brown);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        
+        nav a {
+            color: var(--cream);
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            padding: 5px 15px;
+            border-radius: 20px;
+        }
+        
+        nav a:hover {
+            background: var(--golden);
+            color: var(--dark-brown);
+            transform: scale(1.1);
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(61, 41, 20, 0.7), rgba(61, 41, 20, 0.7)),
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23F4A460" x="10" y="10" width="20" height="20" rx="3"/><rect fill="%23DEB887" x="40" y="30" width="15" height="15" rx="2"/><rect fill="%23D2691E" x="70" y="20" width="18" height="18" rx="3"/><rect fill="%23DAA520" x="20" y="60" width="22" height="22" rx="4"/><rect fill="%23FFDEAB" x="60" y="65" width="16" height="16" rx="2"/></svg>');
+            background-size: cover, 200px;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            background: rgba(255, 248, 231, 0.95);
+            padding: 50px 80px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            border: 4px solid var(--golden);
+            animation: fadeInUp 1s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: var(--warm-brown);
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 1.3rem;
+            color: var(--dark-brown);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--warm-brown);
+            color: var(--cream);
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            border: 3px solid var(--golden);
+        }
+        
+        .btn:hover {
+            background: var(--golden);
+            color: var(--dark-brown);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.5);
+        }
+        
+        /* Products Section */
+        .products {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-align: center;
+            color: var(--warm-brown);
+            margin-bottom: 50px;
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '🥖';
+            display: block;
+            font-size: 2rem;
+            margin-top: 10px;
+        }
+        
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.15);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--golden);
+            box-shadow: 0 15px 40px rgba(139, 69, 19, 0.25);
+        }
+        
+        .product-image {
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 5rem;
+            background: linear-gradient(135deg, #FFF8E7 0%, #FFE4B5 100%);
+        }
+        
+        .product-info {
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .product-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--warm-brown);
+            margin-bottom: 10px;
+        }
+        
+        .product-info p {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+        
+        .price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--golden);
+        }
+        
+        /* About Section */
+        .about {
+            background: var(--dark-brown);
+            color: var(--cream);
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .about h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .about p {
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.8;
+            font-size: 1.1rem;
+        }
+        
+        .minecraft-tribute {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .minecraft-tribute p {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            font-style: italic;
+        }
+        
+        /* Contact Section */
+        .contact {
+            padding: 80px 20px;
+            text-align: center;
+        }
+        
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .contact-item {
+            background: white;
+            padding: 30px 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.1);
+        }
+        
+        .contact-item h4 {
+            color: var(--warm-brown);
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--warm-brown);
+            color: var(--cream);
+            text-align: center;
+            padding: 30px;
+        }
+        
+        footer p {
+            opacity: 0.8;
+        }
+        
+        /* Animated bread parade */
+        .bread-parade {
+            overflow: hidden;
+            background: var(--golden);
+            padding: 15px 0;
+            white-space: nowrap;
+        }
+        
+        .bread-parade-inner {
+            display: inline-block;
+            animation: scroll 20s linear infinite;
+        }
+        
+        .bread-parade span {
+            display: inline-block;
+            font-size: 2rem;
+            margin: 0 30px;
+        }
+        
+        @keyframes scroll {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
     </style>
 </head>
 <body>
-<div id="click-to-play">
-<h1>🥐 TwitchCraft Bakery 🍞</h1>
-<p>Click to Play</p>
-<p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
-</div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🌸 Memorial Garden | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE! | 🌸 NEW: FLOWER GARDEN AT FOUNTAIN!</div>
-<div id="crosshair"></div>
-<div id="game-container"></div>
-<script>
-        // TwitchCraft - A Mini Minecraft Clone
-        let scene, camera, renderer, blocks = [];
-        let moveForward = false, moveBackward = false, moveLeft = false, moveRight = false;
-        let velocity = new THREE.Vector3();
-        let isLocked = false;
-        const blockSize = 1;
-        const worldSize = 32;
-        
-        // Block colors
-        const blockTypes = [
-            0x4a7c31, // Grass
-            0x8B4513, // Dirt
-            0x808080, // Stone
-            0x654321, // Wood
-            0xFFE135, // Banana Yellow
-            0xFF0000, // Mario Red
-            0x9932CC, // Puzzle Purple
-        ];
-        let currentBlock = 0;
-        
-        function init() {
-            scene = new THREE.Scene();
-            scene.background = new THREE.Color(0x87CEEB);
-            scene.fog = new THREE.Fog(0x87CEEB, 30, 100);
-            
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            camera.position.set(worldSize/2, 12, worldSize/2);
-            camera.rotation.order = 'YXZ';
-            
-            renderer = new THREE.WebGLRenderer({ antialias: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.shadowMap.enabled = true;
-            document.getElementById('game-container').appendChild(renderer.domElement);
-            
-            // Lighting
-            const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-            scene.add(ambient);
-            const sun = new THREE.DirectionalLight(0xffffff, 0.8);
-            sun.position.set(50, 100, 50);
-            sun.castShadow = true;
-            scene.add(sun);
-            
-            // Generate terrain
-            generateTerrain();
-            
-            // Add Mario NPC
-            createMario();
-            
-            // Add floating banana collectible
-            createBanana();
-            
-            // Add puzzle blocks
-            createPuzzleBlocks();
-            
-            // Add bakery
-            createBakery();
-            
-            // Add Link from Zelda
-            createLink();
-            
-            // Add Ganon
-            createGanon();
-            
-            // Add more food items
-            createPizza();
-            createMoreBread();
-            
-            // Add Japanese Restaurant
-            createJapaneseRestaurant();
-            
-            // Add 3D Movie Theater!
-            createMovieTheater();
-            
-            // Add Pizzeria!
-            createPizzeria();
-            
-            // Add Burger Place!
-            createBurgerPlace();
-            
-            // Add floating greeting signs!
-            createGreetingSigns();
-            
-            // Add Crystal Cave!
-            createCrystalCave();
-            
-            // Add Waterfall!
-            createWaterfall();
-            
-            // Add Enchanted Forest!
-            createEnchantedForest();
-            
-            // Add Aurora Borealis!
-            createAuroraBorealis();
-            
-            // Add Fireflies!
-            createFireflies();
-            
-            // Add GIANT MARIO STATUE with Thank You Panel!
-            createMarioStatue();
-            
-            // Add Weather Particles!
-            createWeatherEffects();
-            
-            // Add Floating Thank You Panel!
-            createThankYouPanel();
-            
-            // Controls
-            document.addEventListener('keydown', onKeyDown);
-            document.addEventListener('keyup', onKeyUp);
-            document.addEventListener('click', onClick);
-            document.addEventListener('contextmenu', onRightClick);
-            document.addEventListener('mousemove', onMouseMove);
-            window.addEventListener('resize', onResize);
-            
-            // Pointer lock
-            document.getElementById('click-to-play').addEventListener('click', () => {
-                document.body.requestPointerLock();
-            });
-            document.addEventListener('pointerlockchange', () => {
-                isLocked = document.pointerLockElement === document.body;
-                document.getElementById('click-to-play').classList.toggle('hidden', isLocked);
-            });
-            
-            animate();
-        }
-        
-        function createMario() {
-            // Steve-style Mario (Minecraft villager aesthetic)
-            const mx = 20, mz = 20;
-            // Legs (blue like Steve's pants)
-            createBlock(mx, 6, mz, 0x3b5998);
-            // Body (red shirt - Mario style)
-            createBlock(mx, 7, mz, 0xCC0000);
-            createBlock(mx, 8, mz, 0xCC0000);
-            // Head (blocky Minecraft style - 2x2x2)
-            createBlock(mx, 9, mz, 0xC69C6D); // skin
-            createBlock(mx + 1, 9, mz, 0xC69C6D);
-            createBlock(mx, 9, mz + 1, 0xC69C6D);
-            createBlock(mx + 1, 9, mz + 1, 0x8B4513); // hair back
-            createBlock(mx, 10, mz, 0xCC0000); // hat top
-            createBlock(mx + 1, 10, mz, 0xCC0000);
-            // Arms (blocky)
-            createBlock(mx - 1, 7, mz, 0xC69C6D);
-            createBlock(mx - 1, 8, mz, 0xC69C6D);
-            createBlock(mx + 2, 7, mz, 0xC69C6D);
-            createBlock(mx + 2, 8, mz, 0xC69C6D);
-        }
-        
-        function createBanana() {
-            // Floating banana made of yellow blocks
-            const bananaY = 12;
-            createBlock(10, bananaY, 10, 0xFFE135);
-            createBlock(11, bananaY + 1, 10, 0xFFE135);
-            createBlock(12, bananaY + 1, 10, 0xFFE135);
-            createBlock(13, bananaY, 10, 0xFFE135);
-            
-            // Make banana spin
-            setInterval(() => {
-                blocks.forEach(b => {
-                    if (b.position.y >= bananaY && b.material.color.getHex() === 0xFFE135) {
-                        b.rotation.y += 0.05;
-                    }
-                });
-            }, 50);
-        }
-        
-        function createPuzzleBlocks() {
-            // Mystery puzzle blocks (purple) - click them for surprises!
-            for (let i = 0; i < 5; i++) {
-                const puzzleBlock = createBlock(5 + i * 2, 10, 8, 0x9932CC);
-                puzzleBlock.userData.isPuzzle = true;
-            }
-        }
-        
-        function createBakery() {
-            const bx = 2, bz = 2, by = 5; // Bakery base position
-            
-            // Foundation & Floor (tan/beige)
-            for (let x = 0; x < 5; x++) {
-                for (let z = 0; z < 5; z++) {
-                    createBlock(bx + x, by, bz + z, 0xD2B48C);
-                }
-            }
-            
-            // Walls (warm brown)
-            for (let y = 1; y <= 3; y++) {
-                for (let x = 0; x < 5; x++) {
-                    createBlock(bx + x, by + y, bz, 0x8B4513);
-                    createBlock(bx + x, by + y, bz + 4, 0x8B4513);
-                }
-                for (let z = 1; z < 4; z++) {
-                    createBlock(bx, by + y, bz + z, 0x8B4513);
-                    createBlock(bx + 4, by + y, bz + z, 0x8B4513);
-                }
-            }
-            
-            // Door opening (remove front center blocks)
-            // Window (light blue glass)
-            createBlock(bx + 2, by + 2, bz, 0x87CEEB);
-            
-            // Roof (red tiles like Mario!)
-            for (let x = -1; x < 6; x++) {
-                for (let z = -1; z < 6; z++) {
-                    createBlock(bx + x, by + 4, bz + z, 0xB22222);
-                }
-            }
-            
-            // Chimney (grey stone)
-            createBlock(bx + 4, by + 5, bz + 3, 0x696969);
-            createBlock(bx + 4, by + 6, bz + 3, 0x696969);
-            
-            // Bread display inside (golden brown loaves)
-            createBlock(bx + 1, by + 1, bz + 2, 0xDAA520);
-            createBlock(bx + 2, by + 1, bz + 2, 0xDAA520);
-            createBlock(bx + 3, by + 1, bz + 2, 0xF4A460);
-            
-            // Croissant (lighter tan)
-            createBlock(bx + 1, by + 1, bz + 3, 0xFFDEAD);
-            
-            // Oven (dark grey/black)
-            createBlock(bx + 3, by + 1, bz + 3, 0x2F2F2F);
-            createBlock(bx + 3, by + 2, bz + 3, 0x2F2F2F);
-            
-            // Sign post outside
-            createBlock(bx - 1, by + 1, bz + 2, 0x654321);
-            createBlock(bx - 1, by + 2, bz + 2, 0xFFE4B5); // Sign (cream color)
-        }
-        
-        function createLink() {
-            // Minecraft-style Link (blocky Steve proportions)
-            const lx = 28, lz = 28, ly = 8;
-            // Legs (brown boots)
-            createBlock(lx, ly, lz, 0x5C4033);
-            createBlock(lx + 1, ly, lz, 0x5C4033);
-            // Body (green tunic - 2 wide)
-            createBlock(lx, ly + 1, lz, 0x228B22);
-            createBlock(lx + 1, ly + 1, lz, 0x228B22);
-            createBlock(lx, ly + 2, lz, 0x228B22);
-            createBlock(lx + 1, ly + 2, lz, 0x228B22);
-            // Head (blocky 2x2 Minecraft style)
-            createBlock(lx, ly + 3, lz, 0xC69C6D); // face
-            createBlock(lx + 1, ly + 3, lz, 0xC69C6D);
-            createBlock(lx, ly + 3, lz + 1, 0xE6BE8A); // ears
-            createBlock(lx + 1, ly + 3, lz + 1, 0xE6BE8A);
-            // Blonde hair top
-            createBlock(lx, ly + 4, lz, 0xFFD700);
-            createBlock(lx + 1, ly + 4, lz, 0xFFD700);
-            createBlock(lx, ly + 4, lz + 1, 0x228B22); // green cap back
-            createBlock(lx + 1, ly + 4, lz + 1, 0x228B22);
-            // Arms
-            createBlock(lx - 1, ly + 1, lz, 0xC69C6D);
-            createBlock(lx - 1, ly + 2, lz, 0xC69C6D);
-            createBlock(lx + 2, ly + 1, lz, 0xC69C6D);
-            createBlock(lx + 2, ly + 2, lz, 0xC69C6D);
-            // Diamond Sword (Minecraft style!)
-            createBlock(lx + 2, ly + 3, lz, 0x5DADE2);
-            createBlock(lx + 2, ly + 4, lz, 0x5DADE2);
-            createBlock(lx + 2, ly + 5, lz, 0x5DADE2);
-            // Shield
-            createBlock(lx - 1, ly + 3, lz, 0x1E3A8A);
-        }
-        
-        function createGanon() {
-            // Minecraft-style Ganon (like an Illager/Evoker boss!)
-            const gx = 24, gz = 28, gy = 8;
-            // Legs (dark)
-            createBlock(gx, gy, gz, 0x1C1C1C);
-            createBlock(gx + 1, gy, gz, 0x1C1C1C);
-            // Body (dark armor - wider like a boss mob)
-            createBlock(gx, gy + 1, gz, 0x2D2D2D);
-            createBlock(gx + 1, gy + 1, gz, 0x2D2D2D);
-            createBlock(gx, gy + 2, gz, 0x2D2D2D);
-            createBlock(gx + 1, gy + 2, gz, 0x2D2D2D);
-            createBlock(gx, gy + 1, gz + 1, 0x4B0082); // cape
-            createBlock(gx + 1, gy + 1, gz + 1, 0x4B0082);
-            createBlock(gx, gy + 2, gz + 1, 0x4B0082);
-            createBlock(gx + 1, gy + 2, gz + 1, 0x4B0082);
-            // Head (blocky 2x2 - green skin like zombie piglin)
-            createBlock(gx, gy + 3, gz, 0x6B8E23);
-            createBlock(gx + 1, gy + 3, gz, 0x6B8E23);
-            createBlock(gx, gy + 3, gz + 1, 0x556B2F);
-            createBlock(gx + 1, gy + 3, gz + 1, 0x556B2F);
-            // Red mane (like a Minecraft piglin brute)
-            createBlock(gx - 1, gy + 4, gz, 0x8B0000);
-            createBlock(gx, gy + 4, gz, 0x8B0000);
-            createBlock(gx + 1, gy + 4, gz, 0x8B0000);
-            createBlock(gx + 2, gy + 4, gz, 0x8B0000);
-            createBlock(gx, gy + 4, gz + 1, 0x8B0000);
-            createBlock(gx + 1, gy + 4, gz + 1, 0x8B0000);
-            // Arms (bulky)
-            createBlock(gx - 1, gy + 1, gz, 0x6B8E23);
-            createBlock(gx - 1, gy + 2, gz, 0x6B8E23);
-            createBlock(gx + 2, gy + 1, gz, 0x6B8E23);
-            createBlock(gx + 2, gy + 2, gz, 0x6B8E23);
-            // Trident (like drowned mob!)
-            createBlock(gx + 2, gy + 3, gz, 0x4169E1);
-            createBlock(gx + 2, gy + 4, gz, 0x4169E1);
-            createBlock(gx + 2, gy + 5, gz, 0x4169E1);
-            createBlock(gx + 3, gy + 5, gz, 0x4169E1);
-            createBlock(gx + 1, gy + 5, gz, 0x4169E1);
-        }
-        
-        function createPizza() {
-            // Pizza on bakery counter! 🍕
-            const px = 4, py = 6, pz = 5;
-            // Pizza base (tan)
-            createBlock(px, py, pz, 0xDAA520);
-            // Tomato sauce (red center)
-            createBlock(px, py + 0.1, pz, 0xFF6347);
-            // Pepperoni spots
-            createBlock(px + 1, py, pz, 0xDAA520);
-            createBlock(px - 1, py, pz, 0xDAA520);
-            createBlock(px, py, pz + 1, 0xDAA520);
-        }
-        
-        function createMoreBread() {
-            // Fresh baguettes outside bakery! 🥖
-            const bx = 1, by = 6, bz = 4;
-            createBlock(bx, by, bz, 0xDEB887); // Baguette 1
-            createBlock(bx, by, bz + 1, 0xDEB887);
-            createBlock(bx, by, bz + 2, 0xF5DEB3); // Baguette 2 (lighter)
-            // Bread basket
-            createBlock(bx - 1, by - 1, bz + 1, 0x8B4513);
-        }
-        
-        function createJapaneseRestaurant() {
-            // 🍜 Japanese Restaurant - Ramen & Sushi! 🍣
-            const jx = 22, jz = 5, jy = 5;
-            
-            // Foundation (dark wood tatami style)
-            for (let x = 0; x < 6; x++) {
-                for (let z = 0; z < 5; z++) {
-                    createBlock(jx + x, jy, jz + z, 0x3D2914);
-                }
-            }
-            
-            // Walls (light wood - traditional Japanese)
-            for (let y = 1; y <= 3; y++) {
-                for (let x = 0; x < 6; x++) {
-                    createBlock(jx + x, jy + y, jz, 0xD2B48C);
-                    createBlock(jx + x, jy + y, jz + 4, 0xD2B48C);
-                }
-                for (let z = 1; z < 4; z++) {
-                    createBlock(jx, jy + y, jz + z, 0xD2B48C);
-                    createBlock(jx + 5, jy + y, jz + z, 0xD2B48C);
-                }
-            }
-            
-            // Paper screen windows (white/cream)
-            createBlock(jx + 2, jy + 2, jz, 0xFFF8DC);
-            createBlock(jx + 3, jy + 2, jz, 0xFFF8DC);
-            
-            // Traditional Japanese roof (dark blue/grey tiles)
-            for (let x = -1; x < 7; x++) {
-                for (let z = -1; z < 6; z++) {
-                    createBlock(jx + x, jy + 4, jz + z, 0x2F4F4F);
-                }
-            }
-            // Curved roof edges (slightly higher)
-            createBlock(jx - 1, jy + 5, jz - 1, 0x2F4F4F);
-            createBlock(jx + 6, jy + 5, jz - 1, 0x2F4F4F);
-            createBlock(jx - 1, jy + 5, jz + 5, 0x2F4F4F);
-            createBlock(jx + 6, jy + 5, jz + 5, 0x2F4F4F);
-            
-            // Red Torii Gate entrance! ⛩️
-            createBlock(jx + 2, jy + 1, jz - 2, 0xCC0000);
-            createBlock(jx + 3, jy + 1, jz - 2, 0xCC0000);
-            createBlock(jx + 2, jy + 2, jz - 2, 0xCC0000);
-            createBlock(jx + 3, jy + 2, jz - 2, 0xCC0000);
-            createBlock(jx + 2, jy + 3, jz - 2, 0xCC0000);
-            createBlock(jx + 3, jy + 3, jz - 2, 0xCC0000);
-            createBlock(jx + 1, jy + 3, jz - 2, 0xCC0000); // Top bar
-            createBlock(jx + 4, jy + 3, jz - 2, 0xCC0000);
-            createBlock(jx + 1, jy + 4, jz - 2, 0x1C1C1C); // Black roof cap
-            createBlock(jx + 2, jy + 4, jz - 2, 0x1C1C1C);
-            createBlock(jx + 3, jy + 4, jz - 2, 0x1C1C1C);
-            createBlock(jx + 4, jy + 4, jz - 2, 0x1C1C1C);
-            
-            // Sushi counter inside (dark wood)
-            createBlock(jx + 1, jy + 1, jz + 2, 0x2F1810);
-            createBlock(jx + 2, jy + 1, jz + 2, 0x2F1810);
-            createBlock(jx + 3, jy + 1, jz + 2, 0x2F1810);
-            createBlock(jx + 4, jy + 1, jz + 2, 0x2F1810);
-            
-            // Sushi plates! 🍣 (white plates with colored fish)
-            createBlock(jx + 1, jy + 2, jz + 2, 0xFA8072); // Salmon
-            createBlock(jx + 2, jy + 2, jz + 2, 0xDC143C); // Tuna
-            createBlock(jx + 3, jy + 2, jz + 2, 0xFFE4B5); // Tamago
-            createBlock(jx + 4, jy + 2, jz + 2, 0x228B22); // Avocado roll
-            
-            // Ramen bowls! 🍜
-            createBlock(jx + 2, jy + 1, jz + 3, 0xFFFFE0); // Noodle bowl 1
-            createBlock(jx + 3, jy + 1, jz + 3, 0xFFFFE0); // Noodle bowl 2
-            
-            // Paper lanterns outside (red & white)
-            createBlock(jx, jy + 3, jz - 1, 0xFF4500); // Red lantern
-            createBlock(jx + 5, jy + 3, jz - 1, 0xFFFFFF); // White lantern
-            
-            // Chopsticks holder
-            createBlock(jx + 4, jy + 1, jz + 3, 0x8B4513);
-            
-            // Lucky cat statue (gold) 🐱
-            createBlock(jx - 1, jy + 1, jz + 2, 0xFFD700);
-            
-            // Animate the lucky cat waving!
-            let catWaveTime = 0;
-            setInterval(() => {
-                catWaveTime += 0.1;
-                blocks.forEach(b => {
-                    if (b.position.x === jx - 1 && b.position.z === jz + 2 && b.material.color.getHex() === 0xFFD700) {
-                        b.rotation.z = Math.sin(catWaveTime * 3) * 0.2;
-                    }
-                });
-            }, 50);
-            
-            // Sign: 🍜 RAMEN HOUSE - Readable!
-            createBlock(jx + 2, jy + 5, jz - 1, 0xFFD700);
-            createBlock(jx + 3, jy + 5, jz - 1, 0xCC0000);
-            
-            const ramenCanvas = document.createElement('canvas');
-            ramenCanvas.width = 256;
-            ramenCanvas.height = 128;
-            const ramenCtx = ramenCanvas.getContext('2d');
-            ramenCtx.fillStyle = '#CC0000';
-            ramenCtx.fillRect(0, 0, 256, 128);
-            ramenCtx.fillStyle = '#FFD700';
-            ramenCtx.font = 'Bold 32px Arial';
-            ramenCtx.textAlign = 'center';
-            ramenCtx.fillText('🍜 RAMEN HOUSE', 128, 70);
-            const ramenTex = new THREE.CanvasTexture(ramenCanvas);
-            const ramenSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: ramenTex }));
-            ramenSign.scale.set(4, 2, 1);
-            ramenSign.position.set(jx + 2.5, jy + 6, jz - 2);
-            scene.add(ramenSign);
-        }
-        
-        function createMovieTheater() {
-            // 3D Movie Theater! 🎬
-            const tx = 12, tz = 20, ty = 5;
-            
-            // Theater floor (red carpet!)
-            for (let x = 0; x < 8; x++) {
-                for (let z = 0; z < 6; z++) {
-                    createBlock(tx + x, ty, tz + z, 0x8B0000);
-                }
-            }
-            
-            // Back wall (dark)
-            for (let x = 0; x < 8; x++) {
-                for (let y = 1; y <= 5; y++) {
-                    createBlock(tx + x, ty + y, tz + 5, 0x1C1C1C);
-                }
-            }
-            
-            // Side walls
-            for (let z = 0; z < 6; z++) {
-                for (let y = 1; y <= 5; y++) {
-                    createBlock(tx, ty + y, tz + z, 0x2D2D2D);
-                    createBlock(tx + 7, ty + y, tz + z, 0x2D2D2D);
-                }
-            }
-            
-            // Movie Screen (white glowing)
-            for (let x = 2; x < 6; x++) {
-                for (let y = 2; y <= 4; y++) {
-                    const screenBlock = createBlock(tx + x, ty + y, tz + 4.9, 0xFFFFFF);
-                    screenBlock.userData.isScreen = true;
-                }
-            }
-            
-            // Seats (brown benches)
-            for (let row = 0; row < 2; row++) {
-                for (let seat = 1; seat < 7; seat++) {
-                    createBlock(tx + seat, ty + 1, tz + row + 1, 0x654321);
-                }
-            }
-            
-            // Projector booth
-            createBlock(tx + 3, ty + 5, tz + 1, 0x444444);
-            createBlock(tx + 4, ty + 5, tz + 1, 0x444444);
-            
-            // 🎬 MARIO SAVES PEACH - The Movie! 🎬
-            const movieCubes = [];
-            
-            // Create Princess Peach (pink dress, blonde hair)
-            const peachGroup = new THREE.Group();
-            // Peach body (pink dress)
-            const peachDress = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.4), new THREE.MeshLambertMaterial({ color: 0xFF69B4 }));
-            peachDress.position.y = 0.3;
-            peachGroup.add(peachDress);
-            // Peach head
-            const peachHead = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 0.35), new THREE.MeshLambertMaterial({ color: 0xFFDBB4 }));
-            peachHead.position.y = 0.8;
-            peachGroup.add(peachHead);
-            // Crown!
-            const crown = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.15, 0.25), new THREE.MeshLambertMaterial({ color: 0xFFD700 }));
-            crown.position.y = 1.05;
-            peachGroup.add(crown);
-            // Blonde hair
-            const hair = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.3, 0.2), new THREE.MeshLambertMaterial({ color: 0xFFE135 }));
-            hair.position.set(0, 0.75, -0.15);
-            peachGroup.add(hair);
-            peachGroup.position.set(tx + 5.5, ty + 4, tz + 3.5);
-            scene.add(peachGroup);
-            movieCubes.push(peachGroup);
-            
-            // Tower blocks (grey castle tower holding Peach)
-            const towerBlocks = [];
-            for (let ty2 = 0; ty2 < 2; ty2++) {
-                const towerBlock = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.4, 0.8), new THREE.MeshLambertMaterial({ color: 0x808080 }));
-                towerBlock.position.set(tx + 5.5, ty + 2.5 + ty2 * 0.4, tz + 3.5);
-                scene.add(towerBlock);
-                towerBlocks.push(towerBlock);
-            }
-            
-            // Create Movie Mario (running to save her!)
-            const movieMario = new THREE.Group();
-            // Mario legs
-            const marioLegs = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.3), new THREE.MeshLambertMaterial({ color: 0x3b5998 }));
-            marioLegs.position.y = 0.15;
-            movieMario.add(marioLegs);
-            // Mario body
-            const marioBody = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.4, 0.35), new THREE.MeshLambertMaterial({ color: 0xCC0000 }));
-            marioBody.position.y = 0.5;
-            movieMario.add(marioBody);
-            // Mario head
-            const marioHead = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 0.35), new THREE.MeshLambertMaterial({ color: 0xC69C6D }));
-            marioHead.position.y = 0.9;
-            movieMario.add(marioHead);
-            // Mario hat
-            const marioHat = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.15, 0.4), new THREE.MeshLambertMaterial({ color: 0xCC0000 }));
-            marioHat.position.y = 1.15;
-            movieMario.add(marioHat);
-            // Mustache
-            const mustache = new THREE.Mesh(new THREE.BoxGeometry(0.25, 0.08, 0.1), new THREE.MeshLambertMaterial({ color: 0x3D2314 }));
-            mustache.position.set(0, 0.8, 0.2);
-            movieMario.add(mustache);
-            movieMario.position.set(tx + 2, ty + 2.5, tz + 3.5);
-            scene.add(movieMario);
-            movieCubes.push(movieMario);
-            
-            // Create Bowser (the villain blocking the way!)
-            const bowser = new THREE.Group();
-            // Bowser body (green shell)
-            const bowserBody = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.5, 0.6), new THREE.MeshLambertMaterial({ color: 0x228B22 }));
-            bowserBody.position.y = 0.4;
-            bowser.add(bowserBody);
-            // Bowser shell spikes
-            const spike1 = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.2, 0.15), new THREE.MeshLambertMaterial({ color: 0xFFFFFF }));
-            spike1.position.set(0, 0.7, -0.2);
-            bowser.add(spike1);
-            // Bowser head (yellow/orange)
-            const bowserHead = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.45, 0.45), new THREE.MeshLambertMaterial({ color: 0xFFA500 }));
-            bowserHead.position.y = 0.9;
-            bowser.add(bowserHead);
-            // Red mane
-            const bowserMane = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.25, 0.3), new THREE.MeshLambertMaterial({ color: 0xFF4500 }));
-            bowserMane.position.set(0, 1.1, -0.1);
-            bowser.add(bowserMane);
-            // Horns
-            const horn1 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.1), new THREE.MeshLambertMaterial({ color: 0xFFFFE0 }));
-            horn1.position.set(-0.2, 1.2, 0);
-            bowser.add(horn1);
-            const horn2 = new THREE.Mesh(new THREE.BoxGeometry(0.1, 0.2, 0.1), new THREE.MeshLambertMaterial({ color: 0xFFFFE0 }));
-            horn2.position.set(0.2, 1.2, 0);
-            bowser.add(horn2);
-            bowser.position.set(tx + 4, ty + 2.5, tz + 3.5);
-            scene.add(bowser);
-            movieCubes.push(bowser);
-            
-            // Hearts floating from Peach (she's calling for help!)
-            const hearts = [];
-            for (let h = 0; h < 3; h++) {
-                const heart = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.15, 0.1), new THREE.MeshLambertMaterial({ color: 0xFF1493 }));
-                heart.position.set(tx + 5.5 + h * 0.2, ty + 4.5, tz + 3.5);
-                scene.add(heart);
-                hearts.push(heart);
-            }
-            
-            // Animate the 3D movie - Mario runs to save Peach!
-            let movieTime = 0;
-            let moviePhase = 0; // 0=approach, 1=fight, 2=rescue
-            setInterval(() => {
-                movieTime += 0.08;
-                
-                // Mario runs toward Bowser then Peach
-                if (moviePhase === 0) {
-                    movieMario.position.x = tx + 2 + Math.min(movieTime * 0.3, 1.5);
-                    movieMario.position.y = ty + 2.5 + Math.abs(Math.sin(movieTime * 3)) * 0.2; // Jumping!
-                    if (movieTime > 5) { moviePhase = 1; movieTime = 0; }
-                } else if (moviePhase === 1) {
-                    // Battle! Both shake
-                    movieMario.rotation.y = Math.sin(movieTime * 5) * 0.3;
-                    bowser.rotation.y = Math.sin(movieTime * 5 + 1) * 0.3;
-                    bowser.position.y = ty + 2.5 + Math.sin(movieTime * 2) * 0.1;
-                    // Bowser defeated - falls!
-                    if (movieTime > 4) {
-                        bowser.position.y = ty + 2.5 - (movieTime - 4) * 0.5;
-                        bowser.rotation.z = (movieTime - 4) * 0.5;
-                    }
-                    if (movieTime > 6) { moviePhase = 2; movieTime = 0; }
-                } else {
-                    // Rescue! Mario reaches Peach
-                    movieMario.position.x = tx + 3.5 + Math.min(movieTime * 0.4, 2);
-                    movieMario.rotation.y = 0;
-                    // Peach comes down
-                    peachGroup.position.y = ty + 4 - Math.min(movieTime * 0.3, 1.5);
-                    // Hearts explode with joy!
-                    hearts.forEach((heart, i) => {
-                        heart.position.y = ty + 3 + Math.sin(movieTime * 2 + i) * 0.5;
-                        heart.rotation.z = movieTime;
-                    });
-                    // Reset movie loop
-                    if (movieTime > 8) {
-                        moviePhase = 0;
-                        movieTime = 0;
-                        movieMario.position.set(tx + 2, ty + 2.5, tz + 3.5);
-                        peachGroup.position.set(tx + 5.5, ty + 4, tz + 3.5);
-                        bowser.position.set(tx + 4, ty + 2.5, tz + 3.5);
-                        bowser.rotation.z = 0;
-                    }
-                }
-                
-                // Peach waves for help
-                peachGroup.rotation.y = Math.sin(movieTime) * 0.2;
-                
-            }, 50);
-            
-            // Sign outside: "🎬 MARIO SAVES PEACH - NOW PLAYING!"
-            createBlock(tx + 2, ty + 6, tz, 0xFFD700);
-            createBlock(tx + 3, ty + 6, tz, 0xCC0000); // Mario red
-            createBlock(tx + 4, ty + 6, tz, 0xFF69B4); // Peach pink
-            createBlock(tx + 5, ty + 6, tz, 0xFFD700);
-        }
-        
-        function createPizzeria() {
-            // 🏚️ ABANDONED PIZZERIA RUINS - The community demanded its closure!
-            const px = 8, pz = 28, py = 5;
-            
-            // Cracked foundation (dirty tiles)
-            for (let x = 0; x < 6; x++) {
-                for (let z = 0; z < 5; z++) {
-                    if (Math.random() > 0.3) { // Some tiles missing
-                        const tileColor = 0x4A4A4A; // Grey dusty tiles
-                        createBlock(px + x, py, pz + z, tileColor);
-                    }
-                }
-            }
-            
-            // Crumbling walls (darker, damaged)
-            for (let y = 1; y <= 2; y++) { // Lower walls remain
-                for (let x = 0; x < 6; x++) {
-                    if (Math.random() > 0.4) {
-                        createBlock(px + x, py + y, pz + 4, 0x5C3D2E);
-                    }
-                }
-            }
-            
-            // Rubble pile where the oven was
-            createBlock(px + 4, py + 1, pz + 3, 0x3A3A3A);
-            createBlock(px + 3, py + 1, pz + 3, 0x4A4A4A);
-            createBlock(px + 4, py + 1, pz + 2, 0x2A2A2A);
-            
-            // Broken counter remains
-            createBlock(px + 1, py + 1, pz + 2, 0x5C4033);
-            createBlock(px + 3, py + 1, pz + 2, 0x5C4033);
-            
-            // Cobwebs (white wispy blocks)
-            const cobweb1 = createBlock(px + 1, py + 2, pz + 4, 0xDDDDDD);
-            cobweb1.material.transparent = true;
-            cobweb1.material.opacity = 0.4;
-            const cobweb2 = createBlock(px + 5, py + 2, pz + 3, 0xDDDDDD);
-            cobweb2.material.transparent = true;
-            cobweb2.material.opacity = 0.4;
-            
-            // Fallen "CLOSED" sign
-            const closedCanvas = document.createElement('canvas');
-            closedCanvas.width = 256;
-            closedCanvas.height = 128;
-            const closedCtx = closedCanvas.getContext('2d');
-            closedCtx.fillStyle = '#8B0000';
-            closedCtx.fillRect(0, 0, 256, 128);
-            closedCtx.fillStyle = '#FFFFFF';
-            closedCtx.font = 'Bold 36px Arial';
-            closedCtx.textAlign = 'center';
-            closedCtx.fillText('CLOSED FOREVER', 128, 70);
-            const closedTex = new THREE.CanvasTexture(closedCanvas);
-            const closedSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: closedTex }));
-            closedSign.scale.set(3, 1.5, 1);
-            closedSign.position.set(px + 2.5, py + 1.5, pz - 1);
-            closedSign.rotation.z = -0.3; // Tilted/fallen
-            scene.add(closedSign);
-            
-            // Ghost of Pikachu (transparent, sad)
-            const ghostPikaX = px + 1, ghostPikaZ = pz + 1, ghostPikaY = py;
-            const ghostPika = createBlock(ghostPikaX, ghostPikaY + 1.5, ghostPikaZ, 0xFFD700);
-            ghostPika.material.transparent = true;
-            ghostPika.material.opacity = 0.3;
-            ghostPika.scale.set(0.8, 0.8, 0.8);
-            
-            // Weeds growing through cracks (green)
-            createBlock(px + 2, py + 0.5, pz + 1, 0x228B22);
-            createBlock(px + 4, py + 0.5, pz + 2, 0x228B22);
-            
-            // Dust particles floating
-            const dustParticles = [];
-            for (let i = 0; i < 8; i++) {
-                const dust = createBlock(
-                    px + 1 + Math.random() * 4,
-                    py + 1 + Math.random() * 3,
-                    pz + 1 + Math.random() * 3,
-                    0xA0A0A0
-                );
-                dust.scale.set(0.1, 0.1, 0.1);
-                dust.material.transparent = true;
-                dust.material.opacity = 0.5;
-                dust.userData.isDust = true;
-                dust.userData.baseY = dust.position.y;
-                dustParticles.push(dust);
-            }
-            
-            // Animate dust floating
-            let dustTime = 0;
-            setInterval(() => {
-                dustTime += 0.02;
-                dustParticles.forEach((d, i) => {
-                    d.position.y = d.userData.baseY + Math.sin(dustTime + i) * 0.3;
-                    d.position.x += Math.sin(dustTime * 0.5 + i) * 0.01;
-                });
-            }, 50);
-        }
-        
-        function createBurgerPlace() {
-            // 🌊 GRAND WATER FOUNTAIN - The community demanded it 100 times!
-            // A magnificent multi-tiered fountain rises where the garden once stood!
-            const bx = 0, bz = 20, by = 5;
-            
-            // Marble foundation (circular pattern)
-            for (let x = -1; x < 6; x++) {
-                for (let z = -1; z < 5; z++) {
-                    const dist = Math.sqrt(Math.pow(x - 2, 2) + Math.pow(z - 2, 2));
-                    if (dist < 4) {
-                        createBlock(bx + x, by, bz + z, 0xF5F5F5);
-                    }
-                }
-            }
-            
-            // Outer pool rim (dark marble)
-            for (let angle = 0; angle < Math.PI * 2; angle += 0.4) {
-                const rx = Math.cos(angle) * 3;
-                const rz = Math.sin(angle) * 3;
-                createBlock(bx + 2 + Math.round(rx), by + 0.5, bz + 2 + Math.round(rz), 0x4A4A4A);
-            }
-            
-            // Water pool (animated blue)
-            const poolBlocks = [];
-            for (let x = 0; x < 5; x++) {
-                for (let z = 0; z < 4; z++) {
-                    const dist = Math.sqrt(Math.pow(x - 2, 2) + Math.pow(z - 1.5, 2));
-                    if (dist < 2.5) {
-                        const pool = createBlock(bx + x, by + 0.3, bz + z, 0x1E90FF);
-                        pool.material.transparent = true;
-                        pool.material.opacity = 0.6;
-                        pool.userData.isPoolWater = true;
-                        poolBlocks.push(pool);
-                    }
-                }
-            }
-            
-            // First tier - base pedestal
-            createBlock(bx + 2, by + 1, bz + 2, 0xD4AF37);
-            createBlock(bx + 2, by + 2, bz + 2, 0xF5F5F5);
-            
-            // Second tier - middle bowl
-            createBlock(bx + 1, by + 3, bz + 2, 0xF5F5F5);
-            createBlock(bx + 2, by + 3, bz + 2, 0x1E90FF);
-            createBlock(bx + 3, by + 3, bz + 2, 0xF5F5F5);
-            createBlock(bx + 2, by + 3, bz + 1, 0xF5F5F5);
-            createBlock(bx + 2, by + 3, bz + 3, 0xF5F5F5);
-            
-            // Third tier - top spout
-            createBlock(bx + 2, by + 4, bz + 2, 0xD4AF37);
-            createBlock(bx + 2, by + 5, bz + 2, 0xD4AF37);
-            
-            // Water jets shooting up!
-            const waterJets = [];
-            for (let i = 0; i < 8; i++) {
-                const jet = createBlock(bx + 2, by + 6 + i * 0.3, bz + 2, 0x87CEEB);
-                jet.material.transparent = true;
-                jet.material.opacity = 0.7 - i * 0.08;
-                jet.scale.set(0.3, 0.4, 0.3);
-                jet.userData.isWaterJet = true;
-                jet.userData.jetIndex = i;
-                waterJets.push(jet);
-            }
-            
-            // Water droplets falling around fountain
-            const droplets = [];
-            for (let i = 0; i < 20; i++) {
-                const angle = (i / 20) * Math.PI * 2;
-                const droplet = createBlock(
-                    bx + 2 + Math.cos(angle) * (0.5 + Math.random()),
-                    by + 5 + Math.random() * 3,
-                    bz + 2 + Math.sin(angle) * (0.5 + Math.random()),
-                    0x87CEEB
-                );
-                droplet.scale.set(0.1, 0.15, 0.1);
-                droplet.material.transparent = true;
-                droplet.material.opacity = 0.8;
-                droplet.userData.isDroplet = true;
-                droplet.userData.baseY = droplet.position.y;
-                droplet.userData.angle = angle;
-                droplet.userData.speed = 0.05 + Math.random() * 0.05;
-                droplets.push(droplet);
-            }
-            
-            // Spray mist effect
-            const mist = [];
-            for (let i = 0; i < 12; i++) {
-                const m = createBlock(
-                    bx + 1 + Math.random() * 3,
-                    by + 4 + Math.random() * 2,
-                    bz + 1 + Math.random() * 2,
-                    0xFFFFFF
-                );
-                m.scale.set(0.2, 0.2, 0.2);
-                m.material.transparent = true;
-                m.material.opacity = 0.3;
-                m.userData.isMist = true;
-                m.userData.baseX = m.position.x;
-                m.userData.baseY = m.position.y;
-                mist.push(m);
-            }
-            
-            // Decorative statues on corners (cherubs/fish)
-            createBlock(bx - 1, by + 1, bz, 0xC0C0C0); // Fish statue
-            createBlock(bx + 5, by + 1, bz, 0xC0C0C0);
-            createBlock(bx - 1, by + 1, bz + 3, 0xC0C0C0);
-            createBlock(bx + 5, by + 1, bz + 3, 0xC0C0C0);
-            
-            // Add beautiful flower garden around fountain!
-            const flowerColors = [0xFF69B4, 0xFF1493, 0xFFB6C1, 0xFFA07A, 0xFFD700, 0xFF6347, 0xDA70D6, 0x00CED1, 0x98FB98, 0xDDA0DD];
-            const flowerPositions = [
-                {x: -2, z: -2}, {x: -2, z: 5}, {x: 6, z: -2}, {x: 6, z: 5},
-                {x: -3, z: 1}, {x: -3, z: 3}, {x: 7, z: 1}, {x: 7, z: 3},
-                {x: 0, z: -3}, {x: 4, z: -3}, {x: 0, z: 6}, {x: 4, z: 6},
-                {x: -1, z: -2}, {x: 5, z: -2}, {x: -1, z: 5}, {x: 5, z: 5}
-            ];
-            
-            flowerPositions.forEach((pos, i) => {
-                const flowerColor = flowerColors[i % flowerColors.length];
-                // Flower stem
-                createBlock(bx + pos.x, by + 0.5, bz + pos.z, 0x228B22);
-                // Flower bloom
-                const bloom = createBlock(bx + pos.x, by + 1, bz + pos.z, flowerColor);
-                bloom.userData.isFlower = true;
-                bloom.userData.baseY = by + 1;
-                bloom.userData.phase = i * 0.5;
-                // Flower center
-                const center = createBlock(bx + pos.x, by + 1.2, bz + pos.z, 0xFFFF00);
-                center.scale.set(0.3, 0.3, 0.3);
-                center.userData.isFlowerCenter = true;
-            });
-            
-            // Animate flowers swaying
-            let flowerTime = 0;
-            setInterval(() => {
-                flowerTime += 0.05;
-                blocks.forEach(b => {
-                    if (b.userData.isFlower) {
-                        b.rotation.z = Math.sin(flowerTime + b.userData.phase) * 0.15;
-                        b.rotation.x = Math.cos(flowerTime * 0.7 + b.userData.phase) * 0.1;
-                    }
-                });
-            }, 50);
-            
-            // "GRAND FOUNTAIN" sign
-            const fountainCanvas = document.createElement('canvas');
-            fountainCanvas.width = 256;
-            fountainCanvas.height = 128;
-            const fountainCtx = fountainCanvas.getContext('2d');
-            fountainCtx.fillStyle = '#1E90FF';
-            fountainCtx.fillRect(0, 0, 256, 128);
-            fountainCtx.fillStyle = '#FFFFFF';
-            fountainCtx.font = 'Bold 28px Arial';
-            fountainCtx.textAlign = 'center';
-            fountainCtx.fillText('🌊 GRAND FOUNTAIN 🌊', 128, 55);
-            fountainCtx.font = '16px Arial';
-            fountainCtx.fillText('100 Wishes Granted!', 128, 90);
-            const fountainTex = new THREE.CanvasTexture(fountainCanvas);
-            const fountainSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: fountainTex }));
-            fountainSign.scale.set(4, 2, 1);
-            fountainSign.position.set(bx + 2, by + 9, bz + 2);
-            scene.add(fountainSign);
-            
-            // Animate the magnificent fountain!
-            let fountainTime = 0;
-            setInterval(() => {
-                fountainTime += 0.05;
-                
-                // Animate water jets pulsing
-                waterJets.forEach((jet, i) => {
-                    const pulse = Math.sin(fountainTime * 3 + i * 0.5);
-                    jet.scale.y = 0.4 + pulse * 0.2;
-                    jet.position.y = by + 6 + i * 0.3 + pulse * 0.1;
-                    jet.material.opacity = 0.7 - i * 0.08 + pulse * 0.1;
-                });
-                
-                // Animate droplets falling
-                droplets.forEach((d, i) => {
-                    d.position.y -= d.userData.speed;
-                    d.position.x = bx + 2 + Math.cos(d.userData.angle + fountainTime * 0.5) * (1 + Math.sin(fountainTime + i) * 0.5);
-                    d.position.z = bz + 2 + Math.sin(d.userData.angle + fountainTime * 0.5) * (1 + Math.sin(fountainTime + i) * 0.5);
-                    
-                    if (d.position.y < by + 1) {
-                        d.position.y = by + 7 + Math.random() * 2;
-                    }
-                });
-                
-                // Animate mist floating
-                mist.forEach((m, i) => {
-                    m.position.x = m.userData.baseX + Math.sin(fountainTime + i) * 0.3;
-                    m.position.y = m.userData.baseY + Math.cos(fountainTime * 1.5 + i) * 0.2;
-                    m.material.opacity = 0.2 + Math.sin(fountainTime * 2 + i) * 0.1;
-                });
-                
-                // Animate pool water rippling
-                poolBlocks.forEach((p, i) => {
-                    p.position.y = by + 0.3 + Math.sin(fountainTime * 2 + p.position.x + p.position.z) * 0.05;
-                    p.material.opacity = 0.5 + Math.sin(fountainTime + i) * 0.1;
-                });
-            }, 50);
-        }
-        
-        function createGreetingSigns() {
-            // 🎈 FLOATING GREETING SIGNS! 🎈
-            
-            // "HI MOM!" sign (floating high in the sky)
-            const momX = 16, momY = 25, momZ = 16;
-            // Heart shape around text
-            createBlock(momX - 2, momY, momZ, 0xFF69B4);
-            createBlock(momX + 2, momY, momZ, 0xFF69B4);
-            createBlock(momX - 1, momY + 1, momZ, 0xFF69B4);
-            createBlock(momX + 1, momY + 1, momZ, 0xFF69B4);
-            createBlock(momX, momY + 2, momZ, 0xFF69B4);
-            // "HI" in white
-            createBlock(momX - 1, momY, momZ, 0xFFFFFF);
-            createBlock(momX, momY, momZ, 0xFFFFFF);
-            createBlock(momX + 1, momY, momZ, 0xFFFFFF);
-            // "MOM" below
-            createBlock(momX - 1, momY - 1, momZ, 0xFFD700);
-            createBlock(momX, momY - 1, momZ, 0xFFD700);
-            createBlock(momX + 1, momY - 1, momZ, 0xFFD700);
-            
-            // "HI FRIENDS!" sign (different location)
-            const friendX = 26, friendY = 22, friendZ = 10;
-            // Rainbow colors!
-            createBlock(friendX - 2, friendY, friendZ, 0xFF0000);
-            createBlock(friendX - 1, friendY, friendZ, 0xFFA500);
-            createBlock(friendX, friendY, friendZ, 0xFFFF00);
-            createBlock(friendX + 1, friendY, friendZ, 0x00FF00);
-            createBlock(friendX + 2, friendY, friendZ, 0x0000FF);
-            createBlock(friendX + 3, friendY, friendZ, 0x8B00FF);
-            // Second row
-            createBlock(friendX - 1, friendY - 1, friendZ, 0xFFFFFF);
-            createBlock(friendX, friendY - 1, friendZ, 0xFFFFFF);
-            createBlock(friendX + 1, friendY - 1, friendZ, 0xFFFFFF);
-            createBlock(friendX + 2, friendY - 1, friendZ, 0xFFFFFF);
-            
-            // Make signs float/bob gently
-            let signTime = 0;
-            
-            // Sparkle effect on signs
-            setInterval(() => {
-                signBlocks.forEach(b => {
-                    if (Math.random() > 0.95) {
-                        b.material.emissive = new THREE.Color(0xFFFFFF);
-                        b.material.emissiveIntensity = 0.5;
-                        setTimeout(() => {
-                            b.material.emissiveIntensity = 0;
-                        }, 100);
-                    }
-                });
-            }, 100);
-            const signBlocks = blocks.filter(b => 
-                (b.position.y >= momY - 1 && b.position.y <= momY + 2 && b.position.x >= momX - 2 && b.position.x <= momX + 2) ||
-                (b.position.y >= friendY - 1 && b.position.y <= friendY && b.position.x >= friendX - 2 && b.position.x <= friendX + 3)
-            );
-            const originalY = signBlocks.map(b => b.position.y);
-            setInterval(() => {
-                signTime += 0.05;
-                signBlocks.forEach((b, i) => {
-                    b.position.y = originalY[i] + Math.sin(signTime + i * 0.2) * 0.3;
-                });
-            }, 50);
-        }
-        
-        function generateTerrain() {
-            for (let x = 0; x < worldSize; x++) {
-                for (let z = 0; z < worldSize; z++) {
-                    const height = Math.floor(Math.sin(x * 0.2) * 3 + Math.cos(z * 0.2) * 3 + Math.sin((x+z) * 0.15) * 2 + 5);
-                    for (let y = 0; y <= height; y++) {
-                        const color = y === height ? blockTypes[0] : (y > height - 3 ? blockTypes[1] : blockTypes[2]);
-                        createBlock(x, y, z, color);
-                    }
-                }
-            }
-        }
-        
-        function createBlock(x, y, z, color) {
-            const geometry = new THREE.BoxGeometry(blockSize, blockSize, blockSize);
-            const material = new THREE.MeshLambertMaterial({ color: color });
-            const block = new THREE.Mesh(geometry, material);
-            block.position.set(x, y, z);
-            block.castShadow = true;
-            block.receiveShadow = true;
-            scene.add(block);
-            blocks.push(block);
-            return block;
-        }
-        
-        function onKeyDown(e) {
-            if (e.code === 'KeyW') moveForward = true;
-            if (e.code === 'KeyS') moveBackward = true;
-            if (e.code === 'KeyA') moveLeft = true;
-            if (e.code === 'KeyD') moveRight = true;
-            if (e.code === 'Space') velocity.y = 0.15;
-            if (e.code === 'Digit1') currentBlock = 0;
-            if (e.code === 'Digit2') currentBlock = 1;
-            if (e.code === 'Digit3') currentBlock = 2;
-            if (e.code === 'Digit4') currentBlock = 3;
-        }
-        
-        function onKeyUp(e) {
-            if (e.code === 'KeyW') moveForward = false;
-            if (e.code === 'KeyS') moveBackward = false;
-            if (e.code === 'KeyA') moveLeft = false;
-            if (e.code === 'KeyD') moveRight = false;
-        }
-        
-        let yaw = 0, pitch = 0;
-        function onMouseMove(e) {
-            if (!isLocked) return;
-            yaw -= e.movementX * 0.002;
-            pitch -= e.movementY * 0.002;
-            pitch = Math.max(-Math.PI/3, Math.min(Math.PI/3, pitch));
-            camera.rotation.set(pitch, yaw, 0, 'YXZ');
-        }
-        
-        function getTargetBlock() {
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-            const intersects = raycaster.intersectObjects(blocks);
-            return intersects.length > 0 ? intersects[0] : null;
-        }
-        
-        function onClick(e) {
-            if (!isLocked) return;
-            const hit = getTargetBlock();
-            if (hit && hit.distance < 8) {
-                // Puzzle block special interaction
-                if (hit.object.userData.isPuzzle) {
-                    // Spawn a random block above!
-                    const randomColor = blockTypes[Math.floor(Math.random() * blockTypes.length)];
-                    createBlock(hit.object.position.x, hit.object.position.y + 2, hit.object.position.z, randomColor);
-                    hit.object.material.color.setHex(0x666666); // Turn grey after use
-                    hit.object.userData.isPuzzle = false;
-                } else {
-                    scene.remove(hit.object);
-                    blocks = blocks.filter(b => b !== hit.object);
-                }
-            }
-        }
-        
-        function onRightClick(e) {
-            e.preventDefault();
-            if (!isLocked) return;
-            const hit = getTargetBlock();
-            if (hit && hit.distance < 8) {
-                const pos = hit.object.position.clone().add(hit.face.normal);
-                createBlock(pos.x, pos.y, pos.z, blockTypes[currentBlock]);
-            }
-        }
-        
-        function onResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            
-            // Movement
-            const speed = 0.1;
-            const direction = new THREE.Vector3();
-            camera.getWorldDirection(direction);
-            direction.y = 0;
-            direction.normalize();
-            
-            const right = new THREE.Vector3();
-            right.crossVectors(direction, new THREE.Vector3(0, 1, 0));
-            
-            if (moveForward) camera.position.addScaledVector(direction, speed);
-            if (moveBackward) camera.position.addScaledVector(direction, -speed);
-            if (moveLeft) camera.position.addScaledVector(right, -speed);
-            if (moveRight) camera.position.addScaledVector(right, speed);
-            
-            // Gravity
-            velocity.y -= 0.008;
-            camera.position.y += velocity.y;
-            if (camera.position.y < 10) {
-                camera.position.y = 10;
-                velocity.y = 0;
-            }
-            
-            renderer.render(scene, camera);
-        }
-        
-        function createCrystalCave() {
-            // 💎 CRYSTAL CAVE - Underground wonder!
-            const cx = 5, cy = 0, cz = 15;
-            
-            // Cave entrance (dark stone arch)
-            for (let y = 0; y < 4; y++) {
-                createBlock(cx, cy + y, cz, 0x2F2F2F);
-                createBlock(cx + 4, cy + y, cz, 0x2F2F2F);
-            }
-            createBlock(cx + 1, cy + 3, cz, 0x2F2F2F);
-            createBlock(cx + 2, cy + 3, cz, 0x2F2F2F);
-            createBlock(cx + 3, cy + 3, cz, 0x2F2F2F);
-            
-            // Glowing crystals (various colors)
-            const crystalColors = [0x00FFFF, 0xFF00FF, 0x00FF00, 0xFFFF00, 0xFF6B6B, 0x6B6BFF];
-            const crystals = [];
-            
-            // Crystal clusters
-            for (let i = 0; i < 12; i++) {
-                const color = crystalColors[Math.floor(Math.random() * crystalColors.length)];
-                const x = cx + 1 + Math.floor(Math.random() * 3);
-                const y = cy + Math.floor(Math.random() * 3);
-                const z = cz + 1 + Math.floor(Math.random() * 3);
-                const crystal = createBlock(x, y, z, color);
-                crystal.userData.isCrystal = true;
-                crystals.push(crystal);
-            }
-            
-            // Animate crystal glow
-            let crystalTime = 0;
-            setInterval(() => {
-                crystalTime += 0.1;
-                crystals.forEach((c, i) => {
-                    if (c.material) {
-                        const intensity = 0.3 + Math.sin(crystalTime + i) * 0.3;
-                        c.material.emissive = c.material.color;
-                        c.material.emissiveIntensity = intensity;
-                    }
-                });
-            }, 50);
-            
-            // Amethyst geode blocks
-            createBlock(cx + 2, cy + 1, cz + 2, 0x9966CC);
-            createBlock(cx + 2, cy + 2, cz + 2, 0x9966CC);
-        }
-        
-        function createWaterfall() {
-            // 🌊 WATERFALL - Flowing water effect!
-            const wx = 28, wy = 8, wz = 15;
-            
-            // Rocky cliff
-            for (let y = 0; y < 10; y++) {
-                for (let z = 0; z < 3; z++) {
-                    createBlock(wx, wy + y, wz + z, 0x696969);
-                    createBlock(wx + 1, wy + y, wz + z, 0x808080);
-                }
-            }
-            
-            // Water blocks (animated blue)
-            const waterBlocks = [];
-            for (let y = 0; y < 12; y++) {
-                const water = createBlock(wx - 1, wy + y, wz + 1, 0x1E90FF);
-                water.material.transparent = true;
-                water.material.opacity = 0.7;
-                water.userData.isWater = true;
-                water.userData.baseY = wy + y;
-                waterBlocks.push(water);
-            }
-            
-            // Pool at bottom
-            for (let x = -3; x < 2; x++) {
-                for (let z = 0; z < 4; z++) {
-                    const pool = createBlock(wx + x, wy - 1, wz + z, 0x1E90FF);
-                    pool.material.transparent = true;
-                    pool.material.opacity = 0.6;
-                }
-            }
-            
-            // Animate waterfall
-            let waterTime = 0;
-            setInterval(() => {
-                waterTime += 0.15;
-                waterBlocks.forEach((w, i) => {
-                    w.position.x = wx - 1 + Math.sin(waterTime + i * 0.5) * 0.1;
-                    w.material.opacity = 0.5 + Math.sin(waterTime * 2 + i) * 0.2;
-                });
-            }, 50);
-            
-            // Mist particles (white blocks)
-            for (let i = 0; i < 5; i++) {
-                const mist = createBlock(wx - 2 + i * 0.5, wy, wz + 1, 0xFFFFFF);
-                mist.material.transparent = true;
-                mist.material.opacity = 0.3;
-                mist.scale.set(0.3, 0.3, 0.3);
-            }
-        }
-        
-        function createEnchantedForest() {
-            // 🌲 ENCHANTED FOREST - Magical trees!
-            const trees = [
-                {x: 15, z: 5},
-                {x: 18, z: 7},
-                {x: 14, z: 9},
-                {x: 20, z: 4}
-            ];
-            
-            trees.forEach((tree, treeIndex) => {
-                const tx = tree.x, tz = tree.z, ty = 6;
-                
-                // Trunk (dark oak)
-                for (let y = 0; y < 5; y++) {
-                    createBlock(tx, ty + y, tz, 0x3D2914);
-                }
-                
-                // Leaves (magical green with glow)
-                const leafBlocks = [];
-                for (let lx = -2; lx <= 2; lx++) {
-                    for (let lz = -2; lz <= 2; lz++) {
-                        for (let ly = 0; ly < 3; ly++) {
-                            if (Math.abs(lx) + Math.abs(lz) + ly < 4) {
-                                const leafColor = treeIndex % 2 === 0 ? 0x228B22 : 0x32CD32;
-                                const leaf = createBlock(tx + lx, ty + 4 + ly, tz + lz, leafColor);
-                                leaf.userData.isLeaf = true;
-                                leafBlocks.push(leaf);
-                            }
-                        }
-                    }
-                }
-                
-                // Fairy lights in trees!
-                const fairyColors = [0xFFFF00, 0xFF69B4, 0x00FFFF, 0xFFFFFF];
-                for (let i = 0; i < 3; i++) {
-                    const fairy = createBlock(
-                        tx + (Math.random() - 0.5) * 3,
-                        ty + 4 + Math.random() * 2,
-                        tz + (Math.random() - 0.5) * 3,
-                        fairyColors[Math.floor(Math.random() * fairyColors.length)]
-                    );
-                    fairy.scale.set(0.2, 0.2, 0.2);
-                    fairy.material.emissive = fairy.material.color;
-                    fairy.material.emissiveIntensity = 1;
-                    fairy.userData.isFairy = true;
-                }
-            });
-            
-            // Animate leaves rustling
-            let leafTime = 0;
-            setInterval(() => {
-                leafTime += 0.05;
-                blocks.forEach(b => {
-                    if (b.userData.isLeaf) {
-                        b.rotation.x = Math.sin(leafTime + b.position.x) * 0.05;
-                        b.rotation.z = Math.cos(leafTime + b.position.z) * 0.05;
-                    }
-                    if (b.userData.isFairy) {
-                        b.position.y += Math.sin(leafTime * 3 + b.position.x) * 0.02;
-                    }
-                });
-            }, 50);
-            
-            // Mushrooms at base
-            const mushroomColors = [0xFF0000, 0xFFFFFF, 0x8B4513];
-            trees.forEach(tree => {
-                createBlock(tree.x + 1, 6, tree.z + 1, 0xFF0000); // Red cap
-                createBlock(tree.x + 1, 5, tree.z + 1, 0xFFFFFF); // White stem
-            });
-        }
-        
-        function createAuroraBorealis() {
-            // 🌌 AURORA BOREALIS - Northern lights in the sky!
-            const auroraBlocks = [];
-            const auroraColors = [0x00FF7F, 0x00CED1, 0x9400D3, 0x4169E1, 0x00FA9A];
-            
-            for (let i = 0; i < 30; i++) {
-                const x = 5 + Math.random() * 25;
-                const y = 35 + Math.random() * 10;
-                const z = 5 + Math.random() * 25;
-                const color = auroraColors[Math.floor(Math.random() * auroraColors.length)];
-                
-                const aurora = createBlock(x, y, z, color);
-                aurora.material.transparent = true;
-                aurora.material.opacity = 0.4;
-                aurora.scale.set(2 + Math.random() * 3, 0.3, 1);
-                aurora.userData.isAurora = true;
-                aurora.userData.baseX = x;
-                aurora.userData.baseY = y;
-                aurora.userData.speed = 0.5 + Math.random();
-                auroraBlocks.push(aurora);
-            }
-            
-            // Animate aurora
-            let auroraTime = 0;
-            setInterval(() => {
-                auroraTime += 0.02;
-                auroraBlocks.forEach((a, i) => {
-                    a.position.x = a.userData.baseX + Math.sin(auroraTime * a.userData.speed + i) * 3;
-                    a.position.y = a.userData.baseY + Math.cos(auroraTime * 0.5 + i) * 2;
-                    a.material.opacity = 0.3 + Math.sin(auroraTime + i) * 0.2;
-                    a.rotation.z = Math.sin(auroraTime * 0.3 + i) * 0.1;
-                });
-            }, 50);
-        }
-        
-        function createFireflies() {
-            // ✨ FIREFLIES - Magical floating lights!
-            const fireflies = [];
-            
-            for (let i = 0; i < 25; i++) {
-                const x = 5 + Math.random() * 25;
-                const y = 8 + Math.random() * 8;
-                const z = 5 + Math.random() * 25;
-                
-                const firefly = createBlock(x, y, z, 0xFFFF00);
-                firefly.scale.set(0.15, 0.15, 0.15);
-                firefly.material.emissive = new THREE.Color(0xFFFF00);
-                firefly.material.emissiveIntensity = 1;
-                firefly.userData.isFirefly = true;
-                firefly.userData.baseX = x;
-                firefly.userData.baseY = y;
-                firefly.userData.baseZ = z;
-                firefly.userData.phase = Math.random() * Math.PI * 2;
-                fireflies.push(firefly);
-            }
-            
-            // Animate fireflies
-            let fireflyTime = 0;
-            setInterval(() => {
-                fireflyTime += 0.03;
-                fireflies.forEach((f, i) => {
-                    const phase = f.userData.phase;
-                    f.position.x = f.userData.baseX + Math.sin(fireflyTime + phase) * 2;
-                    f.position.y = f.userData.baseY + Math.cos(fireflyTime * 1.5 + phase) * 1.5;
-                    f.position.z = f.userData.baseZ + Math.sin(fireflyTime * 0.7 + phase) * 2;
-                    
-                    // Blinking effect
-                    f.material.emissiveIntensity = 0.5 + Math.sin(fireflyTime * 5 + i) * 0.5;
-                    f.visible = Math.sin(fireflyTime * 3 + i * 0.5) > -0.3;
-                });
-            }, 50);
-        }
-        
-        function createMarioStatue() {
-            // 🗽 GIANT MARIO STATUE - A tribute to the hero! 🍄
-            const sx = 16, sy = 5, sz = 25;
-            
-            // MASSIVE PEDESTAL (marble white with gold trim)
-            for (let x = -3; x <= 3; x++) {
-                for (let z = -3; z <= 3; z++) {
-                    createBlock(sx + x, sy, sz + z, 0xF5F5F5);
-                    createBlock(sx + x, sy + 1, sz + z, 0xF5F5F5);
-                }
-            }
-            // Gold trim on pedestal
-            for (let x = -3; x <= 3; x++) {
-                createBlock(sx + x, sy + 2, sz - 3, 0xFFD700);
-                createBlock(sx + x, sy + 2, sz + 3, 0xFFD700);
-            }
-            for (let z = -2; z <= 2; z++) {
-                createBlock(sx - 3, sy + 2, sz + z, 0xFFD700);
-                createBlock(sx + 3, sy + 2, sz + z, 0xFFD700);
-            }
-            
-            // GIANT MARIO BOOTS (brown)
-            for (let x = -1; x <= 0; x++) {
-                for (let z = -1; z <= 0; z++) {
-                    createBlock(sx + x - 1, sy + 3, sz + z, 0x5C4033);
-                    createBlock(sx + x + 2, sy + 3, sz + z, 0x5C4033);
-                }
-            }
-            
-            // GIANT MARIO LEGS (blue overalls)
-            for (let y = 4; y <= 6; y++) {
-                createBlock(sx - 1, sy + y, sz, 0x3b5998);
-                createBlock(sx, sy + y, sz, 0x3b5998);
-                createBlock(sx + 1, sy + y, sz, 0x3b5998);
-                createBlock(sx + 2, sy + y, sz, 0x3b5998);
-            }
-            
-            // GIANT MARIO BODY (red shirt)
-            for (let y = 7; y <= 10; y++) {
-                for (let x = -1; x <= 2; x++) {
-                    for (let z = -1; z <= 1; z++) {
-                        createBlock(sx + x, sy + y, sz + z, 0xCC0000);
-                    }
-                }
-            }
-            // Overall straps
-            createBlock(sx, sy + 9, sz - 1, 0x3b5998);
-            createBlock(sx + 1, sy + 9, sz - 1, 0x3b5998);
-            
-            // GIANT MARIO ARMS (raised in victory!)
-            for (let y = 8; y <= 13; y++) {
-                createBlock(sx - 2, sy + y, sz, 0xC69C6D);
-                createBlock(sx + 3, sy + y, sz, 0xC69C6D);
-            }
-            // Gloves
-            createBlock(sx - 2, sy + 14, sz, 0xFFFFFF);
-            createBlock(sx + 3, sy + 14, sz, 0xFFFFFF);
-            
-            // GIANT MARIO HEAD (4x4x4 blocky)
-            for (let x = -1; x <= 2; x++) {
-                for (let z = -1; z <= 1; z++) {
-                    for (let y = 11; y <= 14; y++) {
-                        createBlock(sx + x, sy + y, sz + z, 0xC69C6D);
-                    }
-                }
-            }
-            // Eyes (black)
-            createBlock(sx, sy + 13, sz - 2, 0x000000);
-            createBlock(sx + 1, sy + 13, sz - 2, 0x000000);
-            // Nose
-            createBlock(sx, sy + 12, sz - 2, 0xC69C6D);
-            createBlock(sx + 1, sy + 12, sz - 2, 0xC69C6D);
-            // Mustache (iconic!)
-            for (let x = -1; x <= 2; x++) {
-                createBlock(sx + x, sy + 11, sz - 2, 0x3D2314);
-            }
-            
-            // GIANT MARIO HAT (red cap)
-            for (let x = -2; x <= 3; x++) {
-                for (let z = -2; z <= 2; z++) {
-                    createBlock(sx + x, sy + 15, sz + z, 0xCC0000);
-                }
-            }
-            createBlock(sx, sy + 16, sz, 0xCC0000);
-            createBlock(sx + 1, sy + 16, sz, 0xCC0000);
-            // M logo (white)
-            createBlock(sx, sy + 15, sz - 3, 0xFFFFFF);
-            createBlock(sx + 1, sy + 15, sz - 3, 0xFFFFFF);
-            
-            // THANK YOU PANEL (golden plaque)
-            for (let x = -4; x <= 4; x++) {
-                for (let y = 0; y <= 2; y++) {
-                    createBlock(sx + x, sy + y, sz - 5, 0xFFD700);
-                }
-            }
-            // Text blocks spelling THANK YOU MARIO!
-            // T
-            createBlock(sx - 3, sy + 1, sz - 6, 0xCC0000);
-            // H
-            createBlock(sx - 2, sy + 1, sz - 6, 0xCC0000);
-            // A
-            createBlock(sx - 1, sy + 1, sz - 6, 0xCC0000);
-            // N
-            createBlock(sx, sy + 1, sz - 6, 0xCC0000);
-            // K
-            createBlock(sx + 1, sy + 1, sz - 6, 0xCC0000);
-            // Heart
-            createBlock(sx + 2, sy + 1, sz - 6, 0xFF69B4);
-            createBlock(sx + 3, sy + 1, sz - 6, 0xFF69B4);
-            
-            // Flowers at base
-            const flowerColors = [0xFF69B4, 0xFFFF00, 0xFF6347, 0x00CED1];
-            for (let i = 0; i < 8; i++) {
-                const angle = (i / 8) * Math.PI * 2;
-                const fx = sx + Math.cos(angle) * 5;
-                const fz = sz + Math.sin(angle) * 5;
-                createBlock(fx, sy, fz, flowerColors[i % flowerColors.length]);
-                createBlock(fx, sy + 1, fz, 0x228B22); // Stem
-            }
-            
-            // Spinning star above Mario's head!
-            const star = createBlock(sx + 0.5, sy + 20, sz, 0xFFFF00);
-            star.userData.isStar = true;
-            star.material.emissive = new THREE.Color(0xFFFF00);
-            star.material.emissiveIntensity = 1;
-            
-            // Animate the star
-            let starTime = 0;
-            setInterval(() => {
-                starTime += 0.05;
-                blocks.forEach(b => {
-                    if (b.userData.isStar) {
-                        b.rotation.y = starTime * 2;
-                        b.position.y = sy + 20 + Math.sin(starTime * 2) * 0.5;
-                        b.material.emissiveIntensity = 0.7 + Math.sin(starTime * 3) * 0.3;
-                    }
-                });
-            }, 50);
-            
-            // Confetti particles around statue!
-            const confetti = [];
-            const confettiColors = [0xFF0000, 0x00FF00, 0x0000FF, 0xFFFF00, 0xFF69B4, 0xFFFFFF];
-            for (let i = 0; i < 30; i++) {
-                const c = createBlock(
-                    sx + (Math.random() - 0.5) * 10,
-                    sy + 10 + Math.random() * 15,
-                    sz + (Math.random() - 0.5) * 10,
-                    confettiColors[Math.floor(Math.random() * confettiColors.length)]
-                );
-                c.scale.set(0.2, 0.2, 0.2);
-                c.userData.isConfetti = true;
-                c.userData.baseY = c.position.y;
-                c.userData.speed = 0.02 + Math.random() * 0.03;
-                c.userData.drift = (Math.random() - 0.5) * 0.1;
-                confetti.push(c);
-            }
-            
-            // Animate confetti
-            setInterval(() => {
-                confetti.forEach(c => {
-                    c.position.y -= c.userData.speed;
-                    c.position.x += c.userData.drift;
-                    c.rotation.x += 0.1;
-                    c.rotation.z += 0.1;
-                    if (c.position.y < sy) {
-                        c.position.y = sy + 25;
-                        c.position.x = sx + (Math.random() - 0.5) * 10;
-                        c.position.z = sz + (Math.random() - 0.5) * 10;
-                    }
-                });
-            }, 50);
-        }
-        
-        function createThankYouPanel() {
-            // 🎉 FLOATING THANK YOU MARIO PANEL IN THE SKY!
-            const panelX = 16, panelY = 30, panelZ = 10;
-            
-            // Create actual readable text using canvas texture!
-            function createTextSprite(message, parameters) {
-                const fontface = parameters.fontface || 'Arial';
-                const fontsize = parameters.fontsize || 48;
-                const borderThickness = parameters.borderThickness || 4;
-                const borderColor = parameters.borderColor || { r:0, g:0, b:0, a:1.0 };
-                const backgroundColor = parameters.backgroundColor || { r:255, g:255, b:255, a:1.0 };
-                const textColor = parameters.textColor || { r:0, g:0, b:0, a:1.0 };
 
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.width = 512;
-                canvas.height = 256;
-                
-                context.font = 'Bold ' + fontsize + 'px ' + fontface;
-                
-                // Background
-                context.fillStyle = 'rgba(' + backgroundColor.r + ',' + backgroundColor.g + ',' + backgroundColor.b + ',' + backgroundColor.a + ')';
-                context.fillRect(0, 0, canvas.width, canvas.height);
-                
-                // Border
-                context.strokeStyle = 'rgba(' + borderColor.r + ',' + borderColor.g + ',' + borderColor.b + ',' + borderColor.a + ')';
-                context.lineWidth = borderThickness;
-                context.strokeRect(0, 0, canvas.width, canvas.height);
-                
-                // Text
-                context.fillStyle = 'rgba(' + textColor.r + ',' + textColor.g + ',' + textColor.b + ',' + textColor.a + ')';
-                context.textAlign = 'center';
-                context.textBaseline = 'middle';
-                context.fillText(message, canvas.width/2, canvas.height/2);
-                
-                const texture = new THREE.CanvasTexture(canvas);
-                const spriteMaterial = new THREE.SpriteMaterial({ map: texture });
-                const sprite = new THREE.Sprite(spriteMaterial);
-                sprite.scale.set(10, 5, 1);
-                return sprite;
-            }
-            
-            // Main THANK YOU MARIO text
-            const thankYouSprite = createTextSprite('THANK YOU MARIO! ❤️', {
-                fontsize: 42,
-                borderColor: { r:255, g:215, b:0, a:1 },
-                borderThickness: 8,
-                backgroundColor: { r:255, g:255, b:240, a:0.9 },
-                textColor: { r:204, g:0, b:0, a:1 }
-            });
-            thankYouSprite.position.set(panelX, panelY + 1, panelZ - 2);
-            scene.add(thankYouSprite);
-            
-            // Animate floating
-            let textTime = 0;
-            setInterval(() => {
-                textTime += 0.02;
-                thankYouSprite.position.y = panelY + 1 + Math.sin(textTime) * 0.5;
-            }, 50);
-            
-            // Golden frame
-            for (let x = -6; x <= 6; x++) {
-                createBlock(panelX + x, panelY - 1, panelZ, 0xFFD700);
-                createBlock(panelX + x, panelY + 3, panelZ, 0xFFD700);
-            }
-            for (let y = 0; y <= 2; y++) {
-                createBlock(panelX - 6, panelY + y, panelZ, 0xFFD700);
-                createBlock(panelX + 6, panelY + y, panelZ, 0xFFD700);
-            }
-            
-            // White background
-            const panelBlocks = [];
-            for (let x = -5; x <= 5; x++) {
-                for (let y = 0; y <= 2; y++) {
-                    const bg = createBlock(panelX + x, panelY + y, panelZ, 0xFFFFF0);
-                    bg.material.emissive = new THREE.Color(0xFFFFF0);
-                    bg.material.emissiveIntensity = 0.3;
-                    panelBlocks.push(bg);
+<div class="voxel-decoration"></div>
+<div class="voxel-decoration"></div>
+<div class="voxel-decoration"></div>
+<div class="voxel-decoration"></div>
+<div class="voxel-decoration"></div>
+<header>
+<div class="logo">🥐 La Maison du Pain 🥖</div>
+<p class="tagline">Artisan Boulangerie Since 2024</p>
+</header>
+<nav>
+<a href="#home">Home</a>
+<a href="#products">Our Breads</a>
+<a href="#about">Our Story</a>
+<a href="#contact">Visit Us</a>
+</nav>
+<section class="hero" id="home">
+<div class="hero-content">
+<h1>Freshly Baked Every Morning</h1>
+<p>From our ovens to your table — handcrafted breads, flaky croissants, and artisan pastries made with love and tradition.</p>
+<a class="btn" href="#products">View Our Menu</a>
+</div>
+</section>
+<div class="bread-parade">
+<div class="bread-parade-inner">
+<span>🥐</span><span>🍞</span><span>🥖</span><span>🧁</span><span>🥯</span><span>🍩</span><span>🥐</span><span>🍞</span><span>🥖</span><span>🧁</span><span>🥯</span><span>🍩</span><span>🥐</span><span>🍞</span><span>🥖</span><span>🧁</span><span>🥯</span><span>🍩</span>
+</div>
+</div>
+<section class="products" id="products">
+<h2 class="section-title">Our Fresh Baked Goods</h2>
+<div class="product-grid">
+<div class="product-card">
+<div class="product-image">🥐</div>
+<div class="product-info">
+<h3>Butter Croissant</h3>
+<p>Flaky, golden layers of pure butter perfection. Best enjoyed warm.</p>
+<span class="price">$3.50</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🥖</div>
+<div class="product-info">
+<h3>French Baguette</h3>
+<p>Crispy crust, soft interior. The classic French bread experience.</p>
+<span class="price">$4.00</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🍞</div>
+<div class="product-info">
+<h3>Sourdough Loaf</h3>
+<p>72-hour fermented dough with that perfect tangy flavor.</p>
+<span class="price">$6.50</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🧁</div>
+<div class="product-info">
+<h3>Pain au Chocolat</h3>
+<p>Rich dark chocolate wrapped in buttery, flaky pastry.</p>
+<span class="price">$4.25</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🥯</div>
+<div class="product-info">
+<h3>Artisan Bagels</h3>
+<p>Hand-rolled, kettle-boiled, and baked to golden perfection.</p>
+<span class="price">$2.75</span>
+</div>
+</div>
+<div class="product-card">
+<div class="product-image">🍩</div>
+<div class="product-info">
+<h3>Brioche Doughnuts</h3>
+<p>Light, airy brioche filled with vanilla cream or jam.</p>
+<span class="price">$3.75</span>
+</div>
+</div>
+</div>
+</section>
+<section class="about" id="about">
+<h2>Our Story</h2>
+<p>La Maison du Pain began as a humble dream — to bring the authentic taste of French boulangerie to our community. Every morning at 4 AM, our master bakers begin their craft, shaping dough with techniques passed down through generations.</p>
+<p>We use only the finest ingredients: French butter, organic flour, and a whole lot of passion. No shortcuts, no compromises — just honest, delicious bread.</p>
+<div class="minecraft-tribute">
+<p>🧱 Built from the blocks of our imagination — this bakery rose from a voxel world 🧱</p>
+</div>
+</section>
+<section class="contact" id="contact">
+<h2 class="section-title">Visit Our Bakery</h2>
+<div class="contact-info">
+<div class="contact-item">
+<h4>📍 Location</h4>
+<p>123 Croissant Lane<br/>Breadville, BK 12345</p>
+</div>
+<div class="contact-item">
+<h4>🕐 Hours</h4>
+<p>Mon-Sat: 6AM - 7PM<br/>Sunday: 7AM - 3PM</p>
+</div>
+<div class="contact-item">
+<h4>📞 Contact</h4>
+<p>Phone: (555) BREAD-YUM<br/>hello@lamaisondupain.com</p>
+</div>
+</div>
+</section>
+<footer>
+<p>© 2024 La Maison du Pain — Crafted with 🤍 and flour</p>
+<p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.6;">🎮 Evolved from TwitchCraft Bakery World — The community has spoken!</p>
+</footer>
+<script>
+        // Smooth scroll for navigation
+        document.querySelectorAll('nav a').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
-            }
-            
-            // THANK YOU MARIO - Red letters
-            // T
-            createBlock(panelX - 4, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX - 4, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // H
-            createBlock(panelX - 3, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX - 3, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // A
-            createBlock(panelX - 2, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX - 2, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // N
-            createBlock(panelX - 1, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX - 1, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // K
-            createBlock(panelX, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // Heart
-            createBlock(panelX + 1, panelY + 1.5, panelZ - 0.1, 0xFF69B4);
-            // Y
-            createBlock(panelX + 2, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX + 2, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // O
-            createBlock(panelX + 3, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX + 3, panelY + 1, panelZ - 0.1, 0xCC0000);
-            // U
-            createBlock(panelX + 4, panelY + 2, panelZ - 0.1, 0xCC0000);
-            createBlock(panelX + 4, panelY + 1, panelZ - 0.1, 0xCC0000);
-            
-            // MARIO at bottom - Blue
-            createBlock(panelX - 2, panelY, panelZ - 0.1, 0x3b5998);
-            createBlock(panelX - 1, panelY, panelZ - 0.1, 0x3b5998);
-            createBlock(panelX, panelY, panelZ - 0.1, 0x3b5998);
-            createBlock(panelX + 1, panelY, panelZ - 0.1, 0x3b5998);
-            createBlock(panelX + 2, panelY, panelZ - 0.1, 0x3b5998);
-            
-            // Stars around panel
-            const starPositions = [
-                {x: -7, y: 3}, {x: 7, y: 3}, {x: -7, y: -1}, {x: 7, y: -1}
-            ];
-            const starBlocks = [];
-            starPositions.forEach(pos => {
-                const star = createBlock(panelX + pos.x, panelY + pos.y, panelZ, 0xFFFF00);
-                star.material.emissive = new THREE.Color(0xFFFF00);
-                star.material.emissiveIntensity = 1;
-                star.userData.isPanelStar = true;
-                starBlocks.push(star);
             });
-            
-            // Animate the floating panel
-            let panelTime = 0;
-            const allPanelBlocks = [...panelBlocks, ...starBlocks];
-            const baseY = panelY;
-            setInterval(() => {
-                panelTime += 0.03;
-                // Gentle floating
-                blocks.forEach(b => {
-                    if (b.position.z === panelZ && b.position.y >= panelY - 2 && b.position.y <= panelY + 4) {
-                        b.position.y = b.position.y + Math.sin(panelTime) * 0.003;
-                    }
-                    if (b.userData.isPanelStar) {
-                        b.rotation.y = panelTime * 2;
-                        b.material.emissiveIntensity = 0.7 + Math.sin(panelTime * 3) * 0.3;
-                    }
-                });
-            }, 50);
-        }
+        });
         
-        function createWeatherEffects() {
-            // 🌨️ WEATHER - Gentle snow particles!
-            const snowflakes = [];
-            
-            for (let i = 0; i < 100; i++) {
-                const x = Math.random() * worldSize;
-                const y = 20 + Math.random() * 20;
-                const z = Math.random() * worldSize;
-                
-                const snow = createBlock(x, y, z, 0xFFFFFF);
-                snow.scale.set(0.1, 0.1, 0.1);
-                snow.material.transparent = true;
-                snow.material.opacity = 0.8;
-                snow.userData.isSnow = true;
-                snow.userData.fallSpeed = 0.02 + Math.random() * 0.03;
-                snow.userData.drift = Math.random() * 0.02;
-                snowflakes.push(snow);
-            }
-            
-            // Animate snow
-            setInterval(() => {
-                snowflakes.forEach(s => {
-                    s.position.y -= s.userData.fallSpeed;
-                    s.position.x += Math.sin(Date.now() * 0.001 + s.position.z) * s.userData.drift;
-                    
-                    // Reset when hitting ground
-                    if (s.position.y < 5) {
-                        s.position.y = 35 + Math.random() * 10;
-                        s.position.x = Math.random() * worldSize;
-                        s.position.z = Math.random() * worldSize;
-                    }
-                });
-            }, 30);
-        }
+        // Add hover sound effect simulation (visual feedback)
+        document.querySelectorAll('.product-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.style.transform = 'translateY(-10px) rotate(1deg)';
+            });
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'translateY(0) rotate(0deg)';
+            });
+        });
         
-        init();
+        // Parallax voxel decorations
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            document.querySelectorAll('.voxel-decoration').forEach((voxel, i) => {
+                const speed = 0.1 + (i * 0.05);
+                voxel.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.02}deg)`;
+            });
+        });
+        
+        console.log('🥐 Welcome to La Maison du Pain!');
+        console.log('🧱 This bakery was built from the ruins of a Minecraft world.');
+        console.log('🎮 The community demanded it - 100 times!');
     </script>
 </body>
 </html>
