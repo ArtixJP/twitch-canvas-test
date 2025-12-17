@@ -89,7 +89,9 @@
         .water-drop {
             position: absolute;
             font-size: 20px;
-            animation: spray 1.5s ease-out infinite;
+            animation: spray 1.5s ease-out forwards;
+            left: 0;
+            top: 0;
         }
         
         @keyframes elephant-bounce {
@@ -444,6 +446,7 @@
 <div class="sun"></div>
 <div class="light-overlay"></div>
 <div class="stars" id="stars"></div>
+
 <script>
         const starsContainer = document.getElementById('stars');
         for (let i = 0; i < 100; i++) {
@@ -513,12 +516,22 @@
             
             const distance = Math.sqrt(Math.pow(kittyX - doggyX, 2) + Math.pow(kittyY - doggyY, 2));
             
-            // If dog is close, cat escapes!
-            if (distance < 30) {
-                // Dog caught the cat!
+            // If dog is close, cat escapes faster!
+            if (distance < 60) {
+                kittySpeed = escapeKittySpeed;
+                kitty.classList.add('escaping');
+                kitty.style.filter = 'drop-shadow(0 0 10px #ff0)';
+            } else {
+                kittySpeed = normalKittySpeed;
+                kitty.classList.remove('escaping');
+                kitty.style.filter = 'none';
+            }
+            
+            // If dog catches the cat!
+            if (distance < 25) {
                 dogScore++;
                 document.getElementById('dogScore').textContent = dogScore;
-                // Change planet color
+                // Change planet color celebration
                 const colors = [
                     'linear-gradient(135deg, #00d2ff 0%, #3a7bd5 30%, #00d2ff 70%, #240046 100%)',
                     'linear-gradient(135deg, #f093fb 0%, #f5576c 30%, #4facfe 70%, #00f2fe 100%)',
@@ -526,15 +539,13 @@
                     'linear-gradient(135deg, #fc466b 0%, #3f5efb 30%, #fc466b 70%, #240046 100%)'
                 ];
                 document.querySelector('.planet').style.background = colors[dogScore % colors.length];
-                // Reset cat position
+                // Flash effect on catch
+                doggy.style.transform += ' scale(1.5)';
+                setTimeout(() => {
+                    doggy.style.transform = doggy.style.transform.replace(' scale(1.5)', '');
+                }, 200);
+                // Reset cat position to opposite side
                 kittyAngle = doggyAngle + 180;
-            }
-            if (distance < 50) {
-                kittySpeed = escapeKittySpeed;
-                kitty.classList.add('escaping');
-            } else {
-                kittySpeed = normalKittySpeed;
-                kitty.classList.remove('escaping');
             }
             
             // Update angles
@@ -568,21 +579,32 @@
             const drop = document.createElement('span');
             drop.className = 'water-drop';
             drop.textContent = '💧';
-            drop.style.setProperty('--tx', (Math.random() * 60 - 30) + 'px');
-            drop.style.animationDelay = Math.random() * 0.5 + 's';
+            const tx = (Math.random() * 60 - 30);
+            drop.style.setProperty('--tx', tx + 'px');
+            drop.style.left = Math.random() * 30 + 'px';
+            drop.style.top = Math.random() * 20 + 'px';
             waterSpray.appendChild(drop);
-            setTimeout(() => drop.remove(), 1500);
+            setTimeout(() => {
+                if (drop.parentNode) drop.remove();
+            }, 1500);
         }
-        setInterval(createWaterDrop, 200);
+        // Create water drops continuously
+        setInterval(createWaterDrop, 150);
+        // Create initial burst
+        for(let i = 0; i < 5; i++) setTimeout(createWaterDrop, i * 100);
         
         // Star clicking game
         const gameCanvas = document.getElementById('gameCanvas');
         const ctx = gameCanvas.getContext('2d');
         let gameScoreVal = 0;
-        const stars = [];
+        const gameStars = [];
+        
+        // Clear canvas initially
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillRect(0, 0, 400, 400);
         
         function createStar() {
-            stars.push({
+            gameStars.push({
                 x: Math.random() * 360 + 20,
                 y: -20,
                 size: Math.random() * 20 + 15,
@@ -592,17 +614,17 @@
         }
         
         function drawGame() {
-            ctx.fillStyle = 'rgba(26, 26, 46, 0.3)';
+            ctx.fillStyle = 'rgba(26, 26, 46, 0.9)';
             ctx.fillRect(0, 0, 400, 400);
             
-            for (let i = stars.length - 1; i >= 0; i--) {
-                const star = stars[i];
+            for (let i = gameStars.length - 1; i >= 0; i--) {
+                const star = gameStars[i];
                 star.y += star.speed;
                 
                 ctx.font = star.size + 'px Arial';
                 ctx.fillText('⭐', star.x, star.y);
                 
-                if (star.y > 420) stars.splice(i, 1);
+                if (star.y > 420) gameStars.splice(i, 1);
             }
             requestAnimationFrame(drawGame);
         }
@@ -612,12 +634,17 @@
             const x = e.clientX - rect.left;
             const y = e.clientY - rect.top;
             
-            for (let i = stars.length - 1; i >= 0; i--) {
-                const star = stars[i];
+            for (let i = gameStars.length - 1; i >= 0; i--) {
+                const star = gameStars[i];
                 if (Math.abs(x - star.x) < star.size && Math.abs(y - star.y) < star.size) {
-                    stars.splice(i, 1);
+                    gameStars.splice(i, 1);
                     gameScoreVal++;
                     document.getElementById('gameScore').textContent = gameScoreVal;
+                    // Add visual feedback
+                    ctx.fillStyle = '#FFD700';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 20, 0, Math.PI * 2);
+                    ctx.fill();
                     break;
                 }
             }
