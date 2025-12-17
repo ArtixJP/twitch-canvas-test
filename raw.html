@@ -59,6 +59,69 @@
             background: rgba(255,255,255,0.3);
             border-radius: 50%;
         }
+        .moon-orbit {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 1px dashed rgba(200,200,200,0.15);
+            border-radius: 50%;
+            animation: rotate 3s linear infinite;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .moon {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #c9c9c9 0%, #888 100%);
+            border-radius: 50%;
+            top: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(200,200,200,0.5);
+        }
+        .sun {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #fff7a0 0%, #ffcc00 40%, #ff9900 70%, transparent 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 60px #ffcc00, 0 0 120px #ff9900, 0 0 200px rgba(255,153,0,0.4);
+            animation: pulse-sun 3s ease-in-out infinite;
+            z-index: 10;
+        }
+        @keyframes pulse-sun {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px #ffcc00, 0 0 120px #ff9900; }
+            50% { transform: scale(1.05); box-shadow: 0 0 80px #ffcc00, 0 0 160px #ff9900; }
+        }
+        .cat {
+            position: absolute;
+            font-size: 24px;
+            transition: transform 0.1s;
+            z-index: 20;
+            filter: drop-shadow(0 0 5px rgba(255,200,100,0.5));
+        }
+        .dog {
+            position: absolute;
+            font-size: 24px;
+            z-index: 20;
+            filter: drop-shadow(0 0 5px rgba(150,100,50,0.5));
+        }
+        .scoreboard {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,204,0,0.4);
+            font-size: 1.2rem;
+            z-index: 100;
+        }
+        .scoreboard span {
+            color: #ffcc00;
+        }
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -110,7 +173,7 @@
     </style>
 </head>
 <body>
-
+<div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
 <button id="musicToggle" onclick="toggleMusic()" title="Toggle Music">🎵</button>
 <div class="stars">
 <div class="star" style="top: 10%; left: 20%; animation-delay: 0.5s;"></div>
@@ -122,9 +185,16 @@
 </div>
 <div class="solar-system">
 <h1>Hello World</h1>
+<div class="sun"></div>
 <div class="orbit">
-<div class="planet" title="Planet Twitch"></div>
+<div class="planet" title="Planet Twitch">
+<div class="moon-orbit">
+<div class="moon" title="Luna"></div>
 </div>
+</div>
+</div>
+<div class="cat" id="cat">🐱</div>
+<div class="dog" id="dog">🐕</div>
 </div>
 <script>
     const audio = document.getElementById('bgMusic');
@@ -153,6 +223,63 @@
         }
         document.removeEventListener('click', initAudio);
     }, { once: true });
+    
+    // Cat and Dog Chase Game
+    const cat = document.getElementById('cat');
+    const dog = document.getElementById('dog');
+    const scoreEl = document.getElementById('dogScore');
+    let dogScore = 0;
+    let catAngle = 0;
+    let dogAngle = Math.PI;
+    let catSpeed = 0.02;
+    let dogSpeed = 0.015;
+    const orbitRadius = 180;
+    const catchDistance = 40;
+    const escapeDistance = 80;
+    
+    function updateChase() {
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        // Calculate positions
+        const catX = centerX + Math.cos(catAngle) * orbitRadius - 12;
+        const catY = centerY + Math.sin(catAngle) * orbitRadius - 12;
+        const dogX = centerX + Math.cos(dogAngle) * orbitRadius - 12;
+        const dogY = centerY + Math.sin(dogAngle) * orbitRadius - 12;
+        
+        // Distance between cat and dog
+        const dist = Math.sqrt((catX - dogX) ** 2 + (catY - dogY) ** 2);
+        
+        // Cat speeds up when dog is close
+        if (dist < escapeDistance) {
+            catSpeed = 0.06; // ZOOM!
+            cat.style.transform = 'scale(1.2)';
+        } else {
+            catSpeed = 0.02;
+            cat.style.transform = 'scale(1)';
+        }
+        
+        // Check if dog catches cat
+        if (dist < catchDistance) {
+            dogScore++;
+            scoreEl.textContent = dogScore;
+            catAngle = dogAngle + Math.PI; // Teleport cat away
+            cat.style.animation = 'twinkle 0.2s ease 3';
+        }
+        
+        // Update angles (dog chases cat direction)
+        catAngle += catSpeed;
+        dogAngle += dogSpeed;
+        
+        // Position elements
+        cat.style.left = catX + 'px';
+        cat.style.top = catY + 'px';
+        dog.style.left = dogX + 'px';
+        dog.style.top = dogY + 'px';
+        
+        requestAnimationFrame(updateChase);
+    }
+    updateChase();
 </script>
 </body>
 </html>
