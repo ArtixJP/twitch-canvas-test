@@ -81,6 +81,49 @@
             animation: ring-rotate 8s linear infinite;
         }
         
+        .moon {
+            position: absolute;
+            width: 25px;
+            height: 25px;
+            background: linear-gradient(135deg, #f5f5f5 0%, #c9c9c9 50%, #8a8a8a 100%);
+            border-radius: 50%;
+            box-shadow: 
+                inset -5px -5px 10px rgba(0,0,0,0.3),
+                inset 3px 3px 8px rgba(255,255,255,0.4),
+                0 0 20px rgba(255, 255, 255, 0.3);
+            animation: orbit 6s linear infinite;
+            top: 50%;
+            left: 50%;
+            transform-origin: 0 0;
+        }
+        
+        .moon::before {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(100, 100, 100, 0.5);
+            border-radius: 50%;
+            top: 5px;
+            left: 8px;
+        }
+        
+        .moon::after {
+            content: '';
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(100, 100, 100, 0.4);
+            border-radius: 50%;
+            top: 12px;
+            left: 4px;
+        }
+        
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+        
         .ring::before {
             content: '';
             position: absolute;
@@ -132,10 +175,10 @@
 <div class="music-control">
 <button id="musicBtn" onclick="toggleMusic()">🎵 Pause Music</button>
 </div>
-
 <div class="planet-container">
 <div class="planet"></div>
 <div class="ring"></div>
+<div class="moon"></div>
 </div>
 <div class="stars" id="stars"></div>
 <script>
@@ -166,7 +209,15 @@
             isPlaying = !isPlaying;
         }
         
-        // Handle autoplay restrictions
+        // Handle autoplay restrictions - attempt to play on load
+        document.addEventListener('click', function initAudio() {
+            bgMusic.play().then(() => {
+                isPlaying = true;
+                musicBtn.textContent = '🎵 Pause Music';
+            }).catch(() => {});
+            document.removeEventListener('click', initAudio);
+        }, { once: true });
+        
         bgMusic.play().catch(() => {
             isPlaying = false;
             musicBtn.textContent = '🎵 Play Music';
