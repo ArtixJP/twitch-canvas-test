@@ -28,6 +28,10 @@
             animation: sun-pulse 2s ease-in-out infinite;
             z-index: 5;
         }
+        @keyframes float-greeting {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
         @keyframes sun-pulse {
             0%, 100% { transform: scale(1); box-shadow: 0 0 60px 30px rgba(255, 235, 59, 0.6), 0 0 100px 60px rgba(255, 152, 0, 0.4); }
             50% { transform: scale(1.05); box-shadow: 0 0 80px 40px rgba(255, 235, 59, 0.7), 0 0 120px 70px rgba(255, 152, 0, 0.5); }
@@ -170,6 +174,7 @@
 <div class="section active" id="space-section">
 <div class="solar-system">
 <div class="sun"></div>
+<div class="mom-greeting" style="position: absolute; top: -120px; left: 50%; transform: translateX(-50%); font-size: 1.2rem; color: #ffb6c1; text-shadow: 0 0 10px #ff69b4, 0 0 20px #ff1493; animation: float-greeting 3s ease-in-out infinite; white-space: nowrap; z-index: 50;">👋 Hi Mom! 💖</div>
 <h1>Hello World</h1>
 <div class="planet">
 <div class="moon"></div>
