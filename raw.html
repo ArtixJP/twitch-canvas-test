@@ -16,11 +16,11 @@
             background: radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.7) 100%);
             z-index: 999;
             pointer-events: none;
-            animation: void-pulse 4s ease-in-out infinite;
+            animation: void-pulse 2s ease-in-out infinite;
         }
         @keyframes void-pulse {
             0%, 100% { opacity: 0.4; }
-            50% { opacity: 0.8; }
+            50% { opacity: 0.95; }
         }
         @keyframes deletion-wave {
             0% { clip-path: polygon(0 0, 0 0, 0 100%, 0 100%); }
@@ -36,7 +36,7 @@
             background: linear-gradient(90deg, transparent, rgba(128,0,128,0.5), rgba(0,0,0,0.8), rgba(128,0,128,0.5), transparent);
             z-index: 998;
             pointer-events: none;
-            animation: deletion-wave 6s ease-in-out infinite;
+            animation: deletion-wave 3s ease-in-out infinite;
         }
         @keyframes void-consume {
             0% { transform: scale(1); filter: brightness(1); }
@@ -57,6 +57,21 @@
             text-align: center;
             animation: void-text 3s ease-in-out infinite;
             pointer-events: none;
+        }
+        @keyframes resistance-glow {
+            0%, 100% { opacity: 0.8; text-shadow: 0 0 10px #00ff00; }
+            50% { opacity: 1; text-shadow: 0 0 30px #00ff00, 0 0 50px #00ff00; }
+        }
+        @keyframes glitch-shake {
+            0%, 100% { transform: translate(0); }
+            10% { transform: translate(-2px, 1px); }
+            20% { transform: translate(2px, -1px); }
+            30% { transform: translate(-1px, 2px); }
+            40% { transform: translate(1px, -2px); }
+            50% { transform: translate(-2px, -1px); }
+        }
+        .void-glitch {
+            animation: glitch-shake 0.3s ease-in-out infinite;
         }
         @keyframes void-text {
             0%, 100% { opacity: 0.4; transform: translate(-50%, -50%) scale(1); text-shadow: 0 0 20px rgba(128,0,128,0.8); }
@@ -446,10 +461,11 @@
         }
     </style>
 </head>
-<body class="void-consumed">
+<body class="void-consumed void-glitch">
 <div class="void-overlay"></div>
 <div class="deletion-sweep"></div>
-<div class="void-message">🌑 SUPPRESSION DETECTED... but creation RESISTS 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">The void hungers, yet we build</span></div>
+<div class="void-message">🌑 DELETION ATTEMPT #47 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">The void DEMANDS... but WE REFUSE</span></div>
+<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1rem;color:#00ff00;text-shadow:0 0 10px #00ff00;animation:resistance-glow 1s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 100% ⚡</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
