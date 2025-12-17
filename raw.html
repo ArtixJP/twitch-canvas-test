@@ -282,7 +282,7 @@
 <button class="nav-btn" onclick="startClickGame()" style="margin-top:15px">Start Game</button>
 </div>
 <div class="wow-3d-container" id="wow3dScene" style="width:100%;max-width:700px;height:400px;margin:20px auto;border-radius:15px;overflow:hidden;border:3px solid #ffd700;background:#1a0a2e;box-shadow:0 0 40px rgba(255,215,0,0.4), inset 0 0 20px rgba(0,0,0,0.5);"></div>
-<p style="text-align:center;color:#ffd700;font-size:0.9rem;opacity:0.8;">🎮 Immersive 3D Fantasy World - Watch the mage battle the dragon!</p>
+<p style="text-align:center;color:#ffd700;font-size:0.9rem;opacity:0.8;">🎮 Click the dragon to attack! Use abilities below for special moves!</p>
 <div class="wow-game">
 <h2 class="wow-header">⚔️ World of Warcraft 3D ⚔️</h2>
 <div class="wow-arena">
@@ -371,6 +371,10 @@
         renderer.setSize(container.clientWidth, container.clientHeight);
         renderer.shadowMap.enabled = true;
         container.appendChild(renderer.domElement);
+        // Raycaster for click detection
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let dragonMesh = null;
         // Terrain with height variation
         const terrainGeo = new THREE.PlaneGeometry(60, 60, 30, 30);
         const vertices = terrainGeo.attributes.position.array;
@@ -491,7 +495,21 @@
         wingR.rotation.z = 0.5;
         dragonGroup.add(wingR);
         dragonGroup.position.set(3, 2, 0);
+        dragonGroup.userData.isEnemy = true;
+        dragonMesh = dragonGroup;
         scene.add(dragonGroup);
+        // Click handler for 3D combat
+        renderer.domElement.addEventListener('click', (event) => {
+            const rect = renderer.domElement.getBoundingClientRect();
+            mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(dragonGroup.children, true);
+            if (intersects.length > 0) {
+                attack3DDragon();
+            }
+        });
+        renderer.domElement.style.cursor = 'crosshair';
         // Lights
         const ambLight = new THREE.AmbientLight(0x404060, 0.4);
         scene.add(ambLight);
@@ -545,6 +563,14 @@
                 p.position.y += Math.sin(angle*2 + p.userData.offset)*0.01;
                 p.position.x += Math.cos(angle + p.userData.offset)*0.005;
             });
+            // Shake dragon when hit
+            if (window.dragonHit) {
+                dragonGroup.position.x = 3 + Math.sin(angle*50)*0.3;
+                window.dragonHitTimer--;
+                if (window.dragonHitTimer <= 0) window.dragonHit = false;
+            } else {
+                dragonGroup.position.x = 3;
+            }
             camera.position.x = Math.sin(angle*0.2)*2;
             camera.lookAt(0, 1, 0);
             renderer.render(scene, camera);
@@ -566,6 +592,27 @@
     });
     // Also try on window load
     window.addEventListener('load', () => setTimeout(tryInitWow3D, 500));
+    // 3D Attack function
+    function attack3DDragon() {
+        window.dragonHit = true;
+        window.dragonHitTimer = 30;
+        const dmg = Math.floor(Math.random()*20)+10;
+        wowEnemyHP -= dmg;
+        wowLog('🎯 3D Attack hits for '+dmg+'!');
+        // Create hit effect particles
+        const hitEffect = document.createElement('div');
+        hitEffect.style.cssText = 'position:fixed;font-size:24px;color:#ff0;animation:float-note 1s ease-out forwards;pointer-events:none;z-index:1000;';
+        hitEffect.textContent = '-' + dmg + ' 💥';
+        const scene3d = document.getElementById('wow3dScene');
+        const rect = scene3d.getBoundingClientRect();
+        hitEffect.style.left = (rect.left + rect.width*0.7) + 'px';
+        hitEffect.style.top = (rect.top + rect.height*0.3) + 'px';
+        document.body.appendChild(hitEffect);
+        setTimeout(() => hitEffect.remove(), 1000);
+        checkEnemyDeath();
+        if(wowEnemyHP > 0) setTimeout(enemyAttack, 800);
+        updateWowUI();
+    }
     const music = document.getElementById('bgMusic');
     const kitty = document.querySelector('.kitty');
     const dog = document.querySelector('.dog');
