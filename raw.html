@@ -5,875 +5,153 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🔥 POKÉMON SIMULATOR - REBIRTH Edition 🔥</title>
+<title>✨ New Canvas ✨</title>
 <style>
-        * { box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', system-ui, sans-serif; 
-            display: flex; 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            min-height: 100vh;
+            display: flex;
             flex-direction: column;
-            justify-content: flex-start; 
-            align-items: center; 
-            min-height: 100vh; 
-            margin: 0;
-            padding: 0;
-            background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 50%, #0a1628 100%);
-            color: #f0e6d3;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            color: #e0e0e0;
             overflow: hidden;
         }
-        h1 { font-size: 2.5rem; text-align: center; text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00; margin-bottom: 10px; }
-        .subtitle { color: #ffd700; font-size: 1rem; margin-bottom: 20px; }
-        .game-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1200px; position: relative; z-index: 10; }
-        .panels-overlay { position: fixed; top: 10px; right: 10px; z-index: 100; display: flex; gap: 10px; flex-direction: column; max-height: 90vh; overflow-y: auto; }
-        .panels-overlay .panel { opacity: 0.95; transform: scale(0.9); transform-origin: top right; }
-        .toggle-panels-btn { position: fixed; top: 60px; left: 10px; z-index: 200; padding: 10px 20px; background: linear-gradient(180deg, #3a2a1a, #2a1a0a); border: 2px solid #ffd700; color: #ffd700; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        .fullscreen-indicator { position: fixed; bottom: 10px; left: 10px; z-index: 200; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px; font-size: 12px; color: #4a4; }
-        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 10px #ffd700; } 50% { box-shadow: 0 0 30px #ffd700, 0 0 50px #ff8c00; } }
-        .world-enemy { animation: enemyFloat 2s infinite, pulse-glow 3s infinite; }
-        .player-char { animation: pulse-glow 2s infinite; }
-        .panel { background: linear-gradient(180deg, rgba(40,30,50,0.95) 0%, rgba(20,15,30,0.98) 100%); border: 2px solid #5a4a3a; border-radius: 8px; padding: 15px; box-shadow: 0 0 20px rgba(255,165,0,0.2), inset 0 0 30px rgba(0,0,0,0.5); }
-        .character-panel { width: 280px; }
-        .combat-panel { width: 500px; min-height: 350px; display: none; }
-        .log-panel { width: 350px; height: 350px; overflow-y: auto; }
-        .stat-bar { height: 20px; border-radius: 10px; margin: 5px 0; position: relative; overflow: hidden; }
-        .health-bar { background: linear-gradient(90deg, #8b0000, #ff0000); box-shadow: 0 0 10px #ff0000; }
-        .mana-bar { background: linear-gradient(90deg, #00008b, #4169e1); box-shadow: 0 0 10px #4169e1; }
-        .xp-bar { background: linear-gradient(90deg, #4b0082, #9932cc); box-shadow: 0 0 10px #9932cc; }
-        .bar-fill { height: 100%; transition: width 0.3s; border-radius: 10px; }
-        .bar-text { position: absolute; width: 100%; text-align: center; font-size: 12px; line-height: 20px; text-shadow: 1px 1px 2px black; }
-        .class-select { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; justify-content: center; }
-        .class-btn { padding: 10px 15px; border: 2px solid #5a4a3a; background: linear-gradient(180deg, #3a2a1a, #2a1a0a); color: #ffd700; cursor: pointer; border-radius: 5px; transition: all 0.3s; font-weight: bold; }
-        .class-btn:hover { border-color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.5); transform: scale(1.05); }
-        .class-btn.selected { border-color: #ffd700; background: linear-gradient(180deg, #5a4a2a, #3a2a1a); }
-        .enemy-display { text-align: center; padding: 20px; display: none; }
-        .enemy-sprite { font-size: 80px; animation: enemyBounce 1s infinite; display: none; }
-        @keyframes enemyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 15px; }
-        .action-btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.2s; text-transform: uppercase; }
-        .attack-btn { background: linear-gradient(180deg, #8b0000, #5a0000); color: white; border: 2px solid #ff4444; }
-        .skill-btn { background: linear-gradient(180deg, #00008b, #000050); color: white; border: 2px solid #4444ff; }
-        .heal-btn { background: linear-gradient(180deg, #006400, #003200); color: white; border: 2px solid #44ff44; }
-        .action-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px currentColor; }
-        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-        .log-entry { padding: 5px; border-bottom: 1px solid #3a3a3a; font-size: 13px; }
-        .log-damage { color: #ff6b6b; }
-        .log-heal { color: #6bff6b; }
-        .log-xp { color: #d4a5ff; }
-        .log-level { color: #ffd700; font-weight: bold; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 14px; margin: 10px 0; }
-        .stat-item { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 3px; }
-        .gold-display { color: #ffd700; font-size: 18px; text-align: center; margin: 10px 0; }
-        .world-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; overflow: hidden; background: linear-gradient(180deg, #1a3a1a 0%, #0d2a0d 100%); border: none; z-index: 1; image-rendering: pixelated; perspective: 800px; transform-style: preserve-3d; }
-        .world-floor { transform: rotateX(60deg) translateZ(-100px) scale(2.5); transform-origin: center center; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,80,0,0.3) 40px, rgba(0,80,0,0.3) 42px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,80,0,0.3) 40px, rgba(0,80,0,0.3) 42px); }
-        .world-3d-horizon { position: absolute; top: 0; left: 0; width: 100%; height: 40%; background: linear-gradient(180deg, #1a0a2e 0%, #2a1a4e 30%, #3a5a3a 70%, #1a4a1a 100%); z-index: 0; }
-        .world-3d-mountains { position: absolute; top: 15%; left: 0; width: 100%; height: 25%; z-index: 1; font-size: 80px; letter-spacing: -20px; opacity: 0.6; filter: blur(2px); color: #2a3a2a; }
-        .world-panel.minimized { width: 100%; max-width: 600px; height: 400px; position: relative; border: 3px solid #5a4a3a; }
-        .world-floor { position: absolute; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(80,0,80,0.15) 40px, rgba(80,0,80,0.15) 41px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(80,0,80,0.15) 40px, rgba(80,0,80,0.15) 41px); background-color: #0a0a1a; }
-        @keyframes voidPulse { 0%, 100% { opacity: 0.7; } 50% { opacity: 0.9; } }
-        .world-tree { position: absolute; font-size: 50px; z-index: 2; pointer-events: none; filter: drop-shadow(3px 6px 8px rgba(0,0,0,0.7)); transform: perspective(500px) rotateX(-5deg); }
-        .world-rock { position: absolute; font-size: 35px; z-index: 2; pointer-events: none; opacity: 0.8; }
-        .player-char { position: absolute; font-size: 40px; transition: left 0.08s ease-out, top 0.08s ease-out; z-index: 10; filter: drop-shadow(0 0 5px #ffd700) drop-shadow(2px 4px 6px rgba(0,0,0,0.5)); cursor: pointer; transform: perspective(500px) rotateX(-10deg); }
-        .world-enemy { position: absolute; font-size: 35px; cursor: pointer; animation: enemyFloat 2s infinite; z-index: 5; filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.6)); transform: perspective(500px) rotateX(-10deg); }
-        .world-chest { position: absolute; font-size: 30px; cursor: pointer; z-index: 5; }
-        .world-chest:hover, .world-enemy:hover { transform: scale(1.2); filter: drop-shadow(0 0 10px gold); }
-        @keyframes enemyFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
-        .daggers { position: absolute; font-size: 20px; opacity: 0; transition: all 0.2s; }
-        .daggers.attack-left { opacity: 1; transform: translateX(-30px) rotate(-45deg); }
-        .daggers.attack-right { opacity: 1; transform: translateX(30px) rotate(45deg); }
-        .world-controls { text-align: center; margin-top: 10px; font-size: 12px; color: #aaa; }
-        .level-display { font-size: 24px; color: #ffd700; text-align: center; }
-        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
-        .shake { animation: shake 0.3s; }
-        @keyframes glow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
-        .glow { animation: glow 0.5s; }
+        
+        .welcome-container {
+            text-align: center;
+            animation: fadeIn 2s ease-out;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s infinite;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            margin-bottom: 2rem;
+        }
+        
+        .canvas-area {
+            width: 80vw;
+            max-width: 800px;
+            height: 50vh;
+            border: 2px dashed #444;
+            border-radius: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .canvas-area:hover {
+            border-color: #667eea;
+            background: rgba(102, 126, 234, 0.05);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 0.2);
+        }
+        
+        .placeholder {
+            font-size: 4rem;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .hint {
+            margin-top: 2rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 2s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
-<h1 style="position:fixed;top:10%;left:50%;transform:translateX(-50%);z-index:150;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(200,200,200,0.9));padding:20px 40px;font-size:2.5rem;margin:0;color:#333;text-shadow:0 0 20px #fff,0 0 40px #ccc;animation:fadeIn 3s ease-out 7s backwards, cleanPulse 2s infinite;border-radius:20px;border:3px solid #999;">🌱 NEW BEGINNING 🌱<br/><span style="font-size:0.8rem;color:#666;">✨ The journey continues... ✨</span></h1>
-<div id="scratch-overlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(255,255,255,0.9);z-index:9997;display:flex;justify-content:center;align-items:center;flex-direction:column;animation:scratchFadeOut 4s ease-out forwards;pointer-events:none;">
-<div style="font-size:5rem;animation:scratchPulse 1s infinite;">🎨</div>
-<div style="font-size:2rem;color:#333;margin-top:20px;text-align:center;">Starting Fresh...<br/><span style="font-size:1rem;color:#666;">A new layer awaits</span></div>
+<div class="stars" id="stars"></div>
+<div class="welcome-container">
+<h1>✨ Fresh Canvas ✨</h1>
+<p class="subtitle">A new beginning awaits</p>
+<div class="canvas-area" id="canvas">
+<span class="placeholder">🎨</span>
 </div>
-<style>@keyframes scratchFadeOut { 0% { opacity:1; } 70% { opacity:1; } 100% { opacity:0; } } @keyframes scratchPulse { 0%,100% { transform:scale(1) rotate(0deg); } 50% { transform:scale(1.1) rotate(5deg); } }</style>
-<style>@keyframes cleanPulse { 0%,100% { box-shadow:0 0 30px rgba(255,255,255,0.6); } 50% { box-shadow:0 0 60px rgba(255,255,255,0.9); } }</style>
-<style>@keyframes rebirthPulse { 0%,100% { box-shadow:0 0 30px rgba(255,68,0,0.6),0 0 60px rgba(255,0,0,0.4); } 50% { box-shadow:0 0 60px rgba(255,100,0,0.8),0 0 100px rgba(255,50,0,0.6),0 0 140px rgba(255,200,0,0.3); } }</style>
-<style>@keyframes newDawnPulse { 0%,100% { box-shadow:0 0 30px rgba(233,30,99,0.5),0 0 60px rgba(156,39,176,0.3); } 50% { box-shadow:0 0 50px rgba(233,30,99,0.7),0 0 80px rgba(156,39,176,0.5),0 0 100px rgba(255,64,129,0.3); } }</style>
-<style>@keyframes titlePulse { 0%,100% { text-shadow:0 0 30px #ff0000,0 0 60px #880000; } 50% { text-shadow:0 0 50px #ff4444,0 0 80px #ff0000,0 0 100px #880000; } }</style>
-<style>@keyframes fadeIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 100% { opacity:1; transform:translate(-50%,-50%) scale(1); } }</style>
-<p style="position:fixed;bottom:18%;left:50%;transform:translateX(-50%);color:#fff;font-size:1.2rem;text-align:center;z-index:100;text-shadow:0 0 10px rgba(255,100,0,0.9),0 0 20px #ff4400;background:rgba(50,0,0,0.85);padding:12px 25px;border-radius:15px;border:2px solid #ff6600;">🔥 WASD to explore • Click wild Pokémon to battle • Throw Pokéballs to catch! 🔥<br/><span style="font-size:0.8rem;color:#ffaa00;">Rise from the ashes!</span></p>
-<div id="captured-display" style="position:fixed;top:70px;left:20px;color:#f0f;font-family:monospace;font-size:14px;z-index:100;background:linear-gradient(180deg,rgba(80,0,80,0.9),rgba(40,0,60,0.95));padding:12px 15px;border-radius:10px;border:2px solid #f0f;box-shadow:0 0 20px rgba(255,0,255,0.4);">
-<div style="font-weight:bold;margin-bottom:8px;font-size:16px;color:#ff4444;">📖 POKÉDEX</div><div id="trainer-badges" style="font-size:10px;margin-bottom:5px;">🏅 Badges: <span id="badge-count">0</span>/8</div>
-<button id="new-game-plus" onclick="startNewGamePlus()" style="margin-top:5px;padding:3px 8px;background:linear-gradient(180deg,#4a0,#280);border:1px solid #8f8;color:#fff;border-radius:3px;cursor:pointer;font-size:10px;">🔄 New Game+</button>
-<button id="fresh-start" onclick="freshStartEffect()" style="margin-top:3px;padding:3px 8px;background:linear-gradient(180deg,#08f,#046);border:1px solid #4af;color:#fff;border-radius:3px;cursor:pointer;font-size:10px;">✨ Fresh Start</button>
-🔮 Captured: <span id="capture-count">0</span>/5
-<div id="captured-list" style="margin-top:8px;font-size:12px;max-height:100px;overflow-y:auto;"></div>
-</div>
-<div id="spaceship" style="position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);font-size:52px;z-index:50;transition:transform 0.15s ease-out;filter:drop-shadow(0 0 25px #ffb74d) drop-shadow(0 0 40px #ff8a65);cursor:pointer;animation:trainerGlow 2s infinite;">🧢</div>
-<style>@keyframes trainerGlow { 0%,100% { filter:drop-shadow(0 0 25px #ffb74d) drop-shadow(0 0 40px #ff8a65); } 50% { filter:drop-shadow(0 0 35px #ffd54f) drop-shadow(0 0 55px #ffab40) drop-shadow(0 0 70px #ff7043); } }</style>
-<div id="coordinates" style="position:fixed;top:20px;left:20px;color:#4f4;font-family:monospace;font-size:14px;z-index:100;background:rgba(0,0,0,0.5);padding:10px;border-radius:5px;border:1px solid #4f4;">🎮 EXPLORING...</div>
-<div id="space-objects"></div>
-<div id="tall-grass-indicator" style="position:fixed;right:15%;top:20%;padding:15px 25px;background:linear-gradient(180deg,#553300,#331100);border:3px solid #ff6600;border-radius:15px;z-index:20;color:#ffcc00;font-weight:bold;box-shadow:0 0 25px rgba(255,100,0,0.6),inset 0 0 15px rgba(255,200,0,0.3);animation:firePulse 2s infinite;">
-<style>@keyframes firePulse { 0%,100% { box-shadow:0 0 20px rgba(255,100,0,0.4); } 50% { box-shadow:0 0 40px rgba(255,150,0,0.7),0 0 60px rgba(255,50,0,0.4); } }</style>
-<style>@keyframes grassPulse { 0%,100% { box-shadow:0 0 20px rgba(0,255,0,0.3); } 50% { box-shadow:0 0 35px rgba(0,255,0,0.5),0 0 50px rgba(0,200,0,0.3); } }</style>
-🌿 EXPLORATION ZONE 🌿<br/>
-<span style="font-size:12px;color:#aaffaa;">Fresh adventures await!</span>
-</div>
-<div id="cloud-container" style="position:fixed;top:0;left:0;width:100%;height:40%;pointer-events:none;z-index:15;overflow:hidden;"></div>
-<div id="pikachu-animation" style="position:fixed;bottom:15%;left:20%;z-index:50;font-size:60px;animation:pikachuBounce 0.8s infinite ease-in-out, pikachuSpark 2s infinite;cursor:pointer;filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.5));" title="Pika pika!">⚡🐭</div>
-<div id="professor-chen" style="position:fixed;bottom:25%;right:15%;z-index:50;font-size:50px;cursor:pointer;filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.5));animation:professorFloat 3s infinite ease-in-out;" title="Click to talk to Professor Chen!">👨‍🔬</div>
-<div id="professor-dialogue" style="display:none;position:fixed;bottom:35%;right:10%;z-index:150;background:linear-gradient(180deg,#fff,#f0f0f0);border:3px solid #333;border-radius:15px;padding:15px 20px;max-width:280px;color:#333;font-size:14px;box-shadow:0 5px 20px rgba(0,0,0,0.3);">
-<div style="font-weight:bold;color:#c00;margin-bottom:8px;">👨‍🔬 Professor Chen</div>
-<div id="chen-text">Hello there! Welcome to the world of Pokémon! Go out and catch 'em all!</div>
-<button onclick="document.getElementById('professor-dialogue').style.display='none'" style="margin-top:10px;padding:5px 15px;background:#4CAF50;color:#fff;border:none;border-radius:5px;cursor:pointer;">OK!</button>
-</div>
-<style>
-@keyframes professorFloat { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-8px); } }
-</style>
-<script>
-const professorChen = document.getElementById('professor-chen');
-const chenDialogues = [
-  "Hello there! Welcome to the world of Pokémon!",
-  "Your very own Pokémon legend is about to unfold!",
-  "A world of dreams and adventures awaits!",
-  "Remember, weaken Pokémon before throwing a Pokéball!",
-  "You've got " + pokeballCount + " Pokéballs - use them wisely!",
-  "The tall grass is full of wild Pokémon!",
-  "Gotta catch 'em all! That's our motto!"
-];
-professorChen.addEventListener('click', () => {
-  const dialogue = document.getElementById('professor-dialogue');
-  const text = document.getElementById('chen-text');
-  text.textContent = chenDialogues[Math.floor(Math.random()*chenDialogues.length)];
-  dialogue.style.display = 'block';
-});
-</script>
-<div id="running-pikachu" style="position:fixed;bottom:30%;left:-100px;z-index:45;font-size:45px;animation:pikachuRun 8s linear infinite;pointer-events:none;">🏃‍♂️⚡</div>
-<div id="floating-banana" style="position:fixed;top:25%;right:25%;z-index:45;font-size:50px;animation:bananaFloat 3s ease-in-out infinite;cursor:pointer;filter:drop-shadow(0 0 10px #ffdd00);" title="A wild banana appeared!">🍌</div>
-<style>@keyframes bananaFloat { 0%,100% { transform:translateY(0) rotate(-10deg); } 50% { transform:translateY(-15px) rotate(10deg); } }</style>
-<div id="pokeball-counter" style="position:fixed;bottom:20px;right:20px;z-index:200;padding:15px 25px;background:linear-gradient(180deg,#cc0000,#880000);border:2px solid #fff;color:#fff;font-weight:bold;border-radius:10px;font-size:14px;box-shadow:0 0 20px #ff0000;">🔴 Pokéballs: <span id="ball-count">25</span><br/><span style="font-size:10px;">Click anywhere to throw!</span></div>
-<div id="pokemon-battle" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:250;background:linear-gradient(180deg,#1a2a4a,#0a1020);border:4px solid #4a90d9;border-radius:15px;padding:20px;width:400px;box-shadow:0 0 40px rgba(74,144,217,0.6);">
-<div style="display:flex;justify-content:space-between;margin-bottom:15px;">
-<div id="enemy-pokemon" style="text-align:center;"><div id="enemy-sprite-poke" style="font-size:60px;">👾</div><div id="enemy-name-poke" style="color:#fff;font-weight:bold;">Wild Nebulax</div><div style="background:#333;border-radius:10px;height:12px;width:120px;margin-top:5px;"><div id="enemy-hp-bar" style="background:linear-gradient(90deg,#4f4,#0a0);height:100%;width:100%;border-radius:10px;transition:width 0.3s;"></div></div></div>
-<div id="player-pokemon" style="text-align:center;"><div style="font-size:60px;">🧢</div><div style="color:#0ff;font-weight:bold;">TRAINER</div><div style="background:#333;border-radius:10px;height:12px;width:120px;margin-top:5px;"><div id="player-hp-bar" style="background:linear-gradient(90deg,#4af,#08f);height:100%;width:100%;border-radius:10px;transition:width 0.3s;"></div></div></div>
-</div>
-<div id="battle-log" style="background:#000;color:#0f0;font-family:monospace;padding:10px;border-radius:5px;height:60px;overflow-y:auto;margin-bottom:10px;font-size:12px;">A wild cosmic creature appeared!</div>
-<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-<button onclick="pokeBattleAction('laser')" style="padding:10px 20px;background:#e44;border:2px solid #f66;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">⚡ LASER</button>
-<button onclick="pokeBattleAction('shield')" style="padding:10px 20px;background:#44e;border:2px solid #66f;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">🛡️ SHIELD</button>
-<button onclick="pokeBattleAction('capture')" style="padding:10px 20px;background:linear-gradient(180deg,#ff4444,#cc0000);border:2px solid #fff;color:#fff;border-radius:50%;width:60px;height:60px;cursor:pointer;font-weight:bold;box-shadow:0 0 15px #ff0000;">🔴</button>
-<button onclick="pokeBattleAction('flee')" style="padding:10px 20px;background:#444;border:2px solid #666;color:#fff;border-radius:8px;cursor:pointer;font-weight:bold;">🏃 FLEE</button>
-</div>
-</div>
-<div id="canon-panel" style="position:fixed;bottom:20px;left:20px;z-index:200;background:linear-gradient(180deg,rgba(255,0,0,0.15),rgba(40,0,60,0.95));border:2px solid #ff4444;border-radius:10px;padding:15px;max-width:360px;color:#ffcccc;font-size:13px;box-shadow:0 0 20px rgba(255,68,68,0.4);backdrop-filter:blur(5px);">
-<h3 style="margin:0 0 10px 0;color:#fff;text-shadow:0 0 10px #ff4444;font-size:14px;">📜 POKÉMON CANON</h3>
-<p style="margin:5px 0;color:#ffd700;"><strong>Premise:</strong></p>
-<p style="margin:0 0 10px 0;font-style:italic;">A Pokemon simulator - explore routes and tall grass as a trainer, encounter wild Pokemon, battle them with moves, and catch them all with Pokeballs for your Pokedex!</p>
-<p style="margin:5px 0;color:#ffd700;"><strong>Core Invariants:</strong></p>
-<ul style="margin:5px 0;padding-left:20px;font-size:12px;">
-<li>The page must remain functional and visually coherent</li>
-<li>Pokemon-style battles with type system are the core experience</li>
-<li>Pokeball capture mechanic is central to gameplay</li>
-<li>Trainer exploration provides the adventure framework</li>
-<li>The Pokedex tracks captured Pokemon</li>
-<li>Wild Pokemon actively pursue the trainer</li>
-</ul>
-<p style="margin:10px 0 5px 0;color:#ffd700;"><strong>Important Elements:</strong></p>
-<p style="margin:0;font-family:monospace;font-size:10px;color:#0ff;line-height:1.4;">🔴 #pokemon-battle<br/>📖 #captured-display<br/>🧢 #spaceship<br/>🌿 #grass-field<br/>👾 .wild-creature<br/>⚪ #pokeball-counter</p>
-<p style="margin:8px 0 0 0;font-size:10px;color:#aaa;"><em>Note: Added overworld pokeball throwing, wild Pokemon now chase the player, smoother movement.</em></p>
-<button onclick="this.parentElement.style.display='none'" style="position:absolute;top:5px;right:8px;background:none;border:none;color:#888;cursor:pointer;font-size:16px;">×</button>
+<p class="hint">The community shapes what comes next...</p>
 </div>
 <script>
-// Pokeball throwing system
-let pokeballCount = 25;
-function throwPokeball(x, y) {
-  if(pokeballCount <= 0 || battleState.active) return;
-  pokeballCount--;
-  document.getElementById('ball-count').textContent = pokeballCount;
-  const ball = document.createElement('div');
-  ball.textContent = '🔴';
-  ball.style.cssText = `position:fixed;left:${ship.getBoundingClientRect().left}px;top:${ship.getBoundingClientRect().top}px;font-size:25px;z-index:300;transition:all 0.4s ease-out;pointer-events:none;`;
-  document.body.appendChild(ball);
-  setTimeout(() => { ball.style.left = x + 'px'; ball.style.top = y + 'px'; ball.style.transform = 'rotate(720deg)'; }, 10);
-  setTimeout(() => {
-    let hit = false;
-    document.querySelectorAll('.cosmic-object').forEach(obj => {
-      const rect = obj.getBoundingClientRect();
-      if(x > rect.left && x < rect.right && y > rect.top && y < rect.bottom && !hit) {
-        hit = true;
-        const chance = Math.random() * 100;
-        if(chance < 40) {
-          const name = cosmicCreatures[Math.floor(Math.random()*cosmicCreatures.length)].name;
-          battleState.captured.push(name);
-          updatePokedex();
-          obj.style.transition = 'all 0.3s';
-          obj.style.transform = 'scale(0)';
-          setTimeout(() => obj.remove(), 300);
-          ball.textContent = '✨';
-        } else {
-          ball.textContent = '💨';
-        }
-      }
-    });
-    setTimeout(() => ball.remove(), 500);
-  }, 400);
-}
-document.addEventListener('click', (e) => {
-  if(!e.target.closest('#pokemon-battle') && !e.target.closest('#pokeball-counter') && !e.target.closest('#captured-display') && !e.target.closest('#canon-panel')) {
-    throwPokeball(e.clientX, e.clientY);
-  }
-});
-</script>
-<div id="void-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(180deg, #1a0000 0%, #330000 20%, #552200 40%, #ff4400 60%, #ff8800 80%, #ffcc00 100%);z-index:0;animation:rebirthSky 20s infinite;"></div>
-<style>@keyframes rebirthSky { 0%,100% { filter:brightness(1) saturate(1.2) hue-rotate(0deg); } 50% { filter:brightness(1.3) saturate(1.5) hue-rotate(10deg); } }</style>
-<style>@keyframes dawnSky { 0%,100% { filter:brightness(1) saturate(1); } 50% { filter:brightness(1.1) saturate(1.2); } }</style>
-<div id="sunrise-glow" style="position:fixed;top:-50%;left:50%;transform:translateX(-50%);width:200vw;height:100vh;background:radial-gradient(ellipse at center,rgba(255,183,77,0.4) 0%,rgba(255,138,101,0.2) 30%,transparent 70%);z-index:0;pointer-events:none;animation:sunGlow 10s infinite ease-in-out;"></div>
-<div id="rebirth-overlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at center, rgba(255,200,0,1) 0%, rgba(255,100,0,0.9) 30%, rgba(200,0,0,0.7) 60%, transparent 90%);z-index:9998;pointer-events:none;animation:rebirthExplosion 5s ease-out forwards;"></div>
-<style>@keyframes rebirthExplosion { 0% { opacity:1; transform:scale(0); } 20% { opacity:1; transform:scale(2); } 100% { opacity:0; transform:scale(4); } }</style>
-<div id="rebirth-text" style="position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);z-index:9999;text-align:center;color:#fff;font-size:3rem;font-weight:bold;text-shadow:0 0 30px #ff4400,0 0 60px #ff0000,0 0 90px #ffaa00;animation:rebirthTextAnim 6s ease-out forwards;pointer-events:none;">🔥 FROM THE ASHES 🔥<br/><span style="font-size:1.2rem;color:#ffd700;">A NEW ERA BEGINS!</span><br/><span style="font-size:0.9rem;color:#ffaa00;">The world has been REBORN!</span></div>
-<style>@keyframes rebirthTextAnim { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.3) rotate(-10deg); } 15% { opacity:1; transform:translate(-50%,-50%) scale(1.3) rotate(5deg); } 30% { transform:translate(-50%,-50%) scale(1) rotate(0deg); } 70% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-60%) scale(1.1); } }</style>
-<style>
-@keyframes newBeginningFade { 0% { opacity:1; } 100% { opacity:0; } }
-@keyframes newBeginningTextFade { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 20% { opacity:1; transform:translate(-50%,-50%) scale(1.1); } 40% { transform:translate(-50%,-50%) scale(1); } 80% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-60%) scale(1); } }
-</style>
-<style>@keyframes sunGlow { 0%,100% { opacity:0.6;transform:translateX(-50%) scale(1); } 50% { opacity:0.9;transform:translateX(-50%) scale(1.1); } }</style>
-<div id="grass-field" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1;"></div>
-<canvas id="particle-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1000;"></canvas>
-<script>
-// Gentle star animation for the new beginning
-const grassField = document.getElementById('grass-field');
-for(let i = 0; i < 80; i++) {
-  const grass = document.createElement('div');
-  grass.textContent = ['🌿','🌱','🍃','🌾'][Math.floor(Math.random()*4)];
-  grass.style.cssText = `position:absolute;font-size:${Math.random()*20+15}px;left:${Math.random()*100}%;top:${40+Math.random()*60}%;opacity:${Math.random()*0.5+0.5};animation:grassSway ${Math.random()*2+1}s infinite ease-in-out;`;
-  grassField.appendChild(grass);
-}
-const style = document.createElement('style');
-style.textContent = `@keyframes twinkle { 0%,100% { opacity:0.3; } 50% { opacity:1; } }
-@keyframes grassSway { 0%,100% { transform:rotate(-5deg); } 50% { transform:rotate(5deg); } }
-@keyframes shipGlow { 0%,100% { filter:drop-shadow(0 0 20px #0ff); } 50% { filter:drop-shadow(0 0 40px #0ff) drop-shadow(0 0 60px #08f); } }
-@keyframes planetRotate { 0% { transform: rotateY(0deg); } 100% { transform: rotateY(360deg); } }
-@keyframes shootingStar { 0% { transform: translate(0,0) scale(1); opacity:1; } 100% { transform: translate(-400px, 300px) scale(0.2); opacity:0; } }
-@keyframes bigBangPulse { 0% { transform: translate(-50%,-50%) scale(0); opacity:1; } 50% { transform: translate(-50%,-50%) scale(3); opacity:0.8; } 100% { transform: translate(-50%,-50%) scale(8); opacity:0; } }
-@keyframes fadeUp { 0% { opacity:1; transform:translateY(0); } 100% { opacity:0; transform:translateY(-30px); } }`;
-document.head.appendChild(style);
-
-// Spatial Exploration System
-let shipX = 0, shipY = 0;
-let shipRotation = 0;
-const ship = document.getElementById('spaceship');
-const coords = document.getElementById('coordinates');
-const spaceObjects = document.getElementById('space-objects');
-
-// Generate cosmic objects
-const cosmicEmojis = ['🐛', '🐦', '🐀', '🦋', '🐝', '🐢', '🦎', '🐍', '🦊', '🐰', '🐱', '🌺', '🍀'];
-for(let i = 0; i < 30; i++) {
-  const obj = document.createElement('div');
-  obj.className = 'cosmic-object';
-  obj.style.cssText = `position:fixed;font-size:${20+Math.random()*40}px;left:${Math.random()*100}%;top:${Math.random()*100}%;z-index:5;opacity:0.7;transition:transform 0.3s;pointer-events:auto;cursor:pointer;`;obj.title='Click to encounter!';
-  obj.textContent = cosmicEmojis[Math.floor(Math.random()*cosmicEmojis.length)];
-  obj.classList.add('wild-creature');
-  obj.dataset.parallax = (Math.random()*0.5+0.2).toFixed(2);
-  spaceObjects.appendChild(obj);
-}
-
-const sectors = ['ADVENTURE', 'MYSTERY', 'WONDER', 'DISCOVERY', 'JOURNEY', 'QUEST', 'EXPLORATION', 'DESTINY'];
-
-function updateShip() {
-  ship.style.transform = `translate(-50%,-50%) rotate(${shipRotation}deg)`;
-  coords.innerHTML = `🎮 EXPLORING...`;
-  
-  // Parallax effect on cosmic objects
-  document.querySelectorAll('.cosmic-object').forEach(obj => {
-    const p = parseFloat(obj.dataset.parallax);
-    const offsetX = -shipX * p;
-    const offsetY = -shipY * p;
-    obj.style.transform = `translate(${offsetX}px, ${offsetY}px)`;
-  });
-  
-  // Move stars too
-  starField.style.transform = `translate(${-shipX*0.1}px, ${-shipY*0.1}px)`;
-}
-
-document.addEventListener('keydown', (e) => {
-  const speed = 25;
-  if(e.key === 'w' || e.key === 'ArrowUp') { shipY -= speed; shipRotation = 0; }
-  if(e.key === 's' || e.key === 'ArrowDown') { shipY += speed; shipRotation = 180; }
-  if(e.key === 'a' || e.key === 'ArrowLeft') { shipX -= speed; shipRotation = -90; }
-  if(e.key === 'd' || e.key === 'ArrowRight') { shipX += speed; shipRotation = 90; }
-  updateShip();
-  // Spawn particles behind ship
-  const rect = ship.getBoundingClientRect();
-  spawnParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#0ff', 3);
-});
-
-ship.style.animation = 'shipGlow 2s infinite';
-
-// Pikachu interaction
-const pikachu = document.getElementById('pikachu-animation');
-let pikachuClicks = 0;
-pikachu.addEventListener('click', () => {
-  pikachuClicks++;
-  const messages = ['Pika!', 'Pikachu!', 'Pika pika!', 'Chuuu~!', '⚡⚡⚡'];
-  const msg = document.createElement('div');
-  msg.textContent = messages[Math.floor(Math.random()*messages.length)];
-  msg.style.cssText = `position:fixed;left:${pikachu.getBoundingClientRect().left}px;top:${pikachu.getBoundingClientRect().top - 30}px;color:#ffd700;font-weight:bold;font-size:20px;z-index:300;animation:fadeUp 1s forwards;pointer-events:none;text-shadow:0 0 10px #ffff00;`;
-  document.body.appendChild(msg);
-  setTimeout(() => msg.remove(), 1000);
-  spawnParticles(pikachu.getBoundingClientRect().left + 30, pikachu.getBoundingClientRect().top + 30, '#ffff00', 15);
-  if(pikachuClicks >= 10) {
-    pikachu.style.fontSize = '80px';
-    pikachu.title = 'Super Pikachu!';
-  }
-});
-
-// Cloud System
-function createCloud() {
-  const container = document.getElementById('cloud-container');
-  const cloud = document.createElement('div');
-  cloud.textContent = '☁️';
-  cloud.style.cssText = `position:absolute;left:100%;top:${Math.random()*30}%;font-size:${40+Math.random()*40}px;opacity:0.7;animation:cloudFloat ${15+Math.random()*10}s linear forwards;`;
-  container.appendChild(cloud);
-  setTimeout(() => cloud.remove(), 25000);
-}
-setInterval(createCloud, 5000);
-setTimeout(createCloud, 1000);
-const cloudStyle = document.createElement('style');
-cloudStyle.textContent = '@keyframes cloudFloat { 0% { left:100%; } 100% { left:-20%; } }
-@keyframes pikachuBounce { 0%, 100% { transform: translateY(0) scaleX(1); } 25% { transform: translateY(-20px) scaleX(1); } 50% { transform: translateY(0) scaleX(1.1); } 75% { transform: translateY(-10px) scaleX(1); } }
-@keyframes pikachuSpark { 0%, 100% { filter: drop-shadow(0 0 5px #ffd700); } 50% { filter: drop-shadow(0 0 20px #ffff00) drop-shadow(0 0 30px #ffd700); } }
-@keyframes pikachuRun { 0% { left: -100px; } 100% { left: calc(100% + 100px); } }';
-document.head.appendChild(cloudStyle);
-
-// Big Bang Effect moved to earlier in page load
-
-// Pokemon-style Battle System
-const cosmicCreatures = [
-  {name:'Nebulax',sprite:'👾',hp:40,atk:8,type:'Psychic'},
-  {name:'Stardust',sprite:'✨',hp:30,atk:12,type:'Fairy'},
-  {name:'Voidling',sprite:'👻',hp:50,atk:6,type:'Ghost'},
-  {name:'Cosmog',sprite:'🌀',hp:35,atk:10,type:'Cosmic'},
-  {name:'Astraleon',sprite:'🦄',hp:60,atk:15,type:'Dragon'},
-  {name:'Pikastar',sprite:'⚡',hp:35,atk:14,type:'Electric'},
-  {name:'Charcomet',sprite:'🔥',hp:45,atk:16,type:'Fire'},
-  {name:'Aquanaut',sprite:'💧',hp:55,atk:10,type:'Water'}
-];
-let battleState = {active:false, playerHp:100, enemyHp:100, enemy:null, captured:[]};
-
-function startBattle() {
-  if(battleState.active) return;
-  battleState.active = true;
-  battleState.playerHp = 100;
-  battleState.enemy = cosmicCreatures[Math.floor(Math.random()*cosmicCreatures.length)];
-  battleState.enemyHp = battleState.enemy.hp;
-  document.getElementById('pokemon-battle').style.display = 'block';
-  document.getElementById('enemy-sprite-poke').textContent = battleState.enemy.sprite;
-  document.getElementById('enemy-name-poke').textContent = 'Wild ' + battleState.enemy.name;
-  document.getElementById('enemy-hp-bar').style.width = '100%';
-  document.getElementById('player-hp-bar').style.width = '100%';
-  document.getElementById('battle-log').innerHTML = '🎵 Wild ' + battleState.enemy.name + ' appeared! 🎵<br>Type: ' + battleState.enemy.type;
-}
-
-function pokeBattleAction(action) {
-  if(!battleState.active) return;
-  const log = document.getElementById('battle-log');
-  if(action === 'laser') {
-    const dmg = 15 + Math.floor(Math.random()*10);
-    battleState.enemyHp -= dmg;
-    log.innerHTML += '<br>⚡ Laser dealt ' + dmg + ' damage!';
-  } else if(action === 'shield') {
-    battleState.playerHp = Math.min(100, battleState.playerHp + 20);
-    log.innerHTML += '<br>🛡️ Shield restored 20 HP!';
-  } else if(action === 'capture') {
-    const chance = (1 - battleState.enemyHp/battleState.enemy.hp) * 80;
-    if(Math.random()*100 < chance) {
-      log.innerHTML += '<br>🔴 *shake* *shake* *shake* ... ✨ CLICK! ✨<br>🎉 Gotcha! ' + battleState.enemy.name + ' was caught!';
-      updatePokedex();
-      battleState.captured.push(battleState.enemy.name);
-      setTimeout(endBattle, 1500);
-      return;
-    } else {
-      log.innerHTML += '<br>🔮 Capture failed!';
-    }
-  } else if(action === 'flee') {
-    log.innerHTML += '<br>🏃 Escaped safely!';
-    setTimeout(endBattle, 1000);
-    return;
-  }
-  // Enemy turn
-  if(battleState.enemyHp > 0) {
-    const eDmg = battleState.enemy.atk + Math.floor(Math.random()*5);
-    battleState.playerHp -= eDmg;
-    log.innerHTML += '<br>' + battleState.enemy.sprite + ' dealt ' + eDmg + ' damage!';
-  }
-  updateBattleUI();
-  if(battleState.enemyHp <= 0) {
-    log.innerHTML += '<br>🎉 ' + battleState.enemy.name + ' defeated!';
-    setTimeout(endBattle, 1500);
-  } else if(battleState.playerHp <= 0) {
-    log.innerHTML += '<br>💥 Your ship was destroyed!';
-    setTimeout(endBattle, 1500);
-  }
-  log.scrollTop = log.scrollHeight;
-}
-
-function updateBattleUI() {
-  document.getElementById('enemy-hp-bar').style.width = Math.max(0,battleState.enemyHp/battleState.enemy.hp*100) + '%';
-  document.getElementById('player-hp-bar').style.width = Math.max(0,battleState.playerHp) + '%';
-}
-
-function endBattle() {
-  battleState.active = false;
-  document.getElementById('pokemon-battle').style.display = 'none';
-}
-
-// Random encounters while exploring
-setInterval(() => {
-  if(!battleState.active && Math.random() < 0.08) {
-    startBattle();
-  }
-}, 1500);
-
-function updatePokedex() {
-  document.getElementById('capture-count').textContent = battleState.captured.length;
-  const list = document.getElementById('captured-list');
-  list.innerHTML = battleState.captured.map(c => '<div style="color:#0ff;">✓ ' + c + '</div>').join('');
-  if(battleState.captured.length >= 5) {
-    list.innerHTML += '<div style="color:#ffd700;font-weight:bold;margin-top:5px;">🏆 POKÉMON MASTER!</div>';
-    document.getElementById('badge-count').textContent = Math.min(8, battleState.captured.length);
-  }
-  document.getElementById('badge-count').textContent = Math.min(8, Math.floor(battleState.captured.length / 1));
-}
-
-// Click on cosmic objects to trigger battles
-document.addEventListener('click', (e) => {
-  if(e.target.classList.contains('cosmic-object') && !battleState.active) {
-    startBattle();
-  }
-});
-
-// Wild Pokemon chase the player!
-function updateWildCreatures() {
-  const shipRect = ship.getBoundingClientRect();
-  const shipCenterX = shipRect.left + shipRect.width/2;
-  const shipCenterY = shipRect.top + shipRect.height/2;
-  document.querySelectorAll('.cosmic-object').forEach(obj => {
-    const rect = obj.getBoundingClientRect();
-    const objX = rect.left + rect.width/2;
-    const objY = rect.top + rect.height/2;
-    const dx = shipCenterX - objX;
-    const dy = shipCenterY - objY;
-    const dist = Math.sqrt(dx*dx + dy*dy);
-    if(dist < 300 && dist > 50) {
-      const speed = 0.8;
-      const moveX = (dx/dist) * speed;
-      const moveY = (dy/dist) * speed;
-      const currentLeft = parseFloat(obj.style.left) || 50;
-      const currentTop = parseFloat(obj.style.top) || 50;
-      obj.style.left = (currentLeft + moveX/window.innerWidth*100) + '%';
-      obj.style.top = (currentTop + moveY/window.innerHeight*100) + '%';
-    }
-    if(dist < 40 && !battleState.active) {
-      startBattle();
-    }
-  });
-}
-setInterval(updateWildCreatures, 50);
-
-// New Game+ Feature - Fresh start feel while preserving the experience
-function startNewGamePlus() {
-  if(confirm('Start New Game+? Your Pokedex progress carries over as legacy badges!')) {
-    const legacyCount = battleState.captured.length;
-    battleState.captured = [];
-    pokeballCount = 25 + legacyCount * 2;
-    document.getElementById('ball-count').textContent = pokeballCount;
-    document.getElementById('capture-count').textContent = '0';
-    document.getElementById('captured-list').innerHTML = '<div style="color:#888;font-size:10px;">Legacy: ' + legacyCount + ' Pokémon</div>';
-    
-    // Refresh wild Pokemon
-    document.querySelectorAll('.cosmic-object').forEach(obj => obj.remove());
-    for(let i = 0; i < 35; i++) {
-      const obj = document.createElement('div');
-      obj.className = 'cosmic-object wild-creature';
-      obj.style.cssText = `position:fixed;font-size:${20+Math.random()*40}px;left:${Math.random()*100}%;top:${Math.random()*100}%;z-index:5;opacity:0.7;transition:transform 0.3s;pointer-events:auto;cursor:pointer;`;
-      obj.title='Click to encounter!';
-      obj.textContent = cosmicEmojis[Math.floor(Math.random()*cosmicEmojis.length)];
-      obj.dataset.parallax = (Math.random()*0.5+0.2).toFixed(2);
-      spaceObjects.appendChild(obj);
-    }
-    
-    // Visual celebration
-    for(let i = 0; i < 50; i++) {
-      setTimeout(() => spawnParticles(Math.random()*window.innerWidth, Math.random()*window.innerHeight, '#' + Math.floor(Math.random()*16777215).toString(16), 5), i * 30);
-    }
-    
-    const msg = document.createElement('div');
-    msg.innerHTML = '🌟 NEW GAME+ STARTED! 🌟<br>+' + (legacyCount*2) + ' bonus Pokéballs!';
-    msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,#000,#206);padding:30px 50px;border:3px solid #ffd700;border-radius:15px;color:#ffd700;font-size:24px;z-index:500;text-align:center;animation:fadeUp 3s forwards;';
-    document.body.appendChild(msg);
-    setTimeout(() => msg.remove(), 3000);
-  }
-}
-
-// Fresh Start Effect - visual refresh without losing progress
-function freshStartEffect() {
-  // Create dramatic white flash
-  const flash = document.createElement('div');
-  flash.style.cssText = 'position:fixed;top:0;left:0;width:100vw;height:100vh;background:#fff;z-index:9999;opacity:1;transition:opacity 1.5s;pointer-events:none;';
-  document.body.appendChild(flash);
-  
-  // Scatter all wild Pokemon to new positions
-  document.querySelectorAll('.cosmic-object').forEach((obj, i) => {
-    setTimeout(() => {
-      obj.style.transition = 'all 0.8s ease-out';
-      obj.style.left = Math.random() * 90 + 5 + '%';
-      obj.style.top = Math.random() * 80 + 10 + '%';
-      obj.style.transform = 'scale(1.2) rotate(' + (Math.random()*360) + 'deg)';
-      setTimeout(() => obj.style.transform = '', 800);
-    }, i * 50);
-  });
-  
-  // Reset player position to center
-  shipX = 0; shipY = 0;
-  updateShip();
-  
-  // Fade out flash
-  setTimeout(() => {
-    flash.style.opacity = '0';
-    setTimeout(() => flash.remove(), 1500);
-  }, 200);
-  
-  // Celebration message
-  const msg = document.createElement('div');
-  msg.innerHTML = '🌟 A FRESH ADVENTURE AWAITS! 🌟<br><span style="font-size:14px;">The world has been refreshed!</span>';
-  msg.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(180deg,#000,#024);padding:25px 40px;border:3px solid #4af;border-radius:15px;color:#4af;font-size:22px;z-index:500;text-align:center;animation:fadeUp 3s forwards;';
-  document.body.appendChild(msg);
-  setTimeout(() => msg.remove(), 3000);
-  
-  // Spawn extra particles for celebration
-  for(let i = 0; i < 80; i++) {
-    setTimeout(() => spawnParticles(Math.random()*window.innerWidth, Math.random()*window.innerHeight, ['#4af','#fff','#ffd700','#f0f'][Math.floor(Math.random()*4)], 3), i * 20);
-  }
-}
-</script>
-<script>
-        // Legacy code preserved but inactive - awaiting new purpose
-        const classes = {
-            warrior: { hp: 120, mp: 30, atk: 15, def: 10, crit: 5, spd: 8, skill: 'Heroic Strike', skillMult: 2.5 },
-            mage: { hp: 70, mp: 100, atk: 8, def: 3, crit: 15, spd: 12, skill: 'Fireball', skillMult: 3.5 },
-            rogue: { hp: 85, mp: 50, atk: 12, def: 5, crit: 25, spd: 18, skill: 'Backstab', skillMult: 4 }
-        };
-        const enemies = [
-            { name: 'Wild Boar', sprite: '🐗', hp: 30, atk: 5, xp: 20, gold: 5 },
-            { name: 'Forest Wolf', sprite: '🐺', hp: 45, atk: 8, xp: 35, gold: 10 },
-            { name: 'Goblin Scout', sprite: '👺', hp: 60, atk: 12, xp: 50, gold: 20 },
-            { name: 'Orc Warrior', sprite: '👹', hp: 100, atk: 18, xp: 80, gold: 40 },
-            { name: 'Dark Mage', sprite: '🧙', hp: 70, atk: 25, xp: 100, gold: 60 },
-            { name: 'Dragon Whelp', sprite: '🐉', hp: 150, atk: 30, xp: 150, gold: 100 },
-            { name: 'Lich King', sprite: '💀', hp: 300, atk: 45, xp: 300, gold: 250 }
-        ];
-        
-        let player = { class: 'warrior', level: 1, xp: 0, gold: 0, ...classes.warrior, maxHp: 120, maxMp: 30 };
-        let enemy = { ...enemies[0], maxHp: enemies[0].hp };
-        
-        function selectClass(c) {
-            document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected'));
-            document.querySelector(`[data-class="${c}"]`).classList.add('selected');
-            player = { class: c, level: 1, xp: 0, gold: player.gold, ...classes[c], maxHp: classes[c].hp, maxMp: classes[c].mp };
-            updateUI();
-            addLog(`You are now a ${c.toUpperCase()}!`, 'log-level');
+        // Generate stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            star.style.opacity = Math.random() * 0.5 + 0.3;
+            starsContainer.appendChild(star);
         }
         
-        function updateUI() {
-            if(!document.getElementById('level')) return; // Guard for missing legacy elements
-            document.getElementById('level').textContent = player.level;
-            document.getElementById('health-fill').style.width = (player.hp/player.maxHp*100)+'%';
-            document.getElementById('health-text').textContent = `${Math.max(0,Math.floor(player.hp))}/${player.maxHp} HP`;
-            document.getElementById('mana-fill').style.width = (player.mp/player.maxMp*100)+'%';
-            document.getElementById('mana-text').textContent = `${Math.max(0,Math.floor(player.mp))}/${player.maxMp} MP`;
-            document.getElementById('xp-fill').style.width = (player.xp/(player.level*100)*100)+'%';
-            document.getElementById('xp-text').textContent = `${player.xp}/${player.level*100} XP`;
-            document.getElementById('gold').textContent = player.gold;
-            document.getElementById('atk').textContent = player.atk;
-            document.getElementById('def').textContent = player.def;
-            document.getElementById('crit').textContent = player.crit;
-            document.getElementById('spd').textContent = player.spd;
-            document.getElementById('enemy-sprite').textContent = enemy.sprite;
-            document.getElementById('enemy-name').textContent = enemy.name;
-            document.getElementById('enemy-health-fill').style.width = (enemy.hp/enemy.maxHp*100)+'%';
-            document.getElementById('enemy-health-text').textContent = `${Math.max(0,Math.floor(enemy.hp))}/${enemy.maxHp} HP`;
-        }
-        
-        function addLog(msg, cls='') { document.getElementById('log').innerHTML = `<div class="log-entry ${cls}">${msg}</div>` + document.getElementById('log').innerHTML; }
-        
-        function attack() {
-            let dmg = player.atk + Math.floor(Math.random()*5);
-            let crit = Math.random()*100 < player.crit;
-            if(crit) dmg *= 2;
-            enemy.hp -= dmg;
-            document.getElementById('enemy-sprite').classList.add('shake');
-            setTimeout(() => document.getElementById('enemy-sprite').classList.remove('shake'), 300);
-            addLog(`You ${crit?'CRITICALLY ':''}hit ${enemy.name} for ${dmg} damage!`, 'log-damage');
-            checkCombat();
-        }
-        
-        function useSkill() {
-            if(player.mp < 20) { addLog('Not enough mana!', 'log-damage'); return; }
-            player.mp -= 20;
-            let dmg = Math.floor(player.atk * classes[player.class].skillMult);
-            enemy.hp -= dmg;
-            document.getElementById('enemy-sprite').classList.add('shake');
-            setTimeout(() => document.getElementById('enemy-sprite').classList.remove('shake'), 300);
-            addLog(`${classes[player.class].skill}! ${dmg} damage to ${enemy.name}!`, 'log-damage');
-            checkCombat();
-        }
-        
-        function heal() {
-            if(player.mp < 15) { addLog('Not enough mana!', 'log-damage'); return; }
-            player.mp -= 15;
-            let amt = 20 + player.level * 5;
-            player.hp = Math.min(player.maxHp, player.hp + amt);
-            addLog(`Healed for ${amt} HP!`, 'log-heal');
-            updateUI();
-        }
-        
-        function checkCombat() {
-            if(enemy.hp <= 0) {
-                addLog(`${enemy.name} defeated! +${enemy.xp} XP, +${enemy.gold} Gold`, 'log-xp');
-                player.xp += enemy.xp;
-                player.gold += enemy.gold;
-                if(player.xp >= player.level * 100) levelUp();
-                spawnEnemy();
-            } else {
-                enemyTurn();
-            }
-            updateUI();
-        }
-        
-        function enemyTurn() {
-            let dmg = Math.max(1, enemy.atk - player.def + Math.floor(Math.random()*5));
-            player.hp -= dmg;
-            addLog(`${enemy.name} hits you for ${dmg} damage!`, 'log-damage');
-            if(player.hp <= 0) {
-                addLog('YOU DIED! Respawning...', 'log-damage');
-                player.hp = player.maxHp;
-                player.mp = player.maxMp;
-                player.gold = Math.floor(player.gold * 0.5);
-            }
-        }
-        
-        function levelUp() {
-            player.xp -= player.level * 100;
-            player.level++;
-            player.maxHp += 10;
-            player.maxMp += 5;
-            player.hp = player.maxHp;
-            player.mp = player.maxMp;
-            player.atk += 2;
-            player.def += 1;
-            addLog(`LEVEL UP! You are now level ${player.level}!`, 'log-level');
-        }
-        
-        function spawnEnemy() {
-            let idx = Math.min(enemies.length-1, Math.floor(player.level/2) + Math.floor(Math.random()*2));
-            let base = enemies[idx];
-            let scale = 1 + (player.level-1)*0.15;
-            enemy = { ...base, hp: Math.floor(base.hp*scale), maxHp: Math.floor(base.hp*scale), atk: Math.floor(base.atk*scale), xp: Math.floor(base.xp*scale), gold: Math.floor(base.gold*scale) };
-            addLog(`A ${enemy.name} appears!`, '');
-        }
-        
-        // Legacy UI update - only run if elements exist
-        if(document.getElementById('level')) {
-          updateUI();
-          addLog('Welcome, Hero! Choose your class and begin your adventure!', 'log-level');
-        }
-        
-        // 2D World Movement System (legacy - player-sprite no longer exists)
-        let playerX = 280, playerY = 180;
-        const playerSprite = document.getElementById('player-sprite');
-        if(playerSprite) {
-          playerSprite.style.left = playerX + 'px';
-          playerSprite.style.top = playerY + 'px';
-        }
-        
-        document.addEventListener('keydown', (e) => {
-            const speed = 15;
-            if(e.key === 'w' || e.key === 'ArrowUp') playerY = Math.max(40, playerY - speed);
-            if(e.key === 's' || e.key === 'ArrowDown') playerY = Math.min(350, playerY + speed);
-            if(e.key === 'a' || e.key === 'ArrowLeft') playerX = Math.max(10, playerX - speed);
-            if(e.key === 'd' || e.key === 'ArrowRight') playerX = Math.min(550, playerX + speed);
-            if(playerSprite) {
-              playerSprite.style.left = playerX + 'px';
-              playerSprite.style.top = playerY + 'px';
-            }
-            checkProximity();
-        });
-        
-        function checkProximity() {
-            document.querySelectorAll('.world-enemy').forEach(en => {
-                const ex = parseInt(en.style.left), ey = parseInt(en.style.top);
-                if(Math.abs(playerX - ex) < 50 && Math.abs(playerY - ey) < 50) {
-                    en.style.filter = 'drop-shadow(0 0 15px red)';
-                }
-            });
-        }
-        
-        document.querySelectorAll('.world-enemy').forEach(en => {
-            en.addEventListener('click', () => attackWorldEnemy(en));
-        });
-        
-        function attackWorldEnemy(en) {
-            const ex = parseInt(en.style.left), ey = parseInt(en.style.top);
-            if(Math.abs(playerX - ex) < 80 && Math.abs(playerY - ey) < 80) {
-                const dl = document.getElementById('dagger-left');
-                const dr = document.getElementById('dagger-right');
-                dl.classList.add('attack-left');
-                dr.classList.add('attack-right');
-                setTimeout(() => { dl.classList.remove('attack-left'); dr.classList.remove('attack-right'); }, 200);
-                
-                let hp = parseInt(en.dataset.hp) || 30;
-                let dmg = player.atk + Math.floor(Math.random() * 10);
-                if(player.class === 'rogue') dmg = Math.floor(dmg * 1.5);
-                hp -= dmg;
-                en.dataset.hp = hp;
-                addLog(`🗡️ Dual strike on ${en.dataset.name} for ${dmg} damage!`, 'log-damage');
-                const enRect = en.getBoundingClientRect();
-                spawnParticles(enRect.left + enRect.width/2, enRect.top + enRect.height/2, '#ffd700', 25);
-                screenShake(6);
-                en.classList.add('shake');
-                setTimeout(() => en.classList.remove('shake'), 300);
-                if(hp <= 0) {
-                    addLog(`${en.dataset.name} defeated in the world! +25 XP, +15 Gold`, 'log-xp');
-                    player.xp += 25; player.gold += 15;
-                    if(player.xp >= player.level * 100) levelUp();
-                    en.style.opacity = '0';
-                    setTimeout(() => en.remove(), 500);
-                    updateUI();
-                }
-            } else {
-                addLog('Too far away! Move closer to attack.', '');
-            }
-        }
-        
-        function openChest(chest) {
-            const cx = parseInt(chest.style.left), cy = parseInt(chest.style.top);
-            if(Math.abs(playerX - cx) < 60 && Math.abs(playerY - cy) < 60) {
-                const goldFound = 10 + Math.floor(Math.random() * 30);
-                player.gold += goldFound;
-                addLog(`📦 Opened chest! Found ${goldFound} gold!`, 'log-xp');
-                chest.textContent = '📭';
-                chest.style.opacity = '0.5';
-                chest.onclick = null;
-                updateUI();
-            } else {
-                addLog('Move closer to open the chest!', '');
-            }
-        }
-        
-        // Auto-select rogue for the dual dagger experience - only if UI exists
-        if(document.getElementById('level')) selectClass('rogue');
-        
-        // Epic Particle System - particles array declared early to prevent reference errors
-        let particles = [];
-        const particleCanvas = document.getElementById('particle-canvas');
-        const pCtx = particleCanvas.getContext('2d');
-        particleCanvas.width = window.innerWidth;
-        particleCanvas.height = window.innerHeight;
-        window.addEventListener('resize', () => { particleCanvas.width = window.innerWidth; particleCanvas.height = window.innerHeight; });
-        class Particle {
-            constructor(x, y, color, type) {
-                this.x = x; this.y = y;
-                this.color = color;
-                this.type = type;
-                this.vx = (Math.random() - 0.5) * 10;
-                this.vy = (Math.random() - 0.5) * 10 - 3;
-                this.life = 1;
-                this.size = Math.random() * 8 + 4;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                this.vy += 0.2;
-                this.life -= 0.02;
-                this.size *= 0.98;
-            }
-            draw() {
-                pCtx.globalAlpha = this.life;
-                pCtx.fillStyle = this.color;
-                if(this.type === 'spark') {
-                    pCtx.beginPath();
-                    pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    pCtx.fill();
-                } else {
-                    pCtx.font = this.size + 'px Arial';
-                    pCtx.fillText('✨', this.x, this.y);
-                }
-                pCtx.globalAlpha = 1;
-            }
-        }
-        
-        function spawnParticles(x, y, color, count=15) {
-            for(let i = 0; i < count; i++) {
-                particles.push(new Particle(x, y, color, Math.random() > 0.5 ? 'spark' : 'star'));
-            }
-        }
-        
-        function animateParticles() {
-            pCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
-            particles = particles.filter(p => p.life > 0);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
-        animateParticles();
-        
-        // Screen shake effect
-        function screenShake(intensity = 5) {
-            const world = document.getElementById('game-world');
-            let shakes = 6;
-            const interval = setInterval(() => {
-                if(shakes <= 0) { world.style.transform = 'translate(0, 0)'; clearInterval(interval); return; }
-                const x = (Math.random() - 0.5) * intensity;
-                const y = (Math.random() - 0.5) * intensity;
-                world.style.transform = `translate(${x}px, ${y}px)`;
-                shakes--;
-            }, 30);
-        }
-        
-        // Override attack to add particles
-        const originalAttack = attack;
-        attack = function() {
-            originalAttack();
-            const enemyEl = document.getElementById('enemy-sprite');
-            const rect = enemyEl.getBoundingClientRect();
-            spawnParticles(rect.left + rect.width/2, rect.top + rect.height/2, '#ff4444', 20);
-            screenShake(8);
-        };
-        
-        // Full screen world panel toggle
-        let panelsVisible = true;
-        function togglePanels() {
-            panelsVisible = !panelsVisible;
-            document.getElementById('panels-overlay').style.display = panelsVisible ? 'flex' : 'none';
-        }
-        
-        // Expand movement bounds for full screen
-        document.addEventListener('keydown', (e) => {
-            const speed = 15;
-            const maxX = window.innerWidth - 50;
-            const maxY = window.innerHeight - 50;
-            if(e.key === 'w' || e.key === 'ArrowUp') playerY = Math.max(40, playerY - speed);
-            if(e.key === 's' || e.key === 'ArrowDown') playerY = Math.min(maxY, playerY + speed);
-            if(e.key === 'a' || e.key === 'ArrowLeft') playerX = Math.max(10, playerX - speed);
-            if(e.key === 'd' || e.key === 'ArrowRight') playerX = Math.min(maxX, playerX + speed);
-            if(playerSprite) {
-              playerSprite.style.left = playerX + 'px';
-              playerSprite.style.top = playerY + 'px';
-            }
-            checkProximity();
-        });
-        
-        // Re-bind world enemies for the new fullscreen world
-        document.querySelectorAll('.world-enemy').forEach(en => {
-            en.addEventListener('click', () => attackWorldEnemy(en));
+        // Interactive canvas
+        const canvas = document.getElementById('canvas');
+        canvas.addEventListener('click', () => {
+            const emojis = ['🌟', '💫', '⭐', '🎯', '🎪', '🎭', '🎨', '🎬', '🎮', '🎲'];
+            const emoji = document.createElement('span');
+            emoji.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            emoji.style.cssText = `
+                position: absolute;
+                font-size: ${20 + Math.random() * 30}px;
+                left: ${Math.random() * 80 + 10}%;
+                top: ${Math.random() * 80 + 10}%;
+                animation: float ${2 + Math.random() * 2}s ease-in-out infinite;
+                pointer-events: none;
+            `;
+            canvas.style.position = 'relative';
+            canvas.appendChild(emoji);
         });
     </script>
 </body>
