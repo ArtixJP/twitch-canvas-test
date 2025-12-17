@@ -30,7 +30,7 @@
 <div id="game-container"></div>
 <div id="ui-overlay"><h1>Voxel World</h1></div>
 <div id="crosshair">+</div>
-<div id="instructions">WASD: Move | Space: Jump | Click: Break | M: Place | 1-7: Select Block | Click to start</div>
+<div id="instructions">WASD: Move | Space: Jump | Left Click: Break | Right Click: Place | 1-7: Select Block | Click to start</div>
 <div id="block-selector">
 <div class="block-icon selected" data-type="grass" style="background: #4a7c23;" title="Grass"></div>
 <div class="block-icon" data-type="dirt" style="background: #8b4513;" title="Dirt"></div>
@@ -152,11 +152,20 @@
         raycaster.set(camera.position, direction);
         const meshes = Array.from(blocks.values());
         const hits = raycaster.intersectObjects(meshes);
-        if(hits.length > 0 && hits[0].distance < 5) {
+        if(hits.length > 0 && hits[0].distance < 6) {
             if(e.button === 0) {
                 const p = hits[0].object.position;
                 blocks.delete(`${p.x},${p.y},${p.z}`);
                 scene.remove(hits[0].object);
+            } else if(e.button === 2) {
+                const n = hits[0].face.normal;
+                const p = hits[0].object.position;
+                const newX = Math.round(p.x + n.x);
+                const newY = Math.round(p.y + n.y);
+                const newZ = Math.round(p.z + n.z);
+                if(!blocks.has(`${newX},${newY},${newZ}`)) {
+                    createBlock(newX, newY, newZ, selectedBlock);
+                }
             }
         }
     });
