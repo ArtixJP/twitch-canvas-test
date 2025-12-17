@@ -282,7 +282,7 @@
 <button class="nav-btn" onclick="startClickGame()" style="margin-top:15px">Start Game</button>
 </div>
 <div class="wow-3d-container" id="wow3dScene" style="width:100%;max-width:700px;height:400px;margin:20px auto;border-radius:15px;overflow:hidden;border:3px solid #ffd700;background:#1a0a2e;box-shadow:0 0 40px rgba(255,215,0,0.4), inset 0 0 20px rgba(0,0,0,0.5);"></div>
-<p style="text-align:center;color:#ffd700;font-size:0.9rem;opacity:0.8;">🎮 Click the dragon to attack! Use abilities below for special moves!</p>
+<p style="text-align:center;color:#ffd700;font-size:0.9rem;opacity:0.8;">🎮 Click dragon to attack! Arrow keys to move, 1/2/3 for abilities!</p>
 <div class="wow-game">
 <h2 class="wow-header">⚔️ World of Warcraft 3D ⚔️</h2>
 <div class="wow-arena">
@@ -302,14 +302,14 @@
 </div>
 </div>
 <div id="mageAbilities">
-<button class="wow-btn" onclick="wowAttack()">⚔️ Attack</button>
-<button class="wow-btn" onclick="wowFireball()">🔥 Fireball (30 MP)</button>
-<button class="wow-btn" onclick="wowHeal()">💚 Heal (20 MP)</button>
+<button class="wow-btn" onclick="wowAttack()">⚔️ Attack [1]</button>
+<button class="wow-btn" onclick="wowFireball()">🔥 Fireball [2]</button>
+<button class="wow-btn" onclick="wowHeal()">💚 Heal [3]</button>
 </div>
 <div id="warriorAbilities" style="display:none;">
-<button class="wow-btn" onclick="heroicStrike()">⚔️ Heroic Strike</button>
-<button class="wow-btn" onclick="shieldBlock()">🛡️ Shield Block (20 Rage)</button>
-<button class="wow-btn" onclick="execute()">💀 Execute (30 Rage)</button>
+<button class="wow-btn" onclick="heroicStrike()">⚔️ Heroic Strike [1]</button>
+<button class="wow-btn" onclick="shieldBlock()">🛡️ Shield Block [2]</button>
+<button class="wow-btn" onclick="execute()">💀 Execute [3]</button>
 </div>
 <div class="combat-log" id="combatLog">Battle begins!</div>
 </div>
@@ -593,6 +593,35 @@
     // Also try on window load
     window.addEventListener('load', () => setTimeout(tryInitWow3D, 500));
     // 3D Attack function
+    // Keyboard controls for WoW game
+    document.addEventListener('keydown', (e) => {
+        const gamesSection = document.getElementById('games');
+        if (!gamesSection.classList.contains('active')) return;
+        
+        // Movement keys (visual feedback)
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight' || e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+            const player = document.getElementById('wowPlayer');
+            const dir = {ArrowLeft: 'translateX(-10px)', ArrowRight: 'translateX(10px)', ArrowUp: 'translateY(-10px)', ArrowDown: 'translateY(10px)'};
+            player.style.transform = dir[e.key];
+            setTimeout(() => player.style.transform = '', 150);
+            wowLog('🏃 Moving ' + e.key.replace('Arrow', '').toLowerCase() + '!');
+        }
+        
+        // Ability keys 1, 2, 3
+        if (e.key === '1') {
+            if (playerClass === 'mage') wowAttack();
+            else heroicStrike();
+        }
+        if (e.key === '2') {
+            if (playerClass === 'mage') wowFireball();
+            else shieldBlock();
+        }
+        if (e.key === '3') {
+            if (playerClass === 'mage') wowHeal();
+            else execute();
+        }
+    });
+    
     function attack3DDragon() {
         window.dragonHit = true;
         window.dragonHitTimer = 30;
