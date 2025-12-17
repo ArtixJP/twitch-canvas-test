@@ -151,6 +151,9 @@
         camera.rotation.y = yaw;
         camera.rotation.x = pitch;
         updateSnake();
+        // Animate grandma sign
+        signGroup.rotation.y = Math.sin(Date.now() * 0.001) * 0.1;
+        signGroup.position.y = 3 + Math.sin(Date.now() * 0.002) * 0.2;
         renderer.render(scene, camera);
     }
     
@@ -162,6 +165,38 @@
         scene.add(segment);
         snakeSegments.push(segment);
     }
+    
+    // Grandma sign in-game!
+    const signGroup = new THREE.Group();
+    const signGeo = new THREE.BoxGeometry(4, 1.5, 0.2);
+    const signMat = new THREE.MeshLambertMaterial({color: 0xff69b4});
+    const signBoard = new THREE.Mesh(signGeo, signMat);
+    signGroup.add(signBoard);
+    const poleGeo = new THREE.BoxGeometry(0.2, 2, 0.2);
+    const poleMat = new THREE.MeshLambertMaterial({color: 0x8B4513});
+    const pole = new THREE.Mesh(poleGeo, poleMat);
+    pole.position.y = -1.5;
+    signGroup.add(pole);
+    signGroup.position.set(-5, 3, -5);
+    scene.add(signGroup);
+    
+    // Create canvas texture for sign text
+    const signCanvas = document.createElement('canvas');
+    signCanvas.width = 512;
+    signCanvas.height = 192;
+    const ctx = signCanvas.getContext('2d');
+    ctx.fillStyle = '#ff69b4';
+    ctx.fillRect(0, 0, 512, 192);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 36px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('👵 Hello Grandma! 💕', 256, 80);
+    ctx.fillText('We love you!', 256, 130);
+    const signTexture = new THREE.CanvasTexture(signCanvas);
+    const signFaceMat = new THREE.MeshBasicMaterial({map: signTexture});
+    const signFace = new THREE.Mesh(new THREE.PlaneGeometry(3.8, 1.4), signFaceMat);
+    signFace.position.z = 0.11;
+    signGroup.add(signFace);
     
     // Snake eyes
     const eyeGeo = new THREE.SphereGeometry(0.1, 8, 8);
