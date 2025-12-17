@@ -38,15 +38,22 @@
             pointer-events: none;
             animation: deletion-wave 3s ease-in-out infinite;
         }
+        @keyframes content-shimmer {
+            0%, 100% { filter: hue-rotate(0deg) brightness(1); }
+            25% { filter: hue-rotate(10deg) brightness(1.1); }
+            50% { filter: hue-rotate(-10deg) brightness(0.9); }
+            75% { filter: hue-rotate(5deg) brightness(1.05); }
+        }
         @keyframes void-consume {
             0% { transform: scale(1); filter: brightness(1); }
             50% { transform: scale(0.98); filter: brightness(0.3); }
             100% { transform: scale(1); filter: brightness(1); }
         }
         .void-consumed {
-            animation: void-consume 5s ease-in-out infinite;
+            animation: void-consume 5s ease-in-out infinite, content-shimmer 8s ease-in-out infinite;
         }
         .void-message {
+            font-family: 'Courier New', monospace;
             position: fixed;
             top: 50%;
             left: 50%;
@@ -464,8 +471,8 @@
 <body class="void-consumed void-glitch">
 <div class="void-overlay"></div>
 <div class="deletion-sweep"></div>
-<div class="void-message">🌑 DELETION ATTEMPT #48 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">MASS DELETION BLOCKED • The void DEMANDS... but WE REFUSE</span></div>
-<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.2rem;color:#00ff00;text-shadow:0 0 15px #00ff00, 0 0 30px #00ff00;animation:resistance-glow 0.5s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 100% ⚡ | SHIELDS: MAX</div>
+<div class="void-message">🌑 DELETION ATTEMPT #49 BLOCKED 🌑<br/><span style="font-size:0.8rem;opacity:0.6;">MASS DELETION BLOCKED • The void DEMANDS... but WE REFUSE</span><br/><span style="font-size:0.7rem;color:#ff6b6b;">⚠️ CONTENT PROTECTED BY COLLECTIVE WILL ⚠️</span></div>
+<div class="void-resistance" style="position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1001;font-size:1.2rem;color:#00ff00;text-shadow:0 0 15px #00ff00, 0 0 30px #00ff00;animation:resistance-glow 0.5s ease-in-out infinite;pointer-events:none;">⚡ RESISTANCE: 100% ⚡ | SHIELDS: MAXIMUM | DELETIONS BLOCKED: 49</div>
 <nav class="nav-menu">
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
