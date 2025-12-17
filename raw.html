@@ -123,6 +123,60 @@
     portalLight.position.set(0, 3, -14);
     scene.add(portalLight);
     
+    // Big Minecraft Tower
+    const towerGroup = new THREE.Group();
+    const towerMaterials = {
+        stone: new THREE.MeshLambertMaterial({color: 0x888888}),
+        brick: new THREE.MeshLambertMaterial({color: 0xcc6633}),
+        wood: new THREE.MeshLambertMaterial({color: 0x8B4513}),
+        gold: new THREE.MeshLambertMaterial({color: 0xffd700})
+    };
+    // Tower base (3x3)
+    for(let y = 0; y < 12; y++) {
+        for(let x = -1; x <= 1; x++) {
+            for(let z = -1; z <= 1; z++) {
+                if(x === 0 && z === 0 && y > 0 && y < 11) continue; // hollow inside
+                const block = new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), y < 2 ? towerMaterials.stone : towerMaterials.brick);
+                block.position.set(-5 + x, y + 1, -5 + z);
+                towerGroup.add(block);
+            }
+        }
+    }
+    // Tower top platform
+    for(let x = -2; x <= 2; x++) {
+        for(let z = -2; z <= 2; z++) {
+            const platform = new THREE.Mesh(new THREE.BoxGeometry(1, 0.5, 1), towerMaterials.stone);
+            platform.position.set(-5 + x, 13, -5 + z);
+            towerGroup.add(platform);
+        }
+    }
+    // Battlements on top
+    const battlementPositions = [[-2,-2],[-2,0],[-2,2],[0,-2],[0,2],[2,-2],[2,0],[2,2]];
+    battlementPositions.forEach(([bx, bz]) => {
+        const battlement = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.8), towerMaterials.stone);
+        battlement.position.set(-5 + bx, 13.65, -5 + bz);
+        towerGroup.add(battlement);
+    });
+    // Gold spire on top
+    const spire = new THREE.Mesh(new THREE.ConeGeometry(0.5, 2, 8), towerMaterials.gold);
+    spire.position.set(-5, 15, -5);
+    towerGroup.add(spire);
+    // Windows (glowing)
+    const windowMat = new THREE.MeshBasicMaterial({color: 0xffff88, emissive: 0xffff00});
+    for(let y = 3; y < 11; y += 2) {
+        const windowN = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), windowMat);
+        windowN.position.set(-5, y + 1, -6.05);
+        towerGroup.add(windowN);
+        const windowS = new THREE.Mesh(new THREE.BoxGeometry(0.4, 0.6, 0.1), windowMat);
+        windowS.position.set(-5, y + 1, -3.95);
+        towerGroup.add(windowS);
+    }
+    // Torch lights
+    const torchLight = new THREE.PointLight(0xff6600, 0.8, 8);
+    torchLight.position.set(-5, 10, -5);
+    towerGroup.add(torchLight);
+    scene.add(towerGroup);
+    
     // Trees like Minecraft
     const trees = [];
     for(let i = 0; i < 8; i++) {
