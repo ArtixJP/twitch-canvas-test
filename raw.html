@@ -1,25 +1,235 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>WoW RPG Simulator - Twitch Versus Code</title>
+<style>
+        * { box-sizing: border-box; }
         body { 
-            font-family: system-ui, sans-serif; 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
             display: flex; 
-            justify-content: center; 
+            flex-direction: column;
+            justify-content: flex-start; 
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
+            padding: 20px;
+            background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 50%, #0a1628 100%);
+            color: #f0e6d3;
+            overflow-x: hidden;
         }
-        h1 { font-size: 3rem; text-align: center; }
+        h1 { font-size: 2.5rem; text-align: center; text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00; margin-bottom: 10px; }
+        .subtitle { color: #ffd700; font-size: 1rem; margin-bottom: 20px; }
+        .game-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1200px; }
+        .panel { background: linear-gradient(180deg, rgba(40,30,50,0.95) 0%, rgba(20,15,30,0.98) 100%); border: 2px solid #5a4a3a; border-radius: 8px; padding: 15px; box-shadow: 0 0 20px rgba(255,165,0,0.2), inset 0 0 30px rgba(0,0,0,0.5); }
+        .character-panel { width: 280px; }
+        .combat-panel { width: 500px; min-height: 350px; }
+        .log-panel { width: 350px; height: 350px; overflow-y: auto; }
+        .stat-bar { height: 20px; border-radius: 10px; margin: 5px 0; position: relative; overflow: hidden; }
+        .health-bar { background: linear-gradient(90deg, #8b0000, #ff0000); box-shadow: 0 0 10px #ff0000; }
+        .mana-bar { background: linear-gradient(90deg, #00008b, #4169e1); box-shadow: 0 0 10px #4169e1; }
+        .xp-bar { background: linear-gradient(90deg, #4b0082, #9932cc); box-shadow: 0 0 10px #9932cc; }
+        .bar-fill { height: 100%; transition: width 0.3s; border-radius: 10px; }
+        .bar-text { position: absolute; width: 100%; text-align: center; font-size: 12px; line-height: 20px; text-shadow: 1px 1px 2px black; }
+        .class-select { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; justify-content: center; }
+        .class-btn { padding: 10px 15px; border: 2px solid #5a4a3a; background: linear-gradient(180deg, #3a2a1a, #2a1a0a); color: #ffd700; cursor: pointer; border-radius: 5px; transition: all 0.3s; font-weight: bold; }
+        .class-btn:hover { border-color: #ffd700; box-shadow: 0 0 15px rgba(255,215,0,0.5); transform: scale(1.05); }
+        .class-btn.selected { border-color: #ffd700; background: linear-gradient(180deg, #5a4a2a, #3a2a1a); }
+        .enemy-display { text-align: center; padding: 20px; }
+        .enemy-sprite { font-size: 80px; animation: enemyBounce 1s infinite; }
+        @keyframes enemyBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .action-buttons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 15px; }
+        .action-btn { padding: 12px 20px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; transition: all 0.2s; text-transform: uppercase; }
+        .attack-btn { background: linear-gradient(180deg, #8b0000, #5a0000); color: white; border: 2px solid #ff4444; }
+        .skill-btn { background: linear-gradient(180deg, #00008b, #000050); color: white; border: 2px solid #4444ff; }
+        .heal-btn { background: linear-gradient(180deg, #006400, #003200); color: white; border: 2px solid #44ff44; }
+        .action-btn:hover { transform: scale(1.1); box-shadow: 0 0 20px currentColor; }
+        .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .log-entry { padding: 5px; border-bottom: 1px solid #3a3a3a; font-size: 13px; }
+        .log-damage { color: #ff6b6b; }
+        .log-heal { color: #6bff6b; }
+        .log-xp { color: #d4a5ff; }
+        .log-level { color: #ffd700; font-weight: bold; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 14px; margin: 10px 0; }
+        .stat-item { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 3px; }
+        .gold-display { color: #ffd700; font-size: 18px; text-align: center; margin: 10px 0; }
+        .level-display { font-size: 24px; color: #ffd700; text-align: center; }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } }
+        .shake { animation: shake 0.3s; }
+        @keyframes glow { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.5); } }
+        .glow { animation: glow 0.5s; }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1>⚔️ Hello World of Warcraft ⚔️</h1>
+<p class="subtitle">~ An Epic RPG Adventure ~</p>
+<div class="game-container">
+<div class="panel character-panel">
+<h3 style="text-align:center;color:#ffd700;margin:0 0 10px 0;">🛡️ Your Hero</h3>
+<div class="level-display">Level <span id="level">1</span></div>
+<div class="class-select">
+<button class="class-btn selected" data-class="warrior" onclick="selectClass('warrior')">⚔️ Warrior</button>
+<button class="class-btn" data-class="mage" onclick="selectClass('mage')">🔮 Mage</button>
+<button class="class-btn" data-class="rogue" onclick="selectClass('rogue')">🗡️ Rogue</button>
+</div>
+<div class="stat-bar health-bar"><div class="bar-fill" id="health-fill" style="width:100%;background:#22aa22;"></div><span class="bar-text" id="health-text">100/100 HP</span></div>
+<div class="stat-bar mana-bar"><div class="bar-fill" id="mana-fill" style="width:100%;background:#2266dd;"></div><span class="bar-text" id="mana-text">50/50 MP</span></div>
+<div class="stat-bar xp-bar"><div class="bar-fill" id="xp-fill" style="width:0%;background:#9932cc;"></div><span class="bar-text" id="xp-text">0/100 XP</span></div>
+<div class="gold-display">💰 <span id="gold">0</span> Gold</div>
+<div class="stats-grid">
+<div class="stat-item">⚔️ ATK: <span id="atk">10</span></div>
+<div class="stat-item">🛡️ DEF: <span id="def">5</span></div>
+<div class="stat-item">✨ CRIT: <span id="crit">5</span>%</div>
+<div class="stat-item">💨 SPD: <span id="spd">10</span></div>
+</div>
+</div>
+<div class="panel combat-panel">
+<h3 style="text-align:center;color:#ff4444;margin:0 0 10px 0;">⚔️ Combat Arena</h3>
+<div class="enemy-display">
+<div class="enemy-sprite" id="enemy-sprite">🐗</div>
+<h4 id="enemy-name">Wild Boar</h4>
+<div class="stat-bar health-bar" style="width:80%;margin:auto;"><div class="bar-fill" id="enemy-health-fill" style="width:100%;background:#cc2222;"></div><span class="bar-text" id="enemy-health-text">30/30 HP</span></div>
+</div>
+<div class="action-buttons">
+<button class="action-btn attack-btn" onclick="attack()">⚔️ Attack</button>
+<button class="action-btn skill-btn" onclick="useSkill()">✨ Skill (20 MP)</button>
+<button class="action-btn heal-btn" onclick="heal()">💚 Heal (15 MP)</button>
+</div>
+</div>
+<div class="panel log-panel">
+<h3 style="text-align:center;color:#aaa;margin:0 0 10px 0;">📜 Battle Log</h3>
+<div id="log"></div>
+</div>
+</div>
+<script>
+        const classes = {
+            warrior: { hp: 120, mp: 30, atk: 15, def: 10, crit: 5, spd: 8, skill: 'Heroic Strike', skillMult: 2.5 },
+            mage: { hp: 70, mp: 100, atk: 8, def: 3, crit: 15, spd: 12, skill: 'Fireball', skillMult: 3.5 },
+            rogue: { hp: 85, mp: 50, atk: 12, def: 5, crit: 25, spd: 18, skill: 'Backstab', skillMult: 4 }
+        };
+        const enemies = [
+            { name: 'Wild Boar', sprite: '🐗', hp: 30, atk: 5, xp: 20, gold: 5 },
+            { name: 'Forest Wolf', sprite: '🐺', hp: 45, atk: 8, xp: 35, gold: 10 },
+            { name: 'Goblin Scout', sprite: '👺', hp: 60, atk: 12, xp: 50, gold: 20 },
+            { name: 'Orc Warrior', sprite: '👹', hp: 100, atk: 18, xp: 80, gold: 40 },
+            { name: 'Dark Mage', sprite: '🧙', hp: 70, atk: 25, xp: 100, gold: 60 },
+            { name: 'Dragon Whelp', sprite: '🐉', hp: 150, atk: 30, xp: 150, gold: 100 },
+            { name: 'Lich King', sprite: '💀', hp: 300, atk: 45, xp: 300, gold: 250 }
+        ];
+        
+        let player = { class: 'warrior', level: 1, xp: 0, gold: 0, ...classes.warrior, maxHp: 120, maxMp: 30 };
+        let enemy = { ...enemies[0], maxHp: enemies[0].hp };
+        
+        function selectClass(c) {
+            document.querySelectorAll('.class-btn').forEach(b => b.classList.remove('selected'));
+            document.querySelector(`[data-class="${c}"]`).classList.add('selected');
+            player = { class: c, level: 1, xp: 0, gold: player.gold, ...classes[c], maxHp: classes[c].hp, maxMp: classes[c].mp };
+            updateUI();
+            addLog(`You are now a ${c.toUpperCase()}!`, 'log-level');
+        }
+        
+        function updateUI() {
+            document.getElementById('level').textContent = player.level;
+            document.getElementById('health-fill').style.width = (player.hp/player.maxHp*100)+'%';
+            document.getElementById('health-text').textContent = `${Math.max(0,Math.floor(player.hp))}/${player.maxHp} HP`;
+            document.getElementById('mana-fill').style.width = (player.mp/player.maxMp*100)+'%';
+            document.getElementById('mana-text').textContent = `${Math.max(0,Math.floor(player.mp))}/${player.maxMp} MP`;
+            document.getElementById('xp-fill').style.width = (player.xp/(player.level*100)*100)+'%';
+            document.getElementById('xp-text').textContent = `${player.xp}/${player.level*100} XP`;
+            document.getElementById('gold').textContent = player.gold;
+            document.getElementById('atk').textContent = player.atk;
+            document.getElementById('def').textContent = player.def;
+            document.getElementById('crit').textContent = player.crit;
+            document.getElementById('spd').textContent = player.spd;
+            document.getElementById('enemy-sprite').textContent = enemy.sprite;
+            document.getElementById('enemy-name').textContent = enemy.name;
+            document.getElementById('enemy-health-fill').style.width = (enemy.hp/enemy.maxHp*100)+'%';
+            document.getElementById('enemy-health-text').textContent = `${Math.max(0,Math.floor(enemy.hp))}/${enemy.maxHp} HP`;
+        }
+        
+        function addLog(msg, cls='') { document.getElementById('log').innerHTML = `<div class="log-entry ${cls}">${msg}</div>` + document.getElementById('log').innerHTML; }
+        
+        function attack() {
+            let dmg = player.atk + Math.floor(Math.random()*5);
+            let crit = Math.random()*100 < player.crit;
+            if(crit) dmg *= 2;
+            enemy.hp -= dmg;
+            document.getElementById('enemy-sprite').classList.add('shake');
+            setTimeout(() => document.getElementById('enemy-sprite').classList.remove('shake'), 300);
+            addLog(`You ${crit?'CRITICALLY ':''}hit ${enemy.name} for ${dmg} damage!`, 'log-damage');
+            checkCombat();
+        }
+        
+        function useSkill() {
+            if(player.mp < 20) { addLog('Not enough mana!', 'log-damage'); return; }
+            player.mp -= 20;
+            let dmg = Math.floor(player.atk * classes[player.class].skillMult);
+            enemy.hp -= dmg;
+            document.getElementById('enemy-sprite').classList.add('shake');
+            setTimeout(() => document.getElementById('enemy-sprite').classList.remove('shake'), 300);
+            addLog(`${classes[player.class].skill}! ${dmg} damage to ${enemy.name}!`, 'log-damage');
+            checkCombat();
+        }
+        
+        function heal() {
+            if(player.mp < 15) { addLog('Not enough mana!', 'log-damage'); return; }
+            player.mp -= 15;
+            let amt = 20 + player.level * 5;
+            player.hp = Math.min(player.maxHp, player.hp + amt);
+            addLog(`Healed for ${amt} HP!`, 'log-heal');
+            updateUI();
+        }
+        
+        function checkCombat() {
+            if(enemy.hp <= 0) {
+                addLog(`${enemy.name} defeated! +${enemy.xp} XP, +${enemy.gold} Gold`, 'log-xp');
+                player.xp += enemy.xp;
+                player.gold += enemy.gold;
+                if(player.xp >= player.level * 100) levelUp();
+                spawnEnemy();
+            } else {
+                enemyTurn();
+            }
+            updateUI();
+        }
+        
+        function enemyTurn() {
+            let dmg = Math.max(1, enemy.atk - player.def + Math.floor(Math.random()*5));
+            player.hp -= dmg;
+            addLog(`${enemy.name} hits you for ${dmg} damage!`, 'log-damage');
+            if(player.hp <= 0) {
+                addLog('YOU DIED! Respawning...', 'log-damage');
+                player.hp = player.maxHp;
+                player.mp = player.maxMp;
+                player.gold = Math.floor(player.gold * 0.5);
+            }
+        }
+        
+        function levelUp() {
+            player.xp -= player.level * 100;
+            player.level++;
+            player.maxHp += 10;
+            player.maxMp += 5;
+            player.hp = player.maxHp;
+            player.mp = player.maxMp;
+            player.atk += 2;
+            player.def += 1;
+            addLog(`LEVEL UP! You are now level ${player.level}!`, 'log-level');
+        }
+        
+        function spawnEnemy() {
+            let idx = Math.min(enemies.length-1, Math.floor(player.level/2) + Math.floor(Math.random()*2));
+            let base = enemies[idx];
+            let scale = 1 + (player.level-1)*0.15;
+            enemy = { ...base, hp: Math.floor(base.hp*scale), maxHp: Math.floor(base.hp*scale), atk: Math.floor(base.atk*scale), xp: Math.floor(base.xp*scale), gold: Math.floor(base.gold*scale) };
+            addLog(`A ${enemy.name} appears!`, '');
+        }
+        
+        updateUI();
+        addLog('Welcome, Hero! Choose your class and begin your adventure!', 'log-level');
+    </script>
 </body>
 </html>
