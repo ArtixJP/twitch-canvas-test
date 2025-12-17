@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🚀 Space Station Builder 🌌</title>
+<title>🍄 Mario Minecraft Builder 🧱</title>
 <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -14,7 +14,7 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+            background: linear-gradient(135deg, #87CEEB 0%, #4a90c2 50%, #2d5a87 100%);
             color: white;
             overflow: hidden;
         }
@@ -28,7 +28,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>🚀 Space Station Builder - Mario Galaxy Edition 🌌🍄</h1>
+<h1>🍄 Mario Minecraft Builder 🧱⛏️</h1>
 <canvas id="game" tabindex="0"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
 <div id="hotbar">
@@ -42,19 +42,18 @@
 <script>
     const canvas = document.getElementById('game');
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a1a);
-    // Space exploration mode - add stars
-    const starsGeo = new THREE.BufferGeometry();
-    const starPositions = [];
-    for(let i = 0; i < 2000; i++) {
-        starPositions.push((Math.random() - 0.5) * 500);
-        starPositions.push((Math.random() - 0.5) * 500);
-        starPositions.push((Math.random() - 0.5) * 500);
+    scene.background = new THREE.Color(0x87CEEB);
+    // Sky clouds
+    const clouds = [];
+    for(let i = 0; i < 10; i++) {
+        const cloudGeo = new THREE.SphereGeometry(2 + Math.random() * 2, 8, 8);
+        const cloudMat = new THREE.MeshLambertMaterial({color: 0xffffff, transparent: true, opacity: 0.8});
+        const cloud = new THREE.Mesh(cloudGeo, cloudMat);
+        cloud.position.set((Math.random()-0.5)*60, 15 + Math.random()*10, (Math.random()-0.5)*60);
+        cloud.scale.set(1.5, 0.6, 1);
+        scene.add(cloud);
+        clouds.push(cloud);
     }
-    starsGeo.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-    const starsMat = new THREE.PointsMaterial({color: 0xffffff, size: 0.5, transparent: true, opacity: 0.8});
-    const stars = new THREE.Points(starsGeo, starsMat);
-    scene.add(stars);
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({canvas});
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -88,17 +87,21 @@
     scene.add(light);
     scene.add(new THREE.AmbientLight(0x2a2a4a));
     
-    // Add floating asteroids/space rocks
-    const asteroids = [];
-    for(let i = 0; i < 15; i++) {
-        const asteroidGeo = new THREE.DodecahedronGeometry(Math.random() * 1.5 + 0.5);
-        const asteroidMat = new THREE.MeshLambertMaterial({color: 0x555566});
-        const asteroid = new THREE.Mesh(asteroidGeo, asteroidMat);
-        asteroid.position.set((Math.random()-0.5)*40, Math.random()*15+5, (Math.random()-0.5)*40);
-        asteroid.userData.speed = Math.random() * 0.01 + 0.005;
-        asteroid.userData.rotSpeed = Math.random() * 0.02;
-        scene.add(asteroid);
-        asteroids.push(asteroid);
+    // Trees like Minecraft
+    const trees = [];
+    for(let i = 0; i < 8; i++) {
+        const trunkGeo = new THREE.BoxGeometry(0.5, 3, 0.5);
+        const trunkMat = new THREE.MeshLambertMaterial({color: 0x8B4513});
+        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+        trunk.position.set((Math.random()-0.5)*18, 2.5, (Math.random()-0.5)*18);
+        scene.add(trunk);
+        const leavesGeo = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+        const leavesMat = new THREE.MeshLambertMaterial({color: 0x228B22});
+        const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+        leaves.position.copy(trunk.position);
+        leaves.position.y += 2.5;
+        scene.add(leaves);
+        trees.push({trunk, leaves});
     }
     
     // Mario coins floating in space
@@ -133,13 +136,10 @@
     plantSpots.position.set(5.2, 2.6, -4.7);
     scene.add(plantSpots);
     
-    // Nebula light
-    const nebulaLight = new THREE.PointLight(0x9933ff, 0.5, 50);
-    nebulaLight.position.set(20, 15, -20);
-    scene.add(nebulaLight);
-    const nebulaLight2 = new THREE.PointLight(0x3399ff, 0.5, 50);
-    nebulaLight2.position.set(-20, 10, 20);
-    scene.add(nebulaLight2);
+    // Sunlight
+    const sunLight = new THREE.PointLight(0xffffaa, 0.8, 100);
+    sunLight.position.set(30, 30, 30);
+    scene.add(sunLight);
     
     camera.position.set(0, 5, 10);
     let yaw = 0, pitch = 0;
@@ -223,18 +223,11 @@
         // Animate grandma sign
         signGroup.rotation.y = Math.sin(Date.now() * 0.001) * 0.1;
         signGroup.position.y = 3 + Math.sin(Date.now() * 0.002) * 0.2;
-        // Rotate stars slowly
-        stars.rotation.y += 0.0001;
-        stars.rotation.x += 0.00005;
-        // Animate asteroids
-        asteroids.forEach(a => {
-            a.rotation.x += a.userData.rotSpeed;
-            a.rotation.y += a.userData.rotSpeed * 0.7;
-            a.position.y += Math.sin(Date.now() * a.userData.speed) * 0.01;
+        // Animate clouds drifting
+        clouds.forEach((c, i) => {
+            c.position.x += 0.01;
+            if(c.position.x > 30) c.position.x = -30;
         });
-        // Pulse nebula lights
-        nebulaLight.intensity = 0.5 + Math.sin(Date.now() * 0.001) * 0.2;
-        nebulaLight2.intensity = 0.5 + Math.cos(Date.now() * 0.0015) * 0.2;
         // Animate Mario coins
         coins.forEach((coin, i) => {
             coin.rotation.z += 0.05;
