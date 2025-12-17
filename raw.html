@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>⚔️ Fantasy Minecraft Builder 🧱</title>
+<title>⚔️ World of Warcraft Builder 🧱</title>
 <style>
         body { 
             font-family: system-ui, sans-serif; 
@@ -28,8 +28,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>⚔️ Fantasy Minecraft Builder 🧱⛏️ 🎬</h1>
-<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.7);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;">🎬 Fantasy: A Love Story<br/>Part 1: Princess Captured!<br/>Part 2: Knight's Battle<br/>Part 3: Wedding Day 💒<br/>Look at X:-25, Z:-40</div>
+<h1>⚔️ World of Warcraft Builder 🧱⛏️ 🎬</h1>
+<div id="movie-info" style="position:absolute;top:50px;right:20px;background:rgba(0,0,0,0.85);padding:10px;border-radius:8px;z-index:100;font-size:0.8rem;border:2px solid #c9a227;">🎬 Azeroth: A Love Story<br/>Part 1: Princess Captured!<br/>Part 2: Champion's Battle<br/>Part 3: Wedding Day 💒<br/>Look at X:-25, Z:-40</div>
+<div id="wow-factions" style="position:absolute;top:50px;left:20px;background:rgba(0,0,0,0.85);padding:10px;border-radius:8px;z-index:100;font-size:0.9rem;border:2px solid #c9a227;">⚔️ FOR THE HORDE! 🔴<br/>🛡️ FOR THE ALLIANCE! 🔵<br/><small style="color:#c9a227;">Portal at X:0, Z:-15</small></div>
 <div id="snake-score" style="position:absolute;top:180px;right:20px;background:rgba(0,100,0,0.8);padding:10px;border-radius:8px;z-index:100;font-size:1rem;color:#0f0;">🐍 Snake Score: 0<br/><small style="color:#8f8;">Platform at X:15, Z:15</small></div>
 <canvas id="game" tabindex="0"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Build/Deconstruct<br/>1-4: Select Block | Arrow Keys: Control Snake 🐍<br/><span id="debug" style="color:#0f0;">Click game to start! (iframe-friendly)</span></div>
@@ -88,6 +89,39 @@
     light.position.set(5,10,5);
     scene.add(light);
     scene.add(new THREE.AmbientLight(0x2a2a4a));
+    
+    // WoW Horde Banner
+    const hordeBannerPole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 6, 8), new THREE.MeshLambertMaterial({color: 0x4a3728}));
+    hordeBannerPole.position.set(-8, 3, -8);
+    scene.add(hordeBannerPole);
+    const hordeBanner = new THREE.Mesh(new THREE.PlaneGeometry(2, 2.5), new THREE.MeshLambertMaterial({color: 0x8B0000, side: THREE.DoubleSide}));
+    hordeBanner.position.set(-8, 5, -8);
+    scene.add(hordeBanner);
+    const hordeSymbol = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.15, 8, 16), new THREE.MeshLambertMaterial({color: 0x000000}));
+    hordeSymbol.position.set(-8, 5, -7.95);
+    scene.add(hordeSymbol);
+    
+    // WoW Alliance Banner
+    const allianceBannerPole = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 6, 8), new THREE.MeshLambertMaterial({color: 0x4a3728}));
+    allianceBannerPole.position.set(8, 3, -8);
+    scene.add(allianceBannerPole);
+    const allianceBanner = new THREE.Mesh(new THREE.PlaneGeometry(2, 2.5), new THREE.MeshLambertMaterial({color: 0x00008B, side: THREE.DoubleSide}));
+    allianceBanner.position.set(8, 5, -8);
+    scene.add(allianceBanner);
+    const allianceSymbol = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 0.1), new THREE.MeshLambertMaterial({color: 0xffd700}));
+    allianceSymbol.position.set(8, 5, -7.9);
+    scene.add(allianceSymbol);
+    
+    // WoW Portal (Dark Portal style)
+    const portalRing = new THREE.Mesh(new THREE.TorusGeometry(2, 0.3, 16, 32), new THREE.MeshLambertMaterial({color: 0x2a1a4a}));
+    portalRing.position.set(0, 3, -15);
+    scene.add(portalRing);
+    const portalGlow = new THREE.Mesh(new THREE.CircleGeometry(1.8, 32), new THREE.MeshBasicMaterial({color: 0x00ff88, transparent: true, opacity: 0.6, side: THREE.DoubleSide}));
+    portalGlow.position.set(0, 3, -15);
+    scene.add(portalGlow);
+    const portalLight = new THREE.PointLight(0x00ff88, 1.5, 10);
+    portalLight.position.set(0, 3, -14);
+    scene.add(portalLight);
     
     // Trees like Minecraft
     const trees = [];
@@ -417,6 +451,11 @@
         });
         // Animate piranha plant
         plantHead.position.y = 2.5 + Math.sin(Date.now() * 0.002) * 0.8;
+        // Animate WoW portal
+        portalGlow.rotation.z += 0.02;
+        portalGlow.material.opacity = 0.4 + Math.sin(Date.now() * 0.003) * 0.3;
+        hordeBanner.rotation.y = Math.sin(Date.now() * 0.001) * 0.1;
+        allianceBanner.rotation.y = Math.sin(Date.now() * 0.001 + 1) * 0.1;
         // Update 3D Fantasy movie scene
         updateMovie();
         // Slight theater rotation for dynamic feel
