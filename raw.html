@@ -417,6 +417,7 @@
         background: linear-gradient(to bottom, rgba(50, 60, 80, 0.4), rgba(30, 40, 60, 0.2));
         pointer-events: none;
         z-index: 150;
+        display: none;
     }
     
     /* Thunder flash */
@@ -437,7 +438,7 @@
         pointer-events: none;
         z-index: 300;
         opacity: 0;
-        animation: thunder-flash 8s ease-in-out infinite;
+        display: none;
     }
     
     @keyframes sun-dim {
@@ -544,7 +545,7 @@
 <body>
 <div id="game-container">
 <div id="ui">
-<div id="test-banner">🌧️ IL PLEUT À SEAUX! 🌧️</div>
+<div id="test-banner">☀️ SUNNY SKIES! ☀️</div>
 <div id="info">
 <div>🎮 Mathilde's Minecraft World 🏰</div>
 <div style="color: #00ff00; font-size: 12px;">✅ TEST SUCCESSFUL!</div>
@@ -985,16 +986,16 @@ function createRain() {
     }
 }
 
-// Start heavy rain - every 30ms for intense effect
-setInterval(createRain, 30);
+// Rain disabled - sunny day!
+// setInterval(createRain, 30);
 
-// Update scene background to be darker/stormier
+// Sunny bright sky!
 if (scene) {
-    scene.background = new THREE.Color(0x1a1525);
-    scene.fog = new THREE.Fog(0x2a2035, 15, 50);
+    scene.background = new THREE.Color(0x4a90c2);
+    scene.fog = new THREE.Fog(0x87ceeb, 30, 80);
 }
 
-console.log('🌧️ Il pleut à seaux! Heavy rain activated!');
+console.log('☀️ Sunny skies! Rain removed!');
 </script>
 </body>
 </html>
