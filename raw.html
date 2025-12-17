@@ -446,6 +446,194 @@
         40%, 60% { filter: brightness(0.6); }
     }
     
+    /* Mario Character */
+    #mario {
+        position: absolute;
+        bottom: 150px;
+        left: 0;
+        width: 40px;
+        height: 50px;
+        z-index: 500;
+        animation: mario-run 8s linear infinite;
+        pointer-events: none;
+        image-rendering: pixelated;
+    }
+    
+    #mario .mario-body {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+    
+    /* Mario pixel art using box-shadows */
+    #mario .hat {
+        position: absolute;
+        top: 0;
+        left: 8px;
+        width: 24px;
+        height: 8px;
+        background: #ff0000;
+        border-radius: 2px 2px 0 0;
+    }
+    
+    #mario .face {
+        position: absolute;
+        top: 8px;
+        left: 4px;
+        width: 32px;
+        height: 12px;
+        background: #ffcc99;
+        border-radius: 4px;
+    }
+    
+    #mario .mustache {
+        position: absolute;
+        top: 16px;
+        left: 8px;
+        width: 24px;
+        height: 4px;
+        background: #4a2f00;
+        border-radius: 2px;
+    }
+    
+    #mario .body {
+        position: absolute;
+        top: 20px;
+        left: 6px;
+        width: 28px;
+        height: 16px;
+        background: #ff0000;
+        border-radius: 4px;
+    }
+    
+    #mario .overalls {
+        position: absolute;
+        top: 28px;
+        left: 8px;
+        width: 24px;
+        height: 14px;
+        background: #0066ff;
+        border-radius: 0 0 4px 4px;
+    }
+    
+    #mario .leg-left, #mario .leg-right {
+        position: absolute;
+        bottom: 0;
+        width: 10px;
+        height: 10px;
+        background: #4a2f00;
+        border-radius: 2px;
+        animation: mario-legs 0.2s steps(2) infinite;
+    }
+    
+    #mario .leg-left {
+        left: 8px;
+    }
+    
+    #mario .leg-right {
+        right: 8px;
+        animation-delay: 0.1s;
+    }
+    
+    @keyframes mario-run {
+        0% {
+            left: -60px;
+            bottom: 150px;
+        }
+        15% {
+            left: 20%;
+            bottom: 150px;
+        }
+        20% {
+            left: 25%;
+            bottom: 220px;
+        }
+        25% {
+            left: 30%;
+            bottom: 150px;
+        }
+        45% {
+            left: 50%;
+            bottom: 150px;
+        }
+        50% {
+            left: 55%;
+            bottom: 250px;
+        }
+        55% {
+            left: 60%;
+            bottom: 150px;
+        }
+        75% {
+            left: 80%;
+            bottom: 150px;
+        }
+        80% {
+            left: 85%;
+            bottom: 200px;
+        }
+        85% {
+            left: 90%;
+            bottom: 150px;
+        }
+        100% {
+            left: 110%;
+            bottom: 150px;
+        }
+    }
+    
+    @keyframes mario-legs {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-3px); }
+    }
+    
+    /* Mario jump effect stars */
+    .mario-star {
+        position: absolute;
+        font-size: 20px;
+        animation: star-pop 0.5s ease-out forwards;
+        z-index: 501;
+        pointer-events: none;
+    }
+    
+    @keyframes star-pop {
+        0% {
+            opacity: 1;
+            transform: scale(0) translateY(0);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.5) translateY(-20px);
+        }
+        100% {
+            opacity: 0;
+            transform: scale(0.5) translateY(-40px);
+        }
+    }
+    
+    /* Coin block */
+    .coin-block {
+        position: absolute;
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(135deg, #ffcc00 0%, #ff9900 50%, #cc6600 100%);
+        border: 3px solid #996600;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+        color: #996600;
+        text-shadow: 1px 1px 0 #ffff00;
+        box-shadow: inset 2px 2px 0 rgba(255,255,255,0.3), inset -2px -2px 0 rgba(0,0,0,0.2);
+        z-index: 400;
+    }
+    
+    #coin-block-1 { top: 200px; left: 25%; }
+    #coin-block-2 { top: 170px; left: 55%; }
+    #coin-block-3 { top: 220px; left: 85%; }
+    
     /* Asteroid */
     #asteroid {
         position: absolute;
@@ -545,7 +733,7 @@
 <body>
 <div id="game-container">
 <div id="ui">
-<div id="test-banner">☀️ SUNNY SKIES! ☀️</div>
+<div id="test-banner">🍄 MARIO IN MINECRAFT! 🎮</div>
 <div id="info">
 <div>🎮 Mathilde's Minecraft World 🏰</div>
 <div style="color: #00ff00; font-size: 12px;">✅ TEST SUCCESSFUL!</div>
@@ -590,6 +778,20 @@
 <div class="puff3"></div>
 </div>
 <div id="asteroid"></div>
+<div id="mario">
+<div class="mario-body">
+<div class="hat"></div>
+<div class="face"></div>
+<div class="mustache"></div>
+<div class="body"></div>
+<div class="overalls"></div>
+<div class="leg-left"></div>
+<div class="leg-right"></div>
+</div>
+</div>
+<div class="coin-block" id="coin-block-1">?</div>
+<div class="coin-block" id="coin-block-2">?</div>
+<div class="coin-block" id="coin-block-3">?</div>
 <div id="rain-overlay"></div>
 <div id="thunder"></div>
 <div id="rain-container"></div>
@@ -954,6 +1156,42 @@ function createAsteroidParticles() {
 }
 
 setInterval(createAsteroidParticles, 50);
+
+// Mario jump stars effect
+function createMarioStar() {
+    const mario = document.getElementById('mario');
+    if (!mario) return;
+    
+    const rect = mario.getBoundingClientRect();
+    
+    // Only create stars during jumps (when mario is higher)
+    if (rect.bottom < window.innerHeight - 200) {
+        const star = document.createElement('div');
+        star.className = 'mario-star';
+        star.textContent = ['⭐', '✨', '💫', '🪙'][Math.floor(Math.random() * 4)];
+        star.style.left = (rect.left + 20 + (Math.random() - 0.5) * 30) + 'px';
+        star.style.top = (rect.top + 20) + 'px';
+        document.body.appendChild(star);
+        
+        setTimeout(() => star.remove(), 500);
+    }
+}
+
+setInterval(createMarioStar, 200);
+
+// Coin block hit animation
+function animateCoinBlocks() {
+    const blocks = document.querySelectorAll('.coin-block');
+    blocks.forEach(block => {
+        block.addEventListener('animationiteration', () => {
+            block.style.transform = 'translateY(-5px)';
+            setTimeout(() => block.style.transform = '', 100);
+        });
+    });
+}
+animateCoinBlocks();
+
+console.log('🍄 It\'s-a me, Mario! Running through Minecraft!');
 
 // Heavy Rain Effect - Il pleut à seaux!
 function createRain() {
