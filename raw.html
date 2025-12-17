@@ -5,15 +5,15 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>💀 WORLD.EXE HAS CRASHED 💀</title>
+<title>🛡️ SAFE MODE - SYSTEM RECOVERY 🛡️</title>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     
     body {
         min-height: 100vh;
-        background: #0a0a0a;
+        background: #0a1628;
         font-family: 'Courier New', monospace;
-        color: #0f0;
+        color: #4facfe;
         overflow: hidden;
     }
     
@@ -40,8 +40,8 @@
         height: 100%;
         background: repeating-linear-gradient(
             0deg,
-            rgba(0, 255, 0, 0.03) 0px,
-            rgba(0, 255, 0, 0.03) 1px,
+            rgba(79, 172, 254, 0.02) 0px,
+            rgba(79, 172, 254, 0.02) 1px,
             transparent 1px,
             transparent 2px
         );
@@ -171,13 +171,13 @@
 <div id="gameContainer"></div>
 <div id="crosshair"></div>
 <div id="instructions">
-<h3 style="color: #f00; animation: glitch 0.3s infinite;">⚠️ SYSTEM FAILURE ⚠️</h3>
-<p style="color: #f00;">ERROR: WORLD_CORRUPTION</p>
-<p>FRAGMENTS DETECTED: 47%</p>
-<p>REBUILDING FROM RUINS...</p>
-<p style="color: #ff0;">AWAITING NEW COMMANDS</p>
-<p>TYPE: 'REBIRTH' TO BEGIN</p>
-<p style="font-size: 10px; color: #666;">v0.0.1 - THE AFTERMATH</p>
+<h3 style="color: #4facfe;">🛡️ SAFE MODE ACTIVE 🛡️</h3>
+<p style="color: #00ff88;">✓ SYSTEM STABILIZED</p>
+<p>INTEGRITY: 98%</p>
+<p>All threats contained...</p>
+<p style="color: #4facfe;">ENVIRONMENT: PEACEFUL</p>
+<p>Click to explore safely</p>
+<p style="font-size: 10px; color: #666;">v1.0.0 - RECOVERY MODE</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -218,8 +218,8 @@
     
     // Three.js setup
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0a0a0a);
-    scene.fog = new THREE.Fog(0x0a0a0a, 20, 80);
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.Fog(0x87CEEB, 40, 120);
     
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.set(0, 10, 20);
@@ -230,10 +230,10 @@
     document.getElementById('gameContainer').appendChild(renderer.domElement);
     
     // Lighting
-    const ambientLight = new THREE.AmbientLight(0x00ff00, 0.2); // Eerie green glow
+    const ambientLight = new THREE.AmbientLight(0x4facfe, 0.4); // Calm blue glow
     scene.add(ambientLight);
     
-    const sunLight = new THREE.DirectionalLight(0xff0000, 0.4); // Blood red sun
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8); // Peaceful white sun
     sunLight.position.set(50, 100, 50);
     sunLight.castShadow = true;
     scene.add(sunLight);
@@ -756,10 +756,10 @@
                 pokemon.rotation.y = Math.atan2(dx, dz);
             }
             
-            // GLITCHY DEATH ANIMATION - Pokemon are corrupted!
-            pokemon.position.y = 5 + Math.sin(Date.now() * 0.02 + pokemon.id) * 2;
-            pokemon.scale.x = 1 + Math.sin(Date.now() * 0.01) * 0.5;
-            pokemon.visible = Math.random() > 0.1; // Flickering existence
+            // SAFE MODE - Pokemon are peaceful and stable
+            pokemon.position.y = 5 + Math.sin(Date.now() * 0.002 + pokemon.id) * 0.3;
+            pokemon.scale.x = 1;
+            pokemon.visible = true; // Stable existence
             
             // Slight rotation animation
             pokemon.children[0].rotation.z = Math.sin(Date.now() * 0.003) * 0.1;
