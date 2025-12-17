@@ -192,6 +192,7 @@
 <p style="color: #87CEEB;">⛲ FOUNTAIN ADDED!</p>
 <p style="color: #FF4500;">🎬 BOWSER MOVIE THEATER!</p>
 <p style="color: #DC143C;">🍣 JAPANESE RESTAURANT!</p>
+<p style="color: #FF6347;">🍣 SUSHI CONVEYOR ADDED!</p>
 <p style="color: #FF6347;">📱 POKEDEX ACTIVE!</p>
 <p style="color: #FFA500;">🎬 Press F near theater!</p>
 <p style="color: #E52521;">💬 MARIO TALKS TO TOAD!</p>
@@ -874,6 +875,119 @@
         return restaurantGroup;
     }
     const japaneseRestaurant = createJapaneseRestaurant();
+    
+    // FLOATING SUSHI CONVEYOR BELT - Community requested!
+    function createSushiConveyor() {
+        const conveyorGroup = new THREE.Group();
+        
+        // Conveyor belt base
+        const beltGeo = new THREE.TorusGeometry(8, 0.5, 8, 32);
+        const beltMat = new THREE.MeshLambertMaterial({ color: 0x2F2F2F });
+        const belt = new THREE.Mesh(beltGeo, beltMat);
+        belt.rotation.x = Math.PI / 2;
+        belt.position.y = 0.5;
+        conveyorGroup.add(belt);
+        
+        // Sushi pieces on plates!
+        const sushiTypes = [
+            { name: 'Salmon', fishColor: 0xFF6347, riceColor: 0xFFFAF0 },
+            { name: 'Tuna', fishColor: 0xDC143C, riceColor: 0xFFFAF0 },
+            { name: 'Shrimp', fishColor: 0xFFA07A, riceColor: 0xFFFAF0 },
+            { name: 'Tamago', fishColor: 0xFFD700, riceColor: 0xFFFAF0 },
+            { name: 'Unagi', fishColor: 0x8B4513, riceColor: 0xFFFAF0 },
+            { name: 'Ikura', fishColor: 0xFF4500, riceColor: 0xFFFAF0 }
+        ];
+        
+        const sushiPieces = [];
+        for (let i = 0; i < 12; i++) {
+            const sushiGroup = new THREE.Group();
+            const type = sushiTypes[i % sushiTypes.length];
+            
+            // Plate
+            const plateGeo = new THREE.CylinderGeometry(0.6, 0.5, 0.1, 16);
+            const plateMat = new THREE.MeshLambertMaterial({ color: 0xE0E0E0 });
+            const plate = new THREE.Mesh(plateGeo, plateMat);
+            sushiGroup.add(plate);
+            
+            // Rice base
+            const riceGeo = new THREE.BoxGeometry(0.4, 0.25, 0.8);
+            const riceMat = new THREE.MeshLambertMaterial({ color: type.riceColor });
+            const rice = new THREE.Mesh(riceGeo, riceMat);
+            rice.position.y = 0.2;
+            sushiGroup.add(rice);
+            
+            // Fish topping
+            const fishGeo = new THREE.BoxGeometry(0.45, 0.1, 0.85);
+            const fishMat = new THREE.MeshLambertMaterial({ color: type.fishColor });
+            const fish = new THREE.Mesh(fishGeo, fishMat);
+            fish.position.y = 0.38;
+            fish.rotation.x = 0.1;
+            sushiGroup.add(fish);
+            
+            // Nori wrap for some
+            if (i % 3 === 0) {
+                const noriGeo = new THREE.BoxGeometry(0.48, 0.35, 0.15);
+                const noriMat = new THREE.MeshLambertMaterial({ color: 0x1a1a1a });
+                const nori = new THREE.Mesh(noriGeo, noriMat);
+                nori.position.set(0, 0.2, 0);
+                sushiGroup.add(nori);
+            }
+            
+            sushiGroup.userData = { angle: (i / 12) * Math.PI * 2, type: type.name };
+            sushiGroup.name = 'sushiPiece';
+            conveyorGroup.add(sushiGroup);
+            sushiPieces.push(sushiGroup);
+        }
+        
+        // Giant sushi chef statue
+        const chefGroup = new THREE.Group();
+        const chefBodyGeo = new THREE.CylinderGeometry(1, 1.2, 3, 8);
+        const chefBodyMat = new THREE.MeshLambertMaterial({ color: 0xFFFFFF });
+        const chefBody = new THREE.Mesh(chefBodyGeo, chefBodyMat);
+        chefBody.position.y = 1.5;
+        chefGroup.add(chefBody);
+        
+        const chefHeadGeo = new THREE.SphereGeometry(0.8, 12, 12);
+        const chefHeadMat = new THREE.MeshLambertMaterial({ color: 0xFFDBB4 });
+        const chefHead = new THREE.Mesh(chefHeadGeo, chefHeadMat);
+        chefHead.position.y = 3.5;
+        chefGroup.add(chefHead);
+        
+        const chefHatGeo = new THREE.CylinderGeometry(0.6, 0.8, 1.2, 8);
+        const chefHat = new THREE.Mesh(chefHatGeo, chefBodyMat);
+        chefHat.position.y = 4.5;
+        chefGroup.add(chefHat);
+        
+        chefGroup.position.set(0, 0, 0);
+        conveyorGroup.add(chefGroup);
+        
+        // Sushi sign
+        const signCanvas = document.createElement('canvas');
+        signCanvas.width = 256;
+        signCanvas.height = 128;
+        const sctx = signCanvas.getContext('2d');
+        sctx.fillStyle = '#DC143C';
+        sctx.fillRect(0, 0, 256, 128);
+        sctx.fillStyle = '#FFFFFF';
+        sctx.font = 'bold 32px Arial';
+        sctx.textAlign = 'center';
+        sctx.fillText('🍣 SUSHI 🍣', 128, 50);
+        sctx.font = '20px Arial';
+        sctx.fillText('FRESH & DELICIOUS!', 128, 90);
+        const signTex = new THREE.CanvasTexture(signCanvas);
+        const signGeo = new THREE.PlaneGeometry(4, 2);
+        const signMat = new THREE.MeshBasicMaterial({ map: signTex, side: THREE.DoubleSide });
+        const sushiSign = new THREE.Mesh(signGeo, signMat);
+        sushiSign.position.set(0, 7, 0);
+        sushiSign.name = 'sushiSign';
+        conveyorGroup.add(sushiSign);
+        
+        conveyorGroup.position.set(35, 1, 35);
+        conveyorGroup.userData = { sushiPieces: sushiPieces };
+        scene.add(conveyorGroup);
+        return conveyorGroup;
+    }
+    const sushiConveyor = createSushiConveyor();
     
     // Create Rainbow in the sky
     function createRainbow() {
@@ -1959,6 +2073,24 @@
                 }
                 if (child.name === 'neonWindow') {
                     child.material.opacity = 0.5 + Math.sin(Date.now() * 0.006) * 0.4;
+                }
+            });
+        }
+        
+        // Animate Sushi Conveyor Belt!
+        if (sushiConveyor && sushiConveyor.userData.sushiPieces) {
+            sushiConveyor.userData.sushiPieces.forEach((sushi, i) => {
+                sushi.userData.angle += delta * 0.5;
+                sushi.position.x = Math.cos(sushi.userData.angle) * 8;
+                sushi.position.z = Math.sin(sushi.userData.angle) * 8;
+                sushi.position.y = 1 + Math.sin(Date.now() * 0.003 + i) * 0.1;
+                sushi.rotation.y = -sushi.userData.angle + Math.PI / 2;
+            });
+            // Animate sushi sign
+            sushiConveyor.children.forEach(child => {
+                if (child.name === 'sushiSign') {
+                    child.lookAt(camera.position);
+                    child.position.y = 7 + Math.sin(Date.now() * 0.002) * 0.3;
                 }
             });
         }
