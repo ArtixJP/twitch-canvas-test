@@ -16,17 +16,18 @@
             align-items: center; 
             min-height: 100vh; 
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background: linear-gradient(135deg, #0d0d1a 0%, #1a0a2e 50%, #0a1628 100%);
             color: #f0e6d3;
-            overflow-x: hidden;
+            overflow: hidden;
         }
         h1 { font-size: 2.5rem; text-align: center; text-shadow: 0 0 20px #ffd700, 0 0 40px #ff8c00; margin-bottom: 10px; }
         .subtitle { color: #ffd700; font-size: 1rem; margin-bottom: 20px; }
         .game-container { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; width: 100%; max-width: 1200px; position: relative; z-index: 10; }
         .panels-overlay { position: fixed; top: 10px; right: 10px; z-index: 100; display: flex; gap: 10px; flex-direction: column; max-height: 90vh; overflow-y: auto; }
         .panels-overlay .panel { opacity: 0.95; transform: scale(0.9); transform-origin: top right; }
-        .toggle-panels-btn { position: fixed; top: 10px; left: 10px; z-index: 200; padding: 10px 20px; background: linear-gradient(180deg, #3a2a1a, #2a1a0a); border: 2px solid #ffd700; color: #ffd700; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .toggle-panels-btn { position: fixed; top: 60px; left: 10px; z-index: 200; padding: 10px 20px; background: linear-gradient(180deg, #3a2a1a, #2a1a0a); border: 2px solid #ffd700; color: #ffd700; cursor: pointer; border-radius: 5px; font-weight: bold; }
+        .fullscreen-indicator { position: fixed; bottom: 10px; left: 10px; z-index: 200; background: rgba(0,0,0,0.7); padding: 5px 10px; border-radius: 5px; font-size: 12px; color: #4a4; }
         .panel { background: linear-gradient(180deg, rgba(40,30,50,0.95) 0%, rgba(20,15,30,0.98) 100%); border: 2px solid #5a4a3a; border-radius: 8px; padding: 15px; box-shadow: 0 0 20px rgba(255,165,0,0.2), inset 0 0 30px rgba(0,0,0,0.5); }
         .character-panel { width: 280px; }
         .combat-panel { width: 500px; min-height: 350px; }
@@ -59,9 +60,11 @@
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 14px; margin: 10px 0; }
         .stat-item { background: rgba(0,0,0,0.3); padding: 5px; border-radius: 3px; }
         .gold-display { color: #ffd700; font-size: 18px; text-align: center; margin: 10px 0; }
-        .world-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; overflow: hidden; background: linear-gradient(180deg, #1a3a1a 0%, #0d2a0d 100%); border: none; z-index: 1; }
+        .world-panel { width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; overflow: hidden; background: linear-gradient(180deg, #1a3a1a 0%, #0d2a0d 100%); border: none; z-index: 1; image-rendering: pixelated; }
         .world-panel.minimized { width: 100%; max-width: 600px; height: 400px; position: relative; border: 3px solid #5a4a3a; }
-        .world-floor { position: absolute; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,50,0,0.3) 40px, rgba(0,50,0,0.3) 41px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,50,0,0.3) 40px, rgba(0,50,0,0.3) 41px); }
+        .world-floor { position: absolute; width: 100%; height: 100%; background-image: repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,80,0,0.2) 40px, rgba(0,80,0,0.2) 41px), repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,80,0,0.2) 40px, rgba(0,80,0,0.2) 41px); background-color: #1a4a1a; }
+        .world-tree { position: absolute; font-size: 50px; z-index: 2; pointer-events: none; }
+        .world-rock { position: absolute; font-size: 35px; z-index: 2; pointer-events: none; opacity: 0.8; }
         .player-char { position: absolute; font-size: 40px; transition: left 0.15s, top 0.15s; z-index: 10; filter: drop-shadow(0 0 5px #ffd700); cursor: pointer; }
         .world-enemy { position: absolute; font-size: 35px; cursor: pointer; animation: enemyFloat 2s infinite; z-index: 5; }
         .world-chest { position: absolute; font-size: 30px; cursor: pointer; z-index: 5; }
@@ -79,12 +82,17 @@
     </style>
 </head>
 <body>
-<h1>⚔️ Hello World of Warcraft ⚔️</h1>
-<p class="subtitle">~ An Epic RPG Adventure ~</p>
+<h1 style="position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:150;background:rgba(0,0,0,0.8);padding:5px 20px;border-radius:10px;font-size:1.5rem;margin:0;">⚔️ Hello World of Warcraft ⚔️</h1>
 <button class="toggle-panels-btn" onclick="togglePanels()">📊 Toggle Panels</button>
 <div class="panel world-panel" id="game-world">
 <h3 style="text-align:center;color:#4a4;margin:5px 0;position:absolute;top:10px;left:50%;transform:translateX(-50%);z-index:20;background:rgba(0,0,0,0.7);padding:5px 15px;border-radius:5px;">🗺️ Explore the World</h3>
 <div class="world-floor"></div>
+<div class="world-tree" style="left:50px;top:200px;">🌲</div>
+<div class="world-tree" style="left:600px;top:100px;">🌳</div>
+<div class="world-tree" style="left:900px;top:350px;">🌲</div>
+<div class="world-tree" style="left:300px;top:450px;">🌳</div>
+<div class="world-rock" style="left:450px;top:500px;">🪨</div>
+<div class="world-rock" style="left:750px;top:150px;">🪨</div>
 <div class="player-char" id="player-sprite">🗡️<span class="daggers" id="dagger-left">🗡️</span><span class="daggers" id="dagger-right">🗡️</span></div>
 <div class="world-enemy" data-hp="30" data-name="Goblin" id="world-enemy-1" style="left:400px;top:150px;">👺</div>
 <div class="world-enemy" data-hp="45" data-name="Wolf" id="world-enemy-2" style="left:200px;top:280px;">🐺</div>
@@ -94,6 +102,7 @@
 <div class="world-chest" id="chest-2" onclick="openChest(this)" style="left:100px;top:100px;">📦</div>
 <div class="world-chest" id="chest-3" onclick="openChest(this)" style="left:800px;top:200px;">📦</div>
 <div class="world-controls" style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);padding:5px 15px;border-radius:5px;">Use WASD or Arrow Keys to move • Click enemies to attack</div>
+<div class="fullscreen-indicator">🎮 2D Fullscreen Mode Active</div>
 </div>
 <div class="panels-overlay" id="panels-overlay">
 <div class="game-container">
@@ -135,7 +144,6 @@
 <h3 style="text-align:center;color:#aaa;margin:0 0 10px 0;">📜 Battle Log</h3>
 <div id="log"></div>
 </div>
-
 <script>
         const classes = {
             warrior: { hp: 120, mp: 30, atk: 15, def: 10, crit: 5, spd: 8, skill: 'Heroic Strike', skillMult: 2.5 },
