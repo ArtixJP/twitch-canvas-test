@@ -81,6 +81,68 @@
             z-index: 50;
             transition: left 0.15s, bottom 0.15s;
         }
+        #mario {
+            position: absolute;
+            width: 48px;
+            height: 64px;
+            z-index: 45;
+            animation: mario-bounce 0.5s infinite ease-in-out, mario-walk 8s infinite linear;
+            image-rendering: pixelated;
+        }
+        @keyframes mario-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        @keyframes mario-walk {
+            0% { left: -50px; }
+            50% { left: calc(100vw + 50px); }
+            50.01% { left: calc(100vw + 50px); transform: scaleX(-1); }
+            100% { left: -50px; transform: scaleX(-1); }
+        }
+        .mario-hat {
+            width: 40px;
+            height: 12px;
+            background: #E52521;
+            border-radius: 8px 8px 0 0;
+            margin-left: 4px;
+        }
+        .mario-head {
+            width: 36px;
+            height: 20px;
+            background: #FFB366;
+            margin-left: 6px;
+            position: relative;
+        }
+        .mario-head::before {
+            content: '';
+            position: absolute;
+            width: 24px;
+            height: 8px;
+            background: #8B4513;
+            bottom: 2px;
+            left: 6px;
+            border-radius: 2px;
+        }
+        .mario-body {
+            width: 32px;
+            height: 16px;
+            background: #E52521;
+            margin-left: 8px;
+        }
+        .mario-overalls {
+            width: 36px;
+            height: 16px;
+            background: #0051BA;
+            margin-left: 6px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .mario-overalls::before, .mario-overalls::after {
+            content: '';
+            width: 12px;
+            height: 16px;
+            background: #0051BA;
+        }
         .player-head {
             width: 40px;
             height: 40px;
@@ -157,12 +219,19 @@
 <div id="instructions">
             🎮 WASD/Arrows: Move<br/>
             🖱️ Click blocks: Break<br/>
-            1-4: Select block type
+            1-4: Select block type<br/>
+            🍄 Mario is visiting!
         </div>
 <div id="world"></div>
 <div id="player">
 <div class="player-head"></div>
 <div class="player-body"></div>
+</div>
+<div id="mario" style="bottom: 250px;">
+<div class="mario-hat"></div>
+<div class="mario-head"></div>
+<div class="mario-body"></div>
+<div class="mario-overalls"></div>
 </div>
 <div id="hotbar">
 <div class="hotbar-slot grass selected" data-block="grass"></div>
