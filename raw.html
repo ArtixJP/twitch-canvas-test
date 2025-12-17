@@ -118,15 +118,19 @@
         player.x += player.vx; player.y += player.vy; player.z += player.vz;
         
         player.grounded = false;
-        const feet = `${Math.round(player.x)},${Math.round(player.y-1.5)},${Math.round(player.z)}`;
-        if(blocks.has(feet) && player.vy < 0) {
-            player.y = Math.round(player.y-1.5) + 2.5;
-            player.vy = 0;
-            player.grounded = true;
+        const feetY = Math.floor(player.y - 1.6);
+        const feet = `${Math.round(player.x)},${feetY},${Math.round(player.z)}`;
+        if(blocks.has(feet) && player.vy <= 0) {
+            const targetY = feetY + 2.6;
+            if(player.y < targetY + 0.1) {
+                player.y = targetY;
+                player.vy = 0;
+                player.grounded = true;
+            }
         }
         if(player.y < -10) { player.x = 0; player.y = 10; player.z = 5; player.vy = 0; }
         
-        camera.position.set(player.x, player.y, player.z);
+        camera.position.lerp(new THREE.Vector3(player.x, player.y, player.z), 0.5);
         camera.rotation.order = 'YXZ';
         camera.rotation.y = player.yaw;
         camera.rotation.x = player.pitch;
