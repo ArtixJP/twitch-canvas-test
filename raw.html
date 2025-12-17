@@ -83,12 +83,12 @@
 </div>
 <h1>Hello World</h1>
 
-<button class="music-btn" id="musicToggle">🎵 Play Music</button>
+<button class="music-btn playing" id="musicToggle">⏸️ Pause</button>
 <script>
     const music = document.getElementById('bgMusic');
     const btn = document.getElementById('musicToggle');
     btn.addEventListener('click', () => {
-        if (music.paused) {
+        if (!music || music.paused) {
             music.play();
             btn.textContent = '⏸️ Pause';
             btn.classList.add('playing');
