@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🌸 POKÉMON SIMULATOR - A New Dawn Edition 🌸</title>
+<title>🔥 POKÉMON SIMULATOR - REBIRTH Edition 🔥</title>
 <style>
         * { box-sizing: border-box; }
         body { 
@@ -89,11 +89,12 @@
     </style>
 </head>
 <body>
-<h1 style="position:fixed;top:10%;left:50%;transform:translateX(-50%);z-index:150;background:linear-gradient(180deg,rgba(255,200,220,0.9),rgba(180,100,200,0.85));padding:20px 40px;font-size:2.5rem;margin:0;color:#6a1b9a;text-shadow:0 0 20px #e91e63,0 0 40px #9c27b0;animation:fadeIn 3s ease-out, newDawnPulse 4s infinite;border-radius:20px;border:3px solid #f8bbd9;">🌸 POKÉMON SIMULATOR 🌸<br/><span style="font-size:0.8rem;color:#880e4f;">✨ A New Dawn Edition ✨</span></h1>
+<h1 style="position:fixed;top:10%;left:50%;transform:translateX(-50%);z-index:150;background:linear-gradient(180deg,rgba(255,100,50,0.95),rgba(200,50,0,0.9));padding:20px 40px;font-size:2.5rem;margin:0;color:#fff;text-shadow:0 0 20px #ff4400,0 0 40px #ff0000;animation:fadeIn 3s ease-out, rebirthPulse 2s infinite;border-radius:20px;border:3px solid #ffaa00;">🔥 POKÉMON SIMULATOR 🔥<br/><span style="font-size:0.8rem;color:#ffd700;">⚡ REBIRTH Edition ⚡</span></h1>
+<style>@keyframes rebirthPulse { 0%,100% { box-shadow:0 0 30px rgba(255,68,0,0.6),0 0 60px rgba(255,0,0,0.4); } 50% { box-shadow:0 0 60px rgba(255,100,0,0.8),0 0 100px rgba(255,50,0,0.6),0 0 140px rgba(255,200,0,0.3); } }</style>
 <style>@keyframes newDawnPulse { 0%,100% { box-shadow:0 0 30px rgba(233,30,99,0.5),0 0 60px rgba(156,39,176,0.3); } 50% { box-shadow:0 0 50px rgba(233,30,99,0.7),0 0 80px rgba(156,39,176,0.5),0 0 100px rgba(255,64,129,0.3); } }</style>
 <style>@keyframes titlePulse { 0%,100% { text-shadow:0 0 30px #ff0000,0 0 60px #880000; } 50% { text-shadow:0 0 50px #ff4444,0 0 80px #ff0000,0 0 100px #880000; } }</style>
 <style>@keyframes fadeIn { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 100% { opacity:1; transform:translate(-50%,-50%) scale(1); } }</style>
-<p style="position:fixed;bottom:18%;left:50%;transform:translateX(-50%);color:#4a148c;font-size:1.2rem;text-align:center;z-index:100;text-shadow:0 0 10px rgba(255,255,255,0.8),0 0 20px #e91e63;background:rgba(255,255,255,0.7);padding:12px 25px;border-radius:15px;border:2px solid #f48fb1;">🌅 WASD to explore • Click wild Pokémon to battle • Throw Pokéballs to catch! 🌅<br/><span style="font-size:0.8rem;color:#880e4f;">A fresh new day begins!</span></p>
+<p style="position:fixed;bottom:18%;left:50%;transform:translateX(-50%);color:#fff;font-size:1.2rem;text-align:center;z-index:100;text-shadow:0 0 10px rgba(255,100,0,0.9),0 0 20px #ff4400;background:rgba(50,0,0,0.85);padding:12px 25px;border-radius:15px;border:2px solid #ff6600;">🔥 WASD to explore • Click wild Pokémon to battle • Throw Pokéballs to catch! 🔥<br/><span style="font-size:0.8rem;color:#ffaa00;">Rise from the ashes!</span></p>
 <div id="captured-display" style="position:fixed;top:70px;left:20px;color:#f0f;font-family:monospace;font-size:14px;z-index:100;background:linear-gradient(180deg,rgba(80,0,80,0.9),rgba(40,0,60,0.95));padding:12px 15px;border-radius:10px;border:2px solid #f0f;box-shadow:0 0 20px rgba(255,0,255,0.4);">
 <div style="font-weight:bold;margin-bottom:8px;font-size:16px;color:#ff4444;">📖 POKÉDEX</div><div id="trainer-badges" style="font-size:10px;margin-bottom:5px;">🏅 Badges: <span id="badge-count">0</span>/8</div>
 <button id="new-game-plus" onclick="startNewGamePlus()" style="margin-top:5px;padding:3px 8px;background:linear-gradient(180deg,#4a0,#280);border:1px solid #8f8;color:#fff;border-radius:3px;cursor:pointer;font-size:10px;">🔄 New Game+</button>
@@ -105,10 +106,11 @@
 <style>@keyframes trainerGlow { 0%,100% { filter:drop-shadow(0 0 25px #ffb74d) drop-shadow(0 0 40px #ff8a65); } 50% { filter:drop-shadow(0 0 35px #ffd54f) drop-shadow(0 0 55px #ffab40) drop-shadow(0 0 70px #ff7043); } }</style>
 <div id="coordinates" style="position:fixed;top:20px;left:20px;color:#4f4;font-family:monospace;font-size:14px;z-index:100;background:rgba(0,0,0,0.5);padding:10px;border-radius:5px;border:1px solid #4f4;">🎮 EXPLORING...</div>
 <div id="space-objects"></div>
-<div id="tall-grass-indicator" style="position:fixed;right:15%;top:20%;padding:15px 25px;background:linear-gradient(180deg,#c8e6c9,#81c784);border:3px solid #66bb6a;border-radius:15px;z-index:20;color:#1b5e20;font-weight:bold;box-shadow:0 0 25px rgba(129,199,132,0.6),inset 0 0 15px rgba(255,255,255,0.3);animation:grassPulse 3s infinite;">
+<div id="tall-grass-indicator" style="position:fixed;right:15%;top:20%;padding:15px 25px;background:linear-gradient(180deg,#553300,#331100);border:3px solid #ff6600;border-radius:15px;z-index:20;color:#ffcc00;font-weight:bold;box-shadow:0 0 25px rgba(255,100,0,0.6),inset 0 0 15px rgba(255,200,0,0.3);animation:firePulse 2s infinite;">
+<style>@keyframes firePulse { 0%,100% { box-shadow:0 0 20px rgba(255,100,0,0.4); } 50% { box-shadow:0 0 40px rgba(255,150,0,0.7),0 0 60px rgba(255,50,0,0.4); } }</style>
 <style>@keyframes grassPulse { 0%,100% { box-shadow:0 0 20px rgba(0,255,0,0.3); } 50% { box-shadow:0 0 35px rgba(0,255,0,0.5),0 0 50px rgba(0,200,0,0.3); } }</style>
-🌿 TALL GRASS AREA 🌿<br/>
-<span style="font-size:12px;color:#6a6;">Wild Pokémon may appear!</span>
+🔥 VOLCANIC GRASS ZONE 🔥<br/>
+<span style="font-size:12px;color:#ff8800;">Reborn Pokémon await!</span>
 </div>
 <div id="cloud-container" style="position:fixed;top:0;left:0;width:100%;height:40%;pointer-events:none;z-index:15;overflow:hidden;"></div>
 <div id="pikachu-animation" style="position:fixed;bottom:15%;left:20%;z-index:50;font-size:60px;animation:pikachuBounce 0.8s infinite ease-in-out, pikachuSpark 2s infinite;cursor:pointer;filter:drop-shadow(2px 4px 6px rgba(0,0,0,0.5));" title="Pika pika!">⚡🐭</div>
@@ -213,11 +215,14 @@ document.addEventListener('click', (e) => {
   }
 });
 </script>
-<div id="void-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(180deg, #ffb6c1 0%, #ffd700 15%, #87CEEB 35%, #98fb98 55%, #228B22 75%, #1a4a1a 100%);z-index:0;animation:dawnSky 30s infinite;"></div>
+<div id="void-canvas" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:linear-gradient(180deg, #1a0000 0%, #330000 20%, #552200 40%, #ff4400 60%, #ff8800 80%, #ffcc00 100%);z-index:0;animation:rebirthSky 20s infinite;"></div>
+<style>@keyframes rebirthSky { 0%,100% { filter:brightness(1) saturate(1.2) hue-rotate(0deg); } 50% { filter:brightness(1.3) saturate(1.5) hue-rotate(10deg); } }</style>
 <style>@keyframes dawnSky { 0%,100% { filter:brightness(1) saturate(1); } 50% { filter:brightness(1.1) saturate(1.2); } }</style>
 <div id="sunrise-glow" style="position:fixed;top:-50%;left:50%;transform:translateX(-50%);width:200vw;height:100vh;background:radial-gradient(ellipse at center,rgba(255,183,77,0.4) 0%,rgba(255,138,101,0.2) 30%,transparent 70%);z-index:0;pointer-events:none;animation:sunGlow 10s infinite ease-in-out;"></div>
-<div id="new-beginning-overlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,200,220,0.7) 30%, transparent 70%);z-index:9998;pointer-events:none;animation:newBeginningFade 4s ease-out forwards;"></div>
-<div id="new-beginning-text" style="position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);z-index:9999;text-align:center;color:#4a148c;font-size:2.5rem;font-weight:bold;text-shadow:0 0 30px #fff,0 0 60px #e91e63;animation:newBeginningTextFade 5s ease-out forwards;pointer-events:none;">🌅 A New Journey Begins... 🌅<br/><span style="font-size:1rem;color:#880e4f;">The world awaits your exploration!</span></div>
+<div id="rebirth-overlay" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:radial-gradient(circle at center, rgba(255,200,0,1) 0%, rgba(255,100,0,0.9) 30%, rgba(200,0,0,0.7) 60%, transparent 90%);z-index:9998;pointer-events:none;animation:rebirthExplosion 5s ease-out forwards;"></div>
+<style>@keyframes rebirthExplosion { 0% { opacity:1; transform:scale(0); } 20% { opacity:1; transform:scale(2); } 100% { opacity:0; transform:scale(4); } }</style>
+<div id="rebirth-text" style="position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);z-index:9999;text-align:center;color:#fff;font-size:3rem;font-weight:bold;text-shadow:0 0 30px #ff4400,0 0 60px #ff0000,0 0 90px #ffaa00;animation:rebirthTextAnim 6s ease-out forwards;pointer-events:none;">🔥 FROM THE ASHES 🔥<br/><span style="font-size:1.2rem;color:#ffd700;">A NEW ERA BEGINS!</span><br/><span style="font-size:0.9rem;color:#ffaa00;">The world has been REBORN!</span></div>
+<style>@keyframes rebirthTextAnim { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.3) rotate(-10deg); } 15% { opacity:1; transform:translate(-50%,-50%) scale(1.3) rotate(5deg); } 30% { transform:translate(-50%,-50%) scale(1) rotate(0deg); } 70% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-60%) scale(1.1); } }</style>
 <style>
 @keyframes newBeginningFade { 0% { opacity:1; } 100% { opacity:0; } }
 @keyframes newBeginningTextFade { 0% { opacity:0; transform:translate(-50%,-50%) scale(0.5); } 20% { opacity:1; transform:translate(-50%,-50%) scale(1.1); } 40% { transform:translate(-50%,-50%) scale(1); } 80% { opacity:1; } 100% { opacity:0; transform:translate(-50%,-60%) scale(1); } }
