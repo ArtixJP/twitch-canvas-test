@@ -48,6 +48,25 @@
             justify-content: center;
             align-items: center;
         }
+    .music-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            border: none;
+            border-radius: 25px;
+            color: #1a1a2e;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.5);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .music-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 30px rgba(255, 202, 87, 0.7);
+        }
     </style>
 </head>
 <body>
@@ -55,5 +74,24 @@
 <h1>Hello World</h1>
 <div class="planet"></div>
 </div>
+
+<button class="music-btn" id="musicToggle">🎵 Pause</button>
+<script>
+        const audio = document.getElementById('bgMusic');
+        const btn = document.getElementById('musicToggle');
+        audio.volume = 0.5;
+        audio.play().catch(() => {
+            btn.textContent = '🎵 Play';
+        });
+        btn.addEventListener('click', () => {
+            if (audio.paused) {
+                audio.play();
+                btn.textContent = '🎵 Pause';
+            } else {
+                audio.pause();
+                btn.textContent = '🎵 Play';
+            }
+        });
+    </script>
 </body>
 </html>
