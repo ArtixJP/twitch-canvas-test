@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Versus Code</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch Versus Code</title>
+<style>
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
@@ -15,11 +16,45 @@
             margin: 0;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             color: white;
+            flex-direction: column;
+            gap: 2rem;
         }
         h1 { font-size: 3rem; text-align: center; }
+        .planet-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+        }
+        .planet {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b 0%, #c44569 50%, #6b2d5c 100%);
+            box-shadow: inset -20px -20px 40px rgba(0,0,0,0.5), 0 0 60px rgba(255,107,107,0.3);
+            animation: rotate 20s linear infinite;
+        }
+        .ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 220px;
+            height: 50px;
+            border: 4px solid rgba(255,200,150,0.6);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) rotateX(75deg);
+            box-shadow: 0 0 15px rgba(255,200,150,0.3);
+        }
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<div class="planet-container">
+<div class="planet"></div>
+<div class="ring"></div>
+</div>
+<h1>Hello World</h1>
 </body>
 </html>
