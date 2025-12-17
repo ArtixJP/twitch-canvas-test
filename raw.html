@@ -193,6 +193,7 @@
 <p style="color: #FF4500;">🎬 BOWSER MOVIE THEATER!</p>
 <p style="color: #DC143C;">🍣 JAPANESE RESTAURANT!</p>
 <p style="color: #FF6347;">📱 POKEDEX ACTIVE!</p>
+<p style="color: #FFA500;">🎬 Press F near theater!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -1119,6 +1120,7 @@
             case 'Digit4': selectBlock(3); break;
             case 'Digit5': selectBlock(4); break;
             case 'KeyE': throwPokeball(); break;
+            case 'KeyF': interactWithTheater(); break;
         }
     });
     
@@ -1233,6 +1235,71 @@
         
         scene.add(pokeballGroup);
         pokeballs.push(pokeballGroup);
+    }
+    
+    // Theater interaction
+    let moviePlaying = false;
+    let movieFrame = 0;
+    
+    function interactWithTheater() {
+        const distToTheater = camera.position.distanceTo(new THREE.Vector3(-30, 8, -30));
+        if (distToTheater < 25 && !moviePlaying) {
+            startBowserMovie();
+        }
+    }
+    
+    function startBowserMovie() {
+        moviePlaying = true;
+        movieFrame = 0;
+        
+        // Create movie overlay
+        const overlay = document.createElement('div');
+        overlay.id = 'movieOverlay';
+        overlay.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:60%;height:60%;background:#000;border:4px solid #FFD700;border-radius:10px;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;';
+        
+        const screen = document.createElement('div');
+        screen.id = 'movieScreen';
+        screen.style.cssText = 'width:90%;height:80%;background:#1a0a00;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#FF4500;font-size:24px;font-family:Arial;';
+        screen.innerHTML = '<div style="font-size:32px;">🎬 BOWSER MOVIE 🎬</div><div style="margin-top:20px;">Loading...</div>';
+        
+        const closeBtn = document.createElement('button');
+        closeBtn.textContent = '✕ CLOSE';
+        closeBtn.style.cssText = 'margin-top:10px;padding:10px 20px;background:#E52521;color:white;border:none;border-radius:5px;cursor:pointer;font-size:16px;';
+        closeBtn.onclick = () => { document.body.removeChild(overlay); moviePlaying = false; };
+        
+        overlay.appendChild(screen);
+        overlay.appendChild(closeBtn);
+        document.body.appendChild(overlay);
+        
+        // Movie scenes
+        const scenes = [
+            { text: '🏰 In the Mushroom Kingdom...', bg: '#1a1a4a' },
+            { text: '👸 Princess Peach was captured!', bg: '#FFB6C1' },
+            { text: '🐢 BOWSER: "BWAHAHA!"', bg: '#228B22' },
+            { text: '🔥 "The princess is MINE!"', bg: '#FF4500' },
+            { text: '🍄 But Mario heard the news...', bg: '#E52521' },
+            { text: '🏃 "Here we go!"', bg: '#4169E1' },
+            { text: '⭐ Mario collected power stars!', bg: '#FFD700' },
+            { text: '🐢 BOWSER: "You\'ll never win!"', bg: '#228B22' },
+            { text: '💥 EPIC BATTLE BEGINS!', bg: '#FF0000' },
+            { text: '🎉 Mario saves the day!', bg: '#00FF00' },
+            { text: '👸❤️🍄 THE END', bg: '#FF69B4' }
+        ];
+        
+        let sceneIndex = 0;
+        const playScene = () => {
+            if (sceneIndex < scenes.length && moviePlaying) {
+                const scene = scenes[sceneIndex];
+                screen.style.background = scene.bg;
+                screen.innerHTML = `<div style="font-size:28px;text-align:center;padding:20px;text-shadow:2px 2px 4px black;">${scene.text}</div><div style="font-size:14px;margin-top:20px;">Scene ${sceneIndex + 1}/${scenes.length}</div>`;
+                sceneIndex++;
+                setTimeout(playScene, 2500);
+            } else if (moviePlaying) {
+                screen.innerHTML = '<div style="font-size:32px;">🎬 THE END 🎬</div><div style="margin-top:20px;font-size:18px;">Thanks for watching!</div><div style="margin-top:10px;">⭐⭐⭐⭐⭐</div>';
+            }
+        };
+        
+        setTimeout(playScene, 1000);
     }
     
     // Check pokeball collisions
