@@ -218,6 +218,59 @@
             { emoji: '🍌', name: 'Bananasaur', points: 35 }
         ];
         
+        // Mom's little helper character
+        const momHelper = {
+            x: 100,
+            y: 100,
+            vx: 1.5,
+            vy: 1,
+            message: 'Hi Mom! 💕',
+            showMessage: true,
+            messageTimer: 0
+        };
+        
+        function updateMomHelper() {
+            momHelper.x += momHelper.vx;
+            momHelper.y += momHelper.vy;
+            
+            if (momHelper.x < 30 || momHelper.x > gameCanvas.width - 30) momHelper.vx *= -1;
+            if (momHelper.y < 40 || momHelper.y > gameCanvas.height - 30) momHelper.vy *= -1;
+            
+            momHelper.messageTimer++;
+            if (momHelper.messageTimer > 120) {
+                momHelper.showMessage = !momHelper.showMessage;
+                momHelper.messageTimer = 0;
+            }
+        }
+        
+        function drawMomHelper() {
+            // Draw the little character
+            ctx.font = '28px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            const bounce = Math.sin(Date.now() / 200) * 3;
+            ctx.fillText('🧒', momHelper.x, momHelper.y + bounce);
+            
+            // Draw speech bubble when showing message
+            if (momHelper.showMessage) {
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+                ctx.beginPath();
+                ctx.roundRect(momHelper.x - 45, momHelper.y - 55, 90, 28, 10);
+                ctx.fill();
+                
+                // Speech bubble pointer
+                ctx.beginPath();
+                ctx.moveTo(momHelper.x - 5, momHelper.y - 27);
+                ctx.lineTo(momHelper.x + 5, momHelper.y - 27);
+                ctx.lineTo(momHelper.x, momHelper.y - 20);
+                ctx.fill();
+                
+                ctx.fillStyle = '#c44569';
+                ctx.font = 'bold 12px Arial';
+                ctx.fillText(momHelper.message, momHelper.x, momHelper.y - 41);
+            }
+        }
+        
         let score = 0;
         let caught = 0;
         let wildPokemon = [];
@@ -287,6 +340,10 @@
                 p.update();
                 p.draw();
             });
+            
+            // Update and draw mom's helper
+            updateMomHelper();
+            drawMomHelper();
             
             requestAnimationFrame(gameLoop);
         }
