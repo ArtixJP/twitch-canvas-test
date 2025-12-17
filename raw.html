@@ -18,6 +18,27 @@
             color: white;
         }
         h1 { font-size: 3rem; text-align: center; position: relative; z-index: 10; }
+        .sun {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #fff9c4 0%, #ffeb3b 30%, #ff9800 70%, #ff5722 100%);
+            position: absolute;
+            box-shadow: 0 0 60px 30px rgba(255, 235, 59, 0.6), 0 0 100px 60px rgba(255, 152, 0, 0.4), 0 0 140px 90px rgba(255, 87, 34, 0.2);
+            animation: sun-pulse 2s ease-in-out infinite;
+            z-index: 5;
+        }
+        @keyframes sun-pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 60px 30px rgba(255, 235, 59, 0.6), 0 0 100px 60px rgba(255, 152, 0, 0.4); }
+            50% { transform: scale(1.05); box-shadow: 0 0 80px 40px rgba(255, 235, 59, 0.7), 0 0 120px 70px rgba(255, 152, 0, 0.5); }
+        }
+        .doggy {
+            position: absolute;
+            font-size: 28px;
+            filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
+            transition: transform 0.1s linear;
+            z-index: 20;
+        }
         .planet {
             width: 80px;
             height: 80px;
@@ -94,11 +115,13 @@
 </head>
 <body>
 <div class="solar-system">
+<div class="sun"></div>
 <h1>Hello World</h1>
 <div class="planet">
 <div class="moon"></div>
-<div class="kitty">🐱</div>
+<div class="kitty" id="kitty">🐱</div>
 </div>
+<div class="doggy" id="doggy">🐕</div>
 </div>
 <button class="music-btn" id="musicToggle">🎵 Pause</button>
 <script>
@@ -117,6 +140,42 @@
                 btn.textContent = '🎵 Play';
             }
         });
+
+        // Dog chasing cat logic
+        const kitty = document.getElementById('kitty');
+        const doggy = document.getElementById('doggy');
+        let dogAngle = Math.PI;
+        let dogRadius = 120;
+        let dogSpeed = 0.02;
+        let kittySpeed = 1; // multiplier for kitty animation
+        
+        function updateDogPosition() {
+            const kittyRect = kitty.getBoundingClientRect();
+            const solarSystem = document.querySelector('.solar-system');
+            const centerX = solarSystem.offsetWidth / 2;
+            const centerY = solarSystem.offsetHeight / 2;
+            
+            // Move dog in orbit chasing pattern
+            dogAngle += dogSpeed;
+            const dogX = Math.cos(dogAngle) * dogRadius;
+            const dogY = Math.sin(dogAngle) * dogRadius;
+            doggy.style.transform = `translate(${dogX}px, ${dogY}px)`;
+            
+            // Check distance to kitty
+            const dogRect = doggy.getBoundingClientRect();
+            const dist = Math.hypot(kittyRect.left - dogRect.left, kittyRect.top - dogRect.top);
+            
+            if (dist < 80) {
+                kitty.style.animationDuration = '1s';
+                dogSpeed = 0.01;
+            } else {
+                kitty.style.animationDuration = '5s';
+                dogSpeed = 0.03;
+            }
+            
+            requestAnimationFrame(updateDogPosition);
+        }
+        updateDogPosition();
     </script>
 </body>
 </html>
