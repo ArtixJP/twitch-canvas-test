@@ -186,6 +186,9 @@
 <p style="color: #FFD700;">👋 HELLO MO!</p>
 <p style="color: #FF4500;">🎮 POKEMON GAME ACTIVE!</p>
 <p style="color: #fff; font-size: 11px;">Press E to throw Pokeball!</p>
+<p style="color: #FF0000;">🎮 MARIO MINI-GAME ZONE!</p>
+<p style="color: #FFFF00;">⭐ Hit ? Blocks for coins!</p>
+<p style="color: #00FFFF;">🐾 +10 MORE POKEMON!</p>
 </div>
 <div class="stats">
 <div class="stat">
@@ -536,6 +539,82 @@
     }
     buildMarioTower();
     
+    // MARIO BROS MINI-GAME ZONE!
+    function createMarioGameZone() {
+        const zoneX = -25;
+        const zoneZ = 20;
+        
+        // Question blocks that float and spin!
+        const questionBlocks = [];
+        for (let i = 0; i < 5; i++) {
+            const qBlock = new THREE.Group();
+            const blockGeo = new THREE.BoxGeometry(2.5, 2.5, 2.5);
+            const blockMat = new THREE.MeshLambertMaterial({ color: 0xFFD700 });
+            const block = new THREE.Mesh(blockGeo, blockMat);
+            qBlock.add(block);
+            
+            // Question mark texture
+            const canvas = document.createElement('canvas');
+            canvas.width = 64;
+            canvas.height = 64;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#FFD700';
+            ctx.fillRect(0, 0, 64, 64);
+            ctx.fillStyle = '#8B4513';
+            ctx.font = 'bold 48px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('?', 32, 50);
+            const texture = new THREE.CanvasTexture(canvas);
+            const faceGeo = new THREE.PlaneGeometry(2.4, 2.4);
+            const faceMat = new THREE.MeshBasicMaterial({ map: texture });
+            const face = new THREE.Mesh(faceGeo, faceMat);
+            face.position.z = 1.26;
+            qBlock.add(face);
+            
+            qBlock.position.set(zoneX + i * 5, 12 + Math.random() * 3, zoneZ);
+            qBlock.userData = { baseY: qBlock.position.y, hit: false };
+            scene.add(qBlock);
+            questionBlocks.push(qBlock);
+        }
+        
+        // Green pipes!
+        for (let i = 0; i < 3; i++) {
+            const pipeGroup = new THREE.Group();
+            const pipeGeo = new THREE.CylinderGeometry(1.5, 1.5, 6, 16);
+            const pipeMat = new THREE.MeshLambertMaterial({ color: 0x228B22 });
+            const pipe = new THREE.Mesh(pipeGeo, pipeMat);
+            pipeGroup.add(pipe);
+            
+            const rimGeo = new THREE.CylinderGeometry(1.8, 1.8, 1, 16);
+            const rim = new THREE.Mesh(rimGeo, pipeMat);
+            rim.position.y = 3;
+            pipeGroup.add(rim);
+            
+            pipeGroup.position.set(zoneX + i * 8 - 3, 3, zoneZ + 10);
+            scene.add(pipeGroup);
+        }
+        
+        // Floating coins!
+        const coins = [];
+        for (let i = 0; i < 15; i++) {
+            const coinGeo = new THREE.CylinderGeometry(0.5, 0.5, 0.1, 16);
+            const coinMat = new THREE.MeshBasicMaterial({ color: 0xFFD700 });
+            const coin = new THREE.Mesh(coinGeo, coinMat);
+            coin.position.set(
+                zoneX + (Math.random() - 0.5) * 30,
+                8 + Math.random() * 8,
+                zoneZ + (Math.random() - 0.5) * 20
+            );
+            coin.rotation.x = Math.PI / 2;
+            coin.userData = { collected: false };
+            scene.add(coin);
+            coins.push(coin);
+        }
+        
+        return { questionBlocks, coins };
+    }
+    const marioZone = createMarioGameZone();
+    
     // Create Rainbow in the sky
     function createRainbow() {
         const rainbowGroup = new THREE.Group();
@@ -769,8 +848,11 @@
     createPokemon(pokemonTypes.find(p => p.name === 'Mario'), 5, 5);
     createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -5, 5);
     createPokemon(pokemonTypes.find(p => p.name === 'Toad'), 0, 8);
+    createPokemon(pokemonTypes.find(p => p.name === 'Mario'), 15, -10);
+    createPokemon(pokemonTypes.find(p => p.name === 'Luigi'), -15, -10);
     
-    for (let i = 0; i < 15; i++) {
+    // MEGA POKEMON SPAWN - Community requested!
+    for (let i = 0; i < 25; i++) {
         const type = pokemonTypes[Math.floor(Math.random() * pokemonTypes.length)];
         const x = (Math.random() - 0.5) * 60;
         const z = (Math.random() - 0.5) * 60;
@@ -1113,6 +1195,22 @@
             rainbow.children.forEach((child, i) => {
                 if (child.material) {
                     child.material.opacity = 0.4 + Math.sin(Date.now() * 0.001 + i * 0.5) * 0.2;
+                }
+            });
+        }
+        
+        // Animate Mario Game Zone!
+        if (marioZone) {
+            marioZone.questionBlocks.forEach((qBlock, i) => {
+                if (!qBlock.userData.hit) {
+                    qBlock.position.y = qBlock.userData.baseY + Math.sin(Date.now() * 0.003 + i) * 0.5;
+                    qBlock.rotation.y += delta * 0.5;
+                }
+            });
+            marioZone.coins.forEach((coin, i) => {
+                if (!coin.userData.collected) {
+                    coin.rotation.z += delta * 3;
+                    coin.position.y += Math.sin(Date.now() * 0.005 + i) * 0.01;
                 }
             });
         }
