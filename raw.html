@@ -97,6 +97,10 @@
         .dog {
             font-size: 28px;
             position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -14px;
+            margin-left: -14px;
             filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
             transition: none;
         }
@@ -208,6 +212,10 @@
         .dog {
             font-size: 28px;
             position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -14px;
+            margin-left: -14px;
             filter: drop-shadow(0 0 10px rgba(139, 69, 19, 0.6));
             transition: none;
         }
@@ -250,7 +258,10 @@
         .kitty {
             font-size: 30px;
             position: absolute;
-            animation: orbit 12s linear infinite reverse;
+            top: 50%;
+            left: 50%;
+            margin-top: -15px;
+            margin-left: -15px;
             filter: drop-shadow(0 0 10px rgba(255,182,193,0.6));
         }
         @keyframes orbit {
@@ -359,7 +370,12 @@
     catAngle += catSpeed;
     dogAngle += dogSpeed;
     
+    kitty.style.left = '50%';
+    kitty.style.top = '50%';
+    kitty.style.marginLeft = '-15px';
+    kitty.style.marginTop = '-15px';
     kitty.style.animation = 'none';
+    kitty.style.transform = `rotate(${catAngle}rad) translateX(${orbitRadius}px) rotate(${-catAngle}rad)`;
     dog.style.transform = `rotate(${dogAngle}rad) translateX(${orbitRadius}px) rotate(${-dogAngle}rad)`;
     
     requestAnimationFrame(updateChase);
