@@ -380,12 +380,22 @@
     </style>
 </head>
 <body>
-<div id="space-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(135deg, rgba(10,10,40,0.9) 0%, rgba(30,0,60,0.9) 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:2px solid rgba(100,150,255,0.5);box-shadow:0 0 30px rgba(100,150,255,0.3);backdrop-filter:blur(10px);">
+<div id="minecraft-hud" style="position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:1000;background:linear-gradient(135deg, rgba(60,40,20,0.95) 0%, rgba(40,80,40,0.95) 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:3px solid #5a3;box-shadow:0 0 30px rgba(80,200,80,0.4);backdrop-filter:blur(10px);font-family:'Courier New',monospace;">
+<h2 style="margin:0 0 10px 0;text-shadow:2px 2px 0 #000;color:#5f5;">⛏️ MINECRAFT LITE ⛏️</h2>
+<p style="margin:0;font-size:0.85rem;color:#afc;">WASD: Move | SPACE: Jump | Click: Break | Right-Click: Place | 1-4: Select Block</p>
+<div id="mc-inventory" style="margin-top:10px;display:flex;justify-content:center;gap:5px;"></div>
+</div>
+<div id="crosshair" style="position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:999;pointer-events:none;">
+<div style="width:20px;height:2px;background:white;position:absolute;left:-10px;top:-1px;box-shadow:0 0 3px #000;"></div>
+<div style="width:2px;height:20px;background:white;position:absolute;left:-1px;top:-10px;box-shadow:0 0 3px #000;"></div>
+</div>
+<div id="space-hud" style="display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:100;background:linear-gradient(135deg, rgba(10,10,40,0.9) 0%, rgba(30,0,60,0.9) 100%);padding:15px 30px;border-radius:10px;font-size:1.2rem;text-align:center;border:2px solid rgba(100,150,255,0.5);box-shadow:0 0 30px rgba(100,150,255,0.3);backdrop-filter:blur(10px);">
 <h2 style="margin:0 0 10px 0;text-shadow:0 0 20px #00ffff;color:#fff;">🚀 SPATIAL EXPLORATION 🌌</h2>
 <p style="margin:0;font-size:0.9rem;opacity:0.9;color:#aaccff;">WASD to fly | Q/E to roll | Mouse to look | Scroll to speed</p>
 <div id="coords-display" style="margin-top:10px;font-size:0.9rem;color:#88ffaa;">Position: <span id="coords">0, 0, 0</span></div>
 </div>
-<div id="space-container" style="position:fixed;top:0;left:0;width:100vw;height:100vh;"></div>
+<div id="minecraft-container" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:500;"></div>
+<div id="space-container" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;"></div>
 <script>
         // Spatial Exploration - Immersive 3D Space Experience
         let spaceScene, spaceCamera, spaceRenderer;
@@ -642,8 +652,253 @@
         
         
         
-        // Initialize Space Exploration immediately on load
-        setTimeout(initSpace, 100);
+        // Minecraft Game
+        let mcScene, mcCamera, mcRenderer, mcControls;
+        let mcBlocks = [];
+        let selectedBlock = 0;
+        const blockTypes = [
+            {name: 'Grass', color: 0x4a8f29, top: 0x5cb338},
+            {name: 'Dirt', color: 0x8b5a2b, top: 0x8b5a2b},
+            {name: 'Stone', color: 0x808080, top: 0x808080},
+            {name: 'Wood', color: 0x8b4513, top: 0x8b4513}
+        ];
+        let mcVelocity = new THREE.Vector3();
+        let mcOnGround = false;
+        let mcPlayer = {x: 8, y: 15, z: 8};
+        let mcYaw = 0, mcPitch = 0;
+        let mcKeys = {};
+        let isPointerLocked = false;
+        
+        function initMinecraft() {
+            const container = document.getElementById('minecraft-container');
+            
+            mcScene = new THREE.Scene();
+            mcScene.background = new THREE.Color(0x87ceeb);
+            mcScene.fog = new THREE.Fog(0x87ceeb, 20, 80);
+            
+            mcCamera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            mcCamera.position.set(mcPlayer.x, mcPlayer.y, mcPlayer.z);
+            
+            mcRenderer = new THREE.WebGLRenderer({antialias: true});
+            mcRenderer.setSize(window.innerWidth, window.innerHeight);
+            mcRenderer.shadowMap.enabled = true;
+            container.appendChild(mcRenderer.domElement);
+            
+            // Lighting
+            const sunLight = new THREE.DirectionalLight(0xffffcc, 1);
+            sunLight.position.set(50, 100, 50);
+            sunLight.castShadow = true;
+            mcScene.add(sunLight);
+            
+            const ambient = new THREE.AmbientLight(0x6688cc, 0.4);
+            mcScene.add(ambient);
+            
+            // Generate terrain
+            generateTerrain();
+            
+            // Create inventory UI
+            createInventoryUI();
+            
+            // Controls
+            document.addEventListener('keydown', (e) => { mcKeys[e.key.toLowerCase()] = true; });
+            document.addEventListener('keyup', (e) => { mcKeys[e.key.toLowerCase()] = false; });
+            
+            container.addEventListener('click', () => {
+                if (!isPointerLocked) {
+                    container.requestPointerLock();
+                } else {
+                    breakBlock();
+                }
+            });
+            
+            container.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                if (isPointerLocked) placeBlock();
+            });
+            
+            document.addEventListener('pointerlockchange', () => {
+                isPointerLocked = document.pointerLockElement === container;
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (isPointerLocked) {
+                    mcYaw -= e.movementX * 0.002;
+                    mcPitch -= e.movementY * 0.002;
+                    mcPitch = Math.max(-Math.PI/2 + 0.1, Math.min(Math.PI/2 - 0.1, mcPitch));
+                }
+            });
+            
+            document.addEventListener('keydown', (e) => {
+                if (e.key >= '1' && e.key <= '4') {
+                    selectedBlock = parseInt(e.key) - 1;
+                    updateInventoryUI();
+                }
+            });
+            
+            animateMinecraft();
+        }
+        
+        function createBlock(x, y, z, typeIndex) {
+            const type = blockTypes[typeIndex];
+            const geo = new THREE.BoxGeometry(1, 1, 1);
+            const materials = [
+                new THREE.MeshLambertMaterial({color: type.color}),
+                new THREE.MeshLambertMaterial({color: type.color}),
+                new THREE.MeshLambertMaterial({color: type.top}),
+                new THREE.MeshLambertMaterial({color: type.color * 0.8}),
+                new THREE.MeshLambertMaterial({color: type.color}),
+                new THREE.MeshLambertMaterial({color: type.color})
+            ];
+            const block = new THREE.Mesh(geo, materials);
+            block.position.set(x + 0.5, y + 0.5, z + 0.5);
+            block.castShadow = true;
+            block.receiveShadow = true;
+            block.userData = {x, y, z, type: typeIndex};
+            mcScene.add(block);
+            mcBlocks.push(block);
+            return block;
+        }
+        
+        function generateTerrain() {
+            for (let x = 0; x < 32; x++) {
+                for (let z = 0; z < 32; z++) {
+                    const height = Math.floor(Math.sin(x*0.2)*2 + Math.cos(z*0.2)*2 + 5);
+                    for (let y = 0; y <= height; y++) {
+                        const type = y === height ? 0 : (y > height - 3 ? 1 : 2);
+                        createBlock(x, y, z, type);
+                    }
+                }
+            }
+        }
+        
+        function createInventoryUI() {
+            const inv = document.getElementById('mc-inventory');
+            blockTypes.forEach((type, i) => {
+                const slot = document.createElement('div');
+                slot.id = 'slot-' + i;
+                slot.style.cssText = 'width:40px;height:40px;border:2px solid #333;border-radius:5px;display:flex;align-items:center;justify-content:center;cursor:pointer;';
+                slot.style.background = '#' + type.color.toString(16).padStart(6, '0');
+                slot.innerHTML = '<span style="font-size:10px;color:white;text-shadow:1px 1px #000;">' + type.name + '</span>';
+                slot.onclick = () => { selectedBlock = i; updateInventoryUI(); };
+                inv.appendChild(slot);
+            });
+            updateInventoryUI();
+        }
+        
+        function updateInventoryUI() {
+            blockTypes.forEach((_, i) => {
+                const slot = document.getElementById('slot-' + i);
+                slot.style.border = i === selectedBlock ? '3px solid #ff0' : '2px solid #333';
+                slot.style.transform = i === selectedBlock ? 'scale(1.1)' : 'scale(1)';
+            });
+        }
+        
+        function getBlockAt(x, y, z) {
+            return mcBlocks.find(b => b.userData.x === x && b.userData.y === y && b.userData.z === z);
+        }
+        
+        function raycast() {
+            const dir = new THREE.Vector3(0, 0, -1);
+            dir.applyQuaternion(mcCamera.quaternion);
+            const raycaster = new THREE.Raycaster(mcCamera.position, dir, 0, 5);
+            return raycaster.intersectObjects(mcBlocks);
+        }
+        
+        function breakBlock() {
+            const hits = raycast();
+            if (hits.length > 0) {
+                const block = hits[0].object;
+                mcScene.remove(block);
+                mcBlocks = mcBlocks.filter(b => b !== block);
+            }
+        }
+        
+        function placeBlock() {
+            const hits = raycast();
+            if (hits.length > 0) {
+                const hit = hits[0];
+                const normal = hit.face.normal;
+                const pos = hit.object.userData;
+                const newX = pos.x + Math.round(normal.x);
+                const newY = pos.y + Math.round(normal.y);
+                const newZ = pos.z + Math.round(normal.z);
+                if (!getBlockAt(newX, newY, newZ)) {
+                    createBlock(newX, newY, newZ, selectedBlock);
+                }
+            }
+        }
+        
+        function checkCollision(x, y, z) {
+            const margin = 0.3;
+            for (let block of mcBlocks) {
+                const bx = block.userData.x, by = block.userData.y, bz = block.userData.z;
+                if (x + margin > bx && x - margin < bx + 1 &&
+                    y + 1.6 > by && y < by + 1 &&
+                    z + margin > bz && z - margin < bz + 1) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        function animateMinecraft() {
+            requestAnimationFrame(animateMinecraft);
+            
+            // Camera rotation
+            mcCamera.rotation.order = 'YXZ';
+            mcCamera.rotation.y = mcYaw;
+            mcCamera.rotation.x = mcPitch;
+            
+            // Movement
+            const moveDir = new THREE.Vector3();
+            if (mcKeys['w']) moveDir.z -= 1;
+            if (mcKeys['s']) moveDir.z += 1;
+            if (mcKeys['a']) moveDir.x -= 1;
+            if (mcKeys['d']) moveDir.x += 1;
+            
+            moveDir.normalize();
+            moveDir.applyAxisAngle(new THREE.Vector3(0, 1, 0), mcYaw);
+            moveDir.multiplyScalar(0.1);
+            
+            // Gravity & jump
+            mcVelocity.y -= 0.015;
+            if (mcKeys[' '] && mcOnGround) mcVelocity.y = 0.2;
+            
+            // Apply movement with collision
+            const newX = mcPlayer.x + moveDir.x;
+            const newZ = mcPlayer.z + moveDir.z;
+            const newY = mcPlayer.y + mcVelocity.y;
+            
+            if (!checkCollision(newX, mcPlayer.y, mcPlayer.z)) mcPlayer.x = newX;
+            if (!checkCollision(mcPlayer.x, mcPlayer.y, newZ)) mcPlayer.z = newZ;
+            
+            mcOnGround = false;
+            if (!checkCollision(mcPlayer.x, newY, mcPlayer.z)) {
+                mcPlayer.y = newY;
+            } else {
+                if (mcVelocity.y < 0) mcOnGround = true;
+                mcVelocity.y = 0;
+            }
+            
+            // Keep in bounds
+            mcPlayer.x = Math.max(0.5, Math.min(31.5, mcPlayer.x));
+            mcPlayer.z = Math.max(0.5, Math.min(31.5, mcPlayer.z));
+            if (mcPlayer.y < -10) { mcPlayer.y = 20; mcVelocity.y = 0; }
+            
+            mcCamera.position.set(mcPlayer.x, mcPlayer.y + 1.6, mcPlayer.z);
+            
+            mcRenderer.render(mcScene, mcCamera);
+        }
+        
+        setTimeout(initMinecraft, 100);
+        
+        window.addEventListener('resize', () => {
+            if (mcCamera && mcRenderer) {
+                mcCamera.aspect = window.innerWidth / window.innerHeight;
+                mcCamera.updateProjectionMatrix();
+                mcRenderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
         
         // Handle window resize
         window.addEventListener('resize', () => {
