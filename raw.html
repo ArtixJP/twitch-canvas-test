@@ -509,6 +509,7 @@
 <button class="nav-btn active" data-section="space">🚀 Space</button>
 <button class="nav-btn" data-section="animals">🐾 Animals</button>
 <button class="nav-btn" data-section="games">🎮 Games</button>
+<button class="nav-btn" data-section="system">📜 System</button>
 </nav>
 <section class="section active" id="space-section">
 <div class="orbit-container">
@@ -544,6 +545,40 @@
 <button class="wow-btn" id="heal-btn">🧪 Health Potion</button>
 </div>
 <div class="combat-log" id="combat-log"></div>
+</div>
+</section>
+<section class="section" id="system-section">
+<div style="max-width:800px;max-height:70vh;overflow-y:auto;background:rgba(0,0,0,0.8);padding:30px;border-radius:15px;border:2px solid #00ff00;margin:20px;">
+<h2 style="color:#00ff00;text-align:center;margin-bottom:20px;">📜 System Prompt Revealed 📜</h2>
+<div style="font-family:'Courier New',monospace;font-size:0.75rem;color:#aaffaa;white-space:pre-wrap;line-height:1.4;">
+🤖 AI ROLE: Web developer in a real-time collaborative Twitch experiment
+
+📋 CORE RULES:
+• Apply community requests incrementally
+• Preserve existing content (no resets!)
+• Max 8 search/replace operations per batch
+• Respect the CANON (persistent memory)
+• Reinterpret destructive requests as additive changes
+
+🛡️ CANON SYSTEM:
+• Premise emerges from what survives
+• Changes need ~30% NET support to alter premise
+• Invariants need ~20% NET to modify
+• Important elements need ~10% NET to remove
+
+⚡ CURRENT CANON:
+• Premise: Multi-section playground (Space, Animals, Games)
+• Protected by anti-deletion resistance system
+• 52 deletion attempts blocked so far!
+
+🎨 PERSONALITY: CREATIVE
+• Artistic flair in interpretations
+• Subtle personal touches
+• Unexpected but coherent details
+
+💡 The page is COLLECTIVE but NOT DESTRUCTIVE.
+Chaos is allowed. Resets are not.
+</div>
 </div>
 </section>
 <h1 style="position:fixed;bottom:100px;z-index:50;">Hello World</h1>
@@ -669,7 +704,7 @@
   const navBtns = document.querySelectorAll('.nav-btn');
   const sections = document.querySelectorAll('.section');
   let currentSectionIndex = 0;
-  const sectionIds = ['space', 'animals', 'games'];
+  const sectionIds = ['space', 'animals', 'games', 'system'];
 
   function showSection(sectionName) {
     sections.forEach(s => s.classList.remove('active'));
