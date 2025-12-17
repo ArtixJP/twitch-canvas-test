@@ -5,638 +5,744 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>🥐 La Maison du Pain - Artisan Bakery 🥖</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Lato:wght@300;400;700&amp;display=swap" rel="stylesheet"/>
+<title>⛏️ MINECRAFT BAKERY DIMENSION ⛏️</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&amp;display=swap" rel="stylesheet"/>
 <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        :root {
-            --cream: #FFF8E7;
-            --warm-brown: #8B4513;
-            --golden: #DAA520;
-            --dark-brown: #3D2914;
-            --soft-pink: #FFE4E1;
-            --crust: #D2691E;
-        }
-        
-        body {
-            font-family: 'Lato', sans-serif;
-            background: var(--cream);
-            color: var(--dark-brown);
-            overflow-x: hidden;
-        }
-        
-        /* Floating voxel bread decorations - echoes of the old world */
-        .voxel-decoration {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            background: var(--golden);
-            opacity: 0.3;
-            animation: float 6s ease-in-out infinite;
-            z-index: 0;
-            border-radius: 2px;
-            box-shadow: 2px 2px 0 var(--crust);
-        }
-        .voxel-decoration:nth-child(1) { top: 10%; left: 5%; animation-delay: 0s; background: #F4A460; }
-        .voxel-decoration:nth-child(2) { top: 20%; right: 8%; animation-delay: 1s; background: #DEB887; }
-        .voxel-decoration:nth-child(3) { top: 60%; left: 3%; animation-delay: 2s; background: #D2691E; }
-        .voxel-decoration:nth-child(4) { top: 80%; right: 5%; animation-delay: 3s; background: #DAA520; }
-        .voxel-decoration:nth-child(5) { top: 40%; right: 2%; animation-delay: 4s; background: #FFDEAB; }
-        
-        /* FLYING CROISSANTS - The community has spoken! */
-        .flying-croissant {
-            position: fixed;
-            font-size: 3rem;
-            z-index: 1000;
-            pointer-events: none;
-            filter: drop-shadow(3px 3px 0 #8B4513);
-            animation: flyAround 8s ease-in-out infinite;
-        }
-        .flying-croissant:nth-child(6) { animation-delay: 0s; animation-duration: 12s; }
-        .flying-croissant:nth-child(7) { animation-delay: 1s; animation-duration: 10s; font-size: 2rem; }
-        .flying-croissant:nth-child(8) { animation-delay: 2s; animation-duration: 14s; font-size: 4rem; }
-        .flying-croissant:nth-child(9) { animation-delay: 3s; animation-duration: 9s; font-size: 2.5rem; }
-        .flying-croissant:nth-child(10) { animation-delay: 4s; animation-duration: 11s; font-size: 3.5rem; }
-        .flying-croissant:nth-child(11) { animation-delay: 5s; animation-duration: 13s; font-size: 2rem; }
-        .flying-croissant:nth-child(12) { animation-delay: 6s; animation-duration: 8s; font-size: 3rem; }
-        .flying-croissant:nth-child(13) { animation-delay: 7s; animation-duration: 15s; font-size: 4.5rem; }
-        
-        /* MINECRAFT WORLD RETURNS - THE COMMUNITY HAS SPOKEN x100! */
-        .minecraft-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 999;
-            background: 
-                repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(0,100,0,0.03) 8px, rgba(0,100,0,0.03) 16px),
-                repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(139,69,19,0.03) 8px, rgba(139,69,19,0.03) 16px);
-            animation: pixelPulse 2s ease-in-out infinite;
-        }
-        
-        @keyframes pixelPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 0.8; }
-        }
-        
-        .minecraft-portal {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 120px;
-            height: 180px;
-            background: linear-gradient(180deg, #4B0082 0%, #8B008B 50%, #4B0082 100%);
-            border: 8px solid #2D0047;
-            box-shadow: 0 0 30px #8B008B, inset 0 0 40px rgba(255,255,255,0.3);
-            animation: portalGlow 1.5s ease-in-out infinite;
-            z-index: 1001;
-            image-rendering: pixelated;
-        }
-        
-        .minecraft-portal::before {
-            content: '⛏️ ENTER';
-            position: absolute;
-            bottom: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: monospace;
-            color: #8B008B;
-            font-weight: bold;
-            text-shadow: 2px 2px 0 #000;
-        }
-        
-        @keyframes portalGlow {
-            0%, 100% { box-shadow: 0 0 30px #8B008B, inset 0 0 40px rgba(255,255,255,0.3); }
-            50% { box-shadow: 0 0 60px #DA70D6, inset 0 0 60px rgba(255,255,255,0.5); }
-        }
-        
-        /* PAIN AU CHOCOLAT x20 - Floating voxel style! */
-        .pain-chocolat {
-            position: fixed;
-            font-size: 2rem;
-            z-index: 998;
-            pointer-events: none;
-            animation: voxelFloat 5s ease-in-out infinite;
-            image-rendering: pixelated;
-            filter: drop-shadow(2px 2px 0 #3D2914);
-        }
-        
-        @keyframes voxelFloat {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-15px) rotate(5deg); }
-            75% { transform: translateY(-10px) rotate(-5deg); }
-        }
-        
-        .grass-block {
-            position: fixed;
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(180deg, #5D8C3D 0%, #5D8C3D 30%, #8B4513 30%, #8B4513 100%);
-            border: 2px solid #3D5C2D;
-            z-index: 0;
-            image-rendering: pixelated;
-        }
-        
-        @keyframes flyAround {
-            0% { top: 10%; left: -10%; transform: rotate(0deg) scale(1); }
-            25% { top: 30%; left: 80%; transform: rotate(90deg) scale(1.2); }
-            50% { top: 70%; left: 50%; transform: rotate(180deg) scale(0.8); }
-            75% { top: 20%; left: 20%; transform: rotate(270deg) scale(1.1); }
-            100% { top: 10%; left: -10%; transform: rotate(360deg) scale(1); }
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-        
-        /* Header */
-        header {
-            background: linear-gradient(135deg, var(--warm-brown) 0%, var(--crust) 50%, var(--golden) 100%);
-            padding: 20px 0;
-            text-align: center;
-            position: relative;
-            box-shadow: 0 4px 20px rgba(139, 69, 19, 0.3);
-        }
-        
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: var(--cream);
-            text-shadow: 3px 3px 6px rgba(0,0,0,0.3);
-            margin-bottom: 10px;
-        }
-        
-        .tagline {
-            font-style: italic;
-            color: #FFE4B5;
-            font-size: 1.2rem;
-            letter-spacing: 2px;
-        }
-        
-        nav {
-            background: var(--dark-brown);
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 40px;
-            flex-wrap: wrap;
-        }
-        
-        nav a {
-            color: var(--cream);
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            padding: 5px 15px;
-            border-radius: 20px;
-        }
-        
-        nav a:hover {
-            background: var(--golden);
-            color: var(--dark-brown);
-            transform: scale(1.1);
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(rgba(61, 41, 20, 0.7), rgba(61, 41, 20, 0.7)),
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%23F4A460" x="10" y="10" width="20" height="20" rx="3"/><rect fill="%23DEB887" x="40" y="30" width="15" height="15" rx="2"/><rect fill="%23D2691E" x="70" y="20" width="18" height="18" rx="3"/><rect fill="%23DAA520" x="20" y="60" width="22" height="22" rx="4"/><rect fill="%23FFDEAB" x="60" y="65" width="16" height="16" rx="2"/></svg>');
-            background-size: cover, 200px;
-            min-height: 500px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-        }
-        
-        .hero-content {
-            background: rgba(255, 248, 231, 0.95);
-            padding: 50px 80px;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-            border: 4px solid var(--golden);
-            animation: fadeInUp 1s ease;
-        }
-        
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .hero h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 3rem;
-            color: var(--warm-brown);
-            margin-bottom: 20px;
-        }
-        
-        .hero p {
-            font-size: 1.3rem;
-            color: var(--dark-brown);
-            margin-bottom: 30px;
-            line-height: 1.8;
-        }
-        
-        .btn {
-            display: inline-block;
-            background: var(--warm-brown);
-            color: var(--cream);
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            transition: all 0.3s ease;
-            border: 3px solid var(--golden);
-        }
-        
-        .btn:hover {
-            background: var(--golden);
-            color: var(--dark-brown);
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(218, 165, 32, 0.5);
-        }
-        
-        /* Products Section */
-        .products {
-            padding: 80px 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            text-align: center;
-            color: var(--warm-brown);
-            margin-bottom: 50px;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '🥖';
-            display: block;
-            font-size: 2rem;
-            margin-top: 10px;
-        }
-        
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 30px;
-        }
-        
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.15);
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-10px);
-            border-color: var(--golden);
-            box-shadow: 0 15px 40px rgba(139, 69, 19, 0.25);
-        }
-        
-        .product-image {
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 5rem;
-            background: linear-gradient(135deg, #FFF8E7 0%, #FFE4B5 100%);
-        }
-        
-        .product-info {
-            padding: 25px;
-            text-align: center;
-        }
-        
-        .product-info h3 {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            color: var(--warm-brown);
-            margin-bottom: 10px;
-        }
-        
-        .product-info p {
-            color: #666;
-            font-size: 0.95rem;
-            margin-bottom: 15px;
-        }
-        
-        .price {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--golden);
-        }
-        
-        /* About Section */
-        .about {
-            background: var(--dark-brown);
-            color: var(--cream);
-            padding: 80px 20px;
-            text-align: center;
-        }
-        
-        .about h2 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-        }
-        
-        .about p {
-            max-width: 800px;
-            margin: 0 auto 20px;
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-        
-        .minecraft-tribute {
-            margin-top: 30px;
-            padding: 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
-            display: inline-block;
-        }
-        
-        .minecraft-tribute p {
-            font-size: 0.9rem;
-            opacity: 0.7;
-            font-style: italic;
-        }
-        
-        /* Contact Section */
-        .contact {
-            padding: 80px 20px;
-            text-align: center;
-        }
-        
-        .contact-info {
-            display: flex;
-            justify-content: center;
-            gap: 50px;
-            flex-wrap: wrap;
-            margin-top: 40px;
-        }
-        
-        .contact-item {
-            background: white;
-            padding: 30px 40px;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.1);
-        }
-        
-        .contact-item h4 {
-            color: var(--warm-brown);
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        /* Footer */
-        footer {
-            background: var(--warm-brown);
-            color: var(--cream);
-            text-align: center;
-            padding: 30px;
-        }
-        
-        footer p {
-            opacity: 0.8;
-        }
-        
-        /* Animated bread parade */
-        .bread-parade {
-            overflow: hidden;
-            background: var(--golden);
-            padding: 15px 0;
-            white-space: nowrap;
-        }
-        
-        .bread-parade-inner {
-            display: inline-block;
-            animation: scroll 20s linear infinite;
-        }
-        
-        .bread-parade span {
-            display: inline-block;
-            font-size: 2rem;
-            margin: 0 30px;
-        }
-        
-        @keyframes scroll {
-            from { transform: translateX(0); }
-            to { transform: translateX(-50%); }
-        }
-    </style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+    --grass-top: #5D8C3D;
+    --dirt: #8B4513;
+    --stone: #808080;
+    --sky-day: #87CEEB;
+    --wood: #A0522D;
+    --portal-purple: #8B008B;
+}
+
+body {
+    font-family: 'Press Start 2P', monospace;
+    background: linear-gradient(180deg, #87CEEB 0%, #B0E0E6 60%, #90EE90 60%, #228B22 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    image-rendering: pixelated;
+    cursor: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32"><rect fill="%238B4513" x="4" y="4" width="24" height="24"/><rect fill="%23A0522D" x="8" y="8" width="16" height="16"/></svg>') 16 16, auto;
+}
+
+/* PIXEL GRID OVERLAY */
+.pixel-grid {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 9999;
+    background: 
+        repeating-linear-gradient(0deg, transparent, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px),
+        repeating-linear-gradient(90deg, transparent, transparent 31px, rgba(0,0,0,0.03) 31px, rgba(0,0,0,0.03) 32px);
+}
+
+/* MINECRAFT SKY */
+.mc-sky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 30%, #0f3460 60%, #533483 100%);
+    z-index: -2;
+}
+
+/* STARS */
+.star {
+    position: fixed;
+    width: 4px;
+    height: 4px;
+    background: #fff;
+    animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+/* FLOATING BLOCKS */
+.mc-block {
+    position: fixed;
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+    animation: blockFloat 4s ease-in-out infinite;
+    z-index: 10;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+}
+
+.grass-block {
+    background: linear-gradient(180deg, #5D8C3D 0%, #5D8C3D 25%, #8B4513 25%, #8B4513 100%);
+    border: 4px solid #3D5C2D;
+}
+
+.dirt-block {
+    background: #8B4513;
+    border: 4px solid #654321;
+}
+
+.stone-block {
+    background: linear-gradient(135deg, #808080 25%, #696969 50%, #808080 75%);
+    border: 4px solid #505050;
+}
+
+.bread-block {
+    background: linear-gradient(180deg, #DAA520 0%, #D2691E 50%, #8B4513 100%);
+    border: 4px solid #654321;
+    border-radius: 8px;
+}
+
+@keyframes blockFloat {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(5deg); }
+}
+
+/* GROUND LAYER */
+.mc-ground {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 128px;
+    background: repeating-linear-gradient(90deg, 
+        #5D8C3D 0px, #5D8C3D 64px, 
+        #4A7A2D 64px, #4A7A2D 128px);
+    border-top: 8px solid #3D5C2D;
+    z-index: 100;
+}
+
+.mc-ground::after {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 0;
+    width: 100%;
+    height: 96px;
+    background: repeating-linear-gradient(90deg, 
+        #8B4513 0px, #8B4513 64px, 
+        #7A3A0A 64px, #7A3A0A 128px);
+}
+
+/* MAIN GAME HUD */
+.mc-hud {
+    position: fixed;
+    bottom: 140px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 4px;
+    z-index: 500;
+    background: rgba(0,0,0,0.5);
+    padding: 8px;
+    border: 4px solid #555;
+}
+
+.hotbar-slot {
+    width: 64px;
+    height: 64px;
+    background: #8B8B8B;
+    border: 4px solid #373737;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.hotbar-slot:hover {
+    transform: scale(1.1);
+    border-color: #fff;
+}
+
+.hotbar-slot.selected {
+    border-color: #fff;
+    box-shadow: 0 0 10px #fff;
+}
+
+/* BAKERY BUILDING - MINECRAFT STYLE */
+.mc-bakery {
+    position: relative;
+    width: 90%;
+    max-width: 800px;
+    margin: 100px auto;
+    background: linear-gradient(180deg, #A0522D 0%, #8B4513 100%);
+    border: 8px solid #654321;
+    padding: 32px;
+    z-index: 200;
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.4);
+}
+
+.mc-bakery::before {
+    content: '';
+    position: absolute;
+    top: -48px;
+    left: -8px;
+    width: calc(100% + 16px);
+    height: 48px;
+    background: repeating-linear-gradient(90deg, 
+        #8B0000 0px, #8B0000 32px, 
+        #A52A2A 32px, #A52A2A 64px);
+    clip-path: polygon(0 100%, 50% 0, 100% 100%);
+    border: 4px solid #5C0000;
+}
+
+.mc-sign {
+    background: #DEB887;
+    border: 4px solid #8B4513;
+    padding: 16px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
+}
+
+.mc-sign h1 {
+    color: #3D2914;
+    font-size: 1rem;
+    text-shadow: 2px 2px 0 #FFF8E7;
+    line-height: 1.5;
+}
+
+/* ITEM DISPLAYS */
+.mc-chest {
+    background: #A0522D;
+    border: 4px solid #654321;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.mc-chest-title {
+    background: #8B4513;
+    color: #FFF8E7;
+    padding: 8px;
+    font-size: 0.6rem;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.mc-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 16px;
+}
+
+.mc-item {
+    background: #8B8B8B;
+    border: 4px solid #373737;
+    padding: 16px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.1s;
+}
+
+.mc-item:hover {
+    transform: scale(1.05);
+    border-color: #fff;
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.mc-item-icon {
+    font-size: 3rem;
+    margin-bottom: 8px;
+    filter: drop-shadow(2px 2px 0 #000);
+}
+
+.mc-item-name {
+    font-size: 0.5rem;
+    color: #fff;
+    text-shadow: 1px 1px 0 #000;
+}
+
+.mc-item-price {
+    font-size: 0.4rem;
+    color: #FFD700;
+    margin-top: 4px;
+}
+
+/* FLYING CROISSANTS AS MINECRAFT ITEMS */
+.mc-flying-item {
+    position: fixed;
+    font-size: 2rem;
+    z-index: 300;
+    pointer-events: none;
+    animation: minecraftBob 2s ease-in-out infinite, minecraftFly 15s linear infinite;
+    filter: drop-shadow(2px 2px 0 #000);
+    image-rendering: pixelated;
+}
+
+@keyframes minecraftBob {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-10px) rotate(180deg); }
+}
+
+@keyframes minecraftFly {
+    0% { left: -50px; top: 20%; }
+    25% { left: 30%; top: 60%; }
+    50% { left: 70%; top: 30%; }
+    75% { left: 40%; top: 70%; }
+    100% { left: 110%; top: 20%; }
+}
+
+/* CREEPER BAKER */
+.creeper-baker {
+    position: fixed;
+    bottom: 140px;
+    left: 30px;
+    width: 64px;
+    height: 96px;
+    z-index: 400;
+    animation: creeperWalk 8s ease-in-out infinite;
+}
+
+.creeper-head {
+    width: 64px;
+    height: 64px;
+    background: #5D8C3D;
+    border: 4px solid #3D5C2D;
+    position: relative;
+}
+
+.creeper-face {
+    position: absolute;
+    top: 16px;
+    left: 8px;
+    width: 48px;
+    height: 32px;
+    background: 
+        linear-gradient(90deg, #000 0%, #000 33%, transparent 33%, transparent 66%, #000 66%, #000 100%);
+    background-size: 16px 16px;
+}
+
+.creeper-body {
+    width: 32px;
+    height: 32px;
+    background: #5D8C3D;
+    border: 4px solid #3D5C2D;
+    margin: 0 auto;
+}
+
+.creeper-chef-hat {
+    position: absolute;
+    top: -32px;
+    left: 8px;
+    width: 48px;
+    height: 32px;
+    background: #fff;
+    border: 4px solid #ddd;
+    border-radius: 8px 8px 0 0;
+}
+
+@keyframes creeperWalk {
+    0%, 100% { left: 30px; }
+    50% { left: calc(100% - 100px); }
+}
+
+/* PORTAL - NOW CLICKABLE! */
+.mc-portal-container {
+    position: fixed;
+    bottom: 140px;
+    right: 30px;
+    z-index: 400;
+    cursor: pointer;
+}
+
+.mc-portal {
+    width: 96px;
+    height: 160px;
+    background: linear-gradient(180deg, #4B0082 0%, #8B008B 50%, #4B0082 100%);
+    border: 8px solid #2D0047;
+    box-shadow: 0 0 30px #8B008B, inset 0 0 40px rgba(255,255,255,0.3);
+    animation: portalPulse 1s ease-in-out infinite;
+    position: relative;
+}
+
+.mc-portal::before {
+    content: '🍞 BREAD DIMENSION';
+    position: absolute;
+    bottom: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.4rem;
+    color: #DA70D6;
+    text-shadow: 1px 1px 0 #000;
+    white-space: nowrap;
+}
+
+.mc-portal:hover {
+    box-shadow: 0 0 60px #DA70D6, inset 0 0 60px rgba(255,255,255,0.6);
+    transform: scale(1.1);
+}
+
+@keyframes portalPulse {
+    0%, 100% { box-shadow: 0 0 30px #8B008B, inset 0 0 40px rgba(255,255,255,0.3); }
+    50% { box-shadow: 0 0 50px #DA70D6, inset 0 0 50px rgba(255,255,255,0.5); }
+}
+
+/* ACHIEVEMENT POPUP */
+.mc-achievement {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #222;
+    border: 4px solid #555;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    z-index: 1000;
+    animation: achievementSlide 5s ease-in-out;
+}
+
+.mc-achievement-icon {
+    font-size: 2rem;
+}
+
+.mc-achievement-text {
+    color: #fff;
+}
+
+.mc-achievement-title {
+    color: #FFFF00;
+    font-size: 0.5rem;
+}
+
+.mc-achievement-desc {
+    font-size: 0.4rem;
+    margin-top: 4px;
+}
+
+@keyframes achievementSlide {
+    0% { top: -100px; opacity: 0; }
+    10%, 90% { top: 20px; opacity: 1; }
+    100% { top: -100px; opacity: 0; }
+}
+
+/* HEARTS (HEALTH BAR) */
+.mc-health {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    display: flex;
+    gap: 4px;
+    z-index: 500;
+}
+
+.mc-heart {
+    font-size: 1.5rem;
+    filter: drop-shadow(1px 1px 0 #000);
+    animation: heartBeat 1s ease-in-out infinite;
+}
+
+@keyframes heartBeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+/* HUNGER BAR */
+.mc-hunger {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 4px;
+    z-index: 500;
+}
+
+/* EXPERIENCE BAR */
+.mc-xp-bar {
+    position: fixed;
+    bottom: 210px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 8px;
+    background: #222;
+    border: 2px solid #000;
+    z-index: 500;
+}
+
+.mc-xp-fill {
+    height: 100%;
+    width: 75%;
+    background: #7FFF00;
+    animation: xpGlow 2s ease-in-out infinite;
+}
+
+@keyframes xpGlow {
+    0%, 100% { box-shadow: 0 0 5px #7FFF00; }
+    50% { box-shadow: 0 0 15px #7FFF00; }
+}
+
+.mc-xp-level {
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #7FFF00;
+    font-size: 0.6rem;
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* SCROLLABLE CONTENT AREA */
+.mc-world {
+    padding-bottom: 250px;
+}
+
+/* CHAT LOG */
+.mc-chat {
+    position: fixed;
+    bottom: 250px;
+    left: 20px;
+    width: 300px;
+    max-height: 150px;
+    background: rgba(0,0,0,0.5);
+    padding: 8px;
+    font-size: 0.4rem;
+    color: #fff;
+    z-index: 500;
+    overflow: hidden;
+}
+
+.mc-chat-msg {
+    margin-bottom: 4px;
+    animation: chatFade 10s linear forwards;
+}
+
+.mc-chat-msg span {
+    color: #55FF55;
+}
+
+@keyframes chatFade {
+    0%, 80% { opacity: 1; }
+    100% { opacity: 0; }
+}
+</style>
 </head>
 <body>
-<div class="voxel-decoration"></div>
-<div class="voxel-decoration"></div>
-<div class="voxel-decoration"></div>
-<div class="voxel-decoration"></div>
-<div class="voxel-decoration"></div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
+<div class="pixel-grid"></div>
+<div class="mc-sky"></div>
 
-<div class="minecraft-overlay"></div>
-<div class="minecraft-portal"></div>
+<div class="star" style="top:5%;left:10%;"></div>
+<div class="star" style="top:8%;left:25%;animation-delay:0.3s;"></div>
+<div class="star" style="top:3%;left:45%;animation-delay:0.6s;"></div>
+<div class="star" style="top:12%;left:60%;animation-delay:0.9s;"></div>
+<div class="star" style="top:6%;left:80%;animation-delay:1.2s;"></div>
+<div class="star" style="top:15%;left:90%;animation-delay:1.5s;"></div>
+<div class="star" style="top:10%;left:35%;animation-delay:1.8s;"></div>
+<div class="star" style="top:4%;left:70%;animation-delay:2.1s;"></div>
 
-<div class="pain-chocolat" style="top:5%;left:10%;animation-delay:0s;">🍫</div>
-<div class="pain-chocolat" style="top:15%;left:25%;animation-delay:0.3s;">🍫</div>
-<div class="pain-chocolat" style="top:8%;left:45%;animation-delay:0.6s;">🍫</div>
-<div class="pain-chocolat" style="top:20%;left:70%;animation-delay:0.9s;">🍫</div>
-<div class="pain-chocolat" style="top:12%;left:85%;animation-delay:1.2s;">🍫</div>
-<div class="pain-chocolat" style="top:35%;left:8%;animation-delay:1.5s;">🍫</div>
-<div class="pain-chocolat" style="top:40%;left:92%;animation-delay:1.8s;">🍫</div>
-<div class="pain-chocolat" style="top:55%;left:15%;animation-delay:2.1s;">🍫</div>
-<div class="pain-chocolat" style="top:60%;left:78%;animation-delay:2.4s;">🍫</div>
-<div class="pain-chocolat" style="top:70%;left:5%;animation-delay:2.7s;">🍫</div>
-<div class="pain-chocolat" style="top:75%;left:55%;animation-delay:3s;">🍫</div>
-<div class="pain-chocolat" style="top:82%;left:30%;animation-delay:3.3s;">🍫</div>
-<div class="pain-chocolat" style="top:88%;left:65%;animation-delay:3.6s;">🍫</div>
-<div class="pain-chocolat" style="top:25%;left:50%;animation-delay:3.9s;">🍫</div>
-<div class="pain-chocolat" style="top:45%;left:35%;animation-delay:4.2s;">🍫</div>
-<div class="pain-chocolat" style="top:50%;left:60%;animation-delay:4.5s;">🍫</div>
-<div class="pain-chocolat" style="top:65%;left:88%;animation-delay:4.8s;">🍫</div>
-<div class="pain-chocolat" style="top:78%;left:12%;animation-delay:5.1s;">🍫</div>
-<div class="pain-chocolat" style="top:30%;left:95%;animation-delay:5.4s;">🍫</div>
-<div class="pain-chocolat" style="top:92%;left:45%;animation-delay:5.7s;">🍫</div>
+<div class="mc-block grass-block" style="top:15%;left:5%;animation-delay:0s;"></div>
+<div class="mc-block dirt-block" style="top:25%;right:8%;animation-delay:1s;"></div>
+<div class="mc-block stone-block" style="top:45%;left:3%;animation-delay:2s;"></div>
+<div class="mc-block bread-block" style="top:35%;right:5%;animation-delay:3s;"></div>
+<div class="mc-block grass-block" style="top:55%;right:10%;animation-delay:4s;"></div>
 
-<div class="grass-block" style="bottom:0;left:10%;"></div>
-<div class="grass-block" style="bottom:0;left:20%;"></div>
-<div class="grass-block" style="bottom:0;left:75%;"></div>
-<div class="grass-block" style="bottom:32px;left:75%;"></div>
-<header>
-<div class="logo">⛏️ La Maison du Pain ⛏️</div>
-<p class="tagline">⬛ Artisan Boulangerie - MINECRAFT DIMENSION ⬛</p>
-</header>
-<nav>
-<a href="#home">Home</a>
-<a href="#products">Our Breads</a>
-<a href="#about">Our Story</a>
-<a href="#contact">Visit Us</a>
-</nav>
-<section class="hero" id="home">
-<div class="hero-content">
-<h1>Freshly Baked Every Morning</h1>
-<p>From our ovens to your table — handcrafted breads, flaky croissants, and artisan pastries made with love and tradition.</p>
-<a class="btn" href="#products">View Our Menu</a>
+<div class="mc-flying-item" style="animation-delay:0s;">🥐</div>
+<div class="mc-flying-item" style="animation-delay:2s;">🍞</div>
+<div class="mc-flying-item" style="animation-delay:4s;">🥖</div>
+<div class="mc-flying-item" style="animation-delay:6s;">🧁</div>
+<div class="mc-flying-item" style="animation-delay:8s;">🥯</div>
+<div class="mc-flying-item" style="animation-delay:10s;">🍩</div>
+
+<div class="mc-health">
+<span class="mc-heart">❤️</span>
+<span class="mc-heart" style="animation-delay:0.1s;">❤️</span>
+<span class="mc-heart" style="animation-delay:0.2s;">❤️</span>
+<span class="mc-heart" style="animation-delay:0.3s;">❤️</span>
+<span class="mc-heart" style="animation-delay:0.4s;">❤️</span>
+<span class="mc-heart" style="animation-delay:0.5s;">❤️</span>
+<span class="mc-heart" style="animation-delay:0.6s;">❤️</span>
+<span class="mc-heart" style="animation-delay:0.7s;">🖤</span>
+<span class="mc-heart" style="animation-delay:0.8s;">🖤</span>
+<span class="mc-heart" style="animation-delay:0.9s;">🖤</span>
 </div>
-</section>
-<div class="bread-parade">
-<div class="bread-parade-inner">
-<span>🥐</span><span>🍞</span><span>🥖</span><span>🧁</span><span>🥯</span><span>🍩</span><span>🥐</span><span>🍞</span><span>🥖</span><span>🧁</span><span>🥯</span><span>🍩</span><span>🥐</span><span>🍞</span><span>🥖</span><span>🧁</span><span>🥯</span><span>🍩</span>
+
+<div class="mc-hunger">
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🍖</span>
+<span class="mc-heart">🦴</span>
+<span class="mc-heart">🦴</span>
 </div>
-</div>
-<section class="products" id="products">
-<h2 class="section-title">Our Fresh Baked Goods</h2>
-<div class="product-grid">
-<div class="product-card">
-<div class="product-image">🥐</div>
-<div class="product-info">
-<h3>Butter Croissant</h3>
-<p>Flaky, golden layers of pure butter perfection. Best enjoyed warm.</p>
-<span class="price">$3.50</span>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🥖</div>
-<div class="product-info">
-<h3>French Baguette</h3>
-<p>Crispy crust, soft interior. The classic French bread experience.</p>
-<span class="price">$4.00</span>
+
+<div class="mc-achievement">
+<div class="mc-achievement-icon">🏆</div>
+<div class="mc-achievement-text">
+<div class="mc-achievement-title">ACHIEVEMENT GET!</div>
+<div class="mc-achievement-desc">Entered the Bread Dimension</div>
 </div>
 </div>
-<div class="product-card">
-<div class="product-image">🍞</div>
-<div class="product-info">
-<h3>Sourdough Loaf</h3>
-<p>72-hour fermented dough with that perfect tangy flavor.</p>
-<span class="price">$6.50</span>
+
+<div class="mc-chat">
+<div class="mc-chat-msg"><span>[Server]</span> Welcome to MINECRAFT BAKERY!</div>
+<div class="mc-chat-msg"><span>[TwitchChat]</span> x100 requests heard!</div>
+<div class="mc-chat-msg"><span>[Baker_Steve]</span> Fresh bread incoming!</div>
+<div class="mc-chat-msg"><span>[Creeper]</span> Sssssmells delicious...</div>
+</div>
+
+<div class="mc-world">
+<div class="mc-bakery">
+<div class="mc-sign">
+<h1>⛏️ LA MAISON DU PAIN ⛏️<br/>MINECRAFT BAKERY</h1>
+</div>
+<div class="mc-chest">
+<div class="mc-chest-title">🧰 BAKERY INVENTORY - FRESH ITEMS 🧰</div>
+<div class="mc-items">
+<div class="mc-item">
+<div class="mc-item-icon">🥐</div>
+<div class="mc-item-name">BUTTER CROISSANT</div>
+<div class="mc-item-price">💎 3 DIAMONDS</div>
+</div>
+<div class="mc-item">
+<div class="mc-item-icon">🥖</div>
+<div class="mc-item-name">FRENCH BAGUETTE</div>
+<div class="mc-item-price">💎 4 DIAMONDS</div>
+</div>
+<div class="mc-item">
+<div class="mc-item-icon">🍞</div>
+<div class="mc-item-name">SOURDOUGH LOAF</div>
+<div class="mc-item-price">💎 6 DIAMONDS</div>
+</div>
+<div class="mc-item">
+<div class="mc-item-icon">🧁</div>
+<div class="mc-item-name">PAIN AU CHOCOLAT</div>
+<div class="mc-item-price">💎 4 DIAMONDS</div>
+</div>
+<div class="mc-item">
+<div class="mc-item-icon">🥯</div>
+<div class="mc-item-name">ARTISAN BAGEL</div>
+<div class="mc-item-price">💎 2 DIAMONDS</div>
+</div>
+<div class="mc-item">
+<div class="mc-item-icon">🍩</div>
+<div class="mc-item-name">BRIOCHE DONUT</div>
+<div class="mc-item-price">💎 3 DIAMONDS</div>
 </div>
 </div>
-<div class="product-card">
-<div class="product-image">🧁</div>
-<div class="product-info">
-<h3>Pain au Chocolat</h3>
-<p>Rich dark chocolate wrapped in buttery, flaky pastry.</p>
-<span class="price">$4.25</span>
 </div>
-</div>
-<div class="product-card">
-<div class="product-image">🥯</div>
-<div class="product-info">
-<h3>Artisan Bagels</h3>
-<p>Hand-rolled, kettle-boiled, and baked to golden perfection.</p>
-<span class="price">$2.75</span>
-</div>
-</div>
-<div class="product-card">
-<div class="product-image">🍩</div>
-<div class="product-info">
-<h3>Brioche Doughnuts</h3>
-<p>Light, airy brioche filled with vanilla cream or jam.</p>
-<span class="price">$3.75</span>
+<div class="mc-chest">
+<div class="mc-chest-title">📜 BAKERY LORE 📜</div>
+<p style="color:#FFF8E7;font-size:0.5rem;line-height:2;padding:16px;">
+                In the beginning, there was only BLOCKS...<br/>
+                Then the BAKERS came from the old world...<br/>
+                They built ovens from COBBLESTONE...<br/>
+                And crafted BREAD from WHEAT...<br/>
+                Now the BREAD DIMENSION awaits you!<br/>
+                ⛏️ CRAFT. BAKE. SURVIVE. ⛏️
+            </p>
 </div>
 </div>
 </div>
-</section>
-<section class="about" id="about">
-<h2>Our Story</h2>
-<p>La Maison du Pain began as a humble dream — to bring the authentic taste of French boulangerie to our community. Every morning at 4 AM, our master bakers begin their craft, shaping dough with techniques passed down through generations.</p>
-<p>We use only the finest ingredients: French butter, organic flour, and a whole lot of passion. No shortcuts, no compromises — just honest, delicious bread.</p>
-<div class="minecraft-tribute">
-<p>🧱 Built from the blocks of our imagination — this bakery rose from a voxel world 🧱</p>
-<p style="margin-top: 10px; font-size: 0.8rem;">⛏️ Some say if you watch the croissants fly long enough, you can still see the old Minecraft world... ⛏️</p>
+
+<div class="creeper-baker">
+<div class="creeper-chef-hat"></div>
+<div class="creeper-head">
+<div class="creeper-face"></div>
 </div>
-</section>
-<section class="contact" id="contact">
-<h2 class="section-title">Visit Our Bakery</h2>
-<div class="contact-info">
-<div class="contact-item">
-<h4>📍 Location</h4>
-<p>123 Croissant Lane<br/>Breadville, BK 12345</p>
+<div class="creeper-body"></div>
 </div>
-<div class="contact-item">
-<h4>🕐 Hours</h4>
-<p>Mon-Sat: 6AM - 7PM<br/>Sunday: 7AM - 3PM</p>
+
+<div class="mc-portal-container" onclick="enterPortal()">
+<div class="mc-portal"></div>
 </div>
-<div class="contact-item">
-<h4>📞 Contact</h4>
-<p>Phone: (555) BREAD-YUM<br/>hello@lamaisondupain.com</p>
+
+<div class="mc-ground"></div>
+
+<div class="mc-xp-bar">
+<div class="mc-xp-level">LVL 42</div>
+<div class="mc-xp-fill"></div>
 </div>
+
+<div class="mc-hud">
+<div class="hotbar-slot selected">🥐</div>
+<div class="hotbar-slot">🥖</div>
+<div class="hotbar-slot">🍞</div>
+<div class="hotbar-slot">🧁</div>
+<div class="hotbar-slot">🥯</div>
+<div class="hotbar-slot">🍩</div>
+<div class="hotbar-slot">⛏️</div>
+<div class="hotbar-slot">🗡️</div>
+<div class="hotbar-slot">🛡️</div>
 </div>
-</section>
-<footer>
-<p>© 2024 La Maison du Pain — Crafted with 🤍 and flour</p>
-<p style="margin-top: 10px; font-size: 0.8rem; opacity: 0.6;">🎮 Evolved from TwitchCraft Bakery World — The community has spoken!</p>
-</footer>
 <script>
-        // Smooth scroll for navigation
-        document.querySelectorAll('nav a').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            });
-        });
-        
-        // Add hover sound effect simulation (visual feedback)
-        document.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('mouseenter', () => {
-                card.style.transform = 'translateY(-10px) rotate(1deg)';
-            });
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0) rotate(0deg)';
-            });
-        });
-        
-        // Parallax voxel decorations
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            document.querySelectorAll('.voxel-decoration').forEach((voxel, i) => {
-                const speed = 0.1 + (i * 0.05);
-                voxel.style.transform = `translateY(${scrolled * speed}px) rotate(${scrolled * 0.02}deg)`;
-            });
-        });
-        
-        console.log('🥐 Welcome to La Maison du Pain!');
-        console.log('🧱 This bakery was built from the ruins of a Minecraft world.');
-        console.log('🎮 The community demanded it - 100 times!');
-        console.log('🥐 FLYING CROISSANTS ACTIVATED - 100 requests heard!');
-        console.log('⛏️ The Minecraft world echoes in the shadows...');
-        console.log('🟪 THE PORTAL HAS OPENED - x100 REQUESTS HEARD!');
-        console.log('🍫 20 PAIN AU CHOCOLAT SPAWNED IN THE VOXEL REALM!');
-        
-        // Make croissants follow slightly random paths
-        document.querySelectorAll('.flying-croissant').forEach((croissant, i) => {
-            setInterval(() => {
-                const randomX = Math.random() * 5 - 2.5;
-                const randomY = Math.random() * 5 - 2.5;
-                croissant.style.marginLeft = randomX + 'px';
-                croissant.style.marginTop = randomY + 'px';
-            }, 100 + i * 50);
-        });
-    </script>
+console.log('⛏️ MINECRAFT BAKERY DIMENSION LOADED!');
+console.log('🎮 x100 REQUESTS FULFILLED!');
+console.log('🍞 Click the portal to enter the BREAD DIMENSION!');
+
+// Hotbar selection
+document.querySelectorAll('.hotbar-slot').forEach((slot, i) => {
+    slot.addEventListener('click', () => {
+        document.querySelectorAll('.hotbar-slot').forEach(s => s.classList.remove('selected'));
+        slot.classList.add('selected');
+        addChatMessage('[Player]', 'Selected item slot ' + (i+1));
+    });
+});
+
+// Number keys for hotbar
+document.addEventListener('keydown', (e) => {
+    if (e.key >= '1' && e.key <= '9') {
+        const slots = document.querySelectorAll('.hotbar-slot');
+        slots.forEach(s => s.classList.remove('selected'));
+        slots[parseInt(e.key) - 1]?.classList.add('selected');
+    }
+});
+
+// Portal click
+function enterPortal() {
+    document.body.style.animation = 'portalWarp 1s ease-in-out';
+    addChatMessage('[Server]', 'Entering the BREAD DIMENSION...');
+    setTimeout(() => {
+        document.body.style.background = 'linear-gradient(180deg, #4B0082 0%, #8B008B 50%, #DA70D6 100%)';
+        addChatMessage('[Server]', 'Welcome to the BREAD DIMENSION!');
+    }, 500);
+}
+
+// Item clicks
+document.querySelectorAll('.mc-item').forEach(item => {
+    item.addEventListener('click', () => {
+        const name = item.querySelector('.mc-item-name').textContent;
+        addChatMessage('[Shop]', 'You purchased ' + name + '!');
+        item.style.transform = 'scale(0.9)';
+        setTimeout(() => item.style.transform = '', 100);
+    });
+});
+
+// Chat system
+function addChatMessage(sender, msg) {
+    const chat = document.querySelector('.mc-chat');
+    const msgEl = document.createElement('div');
+    msgEl.className = 'mc-chat-msg';
+    msgEl.innerHTML = `<span>${sender}</span> ${msg}`;
+    chat.appendChild(msgEl);
+    if (chat.children.length > 8) chat.removeChild(chat.firstChild);
+}
+
+// Random chat messages
+setInterval(() => {
+    const messages = [
+        ['[Villager]', 'Hmmmm... fresh bread!'],
+        ['[Creeper]', 'Ssssso tasty...'],
+        ['[Steve]', 'Anyone got diamonds?'],
+        ['[Alex]', 'The croissants are amazing!'],
+        ['[Enderman]', '...'],
+        ['[TwitchChat]', 'MINECRAFT BAKERY POG!']
+    ];
+    const [sender, msg] = messages[Math.floor(Math.random() * messages.length)];
+    addChatMessage(sender, msg);
+}, 8000);
+</script>
 </body>
 </html>
