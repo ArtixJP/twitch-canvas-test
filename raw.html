@@ -68,7 +68,7 @@
 <p>Click to Play</p>
 <p style="margin-top:10px;font-size:12px;color:#666">WASD = Move | Mouse = Look | Click = Break | Right Click = Place</p>
 </div>
-<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🏚️ RIP Burger Joint | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
+<div id="ui">🎮 WASD: Move | Space: Jump | Click: Break/Activate | 🍌 Find the Banana! | 🟣 Hit Purple Blocks! | 🥖 Visit the Bakery! | 🎬 NOW PLAYING: Mario Saves Peach! | 🍜 Japanese Restaurant! | 🏚️ ABANDONED PIZZERIA (RIP) | 🌸 Memorial Garden | 💕 HI MOM! HI FRIENDS! | ⛏️ Minecraft Style! | ✨ NEW: Crystal Cave! | 🌊 Waterfall! | 🌲 Enchanted Forest! | 🌌 Aurora Sky! | 🗽 MARIO STATUE: THANK YOU FOR EVERYTHING! ❤️ | 🎉 FLOATING THANK YOU PANEL IN SKY! | 📝 TEXT NOW READABLE!</div>
 <div id="crosshair"></div>
 <div id="game-container"></div>
 <script>
@@ -805,94 +805,96 @@
         }
         
         function createBurgerPlace() {
-            // 🏚️ ABANDONED BURGER RUINS - The community demanded its closure!
+            // 🌸 MEMORIAL FLOWER GARDEN - Where the burger ruins once stood!
+            // The community has spoken: 100 voices demanded change!
             const bx = 0, bz = 20, by = 5;
             
-            // Cracked foundation (dirty tiles)
+            // Beautiful grass foundation
             for (let x = 0; x < 5; x++) {
                 for (let z = 0; z < 4; z++) {
-                    if (Math.random() > 0.25) {
-                        createBlock(bx + x, by, bz + z, 0x3A3A3A);
-                    }
+                    createBlock(bx + x, by, bz + z, 0x4a7c31);
                 }
             }
             
-            // Crumbling walls (partial, damaged)
-            for (let y = 1; y <= 2; y++) {
-                for (let x = 0; x < 5; x++) {
-                    if (Math.random() > 0.5) {
-                        createBlock(bx + x, by + y, bz + 3, 0x5C3D2E);
-                    }
-                }
+            // Flower beds (colorful!)
+            const flowerColors = [0xFF69B4, 0xFFFF00, 0xFF6347, 0x9370DB, 0x00CED1, 0xFFA500];
+            for (let i = 0; i < 12; i++) {
+                const fx = bx + Math.floor(Math.random() * 5);
+                const fz = bz + Math.floor(Math.random() * 4);
+                const flower = createBlock(fx, by + 1, fz, flowerColors[i % flowerColors.length]);
+                flower.scale.set(0.4, 0.6, 0.4);
+                flower.userData.isFlower = true;
             }
             
-            // Rubble pile where grill was
-            createBlock(bx + 3, by + 1, bz + 2, 0x4A4A4A);
-            createBlock(bx + 2, by + 1, bz + 3, 0x3A3A3A);
-            createBlock(bx + 1, by + 1, bz + 2, 0x2A2A2A);
+            // Stone path through garden
+            createBlock(bx + 2, by + 0.1, bz, 0x808080);
+            createBlock(bx + 2, by + 0.1, bz + 1, 0x808080);
+            createBlock(bx + 2, by + 0.1, bz + 2, 0x808080);
             
-            // Broken counter remains
-            createBlock(bx + 1, by + 1, bz + 1, 0x8B8B8B);
+            // Small fountain in center
+            createBlock(bx + 2, by + 1, bz + 2, 0x4169E1);
+            const fountain = createBlock(bx + 2, by + 2, bz + 2, 0x87CEEB);
+            fountain.material.transparent = true;
+            fountain.material.opacity = 0.7;
+            fountain.scale.set(0.5, 0.8, 0.5);
             
-            // Cobwebs
-            const cobweb1 = createBlock(bx + 4, by + 2, bz + 3, 0xDDDDDD);
-            cobweb1.material.transparent = true;
-            cobweb1.material.opacity = 0.4;
+            // Memorial bench
+            createBlock(bx + 4, by + 1, bz + 1, 0x8B4513);
+            createBlock(bx + 4, by + 1, bz + 2, 0x8B4513);
             
-            // Fallen burger sign (on ground, broken)
-            createBlock(bx + 2, by + 1, bz - 1, 0x5C4033);
+            // "GARDEN OF NEW BEGINNINGS" sign
+            const gardenCanvas = document.createElement('canvas');
+            gardenCanvas.width = 256;
+            gardenCanvas.height = 128;
+            const gardenCtx = gardenCanvas.getContext('2d');
+            gardenCtx.fillStyle = '#228B22';
+            gardenCtx.fillRect(0, 0, 256, 128);
+            gardenCtx.fillStyle = '#FFFFFF';
+            gardenCtx.font = 'Bold 22px Arial';
+            gardenCtx.textAlign = 'center';
+            gardenCtx.fillText('🌸 GARDEN OF', 128, 50);
+            gardenCtx.fillText('NEW BEGINNINGS 🌸', 128, 85);
+            const gardenTex = new THREE.CanvasTexture(gardenCanvas);
+            const gardenSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: gardenTex }));
+            gardenSign.scale.set(3, 1.5, 1);
+            gardenSign.position.set(bx + 2, by + 4, bz - 1);
+            scene.add(gardenSign);
             
-            // Ghost of a burger (transparent, sad memory)
-            const ghostBurger = createBlock(bx + 2, by + 2, bz + 1, 0xDAA520);
-            ghostBurger.material.transparent = true;
-            ghostBurger.material.opacity = 0.25;
-            ghostBurger.scale.set(0.7, 0.7, 0.7);
-            
-            // Weeds growing through cracks
-            createBlock(bx + 1, by + 0.5, bz + 1, 0x228B22);
-            createBlock(bx + 3, by + 0.5, bz + 2, 0x228B22);
-            
-            // "RIP BURGERS" sign
-            const burgerCanvas = document.createElement('canvas');
-            burgerCanvas.width = 256;
-            burgerCanvas.height = 128;
-            const burgerCtx = burgerCanvas.getContext('2d');
-            burgerCtx.fillStyle = '#4A4A4A';
-            burgerCtx.fillRect(0, 0, 256, 128);
-            burgerCtx.fillStyle = '#8B0000';
-            burgerCtx.font = 'Bold 28px Arial';
-            burgerCtx.textAlign = 'center';
-            burgerCtx.fillText('RIP BURGERS 🍔💀', 128, 70);
-            const burgerTex = new THREE.CanvasTexture(burgerCanvas);
-            const burgerSign = new THREE.Sprite(new THREE.SpriteMaterial({ map: burgerTex }));
-            burgerSign.scale.set(3, 1.5, 1);
-            burgerSign.position.set(bx + 2, by + 3, bz - 1);
-            burgerSign.rotation.z = -0.2;
-            scene.add(burgerSign);
-            
-            // Dust particles
-            const dustParticles = [];
-            for (let i = 0; i < 5; i++) {
-                const dust = createBlock(
+            // Butterflies!
+            const butterflies = [];
+            const butterflyColors = [0xFFFF00, 0xFF69B4, 0x87CEEB];
+            for (let i = 0; i < 4; i++) {
+                const butterfly = createBlock(
                     bx + 1 + Math.random() * 3,
-                    by + 1 + Math.random() * 2,
+                    by + 2 + Math.random() * 2,
                     bz + 1 + Math.random() * 2,
-                    0xA0A0A0
+                    butterflyColors[i % butterflyColors.length]
                 );
-                dust.scale.set(0.1, 0.1, 0.1);
-                dust.material.transparent = true;
-                dust.material.opacity = 0.4;
-                dust.userData.isBurgerDust = true;
-                dust.userData.baseY = dust.position.y;
-                dustParticles.push(dust);
+                butterfly.scale.set(0.2, 0.15, 0.3);
+                butterfly.userData.isButterfly = true;
+                butterfly.userData.baseX = butterfly.position.x;
+                butterfly.userData.baseY = butterfly.position.y;
+                butterfly.userData.baseZ = butterfly.position.z;
+                butterfly.userData.phase = Math.random() * Math.PI * 2;
+                butterflies.push(butterfly);
             }
             
-            // Animate dust
-            let burgerDustTime = 0;
+            // Animate butterflies and flowers
+            let gardenTime = 0;
             setInterval(() => {
-                burgerDustTime += 0.02;
-                dustParticles.forEach((d, i) => {
-                    d.position.y = d.userData.baseY + Math.sin(burgerDustTime + i) * 0.2;
+                gardenTime += 0.03;
+                butterflies.forEach((b, i) => {
+                    b.position.x = b.userData.baseX + Math.sin(gardenTime + b.userData.phase) * 1.5;
+                    b.position.y = b.userData.baseY + Math.cos(gardenTime * 1.5 + b.userData.phase) * 0.5;
+                    b.position.z = b.userData.baseZ + Math.sin(gardenTime * 0.7 + b.userData.phase) * 1;
+                    b.rotation.y = gardenTime * 2;
+                });
+                // Flowers sway gently
+                blocks.forEach(b => {
+                    if (b.userData.isFlower) {
+                        b.rotation.x = Math.sin(gardenTime + b.position.x) * 0.1;
+                        b.rotation.z = Math.cos(gardenTime + b.position.z) * 0.1;
+                    }
                 });
             }, 50);
         }
