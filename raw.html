@@ -74,7 +74,7 @@
     scene.add(floor);
     
     // Player
-    const playerGeo = new THREE.CapsuleGeometry(0.5, 1, 4, 8);
+    const playerGeo = new THREE.CylinderGeometry(0.5, 0.5, 1.5, 8);
     const playerMat = new THREE.MeshStandardMaterial({color: 0x4488ff});
     const player = new THREE.Mesh(playerGeo, playerMat);
     player.position.y = 1;
