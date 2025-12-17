@@ -28,7 +28,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
-<h1>🎮 Minecraft World - Click to Play</h1>
+<h1>🎮 Minecraft World - Click to Play 🐍</h1>
 <canvas id="game"></canvas>
 <div id="controls">ZQSD/WASD: Move | Space: Jump | Shift: Down<br/>Mouse: Look | Left Click: Place/Break<br/>1-4: Select Block<br/><span id="debug" style="color:#0f0;">Click game to start!</span></div>
 <div id="hotbar">
@@ -141,9 +141,66 @@
         camera.rotation.order = 'YXZ';
         camera.rotation.y = yaw;
         camera.rotation.x = pitch;
+        updateSnake();
         renderer.render(scene, camera);
     }
     animate();
+    
+    // Snake creature
+    const snakeSegments = [];
+    const snakeLength = 8;
+    const snakeSpeed = 0.05;
+    let snakeAngle = 0;
+    let snakeX = 5, snakeZ = 5;
+    
+    for(let i = 0; i < snakeLength; i++) {
+        const geo = new THREE.BoxGeometry(0.6, 0.4, 0.6);
+        const mat = new THREE.MeshLambertMaterial({color: i === 0 ? 0x00ff00 : 0x228B22});
+        const segment = new THREE.Mesh(geo, mat);
+        segment.position.set(snakeX - i * 0.5, 1.2, snakeZ);
+        scene.add(segment);
+        snakeSegments.push(segment);
+    }
+    
+    // Snake eyes
+    const eyeGeo = new THREE.SphereGeometry(0.1, 8, 8);
+    const eyeMat = new THREE.MeshBasicMaterial({color: 0xff0000});
+    const leftEye = new THREE.Mesh(eyeGeo, eyeMat);
+    const rightEye = new THREE.Mesh(eyeGeo, eyeMat);
+    snakeSegments[0].add(leftEye);
+    snakeSegments[0].add(rightEye);
+    leftEye.position.set(-0.2, 0.15, -0.25);
+    rightEye.position.set(0.2, 0.15, -0.25);
+    
+    function updateSnake() {
+        snakeAngle += 0.02 + Math.sin(Date.now() * 0.001) * 0.01;
+        snakeX += Math.cos(snakeAngle) * snakeSpeed;
+        snakeZ += Math.sin(snakeAngle) * snakeSpeed;
+        
+        // Keep snake in bounds
+        if(snakeX > 8) snakeAngle = Math.PI - snakeAngle;
+        if(snakeX < -8) snakeAngle = Math.PI - snakeAngle;
+        if(snakeZ > 8) snakeAngle = -snakeAngle;
+        if(snakeZ < -8) snakeAngle = -snakeAngle;
+        
+        // Move head
+        snakeSegments[0].position.x = snakeX;
+        snakeSegments[0].position.z = snakeZ;
+        snakeSegments[0].position.y = 1.2 + Math.sin(Date.now() * 0.005) * 0.1;
+        snakeSegments[0].rotation.y = -snakeAngle + Math.PI/2;
+        
+        // Follow segments
+        for(let i = 1; i < snakeSegments.length; i++) {
+            const prev = snakeSegments[i-1].position;
+            const curr = snakeSegments[i].position;
+            curr.lerp(prev, 0.3);
+            curr.y = 1.2 + Math.sin(Date.now() * 0.005 + i * 0.5) * 0.05;
+            snakeSegments[i].lookAt(prev);
+        }
+    }
+    
+    // Add snake update to animation loop
+    const originalAnimate = animate;
     
     window.addEventListener('resize', () => {
         camera.aspect = window.innerWidth/window.innerHeight;
