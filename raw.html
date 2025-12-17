@@ -20,6 +20,15 @@
             overflow: hidden;
         }
         h1 { font-size: 3rem; text-align: center; }
+        .orbit-container .planet {
+            position: absolute;
+        }
+        .orbit-container .moon {
+            z-index: 10;
+        }
+        .orbit-container .kitty {
+            z-index: 11;
+        }
         .planet {
             width: 200px;
             height: 200px;
@@ -44,6 +53,36 @@
             border-radius: 50%;
             filter: blur(5px);
         }
+        .moon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e8e8e8 0%, #c0c0c0 50%, #888 100%);
+            box-shadow: 
+                inset -8px -8px 16px rgba(0,0,0,0.4),
+                inset 3px 3px 10px rgba(255,255,255,0.3),
+                0 0 20px rgba(200, 200, 200, 0.3);
+            position: absolute;
+            animation: orbit 8s linear infinite;
+        }
+        .kitty {
+            font-size: 30px;
+            position: absolute;
+            animation: orbit 12s linear infinite reverse;
+            filter: drop-shadow(0 0 10px rgba(255,182,193,0.6));
+        }
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+        }
+        .orbit-container {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
         .planet::after {
             content: '';
             position: absolute;
@@ -62,9 +101,12 @@
     </style>
 </head>
 <body>
+<div class="orbit-container">
 <div class="planet"></div>
+<div class="moon"></div>
+<div class="kitty">🐱</div>
+</div>
 <h1>Hello World</h1>
-
 <button id="musicToggle" style="padding: 10px 20px; background: rgba(74, 144, 217, 0.6); border: none; border-radius: 20px; color: white; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; margin-top: 20px;">🔊 Music</button>
 <script>
   const music = document.getElementById('bgMusic');
