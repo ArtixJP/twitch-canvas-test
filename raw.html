@@ -287,10 +287,12 @@
 <h2 class="wow-header">⚔️ World of Warcraft 3D ⚔️</h2>
 <div class="wow-arena">
 <div class="wow-character">
+<div style="margin-bottom:5px;"><button class="wow-btn" id="mageBtn" onclick="selectClass('mage')" style="font-size:0.7rem;padding:4px 8px;">🧙 Mage</button><button class="wow-btn" id="warriorBtn" onclick="selectClass('warrior')" style="font-size:0.7rem;padding:4px 8px;">⚔️ Warrior</button></div>
 <div class="wow-sprite" id="wowPlayer">🧙</div>
 <div class="stat-bar"><div class="health-fill" id="playerHealth" style="width:100%"></div></div>
 <div class="stat-bar"><div class="mana-fill" id="playerMana" style="width:100%"></div></div>
-<div>Lvl 60 Mage</div>
+<div id="playerClass">Lvl 60 Mage</div>
+<div class="stat-bar" style="background:#8b0000;"><div id="playerRage" style="height:100%;background:linear-gradient(90deg,#8b0000,#ff4444);width:0%"></div></div>
 </div>
 <div style="font-size:30px">⚔️</div>
 <div class="wow-enemy">
@@ -299,10 +301,15 @@
 <div id="enemyName">Dragon (100 HP)</div>
 </div>
 </div>
-<div>
+<div id="mageAbilities">
 <button class="wow-btn" onclick="wowAttack()">⚔️ Attack</button>
 <button class="wow-btn" onclick="wowFireball()">🔥 Fireball (30 MP)</button>
 <button class="wow-btn" onclick="wowHeal()">💚 Heal (20 MP)</button>
+</div>
+<div id="warriorAbilities" style="display:none;">
+<button class="wow-btn" onclick="heroicStrike()">⚔️ Heroic Strike</button>
+<button class="wow-btn" onclick="shieldBlock()">🛡️ Shield Block (20 Rage)</button>
+<button class="wow-btn" onclick="execute()">💀 Execute (30 Rage)</button>
 </div>
 <div class="combat-log" id="combatLog">Battle begins!</div>
 </div>
@@ -621,21 +628,72 @@
         setTimeout(() => clickTarget.style.transform = '', 100);
     });
     // WoW Mini-Game
-    let wowPlayerHP = 100, wowPlayerMP = 100, wowEnemyHP = 100;
+    let wowPlayerHP = 100, wowPlayerMP = 100, wowEnemyHP = 100, wowPlayerRage = 0;
+    let playerClass = 'mage';
+    let shieldBlockActive = false;
     const enemies = [{name:'Dragon',emoji:'🐉',hp:100},{name:'Orc',emoji:'👹',hp:80},{name:'Demon',emoji:'👿',hp:120}];
     let currentEnemy = enemies[0];
     function updateWowUI() {
         document.getElementById('playerHealth').style.width = wowPlayerHP+'%';
         document.getElementById('playerMana').style.width = wowPlayerMP+'%';
+        document.getElementById('playerRage').style.width = wowPlayerRage+'%';
         document.getElementById('enemyHealth').style.width = (wowEnemyHP/currentEnemy.hp*100)+'%';
         document.getElementById('enemyName').textContent = currentEnemy.name+' ('+wowEnemyHP+' HP)';
     }
     function wowLog(msg) { const log=document.getElementById('combatLog'); log.innerHTML=msg+'<br>'+log.innerHTML; }
-    function enemyAttack() { const dmg=Math.floor(Math.random()*15)+5; wowPlayerHP=Math.max(0,wowPlayerHP-dmg); wowLog('🐉 Enemy hits you for '+dmg+'!'); if(wowPlayerHP<=0){wowLog('💀 You died! Respawning...'); setTimeout(()=>{wowPlayerHP=100;wowPlayerMP=100;updateWowUI();},1500);} }
+    function enemyAttack() { let dmg=Math.floor(Math.random()*15)+5; if(shieldBlockActive){dmg=Math.floor(dmg*0.5);wowLog('🛡️ Shield Block absorbs damage!');shieldBlockActive=false;} wowPlayerHP=Math.max(0,wowPlayerHP-dmg); if(playerClass==='warrior')wowPlayerRage=Math.min(100,wowPlayerRage+10); wowLog('🐉 Enemy hits you for '+dmg+'!'+(playerClass==='warrior'?' (+10 Rage)':'')); if(wowPlayerHP<=0){wowLog('💀 You died! Respawning...'); setTimeout(()=>{wowPlayerHP=100;wowPlayerMP=100;wowPlayerRage=0;updateWowUI();},1500);} updateWowUI(); }
     function wowAttack() { const dmg=Math.floor(Math.random()*20)+10; wowEnemyHP-=dmg; wowLog('⚔️ You hit for '+dmg+'!'); checkEnemyDeath(); if(wowEnemyHP>0)setTimeout(enemyAttack,500); updateWowUI(); }
     function wowFireball() { if(wowPlayerMP<30){wowLog('❌ Not enough mana!');return;} wowPlayerMP-=30; const dmg=Math.floor(Math.random()*30)+25; wowEnemyHP-=dmg; wowLog('🔥 Fireball hits for '+dmg+'!'); checkEnemyDeath(); if(wowEnemyHP>0)setTimeout(enemyAttack,500); updateWowUI(); }
     function wowHeal() { if(wowPlayerMP<20){wowLog('❌ Not enough mana!');return;} wowPlayerMP-=20; const heal=Math.floor(Math.random()*20)+15; wowPlayerHP=Math.min(100,wowPlayerHP+heal); wowLog('💚 Healed for '+heal+'!'); setTimeout(enemyAttack,500); updateWowUI(); }
-    function checkEnemyDeath() { if(wowEnemyHP<=0){wowLog('🎉 '+currentEnemy.name+' defeated!'); currentEnemy=enemies[Math.floor(Math.random()*enemies.length)]; wowEnemyHP=currentEnemy.hp; document.getElementById('wowEnemy').textContent=currentEnemy.emoji; wowPlayerMP=Math.min(100,wowPlayerMP+20);} }
+    function checkEnemyDeath() { if(wowEnemyHP<=0){wowLog('🎉 '+currentEnemy.name+' defeated!'); currentEnemy=enemies[Math.floor(Math.random()*enemies.length)]; wowEnemyHP=currentEnemy.hp; document.getElementById('wowEnemy').textContent=currentEnemy.emoji; wowPlayerMP=Math.min(100,wowPlayerMP+20); wowPlayerRage=Math.min(100,wowPlayerRage+15);} }
+    function selectClass(cls) {
+        playerClass = cls;
+        if(cls === 'warrior') {
+            document.getElementById('wowPlayer').textContent = '🗡️';
+            document.getElementById('playerClass').textContent = 'Lvl 60 Warrior';
+            document.getElementById('mageAbilities').style.display = 'none';
+            document.getElementById('warriorAbilities').style.display = 'block';
+            document.getElementById('warriorBtn').style.border = '2px solid #ff4444';
+            document.getElementById('mageBtn').style.border = '2px solid #ffd700';
+        } else {
+            document.getElementById('wowPlayer').textContent = '🧙';
+            document.getElementById('playerClass').textContent = 'Lvl 60 Mage';
+            document.getElementById('mageAbilities').style.display = 'block';
+            document.getElementById('warriorAbilities').style.display = 'none';
+            document.getElementById('mageBtn').style.border = '2px solid #ff4444';
+            document.getElementById('warriorBtn').style.border = '2px solid #ffd700';
+        }
+        wowPlayerHP=100; wowPlayerMP=100; wowPlayerRage=0; updateWowUI();
+        wowLog('⚔️ You are now a ' + cls.toUpperCase() + '!');
+    }
+    function heroicStrike() {
+        const dmg = Math.floor(Math.random()*25)+15;
+        wowEnemyHP -= dmg;
+        wowPlayerRage = Math.min(100, wowPlayerRage + 15);
+        wowLog('⚔️ Heroic Strike hits for '+dmg+'! (+15 Rage)');
+        checkEnemyDeath();
+        if(wowEnemyHP>0) setTimeout(enemyAttack, 500);
+        updateWowUI();
+    }
+    function shieldBlock() {
+        if(wowPlayerRage < 20) { wowLog('❌ Not enough rage!'); return; }
+        wowPlayerRage -= 20;
+        shieldBlockActive = true;
+        wowLog('🛡️ Shield Block active! Next attack reduced!');
+        setTimeout(() => { shieldBlockActive = false; }, 3000);
+        updateWowUI();
+    }
+    function execute() {
+        if(wowPlayerRage < 30) { wowLog('❌ Not enough rage!'); return; }
+        wowPlayerRage -= 30;
+        let dmg = Math.floor(Math.random()*20)+20;
+        if(wowEnemyHP < 30) dmg *= 2;
+        wowEnemyHP -= dmg;
+        wowLog('💀 EXECUTE deals '+dmg+' damage!' + (wowEnemyHP<30?' (BONUS!)':''));
+        checkEnemyDeath();
+        if(wowEnemyHP>0) setTimeout(enemyAttack, 500);
+        updateWowUI();
+    }
     const btn = document.getElementById('musicToggle');
     const sections = ['space', 'animals', 'games', 'canon'];
     let currentSectionIndex = 0;
