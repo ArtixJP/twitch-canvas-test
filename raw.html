@@ -224,10 +224,19 @@
         }
         .mama-star {
             position: absolute;
-            font-size: 10px;
-            color: rgba(255,182,193,0.8);
-            animation: twinkle 2s infinite alternate;
-            text-shadow: 0 0 5px pink;
+            font-size: 18px;
+            color: rgba(255,182,193,1);
+            animation: twinkle 1.5s infinite alternate, pulse-star 3s ease-in-out infinite;
+            text-shadow: 0 0 15px pink, 0 0 30px rgba(255,105,180,0.8), 0 0 45px rgba(255,20,147,0.5);
+            z-index: 200;
+            background: rgba(0,0,0,0.3);
+            padding: 5px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,182,193,0.5);
+        }
+        @keyframes pulse-star {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
         }
         .pizza-monster {
             position: absolute;
@@ -272,10 +281,14 @@
         }
         .bonjour-maman {
             position: absolute;
-            font-size: 12px;
-            color: rgba(255,200,220,0.9);
+            font-size: 16px;
+            color: rgba(255,200,220,1);
             animation: float-message 3s ease-in-out infinite;
-            text-shadow: 0 0 8px pink;
+            text-shadow: 0 0 12px pink, 0 0 20px rgba(255,105,180,0.6);
+            z-index: 200;
+            background: rgba(0,0,0,0.3);
+            padding: 4px 8px;
+            border-radius: 8px;
         }
         @keyframes float-message {
             0%, 100% { transform: translateY(0) rotate(-2deg); }
@@ -427,8 +440,8 @@
 <div class="floating-pizza" style="top: 40%; left: 10%; animation-delay: 2.5s;">🍕</div>
 <div class="floating-pizza" style="top: 55%; left: 30%; animation-delay: 3.5s;">🍕</div>
 <div class="floating-pizza" style="top: 30%; left: 55%; animation-delay: 4.5s;">🍕</div>
-<div class="mama-star" style="top: 5%; left: 92%;">coucou maman ♥</div>
-<div class="bonjour-maman" style="top: 8%; left: 88%;">bonjour maman! 💕</div>
+<div class="mama-star" style="top: 5%; left: 85%;">⭐ coucou maman ♥ ⭐</div>
+<div class="bonjour-maman" style="top: 12%; left: 82%;">💖 bonjour maman! 💕</div>
 <div class="eaten-counter">🍕 Pizzas Eaten: <span id="pizzasEaten">0</span> 👹</div>
 <div class="pizza-monster" id="pizzaMonster">👹</div>
 <div class="orbit">
