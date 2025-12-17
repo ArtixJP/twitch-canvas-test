@@ -62,6 +62,84 @@
         .flying-croissant:nth-child(12) { animation-delay: 6s; animation-duration: 8s; font-size: 3rem; }
         .flying-croissant:nth-child(13) { animation-delay: 7s; animation-duration: 15s; font-size: 4.5rem; }
         
+        /* MINECRAFT WORLD RETURNS - THE COMMUNITY HAS SPOKEN x100! */
+        .minecraft-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            background: 
+                repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(0,100,0,0.03) 8px, rgba(0,100,0,0.03) 16px),
+                repeating-linear-gradient(90deg, transparent, transparent 8px, rgba(139,69,19,0.03) 8px, rgba(139,69,19,0.03) 16px);
+            animation: pixelPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pixelPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 0.8; }
+        }
+        
+        .minecraft-portal {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 180px;
+            background: linear-gradient(180deg, #4B0082 0%, #8B008B 50%, #4B0082 100%);
+            border: 8px solid #2D0047;
+            box-shadow: 0 0 30px #8B008B, inset 0 0 40px rgba(255,255,255,0.3);
+            animation: portalGlow 1.5s ease-in-out infinite;
+            z-index: 1001;
+            image-rendering: pixelated;
+        }
+        
+        .minecraft-portal::before {
+            content: '⛏️ ENTER';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: monospace;
+            color: #8B008B;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #000;
+        }
+        
+        @keyframes portalGlow {
+            0%, 100% { box-shadow: 0 0 30px #8B008B, inset 0 0 40px rgba(255,255,255,0.3); }
+            50% { box-shadow: 0 0 60px #DA70D6, inset 0 0 60px rgba(255,255,255,0.5); }
+        }
+        
+        /* PAIN AU CHOCOLAT x20 - Floating voxel style! */
+        .pain-chocolat {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 998;
+            pointer-events: none;
+            animation: voxelFloat 5s ease-in-out infinite;
+            image-rendering: pixelated;
+            filter: drop-shadow(2px 2px 0 #3D2914);
+        }
+        
+        @keyframes voxelFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(5deg); }
+            75% { transform: translateY(-10px) rotate(-5deg); }
+        }
+        
+        .grass-block {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(180deg, #5D8C3D 0%, #5D8C3D 30%, #8B4513 30%, #8B4513 100%);
+            border: 2px solid #3D5C2D;
+            z-index: 0;
+            image-rendering: pixelated;
+        }
+        
         @keyframes flyAround {
             0% { top: 10%; left: -10%; transform: rotate(0deg) scale(1); }
             25% { top: 30%; left: 80%; transform: rotate(90deg) scale(1.2); }
@@ -369,18 +447,46 @@
 <div class="voxel-decoration"></div>
 <div class="voxel-decoration"></div>
 <div class="voxel-decoration"></div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
+<div class="flying-croissant">🥐</div>
 
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
-<div class="flying-croissant">🥐</div>
+<div class="minecraft-overlay"></div>
+<div class="minecraft-portal"></div>
+
+<div class="pain-chocolat" style="top:5%;left:10%;animation-delay:0s;">🍫</div>
+<div class="pain-chocolat" style="top:15%;left:25%;animation-delay:0.3s;">🍫</div>
+<div class="pain-chocolat" style="top:8%;left:45%;animation-delay:0.6s;">🍫</div>
+<div class="pain-chocolat" style="top:20%;left:70%;animation-delay:0.9s;">🍫</div>
+<div class="pain-chocolat" style="top:12%;left:85%;animation-delay:1.2s;">🍫</div>
+<div class="pain-chocolat" style="top:35%;left:8%;animation-delay:1.5s;">🍫</div>
+<div class="pain-chocolat" style="top:40%;left:92%;animation-delay:1.8s;">🍫</div>
+<div class="pain-chocolat" style="top:55%;left:15%;animation-delay:2.1s;">🍫</div>
+<div class="pain-chocolat" style="top:60%;left:78%;animation-delay:2.4s;">🍫</div>
+<div class="pain-chocolat" style="top:70%;left:5%;animation-delay:2.7s;">🍫</div>
+<div class="pain-chocolat" style="top:75%;left:55%;animation-delay:3s;">🍫</div>
+<div class="pain-chocolat" style="top:82%;left:30%;animation-delay:3.3s;">🍫</div>
+<div class="pain-chocolat" style="top:88%;left:65%;animation-delay:3.6s;">🍫</div>
+<div class="pain-chocolat" style="top:25%;left:50%;animation-delay:3.9s;">🍫</div>
+<div class="pain-chocolat" style="top:45%;left:35%;animation-delay:4.2s;">🍫</div>
+<div class="pain-chocolat" style="top:50%;left:60%;animation-delay:4.5s;">🍫</div>
+<div class="pain-chocolat" style="top:65%;left:88%;animation-delay:4.8s;">🍫</div>
+<div class="pain-chocolat" style="top:78%;left:12%;animation-delay:5.1s;">🍫</div>
+<div class="pain-chocolat" style="top:30%;left:95%;animation-delay:5.4s;">🍫</div>
+<div class="pain-chocolat" style="top:92%;left:45%;animation-delay:5.7s;">🍫</div>
+
+<div class="grass-block" style="bottom:0;left:10%;"></div>
+<div class="grass-block" style="bottom:0;left:20%;"></div>
+<div class="grass-block" style="bottom:0;left:75%;"></div>
+<div class="grass-block" style="bottom:32px;left:75%;"></div>
 <header>
-<div class="logo">🥐 La Maison du Pain 🥖</div>
-<p class="tagline">Artisan Boulangerie Since 2024</p>
+<div class="logo">⛏️ La Maison du Pain ⛏️</div>
+<p class="tagline">⬛ Artisan Boulangerie - MINECRAFT DIMENSION ⬛</p>
 </header>
 <nav>
 <a href="#home">Home</a>
@@ -519,6 +625,8 @@
         console.log('🎮 The community demanded it - 100 times!');
         console.log('🥐 FLYING CROISSANTS ACTIVATED - 100 requests heard!');
         console.log('⛏️ The Minecraft world echoes in the shadows...');
+        console.log('🟪 THE PORTAL HAS OPENED - x100 REQUESTS HEARD!');
+        console.log('🍫 20 PAIN AU CHOCOLAT SPAWNED IN THE VOXEL REALM!');
         
         // Make croissants follow slightly random paths
         document.querySelectorAll('.flying-croissant').forEach((croissant, i) => {
