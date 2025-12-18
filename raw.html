@@ -325,6 +325,34 @@
             0% { opacity: 0.8; transform: scale(1); }
             100% { opacity: 0; transform: scale(0.3) rotate(180deg); }
         }
+        .snake-game-container {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            border: 2px solid rgba(0,255,100,0.6);
+            border-radius: 15px;
+            padding: 10px;
+            z-index: 100;
+        }
+        .snake-canvas {
+            border: 2px solid rgba(0,255,100,0.4);
+            border-radius: 5px;
+            background: rgba(0,20,0,0.8);
+        }
+        .snake-score {
+            color: #00ff64;
+            text-align: center;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            text-shadow: 0 0 10px rgba(0,255,100,0.8);
+        }
+        .snake-instructions {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.7rem;
+            text-align: center;
+            margin-top: 5px;
+        }
         .eaten-counter {
             position: absolute;
             top: 100px;
@@ -487,6 +515,11 @@
 <div class="papy-star" style="top: 85%; left: 20%;">🌟 salut papy! 🍕🍄 🌟</div>
 <div class="bonjour-maman" style="top: 22%; left: 70%;">💖 bonjour maman! 💕</div>
 <div class="eaten-counter">🍕 Pizzas Eaten: <span id="pizzasEaten">0</span> 👹</div>
+<div class="snake-game-container">
+<div class="snake-score">🐍 Space Worm: <span id="snakeScore">0</span></div>
+<canvas class="snake-canvas" height="150" id="snakeCanvas" width="150"></canvas>
+<div class="snake-instructions">Arrow keys to control</div>
+</div>
 <div class="pizza-monster" id="pizzaMonster">👹</div>
 <div class="orbit">
 <div class="planet" title="Planet Twitch">
@@ -652,6 +685,92 @@
         requestAnimationFrame(updateMonster);
     }
     updateMonster();
+    
+    // SPACE WORM SNAKE GAME
+    const snakeCanvas = document.getElementById('snakeCanvas');
+    const snakeCtx = snakeCanvas.getContext('2d');
+    const snakeScoreEl = document.getElementById('snakeScore');
+    const gridSize = 10;
+    const tileCount = 15;
+    let snake = [{x: 7, y: 7}];
+    let snakeDir = {x: 1, y: 0};
+    let snakeFood = {x: 10, y: 10};
+    let snakeScore = 0;
+    let snakeSpeed = 150;
+    
+    function drawSnakeGame() {
+        // Clear canvas with space background
+        snakeCtx.fillStyle = 'rgba(0,20,40,0.9)';
+        snakeCtx.fillRect(0, 0, 150, 150);
+        
+        // Draw stars
+        snakeCtx.fillStyle = 'rgba(255,255,255,0.3)';
+        for(let i = 0; i < 10; i++) {
+            snakeCtx.fillRect((i*17)%145, (i*23)%145, 1, 1);
+        }
+        
+        // Draw food (pizza!)
+        snakeCtx.font = '10px Arial';
+        snakeCtx.fillText('🍕', snakeFood.x * gridSize, snakeFood.y * gridSize + 8);
+        
+        // Draw snake (space worm)
+        snake.forEach((segment, i) => {
+            if(i === 0) {
+                snakeCtx.fillText('🐍', segment.x * gridSize, segment.y * gridSize + 8);
+            } else {
+                snakeCtx.fillStyle = `rgba(0, ${255 - i*20}, 100, 0.8)`;
+                snakeCtx.fillRect(segment.x * gridSize, segment.y * gridSize, gridSize-1, gridSize-1);
+            }
+        });
+    }
+    
+    function updateSnake() {
+        const head = {x: snake[0].x + snakeDir.x, y: snake[0].y + snakeDir.y};
+        
+        // Wrap around edges (space is infinite!)
+        if(head.x < 0) head.x = tileCount - 1;
+        if(head.x >= tileCount) head.x = 0;
+        if(head.y < 0) head.y = tileCount - 1;
+        if(head.y >= tileCount) head.y = 0;
+        
+        // Check self collision
+        for(let segment of snake) {
+            if(head.x === segment.x && head.y === segment.y) {
+                snake = [{x: 7, y: 7}];
+                snakeScore = 0;
+                snakeScoreEl.textContent = snakeScore;
+                return;
+            }
+        }
+        
+        snake.unshift(head);
+        
+        // Check food
+        if(head.x === snakeFood.x && head.y === snakeFood.y) {
+            snakeScore++;
+            snakeScoreEl.textContent = snakeScore;
+            snakeFood = {
+                x: Math.floor(Math.random() * tileCount),
+                y: Math.floor(Math.random() * tileCount)
+            };
+        } else {
+            snake.pop();
+        }
+        
+        drawSnakeGame();
+    }
+    
+    document.addEventListener('keydown', (e) => {
+        switch(e.key) {
+            case 'ArrowUp': if(snakeDir.y !== 1) snakeDir = {x: 0, y: -1}; break;
+            case 'ArrowDown': if(snakeDir.y !== -1) snakeDir = {x: 0, y: 1}; break;
+            case 'ArrowLeft': if(snakeDir.x !== 1) snakeDir = {x: -1, y: 0}; break;
+            case 'ArrowRight': if(snakeDir.x !== -1) snakeDir = {x: 1, y: 0}; break;
+        }
+    });
+    
+    setInterval(updateSnake, snakeSpeed);
+    drawSnakeGame();
     
     // Section Navigation
     const sections = ['space', 'animals', 'games'];
