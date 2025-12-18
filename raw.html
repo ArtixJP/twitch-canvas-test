@@ -401,29 +401,7 @@
             from { opacity: 0.3; }
             to { opacity: 1; }
         }
-        #musicToggle {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            border: 2px solid rgba(255,204,0,0.6);
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            z-index: 100;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 15px rgba(255,204,0,0.3);
-        }
-        #musicToggle:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 25px rgba(255,204,0,0.6);
-        }
-        #musicToggle.paused {
-            opacity: 0.6;
-        }
+        /* 🎵 Music controls removed - the cosmos prefers silence 🌠 */
     </style>
 </head>
 <body>
@@ -434,7 +412,7 @@
 </nav>
 <div class="timer-bar" id="timerBar"></div>
 <div class="scoreboard">🐕 Dog Score: <span id="dogScore">0</span></div>
-<button id="musicToggle" onclick="toggleMusic()" title="Toggle Music">🎵</button>
+
 <div class="stars">
 <div class="star" style="top: 10%; left: 20%; animation-delay: 0.5s;"></div>
 <div class="star" style="top: 30%; left: 80%; animation-delay: 1s;"></div>
@@ -534,32 +512,9 @@
 </div>
 </section>
 <script>
-    const audio = document.getElementById('bgMusic');
-    const btn = document.getElementById('musicToggle');
-    let isPlaying = false;
-    
-    function toggleMusic() {
-        if (isPlaying) {
-            audio.pause();
-            btn.textContent = '🔇';
-            btn.classList.add('paused');
-        } else {
-            audio.play();
-            btn.textContent = '🎵';
-            btn.classList.remove('paused');
-        }
-        isPlaying = !isPlaying;
-    }
-    
-    document.addEventListener('click', function initAudio() {
-        if (!isPlaying) {
-            audio.play().then(() => {
-                isPlaying = true;
-                btn.textContent = '🎵';
-            }).catch(() => {});
-        }
-        document.removeEventListener('click', initAudio);
-    }, { once: true });
+    // 🎵 Music system debugged - removed broken audio references
+    // The pizza galaxy now operates in peaceful silence 🍕🌌
+    console.log('🚀 Pizza Burger Mushroom Galaxy: All systems nominal!');
     
     // Cat and Dog Chase Game
     const cat = document.getElementById('cat');
