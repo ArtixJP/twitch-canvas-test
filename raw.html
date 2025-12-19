@@ -25,7 +25,7 @@
 </head>
 <body>
 <div id="earth-container"></div>
-<h1 class="cosmic-echo">✧ ⋆ ˚ ✦ ˚ ⋆ ✧</h1>
+<h1 class="cosmic-echo cosmic-fading">· · ·</h1>
 <div class="test-beacon">
 <span class="beacon-pulse">◉</span>
 <span class="beacon-text">☀ SUN ORBITING</span>
@@ -67,9 +67,11 @@
   opacity: 0.6;
 }
 @keyframes fadeToStars {
-  0% { opacity: 0.3; transform: scale(0.95); filter: blur(1px); }
-  100% { opacity: 0.7; transform: scale(1.05); filter: blur(0px); }
+  0% { opacity: 0.05; transform: scale(0.8); filter: blur(2px); }
+  50% { opacity: 0.1; transform: scale(0.9); filter: blur(1px); }
+  100% { opacity: 0.05; transform: scale(0.85); filter: blur(2px); }
 }
+.cosmic-fading { font-size: 1rem; letter-spacing: 2em; color: rgba(255,255,255,0.1); }
 </style>
 <script>
         const scene = new THREE.Scene();
