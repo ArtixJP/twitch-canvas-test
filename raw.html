@@ -542,6 +542,13 @@
 </div>
 </section>
 <section class="section" id="games">
+<div class="game-3d-container" style="position: relative; margin-bottom: 30px;">
+<h2 style="text-align: center; color: #ffcc00; text-shadow: 0 0 20px rgba(255,204,0,0.5);">🍕 3D Pizza Catcher 🍕</h2>
+<p style="text-align: center; opacity: 0.7;">Use A/D or Arrow keys to catch falling pizzas!</p>
+<div id="game3dScore" style="text-align: center; font-size: 1.5rem; color: #ff6b9d; margin: 10px 0;">🍕 Caught: <span id="pizzaCatchScore">0</span></div>
+<div id="game3dCanvas" style="width: 400px; height: 300px; margin: 0 auto; border: 3px solid rgba(255,204,0,0.6); border-radius: 15px; overflow: hidden;"></div>
+<p style="text-align: center; font-size: 0.8rem; opacity: 0.5; margin-top: 10px;">🎮 Move the plate to catch cosmic pizzas!</p>
+</div>
 <div class="clicker-game">
 <h2>🎯 Speed Clicker Challenge!</h2>
 <p>Cliquez le plus vite possible en 10 secondes!</p>
@@ -895,6 +902,127 @@
             }, i * 100);
         }
     }
+    
+    // 3D PIZZA CATCHER GAME
+    const game3dContainer = document.getElementById('game3dCanvas');
+    const game3dScene = new THREE.Scene();
+    game3dScene.background = new THREE.Color(0x1a1a2e);
+    const game3dCamera = new THREE.PerspectiveCamera(60, 400/300, 0.1, 1000);
+    const game3dRenderer = new THREE.WebGLRenderer({ antialias: true });
+    game3dRenderer.setSize(400, 300);
+    game3dContainer.appendChild(game3dRenderer.domElement);
+    
+    // Add starfield background
+    const starsGeometry = new THREE.BufferGeometry();
+    const starPositions = [];
+    for(let i = 0; i < 200; i++) {
+        starPositions.push((Math.random() - 0.5) * 100);
+        starPositions.push((Math.random() - 0.5) * 100);
+        starPositions.push(-Math.random() * 50 - 10);
+    }
+    starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
+    const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
+    const starField = new THREE.Points(starsGeometry, starsMaterial);
+    game3dScene.add(starField);
+    
+    // Create plate (catcher)
+    const plateGeometry = new THREE.CylinderGeometry(1.5, 1.2, 0.3, 32);
+    const plateMaterial = new THREE.MeshPhongMaterial({ color: 0xffd700, emissive: 0x332200, shininess: 100 });
+    const plate = new THREE.Mesh(plateGeometry, plateMaterial);
+    plate.position.set(0, -3, 0);
+    game3dScene.add(plate);
+    
+    // Falling pizzas array
+    const fallingPizzas3d = [];
+    let pizzaCatchScore = 0;
+    
+    function createFallingPizza3d() {
+        const pizzaGroup = new THREE.Group();
+        // Pizza base
+        const pizzaGeo = new THREE.CylinderGeometry(0.6, 0.6, 0.15, 8);
+        const pizzaMat = new THREE.MeshPhongMaterial({ color: 0xe67e22, emissive: 0x331100 });
+        const pizza = new THREE.Mesh(pizzaGeo, pizzaMat);
+        pizzaGroup.add(pizza);
+        // Cheese top
+        const cheeseGeo = new THREE.CylinderGeometry(0.55, 0.55, 0.05, 8);
+        const cheeseMat = new THREE.MeshPhongMaterial({ color: 0xf4d03f });
+        const cheese = new THREE.Mesh(cheeseGeo, cheeseMat);
+        cheese.position.y = 0.1;
+        pizzaGroup.add(cheese);
+        // Pepperoni
+        for(let i = 0; i < 3; i++) {
+            const pepGeo = new THREE.CylinderGeometry(0.1, 0.1, 0.03, 8);
+            const pepMat = new THREE.MeshPhongMaterial({ color: 0xc0392b });
+            const pep = new THREE.Mesh(pepGeo, pepMat);
+            pep.position.set(Math.cos(i*2.1)*0.3, 0.15, Math.sin(i*2.1)*0.3);
+            pizzaGroup.add(pep);
+        }
+        pizzaGroup.position.set((Math.random() - 0.5) * 6, 5, 0);
+        pizzaGroup.rotation.x = Math.PI / 2;
+        game3dScene.add(pizzaGroup);
+        fallingPizzas3d.push({ mesh: pizzaGroup, speed: 0.03 + Math.random() * 0.02 });
+    }
+    
+    // Lighting for 3D game
+    const game3dLight = new THREE.PointLight(0xffcc00, 1, 100);
+    game3dLight.position.set(0, 5, 5);
+    game3dScene.add(game3dLight);
+    game3dScene.add(new THREE.AmbientLight(0x404040));
+    
+    game3dCamera.position.set(0, 0, 8);
+    
+    // Plate movement
+    let plateDirection = 0;
+    document.addEventListener('keydown', (e) => {
+        if(e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') plateDirection = -1;
+        if(e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') plateDirection = 1;
+    });
+    document.addEventListener('keyup', (e) => {
+        if(['a','A','d','D','ArrowLeft','ArrowRight'].includes(e.key)) plateDirection = 0;
+    });
+    
+    // Spawn pizzas periodically
+    setInterval(() => {
+        if(fallingPizzas3d.length < 5) createFallingPizza3d();
+    }, 1500);
+    
+    function animate3dGame() {
+        requestAnimationFrame(animate3dGame);
+        
+        // Move plate
+        plate.position.x += plateDirection * 0.15;
+        plate.position.x = Math.max(-4, Math.min(4, plate.position.x));
+        plate.rotation.y += 0.02;
+        
+        // Update falling pizzas
+        for(let i = fallingPizzas3d.length - 1; i >= 0; i--) {
+            const p = fallingPizzas3d[i];
+            p.mesh.position.y -= p.speed;
+            p.mesh.rotation.z += 0.05;
+            
+            // Check catch
+            if(p.mesh.position.y < -2.5 && Math.abs(p.mesh.position.x - plate.position.x) < 1.5) {
+                pizzaCatchScore++;
+                document.getElementById('pizzaCatchScore').textContent = pizzaCatchScore;
+                game3dScene.remove(p.mesh);
+                fallingPizzas3d.splice(i, 1);
+                // Flash plate
+                plateMaterial.emissive.setHex(0x886600);
+                setTimeout(() => plateMaterial.emissive.setHex(0x332200), 100);
+            }
+            // Remove if missed
+            else if(p.mesh.position.y < -5) {
+                game3dScene.remove(p.mesh);
+                fallingPizzas3d.splice(i, 1);
+            }
+        }
+        
+        // Rotate starfield slowly
+        starField.rotation.z += 0.001;
+        
+        game3dRenderer.render(game3dScene, game3dCamera);
+    }
+    animate3dGame();
     
     // Clicker Game
     let clickScore = 0;
