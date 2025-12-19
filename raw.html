@@ -35,7 +35,7 @@
 
         // Earth
         const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
-        const earthTexture = new THREE.TextureLoader().load('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/WorldMap-A_non-mobile.svg/1280px-WorldMap-A_non-mobile.svg.png');
+        const earthTexture = new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
         const earthMaterial = new THREE.MeshPhongMaterial({
             map: earthTexture,
             bumpScale: 0.05,
