@@ -28,7 +28,7 @@
 <h1 class="cosmic-echo">✧ ⋆ ˚ ✦ ˚ ⋆ ✧</h1>
 <div class="test-beacon">
 <span class="beacon-pulse">◉</span>
-<span class="beacon-text">☀ SUN VISIBLE</span>
+<span class="beacon-text">☀ SUN ORBITING</span>
 </div>
 <style>
 .test-beacon {
@@ -187,6 +187,7 @@
         scene.add(astronaut2Group);
         
         let astronaut2Angle = Math.PI;
+        let sunOrbitAngle = 0;
         
         // The Sun - our star!
         const sunGeometry = new THREE.SphereGeometry(1.5, 32, 32);
@@ -209,16 +210,18 @@
         });
         const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
         corona.position.copy(sun.position);
-        // Sun rays for visibility
+        // Sun rays for visibility - stored in group for orbiting
+        const sunRaysGroup = new THREE.Group();
         const rayCount = 12;
         for(let i = 0; i < rayCount; i++) {
             const rayGeo = new THREE.CylinderGeometry(0.02, 0.15, 3, 8);
             const rayMat = new THREE.MeshBasicMaterial({ color: 0xffee88, transparent: true, opacity: 0.4 });
             const ray = new THREE.Mesh(rayGeo, rayMat);
             ray.rotation.z = (i / rayCount) * Math.PI * 2;
-            ray.position.copy(sun.position);
-            scene.add(ray);
+            sunRaysGroup.add(ray);
         }
+        sunRaysGroup.position.copy(sun.position);
+        scene.add(sunRaysGroup);
         scene.add(corona);
         
         // Outer corona
@@ -258,6 +261,20 @@
             const sunPulse = Math.sin(Date.now() * 0.002) * 0.1 + 1;
             corona.scale.set(sunPulse, sunPulse, sunPulse);
             outerCorona.scale.set(sunPulse * 1.05, sunPulse * 1.05, sunPulse * 1.05);
+            
+            // Sun orbiting around Earth - day/night cycle!
+            sunOrbitAngle += 0.004;
+            const sunOrbitRadius = 10;
+            const sunHeight = 3;
+            sun.position.x = Math.cos(sunOrbitAngle) * sunOrbitRadius;
+            sun.position.z = Math.sin(sunOrbitAngle) * sunOrbitRadius;
+            sun.position.y = Math.sin(sunOrbitAngle * 0.5) * sunHeight;
+            corona.position.copy(sun.position);
+            outerCorona.position.copy(sun.position);
+            sunPointLight.position.copy(sun.position);
+            sunLight.position.copy(sun.position);
+            sunRaysGroup.position.copy(sun.position);
+            sunRaysGroup.rotation.z += 0.01; // Spin the rays for extra drama
             
             // Animate astronaut walking around Earth
             astronautAngle += 0.008;
