@@ -436,6 +436,7 @@
         }
         /* 🎵 Music controls removed - the cosmos prefers silence 🌠 */
     </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 <nav class="nav-menu">
@@ -491,6 +492,7 @@
 }
 </style>
 <div class="sun"></div>
+<div id="threejs-planet-container" style="position: absolute; width: 200px; height: 200px; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 5;"></div>
 <div class="giant-mushroom" style="position: absolute; font-size: 60px; top: -80px; left: 50%; transform: translateX(-50%); animation: float-pizza 6s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(139,69,19,0.8)); z-index: 15;">🍄</div>
 <div class="floating-pizza" style="top: 15%; left: 25%; animation-delay: 0s;">🍕</div>
 <div class="floating-pizza" style="top: 60%; left: 75%; animation-delay: 1s;">🍕</div>
@@ -771,6 +773,65 @@
     
     setInterval(updateSnake, snakeSpeed);
     drawSnakeGame();
+    
+    // 3D PLANET WITH THREE.JS
+    const planetContainer = document.getElementById('threejs-planet-container');
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(200, 200);
+    renderer.setClearColor(0x000000, 0);
+    planetContainer.appendChild(renderer.domElement);
+    
+    // Create textured planet
+    const planetGeometry = new THREE.SphereGeometry(2, 32, 32);
+    const planetMaterial = new THREE.MeshPhongMaterial({
+        color: 0x4facfe,
+        emissive: 0x112244,
+        shininess: 100,
+        specular: 0x333333
+    });
+    const planet3D = new THREE.Mesh(planetGeometry, planetMaterial);
+    scene.add(planet3D);
+    
+    // Add rings (pizza-style!)
+    const ringGeometry = new THREE.RingGeometry(2.5, 3.5, 32);
+    const ringMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffcc00,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.6
+    });
+    const ring = new THREE.Mesh(ringGeometry, ringMaterial);
+    ring.rotation.x = Math.PI / 2.5;
+    planet3D.add(ring);
+    
+    // Add lighting
+    const light = new THREE.PointLight(0xffcc00, 1.5, 100);
+    light.position.set(5, 5, 5);
+    scene.add(light);
+    const ambientLight = new THREE.AmbientLight(0x404040);
+    scene.add(ambientLight);
+    
+    camera.position.z = 6;
+    
+    // Animate 3D planet
+    let planet3DAngle = 0;
+    function animate3DPlanet() {
+        requestAnimationFrame(animate3DPlanet);
+        planet3D.rotation.y += 0.01;
+        planet3D.rotation.x = Math.sin(Date.now() * 0.001) * 0.1;
+        
+        // Orbit around center
+        planet3DAngle += 0.005;
+        const orbitX = Math.cos(planet3DAngle) * 1.5;
+        const orbitZ = Math.sin(planet3DAngle) * 0.5;
+        planet3D.position.x = orbitX;
+        planet3D.position.z = orbitZ;
+        
+        renderer.render(scene, camera);
+    }
+    animate3DPlanet();
     
     // Section Navigation
     const sections = ['space', 'animals', 'games'];
