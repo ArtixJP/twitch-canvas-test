@@ -70,6 +70,9 @@
             // Add a hungry shark prowling below!
             addGameObject(new Shark());
             
+            // Add the terrifying RABBIT-WEREWOLF!
+            addGameObject(new RabbitWerewolf());
+            
             // Create starry sky
             for (let i = 0; i < 100; i++) {
                 stars.push({
@@ -200,6 +203,220 @@
         }
         
         // Flying fish will be added in setup after p5.js initializes
+        
+        // RabbitWerewolf class - THE TRUE APEX PREDATOR!
+        class RabbitWerewolf {
+            constructor() {
+                this.x = random(width);
+                this.y = groundLevel - 30;
+                this.vx = random(1, 2) * (random() > 0.5 ? 1 : -1);
+                this.size = random(80, 120);
+                this.earAngle = 0;
+                this.jawOpen = 0;
+                this.hunting = false;
+                this.targetShark = null;
+                this.eatCooldown = 0;
+                this.howlTimer = 0;
+                this.isHowling = false;
+                this.particles = [];
+                this.eyeGlow = 0;
+            }
+            
+            draw() {
+                this.earAngle = sin(frameCount * 0.1) * 0.2;
+                this.eyeGlow = (sin(frameCount * 0.1) + 1) * 0.5;
+                
+                if (this.eatCooldown > 0) this.eatCooldown--;
+                
+                // Random howling
+                if (random() < 0.002 && !this.isHowling) {
+                    this.isHowling = true;
+                    this.howlTimer = 60;
+                }
+                if (this.howlTimer > 0) this.howlTimer--;
+                else this.isHowling = false;
+                
+                // Hunt sharks!
+                let nearestShark = null;
+                let nearestDist = Infinity;
+                for (let obj of gameObjects) {
+                    if (obj instanceof Shark) {
+                        let d = dist(this.x, this.y, obj.x, obj.y);
+                        if (d < nearestDist && d < 400) {
+                            nearestDist = d;
+                            nearestShark = obj;
+                        }
+                    }
+                }
+                
+                if (nearestShark && this.eatCooldown <= 0) {
+                    this.hunting = true;
+                    this.targetShark = nearestShark;
+                    let angle = atan2(nearestShark.y - this.y, nearestShark.x - this.x);
+                    this.vx = cos(angle) * 4;
+                    this.y += sin(angle) * 1.5;
+                    this.jawOpen = abs(sin(frameCount * 0.3)) * 0.5;
+                    
+                    // DEVOUR THE SHARK!
+                    if (nearestDist < this.size * 0.5) {
+                        let sharkIndex = gameObjects.indexOf(nearestShark);
+                        if (sharkIndex > -1) {
+                            // Remove from Shark.allSharks too
+                            let allIndex = Shark.allSharks.indexOf(nearestShark);
+                            if (allIndex > -1) Shark.allSharks.splice(allIndex, 1);
+                            gameObjects.splice(sharkIndex, 1);
+                            this.jawOpen = 0.7;
+                            this.eatCooldown = 180;
+                            // Blood particles!
+                            for (let i = 0; i < 15; i++) {
+                                this.particles.push({
+                                    x: this.x,
+                                    y: this.y,
+                                    vx: random(-3, 3),
+                                    vy: random(-4, 1),
+                                    size: random(5, 12),
+                                    life: 90,
+                                    color: color(random(150, 255), 0, 0)
+                                });
+                            }
+                            // Respawn shark after delay
+                            setTimeout(() => addGameObject(new Shark()), 5000);
+                        }
+                    }
+                } else {
+                    this.hunting = false;
+                    this.jawOpen = abs(sin(frameCount * 0.05)) * 0.15;
+                    if (abs(this.vx) > 2) this.vx *= 0.95;
+                    else this.vx += random(-0.1, 0.1);
+                }
+                
+                this.x += this.vx;
+                this.y = constrain(this.y, groundLevel - 100, groundLevel - 20);
+                
+                if (this.x > width + 100) this.x = -100;
+                if (this.x < -100) this.x = width + 100;
+                
+                // Draw particles
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    let p = this.particles[i];
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.1;
+                    p.life--;
+                    fill(red(p.color), 0, 0, map(p.life, 0, 90, 0, 200));
+                    noStroke();
+                    ellipse(p.x, p.y, p.size);
+                    if (p.life <= 0) this.particles.splice(i, 1);
+                }
+                
+                push();
+                translate(this.x, this.y);
+                if (this.vx < 0) scale(-1, 1);
+                
+                // Shadow
+                fill(0, 0, 0, 50);
+                ellipse(0, this.size * 0.25, this.size * 0.8, this.size * 0.15);
+                
+                // Legs
+                fill(60, 50, 70);
+                ellipse(-this.size * 0.15, this.size * 0.15, this.size * 0.2, this.size * 0.35);
+                ellipse(this.size * 0.1, this.size * 0.15, this.size * 0.2, this.size * 0.35);
+                
+                // Body - dark fur
+                fill(45, 35, 55);
+                ellipse(0, 0, this.size * 0.6, this.size * 0.5);
+                
+                // Chest fur - lighter
+                fill(80, 70, 90);
+                ellipse(this.size * 0.1, this.size * 0.05, this.size * 0.3, this.size * 0.25);
+                
+                // Head
+                fill(50, 40, 60);
+                ellipse(this.size * 0.25, -this.size * 0.1, this.size * 0.35, this.size * 0.3);
+                
+                // Snout
+                fill(40, 30, 50);
+                ellipse(this.size * 0.38, -this.size * 0.05, this.size * 0.2, this.size * 0.15);
+                
+                // Nose
+                fill(20, 10, 20);
+                ellipse(this.size * 0.45, -this.size * 0.05, this.size * 0.08, this.size * 0.06);
+                
+                // Jaw with fangs
+                push();
+                translate(this.size * 0.35, this.size * 0.02);
+                rotate(this.jawOpen);
+                fill(30, 20, 35);
+                arc(0, 0, this.size * 0.18, this.size * 0.1, 0, PI);
+                // FANGS!
+                fill(255, 250, 240);
+                triangle(-this.size * 0.05, 0, -this.size * 0.06, this.size * 0.08, -this.size * 0.04, this.size * 0.08);
+                triangle(this.size * 0.05, 0, this.size * 0.04, this.size * 0.08, this.size * 0.06, this.size * 0.08);
+                pop();
+                
+                // Glowing eyes!
+                let eyeR = this.hunting ? 255 : 200 + this.eyeGlow * 55;
+                fill(eyeR, 50 * (1 - this.eyeGlow), 50 * (1 - this.eyeGlow));
+                ellipse(this.size * 0.22, -this.size * 0.15, this.size * 0.1);
+                ellipse(this.size * 0.32, -this.size * 0.13, this.size * 0.08);
+                // Eye shine
+                fill(255, 255, 200, 150);
+                ellipse(this.size * 0.23, -this.size * 0.16, this.size * 0.03);
+                
+                // Rabbit ears (werewolf style - pointed and menacing)
+                push();
+                translate(this.size * 0.15, -this.size * 0.25);
+                rotate(-0.3 + this.earAngle);
+                fill(50, 40, 60);
+                beginShape();
+                vertex(0, 0);
+                vertex(-this.size * 0.08, -this.size * 0.4);
+                vertex(this.size * 0.05, -this.size * 0.35);
+                vertex(this.size * 0.08, 0);
+                endShape(CLOSE);
+                // Inner ear
+                fill(120, 80, 100);
+                beginShape();
+                vertex(0, -this.size * 0.05);
+                vertex(-this.size * 0.04, -this.size * 0.3);
+                vertex(this.size * 0.03, -this.size * 0.28);
+                vertex(this.size * 0.04, -this.size * 0.05);
+                endShape(CLOSE);
+                pop();
+                
+                push();
+                translate(this.size * 0.28, -this.size * 0.22);
+                rotate(0.3 - this.earAngle);
+                fill(50, 40, 60);
+                beginShape();
+                vertex(0, 0);
+                vertex(-this.size * 0.05, -this.size * 0.35);
+                vertex(this.size * 0.08, -this.size * 0.38);
+                vertex(this.size * 0.08, 0);
+                endShape(CLOSE);
+                fill(120, 80, 100);
+                beginShape();
+                vertex(0, -this.size * 0.05);
+                vertex(-this.size * 0.02, -this.size * 0.28);
+                vertex(this.size * 0.05, -this.size * 0.3);
+                vertex(this.size * 0.04, -this.size * 0.05);
+                endShape(CLOSE);
+                pop();
+                
+                // Howl effect
+                if (this.isHowling) {
+                    noFill();
+                    stroke(200, 200, 255, map(this.howlTimer, 0, 60, 0, 150));
+                    strokeWeight(2);
+                    for (let i = 0; i < 3; i++) {
+                        let r = (60 - this.howlTimer) * 2 + i * 20;
+                        arc(this.size * 0.4, -this.size * 0.1, r, r, -PI/3, PI/3);
+                    }
+                }
+                
+                pop();
+            }
+        }
         
         // Shark class - the apex predator!
         class Shark {
