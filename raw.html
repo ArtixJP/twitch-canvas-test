@@ -104,6 +104,7 @@
 <button class="mc-button" id="spawn-btn" onclick="spawnRandomBlock()">⛏️ SPAWN BLOCK ⛏️</button>
 <button class="mc-button" id="yellow-btn" onclick="spawnGoldBlock()" style="top: 110px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 50%, #B8860B 100%); border-color: #8B6914; border-top-color: #FFE55C; border-left-color: #FFE55C; color: #000; text-shadow: 1px 1px 0 #FFE55C;">🌟 GOLD BLOCK 🌟</button>
 <div id="controls">🖱️ Drag to rotate | Scroll to zoom</div>
+<div id="mario-badge" style="position: absolute; top: 150px; right: 10px; background: rgba(255,0,0,0.3); border: 2px solid #FF0000; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFD700; font-weight: bold;">🍄 IT'S-A ME, MARIO! 🍄</div>
 <div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(0,255,0,0.2); border: 2px dashed #00FF00; padding: 5px 10px; font-size: 0.7rem; z-index: 100; animation: testPulse 1s infinite;">🧪 TEST SIGNAL RECEIVED</div>
 <style>
 @keyframes testPulse {
@@ -158,6 +159,7 @@
             createTerrain();
             
             // Add legacy creatures as Minecraft mobs
+            createVoxelMario(0, 3, 5);
             createVoxelFish(5, 8, 3);
             createVoxelFish(-8, 10, -5);
             createVoxelFish(12, 6, 8);
@@ -432,6 +434,103 @@
             mobs.push(werewolf);
         }
         
+        function createVoxelMario(x, y, z) {
+            const mario = new THREE.Group();
+            
+            // Red cap
+            const cap1 = createBlock(0, 0, 0, 0xFF0000);
+            cap1.position.set(0, 3.5, 0);
+            mario.add(cap1);
+            const cap2 = createBlock(0, 0, 0, 0xFF0000);
+            cap2.position.set(0.5, 3.5, 0);
+            cap2.scale.set(0.5, 0.5, 1);
+            mario.add(cap2);
+            const capBrim = createBlock(0, 0, 0, 0xFF0000);
+            capBrim.position.set(0.8, 3, 0);
+            capBrim.scale.set(0.5, 0.3, 1);
+            mario.add(capBrim);
+            
+            // Face (skin color)
+            const face = createBlock(0, 0, 0, 0xFFD8B0);
+            face.position.set(0, 2.5, 0);
+            mario.add(face);
+            
+            // Mustache
+            const mustache = createBlock(0, 0, 0, 0x4A3728);
+            mustache.position.set(0.3, 2.3, 0.5);
+            mustache.scale.set(0.8, 0.2, 0.2);
+            mario.add(mustache);
+            
+            // Eyes
+            const eye1 = createBlock(0, 0, 0, 0x000000);
+            eye1.position.set(0.2, 2.7, 0.5);
+            eye1.scale.set(0.15, 0.15, 0.15);
+            mario.add(eye1);
+            const eye2 = createBlock(0, 0, 0, 0x000000);
+            eye2.position.set(-0.2, 2.7, 0.5);
+            eye2.scale.set(0.15, 0.15, 0.15);
+            mario.add(eye2);
+            
+            // Nose
+            const nose = createBlock(0, 0, 0, 0xFFD8B0);
+            nose.position.set(0, 2.5, 0.6);
+            nose.scale.set(0.4, 0.3, 0.3);
+            mario.add(nose);
+            
+            // Blue overalls body
+            const body1 = createBlock(0, 0, 0, 0x0000FF);
+            body1.position.set(0, 1.5, 0);
+            mario.add(body1);
+            const body2 = createBlock(0, 0, 0, 0x0000FF);
+            body2.position.set(0, 0.5, 0);
+            mario.add(body2);
+            
+            // Red shirt visible on sides
+            const shirt1 = createBlock(0, 0, 0, 0xFF0000);
+            shirt1.position.set(0.6, 1.5, 0);
+            shirt1.scale.set(0.4, 1, 0.8);
+            mario.add(shirt1);
+            const shirt2 = createBlock(0, 0, 0, 0xFF0000);
+            shirt2.position.set(-0.6, 1.5, 0);
+            shirt2.scale.set(0.4, 1, 0.8);
+            mario.add(shirt2);
+            
+            // Yellow buttons
+            const button1 = createBlock(0, 0, 0, 0xFFD700);
+            button1.position.set(0.3, 1.7, 0.5);
+            button1.scale.set(0.15, 0.15, 0.15);
+            mario.add(button1);
+            const button2 = createBlock(0, 0, 0, 0xFFD700);
+            button2.position.set(-0.3, 1.7, 0.5);
+            button2.scale.set(0.15, 0.15, 0.15);
+            mario.add(button2);
+            
+            // Brown shoes
+            const shoe1 = createBlock(0, 0, 0, 0x8B4513);
+            shoe1.position.set(0.3, -0.3, 0.2);
+            shoe1.scale.set(0.5, 0.4, 0.8);
+            mario.add(shoe1);
+            const shoe2 = createBlock(0, 0, 0, 0x8B4513);
+            shoe2.position.set(-0.3, -0.3, 0.2);
+            shoe2.scale.set(0.5, 0.4, 0.8);
+            mario.add(shoe2);
+            
+            // White gloves/hands
+            const hand1 = createBlock(0, 0, 0, 0xFFFFFF);
+            hand1.position.set(0.9, 1, 0);
+            hand1.scale.set(0.3, 0.3, 0.3);
+            mario.add(hand1);
+            const hand2 = createBlock(0, 0, 0, 0xFFFFFF);
+            hand2.position.set(-0.9, 1, 0);
+            hand2.scale.set(0.3, 0.3, 0.3);
+            mario.add(hand2);
+            
+            mario.position.set(x, y, z);
+            mario.userData = { type: 'mario', vx: 0.04, jumpTimer: 0, baseY: y, isJumping: false };
+            scene.add(mario);
+            mobs.push(mario);
+        }
+        
         function createVoxelGreeter(x, y, z) {
             const greeter = new THREE.Group();
             
@@ -545,6 +644,31 @@
                         mob.position.y += 2;
                     }
                     if (mob.position.y > 2) mob.position.y -= 0.1;
+                }
+                else if (mob.userData.type === 'mario') {
+                    mob.position.x += mob.userData.vx;
+                    mob.rotation.y = mob.userData.vx > 0 ? 0 : Math.PI;
+                    
+                    // Bounce at boundaries
+                    if (mob.position.x > 10 || mob.position.x < -10) {
+                        mob.userData.vx *= -1;
+                    }
+                    
+                    // Random jumping like Mario!
+                    mob.userData.jumpTimer += 0.016;
+                    if (!mob.userData.isJumping && Math.random() < 0.01) {
+                        mob.userData.isJumping = true;
+                        mob.userData.jumpVelocity = 0.25;
+                    }
+                    
+                    if (mob.userData.isJumping) {
+                        mob.position.y += mob.userData.jumpVelocity;
+                        mob.userData.jumpVelocity -= 0.015;
+                        if (mob.position.y <= mob.userData.baseY) {
+                            mob.position.y = mob.userData.baseY;
+                            mob.userData.isJumping = false;
+                        }
+                    }
                 }
                 else if (mob.userData.type === 'greeter') {
                     mob.userData.wobble += 0.05;
