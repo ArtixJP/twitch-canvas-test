@@ -28,7 +28,7 @@
 <h1 class="cosmic-echo cosmic-fading">· · ·</h1>
 <div class="test-beacon">
 <span class="beacon-pulse">◉</span>
-<span class="beacon-text">☀ SUN ORBITING</span>
+<span class="beacon-text">☀ SUN ☾ MOON ORBITING</span>
 </div>
 <style>
 .test-beacon {
@@ -191,6 +191,31 @@
         let astronaut2Angle = Math.PI;
         let sunOrbitAngle = 0;
         
+        // The Moon - Earth's faithful companion
+        const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
+        const moonTexture = new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_1024.jpg');
+        const moonMaterial = new THREE.MeshPhongMaterial({
+            map: moonTexture,
+            bumpScale: 0.02,
+            shininess: 2
+        });
+        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
+        scene.add(moon);
+        
+        // Moon glow
+        const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
+        const moonGlowMaterial = new THREE.MeshBasicMaterial({
+            color: 0xaaaacc,
+            transparent: true,
+            opacity: 0.1,
+            side: THREE.BackSide
+        });
+        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
+        scene.add(moonGlow);
+        
+        let moonOrbitAngle = 0;
+        const moonOrbitRadius = 4;
+        
         // The Sun - our star!
         const sunGeometry = new THREE.SphereGeometry(1.5, 32, 32);
         const sunMaterial = new THREE.MeshBasicMaterial({ 
@@ -263,6 +288,14 @@
             const sunPulse = Math.sin(Date.now() * 0.002) * 0.1 + 1;
             corona.scale.set(sunPulse, sunPulse, sunPulse);
             outerCorona.scale.set(sunPulse * 1.05, sunPulse * 1.05, sunPulse * 1.05);
+            
+            // Moon orbiting Earth
+            moonOrbitAngle += 0.012;
+            moon.position.x = Math.cos(moonOrbitAngle) * moonOrbitRadius;
+            moon.position.z = Math.sin(moonOrbitAngle) * moonOrbitRadius;
+            moon.position.y = Math.sin(moonOrbitAngle * 0.3) * 0.8;
+            moon.rotation.y += 0.002;
+            moonGlow.position.copy(moon.position);
             
             // Sun orbiting around Earth - day/night cycle!
             sunOrbitAngle += 0.004;
