@@ -421,7 +421,7 @@
             }
         }
         
-        // BonjourGreeter class - a friendly floating greeting!
+        // BonjourGreeter class - now a friendly FISH-shaped sign!
         class BonjourGreeter {
             constructor() {
                 this.x = random(100, width - 100);
@@ -429,45 +429,103 @@
                 this.wobble = random(TWO_PI);
                 this.scale = 1;
                 this.hue = random(255);
+                this.finAngle = 0;
             }
             
             draw() {
                 this.wobble += 0.02;
                 this.scale = 1 + sin(this.wobble) * 0.1;
                 this.hue = (this.hue + 0.5) % 255;
+                this.finAngle = sin(frameCount * 0.2) * 0.3;
                 
                 push();
-                translate(this.x, this.y + sin(frameCount * 0.03) * 10);
+                translate(this.x, this.y + sin(frameCount * 0.03) * 15);
                 scale(this.scale);
                 
-                // Speech bubble
-                fill(255, 255, 255, 220);
-                stroke(155, 89, 182);
+                // Fish body (sign background)
+                colorMode(HSB);
+                fill(this.hue, 150, 255, 230);
+                stroke(this.hue, 200, 200);
                 strokeWeight(3);
-                rectMode(CENTER);
-                rect(0, 0, 140, 50, 20);
                 
-                // Bubble tail
+                // Main fish body
+                ellipse(0, 0, 160, 70);
+                
+                // Fish tail
                 noStroke();
-                fill(255, 255, 255, 220);
-                triangle(-10, 25, 10, 25, 0, 45);
+                fill(this.hue, 150, 255, 230);
+                push();
+                translate(-80, 0);
+                rotate(this.finAngle);
+                triangle(0, 0, -40, -30, -40, 30);
+                pop();
                 
-                // Text
+                // Top fin
+                push();
+                translate(0, -35);
+                rotate(-this.finAngle * 0.5);
+                fill(this.hue, 180, 230);
+                triangle(-15, 0, 15, 0, 0, -25);
+                pop();
+                
+                // Bottom fin
+                push();
+                translate(10, 30);
+                rotate(this.finAngle * 0.3);
+                fill(this.hue, 180, 230);
+                ellipse(0, 0, 30, 15);
+                pop();
+                
+                // Fish eye
+                fill(255);
+                stroke(0);
+                strokeWeight(2);
+                ellipse(50, -10, 25, 25);
+                fill(0);
+                noStroke();
+                ellipse(53, -10, 12, 12);
+                fill(255);
+                ellipse(55, -12, 5, 5);
+                
+                // Cute fish lips
+                stroke((this.hue + 30) % 255, 200, 200);
+                strokeWeight(3);
+                noFill();
+                arc(70, 5, 15, 10, -PI/4, PI/4);
+                
+                // Text on fish body
                 noStroke();
                 textAlign(CENTER, CENTER);
-                textSize(24);
-                colorMode(HSB);
-                fill(this.hue, 200, 255);
-                text('👋 Bonjour!', 0, 0);
+                textSize(22);
+                fill(0, 0, 255);
+                text('🐟 Hello!', -10, 5);
                 colorMode(RGB);
                 
-                // Sparkles
-                for (let i = 0; i < 3; i++) {
-                    let angle = this.wobble + i * TWO_PI / 3;
-                    let sx = cos(angle) * 80;
-                    let sy = sin(angle) * 30;
+                // Bubbles from fish
+                for (let i = 0; i < 4; i++) {
+                    let bubbleY = -50 - i * 20 - (frameCount * 0.5 + i * 30) % 80;
+                    let bubbleX = 75 + sin(frameCount * 0.05 + i) * 10;
+                    fill(200, 230, 255, 150 - i * 30);
+                    noStroke();
+                    ellipse(bubbleX, bubbleY, 8 - i, 8 - i);
+                }
+                
+                // Sparkles around fish
+                for (let i = 0; i < 5; i++) {
+                    let angle = this.wobble + i * TWO_PI / 5;
+                    let sx = cos(angle) * 100;
+                    let sy = sin(angle) * 50;
                     fill(255, 255, 100, 150 + sin(frameCount * 0.1 + i) * 100);
-                    ellipse(sx, sy, 6, 6);
+                    noStroke();
+                    // Star shape
+                    push();
+                    translate(sx, sy);
+                    rotate(frameCount * 0.02 + i);
+                    for (let j = 0; j < 4; j++) {
+                        rotate(PI/2);
+                        ellipse(0, 3, 2, 6);
+                    }
+                    pop();
                 }
                 
                 pop();
