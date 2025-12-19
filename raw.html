@@ -104,6 +104,13 @@
 <button class="mc-button" id="spawn-btn" onclick="spawnRandomBlock()">⛏️ SPAWN BLOCK ⛏️</button>
 <button class="mc-button" id="yellow-btn" onclick="spawnGoldBlock()" style="top: 110px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 50%, #B8860B 100%); border-color: #8B6914; border-top-color: #FFE55C; border-left-color: #FFE55C; color: #000; text-shadow: 1px 1px 0 #FFE55C;">🌟 GOLD BLOCK 🌟</button>
 <div id="controls">🖱️ Drag to rotate | Scroll to zoom</div>
+<div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(0,255,0,0.2); border: 2px dashed #00FF00; padding: 5px 10px; font-size: 0.7rem; z-index: 100; animation: testPulse 1s infinite;">🧪 TEST SIGNAL RECEIVED</div>
+<style>
+@keyframes testPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+</style>
 </div>
 <script>
         // Three.js Minecraft World
@@ -160,6 +167,11 @@
             
             // Add trees
             createTree(10, 0, 10);
+            
+            // TEST BLOCK - A mysterious floating test cube
+            const testBlock = createBlock(0, 15, 0, 0x00FF00);
+            testBlock.userData = { isTestBlock: true, floatOffset: 0 };
+            testBlock.scale.set(1.5, 1.5, 1.5);
             createTree(-12, 0, 8);
             createTree(5, 0, -15);
             createTree(-8, 0, -10);
@@ -573,6 +585,12 @@
             for (let block of blocks) {
                 if (block.userData && block.userData.isSeaweed) {
                     block.rotation.z = Math.sin(time * 2 + block.userData.swayOffset) * 0.2;
+                }
+                // Animate the test block
+                if (block.userData && block.userData.isTestBlock) {
+                    block.rotation.x += 0.02;
+                    block.rotation.y += 0.03;
+                    block.position.y = 15 + Math.sin(time * 2) * 2;
                 }
             }
             
