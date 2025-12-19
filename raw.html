@@ -28,7 +28,7 @@
 <h1 class="cosmic-echo">✧ ⋆ ˚ ✦ ˚ ⋆ ✧</h1>
 <div class="test-beacon">
 <span class="beacon-pulse">◉</span>
-<span class="beacon-text">☀ SUN ONLINE</span>
+<span class="beacon-text">☀ SUN VISIBLE</span>
 </div>
 <style>
 .test-beacon {
@@ -196,7 +196,7 @@
             opacity: 1
         });
         const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.position.set(15, 5, 10);
+        sun.position.set(8, 3, -5);
         scene.add(sun);
         
         // Sun corona glow
@@ -209,6 +209,16 @@
         });
         const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
         corona.position.copy(sun.position);
+        // Sun rays for visibility
+        const rayCount = 12;
+        for(let i = 0; i < rayCount; i++) {
+            const rayGeo = new THREE.CylinderGeometry(0.02, 0.15, 3, 8);
+            const rayMat = new THREE.MeshBasicMaterial({ color: 0xffee88, transparent: true, opacity: 0.4 });
+            const ray = new THREE.Mesh(rayGeo, rayMat);
+            ray.rotation.z = (i / rayCount) * Math.PI * 2;
+            ray.position.copy(sun.position);
+            scene.add(ray);
+        }
         scene.add(corona);
         
         // Outer corona
@@ -226,11 +236,12 @@
         // Sun point light (actual light source)
         const sunPointLight = new THREE.PointLight(0xffffcc, 2, 100);
         sunPointLight.position.copy(sun.position);
+        sunPointLight.intensity = 3;
         scene.add(sunPointLight);
         
         // Lighting
         const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
-        sunLight.position.set(15, 5, 10);
+        sunLight.position.set(8, 3, -5);
         scene.add(sunLight);
         const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
         scene.add(ambientLight);
