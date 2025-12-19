@@ -62,10 +62,12 @@
             canvas.parent('game-container');
             groundLevel = height - 80;
             
-            // Add a flying fish to the world!
+            // Add flying fish to the world!
+            addGameObject(new FlyingFish());
+            addGameObject(new FlyingFish());
             addGameObject(new FlyingFish());
             
-            // Add a shark prowling below!
+            // Add a hungry shark prowling below!
             addGameObject(new Shark());
             
             // Create starry sky
@@ -201,6 +203,7 @@
         
         // Shark class - the apex predator!
         class Shark {
+            static allSharks = [];
             constructor() {
                 this.x = random(width);
                 this.y = groundLevel - random(20, 50);
@@ -208,16 +211,86 @@
                 this.size = random(60, 90);
                 this.tailAngle = 0;
                 this.jawOpen = 0;
+                this.hunting = false;
+                this.targetFish = null;
+                this.eatCooldown = 0;
+                this.burpParticles = [];
+                Shark.allSharks.push(this);
             }
             
             draw() {
                 this.tailAngle = sin(frameCount * 0.15) * 0.3;
-                this.jawOpen = abs(sin(frameCount * 0.05)) * 0.1;
+                
+                // Hunt for fish!
+                if (this.eatCooldown > 0) this.eatCooldown--;
+                
+                // Find nearest fish to hunt
+                let nearestFish = null;
+                let nearestDist = Infinity;
+                for (let obj of gameObjects) {
+                    if (obj instanceof FlyingFish) {
+                        let d = dist(this.x, this.y, obj.x, obj.y);
+                        if (d < nearestDist && d < 300) {
+                            nearestDist = d;
+                            nearestFish = obj;
+                        }
+                    }
+                }
+                
+                // Chase the fish!
+                if (nearestFish && this.eatCooldown <= 0) {
+                    this.hunting = true;
+                    this.targetFish = nearestFish;
+                    let angle = atan2(nearestFish.y - this.y, nearestFish.x - this.x);
+                    this.vx = cos(angle) * 3;
+                    this.y += sin(angle) * 2;
+                    this.jawOpen = abs(sin(frameCount * 0.2)) * 0.3;
+                    
+                    // EAT THE FISH!
+                    if (nearestDist < this.size * 0.4) {
+                        // Remove fish from game
+                        let fishIndex = gameObjects.indexOf(nearestFish);
+                        if (fishIndex > -1) {
+                            gameObjects.splice(fishIndex, 1);
+                            this.jawOpen = 0.5;
+                            this.eatCooldown = 120;
+                            // Burp bubbles!
+                            for (let i = 0; i < 5; i++) {
+                                this.burpParticles.push({
+                                    x: this.x + this.size * 0.3,
+                                    y: this.y,
+                                    vy: -random(1, 3),
+                                    size: random(5, 15),
+                                    life: 60
+                                });
+                            }
+                            // Respawn a new fish after a delay
+                            setTimeout(() => addGameObject(new FlyingFish()), 3000);
+                        }
+                    }
+                } else {
+                    this.hunting = false;
+                    this.jawOpen = abs(sin(frameCount * 0.05)) * 0.1;
+                    // Normal patrol speed
+                    if (abs(this.vx) > 2) this.vx *= 0.95;
+                }
+                
                 this.x += this.vx;
                 
                 // Wrap around screen
                 if (this.x > width + 100) this.x = -100;
                 if (this.x < -100) this.x = width + 100;
+                
+                // Draw burp bubbles
+                for (let i = this.burpParticles.length - 1; i >= 0; i--) {
+                    let p = this.burpParticles[i];
+                    p.y += p.vy;
+                    p.life--;
+                    fill(100, 200, 255, map(p.life, 0, 60, 0, 150));
+                    noStroke();
+                    ellipse(p.x, p.y, p.size);
+                    if (p.life <= 0) this.burpParticles.splice(i, 1);
+                }
                 
                 push();
                 translate(this.x, this.y);
@@ -279,6 +352,12 @@
                 for (let i = 0; i < 3; i++) {
                     let gx = this.size * 0.1 + i * 5;
                     line(gx, -this.size * 0.08, gx, this.size * 0.08);
+                }
+                
+                // Hunting indicator - red eyes when hunting!
+                if (this.hunting) {
+                    fill(255, 50, 50);
+                    ellipse(this.size * 0.25, -this.size * 0.05, this.size * 0.1);
                 }
                 
                 pop();
