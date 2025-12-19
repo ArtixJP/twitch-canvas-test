@@ -493,6 +493,7 @@
 </style>
 <div class="sun"></div>
 <div id="threejs-planet-container" style="position: absolute; width: 200px; height: 200px; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 5;"></div>
+<div id="threejs-sun-container" style="position: absolute; width: 300px; height: 300px; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; z-index: 3;"></div>
 <div class="giant-mushroom" style="position: absolute; font-size: 60px; top: -80px; left: 50%; transform: translateX(-50%); animation: float-pizza 6s ease-in-out infinite; filter: drop-shadow(0 0 20px rgba(139,69,19,0.8)); z-index: 15;">🍄</div>
 <div class="floating-pizza" style="top: 15%; left: 25%; animation-delay: 0s;">🍕</div>
 <div class="floating-pizza" style="top: 60%; left: 75%; animation-delay: 1s;">🍕</div>
@@ -839,6 +840,92 @@
         renderer.render(scene, camera);
     }
     animate3DPlanet();
+    
+    // 3D SUN WITH THREE.JS
+    const sunContainer = document.getElementById('threejs-sun-container');
+    const sunScene = new THREE.Scene();
+    const sunCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+    const sunRenderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    sunRenderer.setSize(300, 300);
+    sunRenderer.setClearColor(0x000000, 0);
+    sunContainer.appendChild(sunRenderer.domElement);
+    
+    // Create glowing sun sphere
+    const sunGeometry = new THREE.SphereGeometry(2.5, 64, 64);
+    const sunMaterial = new THREE.ShaderMaterial({
+        uniforms: {
+            time: { value: 0 },
+            color1: { value: new THREE.Color(0xffcc00) },
+            color2: { value: new THREE.Color(0xff6600) },
+            color3: { value: new THREE.Color(0xff3300) }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            void main() {
+                vUv = uv;
+                vNormal = normal;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform float time;
+            uniform vec3 color1;
+            uniform vec3 color2;
+            uniform vec3 color3;
+            varying vec2 vUv;
+            varying vec3 vNormal;
+            void main() {
+                float noise = sin(vUv.x * 20.0 + time) * sin(vUv.y * 20.0 + time * 0.5) * 0.5 + 0.5;
+                vec3 color = mix(color1, color2, noise);
+                color = mix(color, color3, sin(time + vUv.x * 10.0) * 0.3 + 0.3);
+                float fresnel = pow(1.0 - dot(vNormal, vec3(0.0, 0.0, 1.0)), 2.0);
+                color += vec3(1.0, 0.8, 0.3) * fresnel * 0.5;
+                gl_FragColor = vec4(color, 1.0);
+            }
+        `
+    });
+    const sun3D = new THREE.Mesh(sunGeometry, sunMaterial);
+    sunScene.add(sun3D);
+    
+    // Add corona/glow effect
+    const coronaGeometry = new THREE.SphereGeometry(3.2, 32, 32);
+    const coronaMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffaa00,
+        transparent: true,
+        opacity: 0.15,
+        side: THREE.BackSide
+    });
+    const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
+    sunScene.add(corona);
+    
+    // Add solar flares (particle-like rings)
+    const flareGeometry = new THREE.TorusGeometry(3.5, 0.1, 8, 32);
+    const flareMaterial = new THREE.MeshBasicMaterial({ color: 0xff6600, transparent: true, opacity: 0.4 });
+    const flare1 = new THREE.Mesh(flareGeometry, flareMaterial);
+    flare1.rotation.x = Math.PI / 3;
+    sunScene.add(flare1);
+    const flare2 = new THREE.Mesh(flareGeometry, flareMaterial.clone());
+    flare2.rotation.x = -Math.PI / 4;
+    flare2.rotation.y = Math.PI / 2;
+    sunScene.add(flare2);
+    
+    sunCamera.position.z = 7;
+    
+    // Animate 3D sun
+    function animate3DSun() {
+        requestAnimationFrame(animate3DSun);
+        sunMaterial.uniforms.time.value = Date.now() * 0.001;
+        sun3D.rotation.y += 0.003;
+        corona.rotation.y -= 0.002;
+        corona.rotation.x = Math.sin(Date.now() * 0.0005) * 0.2;
+        flare1.rotation.z += 0.01;
+        flare2.rotation.z -= 0.008;
+        // Pulsing corona
+        corona.scale.setScalar(1 + Math.sin(Date.now() * 0.002) * 0.05);
+        sunRenderer.render(sunScene, sunCamera);
+    }
+    animate3DSun();
     
     // Section Navigation
     const sections = ['space', 'animals', 'games'];
