@@ -5,15 +5,15 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch World Builder</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<title>Twitch Minecraft World Builder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
         body { 
-            font-family: system-ui, sans-serif; 
+            font-family: 'Courier New', monospace; 
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background: #1a1a2e;
+            background: #87CEEB;
             color: white;
         }
         h1 { 
@@ -24,9 +24,12 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 100;
-            text-shadow: 0 0 10px #9b59b6, 0 0 20px #9b59b6;
+            text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
             margin: 0;
             pointer-events: none;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+            image-rendering: pixelated;
         }
         #game-container {
             position: relative;
@@ -41,658 +44,449 @@
             bottom: 10px;
             left: 10px;
             font-size: 0.9rem;
-            opacity: 0.7;
             z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 12px;
+            border: 3px solid #555;
+            image-rendering: pixelated;
+        }
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            font-size: 0.8rem;
+            z-index: 100;
+            background: rgba(0,0,0,0.7);
+            padding: 8px 12px;
+            border: 3px solid #555;
+        }
+        .minecraft-text {
+            color: #FFFF55;
+            text-shadow: 2px 2px 0 #3F3F00;
         }
     </style>
 </head>
 <body>
 <div id="game-container">
-<h1>🎮 Twitch World Builder 🎮</h1>
-<div id="object-count">Objects: 0 | Chat to add more!</div>
+<h1>⛏️ MINECRAFT WORLD BUILDER ⛏️</h1>
+<div id="object-count"><span class="minecraft-text">Blocks: 0 | Mobs: 0</span></div>
+<div id="controls">🖱️ Drag to rotate | Scroll to zoom</div>
 </div>
 <script>
-        // Game World State
-        let gameObjects = [];
-        let groundLevel;
-        let stars = [];
+        // Three.js Minecraft World
+        let scene, camera, renderer, controls;
+        let blocks = [];
+        let mobs = [];
+        let blockCount = 0;
+        let time = 0;
         
-        function setup() {
-            let canvas = createCanvas(windowWidth, windowHeight);
-            canvas.parent('game-container');
-            groundLevel = height - 80;
+        // Mouse controls
+        let isDragging = false;
+        let previousMousePosition = { x: 0, y: 0 };
+        let cameraAngle = { x: 0.5, y: 0.3 };
+        let cameraDistance = 50;
+        
+        init();
+        animate();
+        
+        function init() {
+            // Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x87CEEB);
+            scene.fog = new THREE.Fog(0x87CEEB, 50, 150);
             
-            // Add flying fish to the world!
-            addGameObject(new FlyingFish());
-            addGameObject(new FlyingFish());
-            addGameObject(new FlyingFish());
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            updateCameraPosition();
             
-            // Add a hungry shark prowling below!
-            addGameObject(new Shark());
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: false });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            document.getElementById('game-container').appendChild(renderer.domElement);
             
-            // Add the terrifying RABBIT-WEREWOLF!
-            addGameObject(new RabbitWerewolf());
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+            scene.add(ambientLight);
             
-            // Add a friendly floating "Bonjour" greeter!
-            addGameObject(new BonjourGreeter());
+            const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            sunLight.position.set(50, 100, 50);
+            sunLight.castShadow = true;
+            scene.add(sunLight);
             
-            // Create starry sky
-            for (let i = 0; i < 100; i++) {
-                stars.push({
-                    x: random(width),
-                    y: random(groundLevel - 50),
-                    size: random(1, 3),
-                    twinkle: random(TWO_PI)
-                });
+            // Create Minecraft terrain
+            createTerrain();
+            
+            // Add legacy creatures as Minecraft mobs
+            createVoxelFish(5, 8, 3);
+            createVoxelFish(-8, 10, -5);
+            createVoxelFish(12, 6, 8);
+            createVoxelShark(0, 4, 0);
+            createVoxelWerewolfRabbit(-10, 2, 5);
+            createVoxelGreeter(8, 12, -3);
+            
+            // Add trees
+            createTree(10, 0, 10);
+            createTree(-12, 0, 8);
+            createTree(5, 0, -15);
+            createTree(-8, 0, -10);
+            
+            // Mouse events
+            renderer.domElement.addEventListener('mousedown', onMouseDown);
+            renderer.domElement.addEventListener('mousemove', onMouseMove);
+            renderer.domElement.addEventListener('mouseup', onMouseUp);
+            renderer.domElement.addEventListener('wheel', onMouseWheel);
+            
+            window.addEventListener('resize', onWindowResize);
+        }
+        
+        function createBlockMaterial(color) {
+            return new THREE.MeshLambertMaterial({ 
+                color: color,
+                flatShading: true
+            });
+        }
+        
+        function createBlock(x, y, z, color, size = 1) {
+            const geometry = new THREE.BoxGeometry(size, size, size);
+            const material = createBlockMaterial(color);
+            const block = new THREE.Mesh(geometry, material);
+            block.position.set(x, y, z);
+            block.castShadow = true;
+            block.receiveShadow = true;
+            scene.add(block);
+            blocks.push(block);
+            blockCount++;
+            return block;
+        }
+        
+        function createTerrain() {
+            // Grass layer
+            for (let x = -20; x <= 20; x++) {
+                for (let z = -20; z <= 20; z++) {
+                    const height = Math.floor(Math.sin(x * 0.3) * Math.cos(z * 0.3) * 2);
+                    createBlock(x, height, z, 0x4CAF50); // Grass
+                    // Dirt below
+                    for (let y = height - 1; y >= height - 2; y--) {
+                        createBlock(x, y, z, 0x8B4513); // Dirt
+                    }
+                    // Stone deep below
+                    createBlock(x, height - 3, z, 0x808080);
+                }
+            }
+            
+            // Water pool
+            for (let x = -5; x <= 5; x++) {
+                for (let z = -5; z <= 5; z++) {
+                    if (x*x + z*z < 20) {
+                        const waterBlock = createBlock(x, 1, z, 0x3498db);
+                        waterBlock.material.transparent = true;
+                        waterBlock.material.opacity = 0.7;
+                    }
+                }
             }
         }
         
-        function draw() {
-            // Sky gradient
-            for (let y = 0; y < groundLevel; y++) {
-                let inter = map(y, 0, groundLevel, 0, 1);
-                let c = lerpColor(color(26, 26, 46), color(22, 33, 62), inter);
-                stroke(c);
-                line(0, y, width, y);
+        function createTree(x, baseY, z) {
+            // Trunk
+            for (let y = 1; y <= 5; y++) {
+                createBlock(x, baseY + y, z, 0x8B4513);
             }
-            
-            // Twinkling stars
-            noStroke();
-            for (let star of stars) {
-                let alpha = map(sin(frameCount * 0.05 + star.twinkle), -1, 1, 100, 255);
-                fill(255, 255, 255, alpha);
-                ellipse(star.x, star.y, star.size);
+            // Leaves
+            for (let lx = -2; lx <= 2; lx++) {
+                for (let lz = -2; lz <= 2; lz++) {
+                    for (let ly = 0; ly <= 2; ly++) {
+                        if (Math.abs(lx) + Math.abs(lz) + ly < 4) {
+                            createBlock(x + lx, baseY + 5 + ly, z + lz, 0x228B22);
+                        }
+                    }
+                }
             }
-            
-            // Ground
-            fill(34, 139, 34);
-            rect(0, groundLevel, width, height - groundLevel);
-            
-            // Grass details
-            stroke(50, 205, 50);
-            strokeWeight(2);
-            for (let x = 0; x < width; x += 15) {
-                let grassHeight = 5 + sin(x * 0.1 + frameCount * 0.02) * 3;
-                line(x, groundLevel, x + 3, groundLevel - grassHeight);
-            }
-            
-            // Draw all game objects
-            for (let obj of gameObjects) {
-                if (obj.draw) obj.draw();
-            }
-            
-            // Update object count
-            document.getElementById('object-count').textContent = 
-                `Objects: ${gameObjects.length} | Chat to add more!`;
         }
         
-        function windowResized() {
-            resizeCanvas(windowWidth, windowHeight);
-            groundLevel = height - 80;
+        function createVoxelFish(x, y, z) {
+            const fish = new THREE.Group();
+            
+            // Body (cyan/blue blocks)
+            const colors = [0x00CED1, 0x40E0D0, 0x48D1CC];
+            const bodyColor = colors[Math.floor(Math.random() * colors.length)];
+            
+            for (let i = 0; i < 4; i++) {
+                const block = createBlock(0, 0, 0, bodyColor);
+                block.position.set(i - 1.5, 0, 0);
+                fish.add(block);
+            }
+            // Tail
+            const tail = createBlock(0, 0, 0, bodyColor);
+            tail.position.set(-2.5, 0.5, 0);
+            tail.scale.set(0.5, 0.5, 0.5);
+            fish.add(tail);
+            
+            // Eye
+            const eye = createBlock(0, 0, 0, 0xFFFFFF);
+            eye.position.set(1.5, 0.3, 0.5);
+            eye.scale.set(0.3, 0.3, 0.3);
+            fish.add(eye);
+            
+            // Fins (wings)
+            const fin1 = createBlock(0, 0, 0, 0x87CEEB);
+            fin1.position.set(0, 1, 0);
+            fin1.scale.set(1.5, 0.2, 0.5);
+            fish.add(fin1);
+            
+            fish.position.set(x, y, z);
+            fish.userData = { type: 'fish', vx: (Math.random() - 0.5) * 0.1, vy: 0, baseY: y };
+            scene.add(fish);
+            mobs.push(fish);
         }
         
-        // Helper function to add objects (will be used by future requests)
-        function addGameObject(obj) {
-            gameObjects.push(obj);
-        }
-        
-        // Flying Fish class
-        class FlyingFish {
-            constructor() {
-                this.x = random(width);
-                this.y = random(100, groundLevel - 150);
-                this.vx = random(-2, 2);
-                this.vy = 0;
-                this.size = random(30, 50);
-                this.color = color(random(100, 200), random(150, 255), 255);
-                this.finAngle = 0;
-                this.wobble = random(TWO_PI);
+        function createVoxelShark(x, y, z) {
+            const shark = new THREE.Group();
+            
+            // Body (gray blocks)
+            for (let i = 0; i < 6; i++) {
+                const block = createBlock(0, 0, 0, 0x708090);
+                block.position.set(i - 2.5, 0, 0);
+                shark.add(block);
+            }
+            // Dorsal fin
+            const fin = createBlock(0, 0, 0, 0x5F6A6A);
+            fin.position.set(0, 1, 0);
+            fin.scale.set(0.5, 1, 0.3);
+            shark.add(fin);
+            
+            // Tail
+            const tail = createBlock(0, 0, 0, 0x5F6A6A);
+            tail.position.set(-3.5, 0.5, 0);
+            tail.scale.set(0.5, 1.5, 0.3);
+            shark.add(tail);
+            
+            // Teeth (white blocks)
+            for (let i = 0; i < 3; i++) {
+                const tooth = createBlock(0, 0, 0, 0xFFFFFF);
+                tooth.position.set(3 + i * 0.2, -0.3, 0.3);
+                tooth.scale.set(0.15, 0.3, 0.15);
+                shark.add(tooth);
             }
             
-            draw() {
-                this.finAngle = sin(frameCount * 0.3 + this.wobble) * 0.5;
-                this.y += sin(frameCount * 0.05 + this.wobble) * 0.5;
-                this.x += this.vx;
-                
-                // Wrap around screen
-                if (this.x > width + 50) this.x = -50;
-                if (this.x < -50) this.x = width + 50;
-                
-                push();
-                translate(this.x, this.y);
-                if (this.vx < 0) scale(-1, 1);
-                
-                // Body
-                fill(this.color);
-                noStroke();
-                ellipse(0, 0, this.size, this.size * 0.5);
-                
-                // Tail
-                fill(this.color);
-                triangle(
-                    -this.size * 0.4, 0,
-                    -this.size * 0.7, -this.size * 0.2,
-                    -this.size * 0.7, this.size * 0.2
+            // Red eye
+            const eye = createBlock(0, 0, 0, 0xFF0000);
+            eye.position.set(2.5, 0.3, 0.5);
+            eye.scale.set(0.25, 0.25, 0.25);
+            shark.add(eye);
+            
+            shark.position.set(x, y, z);
+            shark.userData = { type: 'shark', vx: (Math.random() - 0.5) * 0.05, angle: 0 };
+            scene.add(shark);
+            mobs.push(shark);
+        }
+        
+        function createVoxelWerewolfRabbit(x, y, z) {
+            const werewolf = new THREE.Group();
+            
+            // Body (dark purple)
+            for (let i = 0; i < 3; i++) {
+                for (let j = 0; j < 2; j++) {
+                    const block = createBlock(0, 0, 0, 0x2D1B36);
+                    block.position.set(i - 1, j, 0);
+                    werewolf.add(block);
+                }
+            }
+            
+            // Head
+            const head = createBlock(0, 0, 0, 0x3D2B46);
+            head.position.set(1.5, 2, 0);
+            werewolf.add(head);
+            
+            // Ears (tall and pointy)
+            const ear1 = createBlock(0, 0, 0, 0x3D2B46);
+            ear1.position.set(1.2, 3.5, 0.3);
+            ear1.scale.set(0.3, 1.5, 0.3);
+            werewolf.add(ear1);
+            
+            const ear2 = createBlock(0, 0, 0, 0x3D2B46);
+            ear2.position.set(1.8, 3.5, 0.3);
+            ear2.scale.set(0.3, 1.5, 0.3);
+            werewolf.add(ear2);
+            
+            // Glowing red eyes
+            const eye1 = createBlock(0, 0, 0, 0xFF0000);
+            eye1.position.set(1.8, 2.2, 0.5);
+            eye1.scale.set(0.2, 0.2, 0.2);
+            werewolf.add(eye1);
+            
+            const eye2 = createBlock(0, 0, 0, 0xFF0000);
+            eye2.position.set(2.1, 2.2, 0.5);
+            eye2.scale.set(0.2, 0.2, 0.2);
+            werewolf.add(eye2);
+            
+            // Fangs
+            const fang1 = createBlock(0, 0, 0, 0xFFFFFF);
+            fang1.position.set(2, 1.7, 0.5);
+            fang1.scale.set(0.1, 0.3, 0.1);
+            werewolf.add(fang1);
+            
+            // Legs
+            const leg1 = createBlock(0, 0, 0, 0x2D1B36);
+            leg1.position.set(-0.5, -1, 0.3);
+            leg1.scale.set(0.4, 1, 0.4);
+            werewolf.add(leg1);
+            
+            const leg2 = createBlock(0, 0, 0, 0x2D1B36);
+            leg2.position.set(0.5, -1, 0.3);
+            leg2.scale.set(0.4, 1, 0.4);
+            werewolf.add(leg2);
+            
+            werewolf.position.set(x, y, z);
+            werewolf.userData = { type: 'werewolf', vx: (Math.random() - 0.5) * 0.03, howlTime: 0 };
+            scene.add(werewolf);
+            mobs.push(werewolf);
+        }
+        
+        function createVoxelGreeter(x, y, z) {
+            const greeter = new THREE.Group();
+            
+            // Fish-shaped sign body (rainbow colors)
+            const rainbowColors = [0xFF6B6B, 0xFFA500, 0xFFFF00, 0x00FF00, 0x00BFFF, 0x8A2BE2];
+            
+            for (let i = 0; i < 6; i++) {
+                const block = createBlock(0, 0, 0, rainbowColors[i]);
+                block.position.set(i - 2.5, 0, 0);
+                greeter.add(block);
+            }
+            
+            // Top fin
+            const topFin = createBlock(0, 0, 0, 0xFFD700);
+            topFin.position.set(0, 1, 0);
+            topFin.scale.set(0.5, 0.8, 0.3);
+            greeter.add(topFin);
+            
+            // Eye
+            const eye = createBlock(0, 0, 0, 0xFFFFFF);
+            eye.position.set(2.5, 0.3, 0.5);
+            eye.scale.set(0.4, 0.4, 0.4);
+            greeter.add(eye);
+            
+            const pupil = createBlock(0, 0, 0, 0x000000);
+            pupil.position.set(2.6, 0.3, 0.6);
+            pupil.scale.set(0.2, 0.2, 0.2);
+            greeter.add(pupil);
+            
+            // Sparkle blocks around it
+            for (let i = 0; i < 4; i++) {
+                const sparkle = createBlock(0, 0, 0, 0xFFFF00);
+                sparkle.position.set(
+                    Math.cos(i * Math.PI / 2) * 4,
+                    Math.sin(i * Math.PI / 2) * 2,
+                    0
                 );
-                
-                // Flying fins (wings)
-                push();
-                rotate(this.finAngle);
-                fill(this.color.levels[0], this.color.levels[1], 255, 180);
-                ellipse(0, -this.size * 0.2, this.size * 0.8, this.size * 0.3);
-                pop();
-                
-                push();
-                rotate(-this.finAngle);
-                fill(this.color.levels[0], this.color.levels[1], 255, 180);
-                ellipse(0, this.size * 0.2, this.size * 0.6, this.size * 0.2);
-                pop();
-                
-                // Eye
-                fill(255);
-                ellipse(this.size * 0.2, -this.size * 0.05, this.size * 0.15);
-                fill(0);
-                ellipse(this.size * 0.22, -this.size * 0.05, this.size * 0.08);
-                
-                // Sparkle trail
-                for (let i = 1; i <= 3; i++) {
-                    let sparkleAlpha = map(i, 1, 3, 150, 50);
-                    fill(255, 255, 255, sparkleAlpha);
-                    ellipse(-this.size * 0.3 * i, sin(frameCount * 0.2 + i) * 5, 4 - i);
-                }
-                
-                pop();
-            }
-        }
-        
-        // Flying fish will be added in setup after p5.js initializes
-        
-        // RabbitWerewolf class - THE TRUE APEX PREDATOR!
-        class RabbitWerewolf {
-            constructor() {
-                this.x = random(width);
-                this.y = groundLevel - 30;
-                this.vx = random(1, 2) * (random() > 0.5 ? 1 : -1);
-                this.size = random(80, 120);
-                this.earAngle = 0;
-                this.jawOpen = 0;
-                this.hunting = false;
-                this.targetShark = null;
-                this.eatCooldown = 0;
-                this.howlTimer = 0;
-                this.isHowling = false;
-                this.particles = [];
-                this.eyeGlow = 0;
+                sparkle.scale.set(0.3, 0.3, 0.3);
+                sparkle.userData = { sparkleIndex: i };
+                greeter.add(sparkle);
             }
             
-            draw() {
-                this.earAngle = sin(frameCount * 0.1) * 0.2;
-                this.eyeGlow = (sin(frameCount * 0.1) + 1) * 0.5;
-                
-                if (this.eatCooldown > 0) this.eatCooldown--;
-                
-                // Random howling
-                if (random() < 0.002 && !this.isHowling) {
-                    this.isHowling = true;
-                    this.howlTimer = 60;
-                }
-                if (this.howlTimer > 0) this.howlTimer--;
-                else this.isHowling = false;
-                
-                // Hunt sharks!
-                let nearestShark = null;
-                let nearestDist = Infinity;
-                for (let obj of gameObjects) {
-                    if (obj instanceof Shark) {
-                        let d = dist(this.x, this.y, obj.x, obj.y);
-                        if (d < nearestDist && d < 400) {
-                            nearestDist = d;
-                            nearestShark = obj;
-                        }
-                    }
-                }
-                
-                if (nearestShark && this.eatCooldown <= 0) {
-                    this.hunting = true;
-                    this.targetShark = nearestShark;
-                    let angle = atan2(nearestShark.y - this.y, nearestShark.x - this.x);
-                    this.vx = cos(angle) * 4;
-                    this.y += sin(angle) * 1.5;
-                    this.jawOpen = abs(sin(frameCount * 0.3)) * 0.5;
-                    
-                    // DEVOUR THE SHARK!
-                    if (nearestDist < this.size * 0.5) {
-                        let sharkIndex = gameObjects.indexOf(nearestShark);
-                        if (sharkIndex > -1) {
-                            // Remove from Shark.allSharks too
-                            let allIndex = Shark.allSharks.indexOf(nearestShark);
-                            if (allIndex > -1) Shark.allSharks.splice(allIndex, 1);
-                            gameObjects.splice(sharkIndex, 1);
-                            this.jawOpen = 0.7;
-                            this.eatCooldown = 180;
-                            // Blood particles!
-                            for (let i = 0; i < 15; i++) {
-                                this.particles.push({
-                                    x: this.x,
-                                    y: this.y,
-                                    vx: random(-3, 3),
-                                    vy: random(-4, 1),
-                                    size: random(5, 12),
-                                    life: 90,
-                                    color: color(random(150, 255), 0, 0)
-                                });
-                            }
-                            // Respawn shark after delay
-                            setTimeout(() => addGameObject(new Shark()), 5000);
-                        }
-                    }
-                } else {
-                    this.hunting = false;
-                    this.jawOpen = abs(sin(frameCount * 0.05)) * 0.15;
-                    if (abs(this.vx) > 2) this.vx *= 0.95;
-                    else this.vx += random(-0.1, 0.1);
-                }
-                
-                this.x += this.vx;
-                this.y = constrain(this.y, groundLevel - 100, groundLevel - 20);
-                
-                if (this.x > width + 100) this.x = -100;
-                if (this.x < -100) this.x = width + 100;
-                
-                // Draw particles
-                for (let i = this.particles.length - 1; i >= 0; i--) {
-                    let p = this.particles[i];
-                    p.x += p.vx;
-                    p.y += p.vy;
-                    p.vy += 0.1;
-                    p.life--;
-                    fill(red(p.color), 0, 0, map(p.life, 0, 90, 0, 200));
-                    noStroke();
-                    ellipse(p.x, p.y, p.size);
-                    if (p.life <= 0) this.particles.splice(i, 1);
-                }
-                
-                push();
-                translate(this.x, this.y);
-                if (this.vx < 0) scale(-1, 1);
-                
-                // Shadow
-                fill(0, 0, 0, 50);
-                ellipse(0, this.size * 0.25, this.size * 0.8, this.size * 0.15);
-                
-                // Legs
-                fill(60, 50, 70);
-                ellipse(-this.size * 0.15, this.size * 0.15, this.size * 0.2, this.size * 0.35);
-                ellipse(this.size * 0.1, this.size * 0.15, this.size * 0.2, this.size * 0.35);
-                
-                // Body - dark fur
-                fill(45, 35, 55);
-                ellipse(0, 0, this.size * 0.6, this.size * 0.5);
-                
-                // Chest fur - lighter
-                fill(80, 70, 90);
-                ellipse(this.size * 0.1, this.size * 0.05, this.size * 0.3, this.size * 0.25);
-                
-                // Head
-                fill(50, 40, 60);
-                ellipse(this.size * 0.25, -this.size * 0.1, this.size * 0.35, this.size * 0.3);
-                
-                // Snout
-                fill(40, 30, 50);
-                ellipse(this.size * 0.38, -this.size * 0.05, this.size * 0.2, this.size * 0.15);
-                
-                // Nose
-                fill(20, 10, 20);
-                ellipse(this.size * 0.45, -this.size * 0.05, this.size * 0.08, this.size * 0.06);
-                
-                // Jaw with fangs
-                push();
-                translate(this.size * 0.35, this.size * 0.02);
-                rotate(this.jawOpen);
-                fill(30, 20, 35);
-                arc(0, 0, this.size * 0.18, this.size * 0.1, 0, PI);
-                // FANGS!
-                fill(255, 250, 240);
-                triangle(-this.size * 0.05, 0, -this.size * 0.06, this.size * 0.08, -this.size * 0.04, this.size * 0.08);
-                triangle(this.size * 0.05, 0, this.size * 0.04, this.size * 0.08, this.size * 0.06, this.size * 0.08);
-                pop();
-                
-                // Glowing eyes!
-                let eyeR = this.hunting ? 255 : 200 + this.eyeGlow * 55;
-                fill(eyeR, 50 * (1 - this.eyeGlow), 50 * (1 - this.eyeGlow));
-                ellipse(this.size * 0.22, -this.size * 0.15, this.size * 0.1);
-                ellipse(this.size * 0.32, -this.size * 0.13, this.size * 0.08);
-                // Eye shine
-                fill(255, 255, 200, 150);
-                ellipse(this.size * 0.23, -this.size * 0.16, this.size * 0.03);
-                
-                // Rabbit ears (werewolf style - pointed and menacing)
-                push();
-                translate(this.size * 0.15, -this.size * 0.25);
-                rotate(-0.3 + this.earAngle);
-                fill(50, 40, 60);
-                beginShape();
-                vertex(0, 0);
-                vertex(-this.size * 0.08, -this.size * 0.4);
-                vertex(this.size * 0.05, -this.size * 0.35);
-                vertex(this.size * 0.08, 0);
-                endShape(CLOSE);
-                // Inner ear
-                fill(120, 80, 100);
-                beginShape();
-                vertex(0, -this.size * 0.05);
-                vertex(-this.size * 0.04, -this.size * 0.3);
-                vertex(this.size * 0.03, -this.size * 0.28);
-                vertex(this.size * 0.04, -this.size * 0.05);
-                endShape(CLOSE);
-                pop();
-                
-                push();
-                translate(this.size * 0.28, -this.size * 0.22);
-                rotate(0.3 - this.earAngle);
-                fill(50, 40, 60);
-                beginShape();
-                vertex(0, 0);
-                vertex(-this.size * 0.05, -this.size * 0.35);
-                vertex(this.size * 0.08, -this.size * 0.38);
-                vertex(this.size * 0.08, 0);
-                endShape(CLOSE);
-                fill(120, 80, 100);
-                beginShape();
-                vertex(0, -this.size * 0.05);
-                vertex(-this.size * 0.02, -this.size * 0.28);
-                vertex(this.size * 0.05, -this.size * 0.3);
-                vertex(this.size * 0.04, -this.size * 0.05);
-                endShape(CLOSE);
-                pop();
-                
-                // Howl effect
-                if (this.isHowling) {
-                    noFill();
-                    stroke(200, 200, 255, map(this.howlTimer, 0, 60, 0, 150));
-                    strokeWeight(2);
-                    for (let i = 0; i < 3; i++) {
-                        let r = (60 - this.howlTimer) * 2 + i * 20;
-                        arc(this.size * 0.4, -this.size * 0.1, r, r, -PI/3, PI/3);
-                    }
-                }
-                
-                pop();
-            }
+            greeter.position.set(x, y, z);
+            greeter.userData = { type: 'greeter', wobble: 0 };
+            scene.add(greeter);
+            mobs.push(greeter);
         }
         
-        // BonjourGreeter class - now a friendly FISH-shaped sign!
-        class BonjourGreeter {
-            constructor() {
-                this.x = random(100, width - 100);
-                this.y = random(100, 200);
-                this.wobble = random(TWO_PI);
-                this.scale = 1;
-                this.hue = random(255);
-                this.finAngle = 0;
-            }
-            
-            draw() {
-                this.wobble += 0.02;
-                this.scale = 1 + sin(this.wobble) * 0.1;
-                this.hue = (this.hue + 0.5) % 255;
-                this.finAngle = sin(frameCount * 0.2) * 0.3;
-                
-                push();
-                translate(this.x, this.y + sin(frameCount * 0.03) * 15);
-                scale(this.scale);
-                
-                // Fish body (sign background)
-                colorMode(HSB);
-                fill(this.hue, 150, 255, 230);
-                stroke(this.hue, 200, 200);
-                strokeWeight(3);
-                
-                // Main fish body
-                ellipse(0, 0, 160, 70);
-                
-                // Fish tail
-                noStroke();
-                fill(this.hue, 150, 255, 230);
-                push();
-                translate(-80, 0);
-                rotate(this.finAngle);
-                triangle(0, 0, -40, -30, -40, 30);
-                pop();
-                
-                // Top fin
-                push();
-                translate(0, -35);
-                rotate(-this.finAngle * 0.5);
-                fill(this.hue, 180, 230);
-                triangle(-15, 0, 15, 0, 0, -25);
-                pop();
-                
-                // Bottom fin
-                push();
-                translate(10, 30);
-                rotate(this.finAngle * 0.3);
-                fill(this.hue, 180, 230);
-                ellipse(0, 0, 30, 15);
-                pop();
-                
-                // Fish eye
-                fill(255);
-                stroke(0);
-                strokeWeight(2);
-                ellipse(50, -10, 25, 25);
-                fill(0);
-                noStroke();
-                ellipse(53, -10, 12, 12);
-                fill(255);
-                ellipse(55, -12, 5, 5);
-                
-                // Cute fish lips
-                stroke((this.hue + 30) % 255, 200, 200);
-                strokeWeight(3);
-                noFill();
-                arc(70, 5, 15, 10, -PI/4, PI/4);
-                
-                // Text on fish body
-                noStroke();
-                textAlign(CENTER, CENTER);
-                textSize(22);
-                fill(0, 0, 255);
-                text('🐟 Hello!', -10, 5);
-                colorMode(RGB);
-                
-                // Bubbles from fish
-                for (let i = 0; i < 4; i++) {
-                    let bubbleY = -50 - i * 20 - (frameCount * 0.5 + i * 30) % 80;
-                    let bubbleX = 75 + sin(frameCount * 0.05 + i) * 10;
-                    fill(200, 230, 255, 150 - i * 30);
-                    noStroke();
-                    ellipse(bubbleX, bubbleY, 8 - i, 8 - i);
-                }
-                
-                // Sparkles around fish
-                for (let i = 0; i < 5; i++) {
-                    let angle = this.wobble + i * TWO_PI / 5;
-                    let sx = cos(angle) * 100;
-                    let sy = sin(angle) * 50;
-                    fill(255, 255, 100, 150 + sin(frameCount * 0.1 + i) * 100);
-                    noStroke();
-                    // Star shape
-                    push();
-                    translate(sx, sy);
-                    rotate(frameCount * 0.02 + i);
-                    for (let j = 0; j < 4; j++) {
-                        rotate(PI/2);
-                        ellipse(0, 3, 2, 6);
-                    }
-                    pop();
-                }
-                
-                pop();
-            }
+        function updateCameraPosition() {
+            camera.position.x = Math.sin(cameraAngle.x) * Math.cos(cameraAngle.y) * cameraDistance;
+            camera.position.y = Math.sin(cameraAngle.y) * cameraDistance + 10;
+            camera.position.z = Math.cos(cameraAngle.x) * Math.cos(cameraAngle.y) * cameraDistance;
+            camera.lookAt(0, 5, 0);
         }
         
-        // Shark class - the apex predator!
-        class Shark {
-            static allSharks = [];
-            constructor() {
-                this.x = random(width);
-                this.y = groundLevel - random(20, 50);
-                this.vx = random(1, 2) * (random() > 0.5 ? 1 : -1);
-                this.size = random(60, 90);
-                this.tailAngle = 0;
-                this.jawOpen = 0;
-                this.hunting = false;
-                this.targetFish = null;
-                this.eatCooldown = 0;
-                this.burpParticles = [];
-                Shark.allSharks.push(this);
+        function onMouseDown(event) {
+            isDragging = true;
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        }
+        
+        function onMouseMove(event) {
+            if (!isDragging) return;
+            const deltaX = event.clientX - previousMousePosition.x;
+            const deltaY = event.clientY - previousMousePosition.y;
+            cameraAngle.x += deltaX * 0.01;
+            cameraAngle.y = Math.max(-Math.PI / 3, Math.min(Math.PI / 3, cameraAngle.y + deltaY * 0.01));
+            updateCameraPosition();
+            previousMousePosition = { x: event.clientX, y: event.clientY };
+        }
+        
+        function onMouseUp() {
+            isDragging = false;
+        }
+        
+        function onMouseWheel(event) {
+            cameraDistance = Math.max(20, Math.min(100, cameraDistance + event.deltaY * 0.05));
+            updateCameraPosition();
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.016;
+            
+            // Animate mobs
+            for (let mob of mobs) {
+                if (mob.userData.type === 'fish') {
+                    mob.position.x += mob.userData.vx;
+                    mob.position.y = mob.userData.baseY + Math.sin(time * 2 + mob.position.x) * 2;
+                    mob.rotation.y = mob.userData.vx > 0 ? 0 : Math.PI;
+                    if (mob.position.x > 25) mob.position.x = -25;
+                    if (mob.position.x < -25) mob.position.x = 25;
+                }
+                else if (mob.userData.type === 'shark') {
+                    mob.userData.angle += 0.01;
+                    mob.position.x = Math.cos(mob.userData.angle) * 8;
+                    mob.position.z = Math.sin(mob.userData.angle) * 8;
+                    mob.rotation.y = -mob.userData.angle + Math.PI / 2;
+                }
+                else if (mob.userData.type === 'werewolf') {
+                    mob.position.x += mob.userData.vx;
+                    mob.rotation.y = mob.userData.vx > 0 ? -Math.PI / 2 : Math.PI / 2;
+                    if (mob.position.x > 18 || mob.position.x < -18) mob.userData.vx *= -1;
+                    // Occasional jump
+                    if (Math.random() < 0.005) {
+                        mob.position.y += 2;
+                    }
+                    if (mob.position.y > 2) mob.position.y -= 0.1;
+                }
+                else if (mob.userData.type === 'greeter') {
+                    mob.userData.wobble += 0.05;
+                    mob.position.y += Math.sin(mob.userData.wobble) * 0.02;
+                    mob.rotation.y += 0.01;
+                    // Animate sparkles
+                    mob.children.forEach((child, i) => {
+                        if (child.userData && child.userData.sparkleIndex !== undefined) {
+                            const idx = child.userData.sparkleIndex;
+                            child.position.x = Math.cos(time * 2 + idx * Math.PI / 2) * 4;
+                            child.position.y = Math.sin(time * 2 + idx * Math.PI / 2) * 2;
+                        }
+                    });
+                }
             }
             
-            draw() {
-                this.tailAngle = sin(frameCount * 0.15) * 0.3;
-                
-                // Hunt for fish!
-                if (this.eatCooldown > 0) this.eatCooldown--;
-                
-                // Find nearest fish to hunt
-                let nearestFish = null;
-                let nearestDist = Infinity;
-                for (let obj of gameObjects) {
-                    if (obj instanceof FlyingFish) {
-                        let d = dist(this.x, this.y, obj.x, obj.y);
-                        if (d < nearestDist && d < 300) {
-                            nearestDist = d;
-                            nearestFish = obj;
-                        }
-                    }
-                }
-                
-                // Chase the fish!
-                if (nearestFish && this.eatCooldown <= 0) {
-                    this.hunting = true;
-                    this.targetFish = nearestFish;
-                    let angle = atan2(nearestFish.y - this.y, nearestFish.x - this.x);
-                    this.vx = cos(angle) * 3;
-                    this.y += sin(angle) * 2;
-                    this.jawOpen = abs(sin(frameCount * 0.2)) * 0.3;
-                    
-                    // EAT THE FISH!
-                    if (nearestDist < this.size * 0.4) {
-                        // Remove fish from game
-                        let fishIndex = gameObjects.indexOf(nearestFish);
-                        if (fishIndex > -1) {
-                            gameObjects.splice(fishIndex, 1);
-                            this.jawOpen = 0.5;
-                            this.eatCooldown = 120;
-                            // Burp bubbles!
-                            for (let i = 0; i < 5; i++) {
-                                this.burpParticles.push({
-                                    x: this.x + this.size * 0.3,
-                                    y: this.y,
-                                    vy: -random(1, 3),
-                                    size: random(5, 15),
-                                    life: 60
-                                });
-                            }
-                            // Respawn a new fish after a delay
-                            setTimeout(() => addGameObject(new FlyingFish()), 3000);
-                        }
-                    }
-                } else {
-                    this.hunting = false;
-                    this.jawOpen = abs(sin(frameCount * 0.05)) * 0.1;
-                    // Normal patrol speed
-                    if (abs(this.vx) > 2) this.vx *= 0.95;
-                }
-                
-                this.x += this.vx;
-                
-                // Wrap around screen
-                if (this.x > width + 100) this.x = -100;
-                if (this.x < -100) this.x = width + 100;
-                
-                // Draw burp bubbles
-                for (let i = this.burpParticles.length - 1; i >= 0; i--) {
-                    let p = this.burpParticles[i];
-                    p.y += p.vy;
-                    p.life--;
-                    fill(100, 200, 255, map(p.life, 0, 60, 0, 150));
-                    noStroke();
-                    ellipse(p.x, p.y, p.size);
-                    if (p.life <= 0) this.burpParticles.splice(i, 1);
-                }
-                
-                push();
-                translate(this.x, this.y);
-                if (this.vx < 0) scale(-1, 1);
-                
-                // Tail
-                push();
-                translate(-this.size * 0.5, 0);
-                rotate(this.tailAngle);
-                fill(70, 80, 90);
-                noStroke();
-                triangle(
-                    0, 0,
-                    -this.size * 0.4, -this.size * 0.25,
-                    -this.size * 0.4, this.size * 0.25
-                );
-                pop();
-                
-                // Body
-                fill(85, 95, 110);
-                noStroke();
-                ellipse(0, 0, this.size, this.size * 0.4);
-                
-                // Dorsal fin
-                fill(70, 80, 90);
-                triangle(
-                    -this.size * 0.1, -this.size * 0.2,
-                    this.size * 0.1, -this.size * 0.2,
-                    0, -this.size * 0.45
-                );
-                
-                // Belly
-                fill(180, 180, 190);
-                ellipse(0, this.size * 0.1, this.size * 0.7, this.size * 0.15);
-                
-                // Jaw (animated)
-                push();
-                translate(this.size * 0.35, this.size * 0.05);
-                rotate(this.jawOpen);
-                fill(60, 20, 30);
-                arc(0, 0, this.size * 0.3, this.size * 0.15, 0, PI);
-                // Teeth
-                fill(255);
-                for (let i = 0; i < 5; i++) {
-                    let tx = map(i, 0, 4, -this.size * 0.12, this.size * 0.12);
-                    triangle(tx, 0, tx - 2, 6, tx + 2, 6);
-                }
-                pop();
-                
-                // Eye
-                fill(0);
-                ellipse(this.size * 0.25, -this.size * 0.05, this.size * 0.08);
-                fill(255, 50);
-                ellipse(this.size * 0.26, -this.size * 0.06, this.size * 0.03);
-                
-                // Gills
-                stroke(60, 70, 80);
-                strokeWeight(2);
-                for (let i = 0; i < 3; i++) {
-                    let gx = this.size * 0.1 + i * 5;
-                    line(gx, -this.size * 0.08, gx, this.size * 0.08);
-                }
-                
-                // Hunting indicator - red eyes when hunting!
-                if (this.hunting) {
-                    fill(255, 50, 50);
-                    ellipse(this.size * 0.25, -this.size * 0.05, this.size * 0.1);
-                }
-                
-                pop();
-            }
+            // Day/night cycle (subtle)
+            const dayProgress = (Math.sin(time * 0.1) + 1) / 2;
+            const skyColor = new THREE.Color().lerpColors(
+                new THREE.Color(0x1a1a2e),
+                new THREE.Color(0x87CEEB),
+                dayProgress
+            );
+            scene.background = skyColor;
+            scene.fog.color = skyColor;
+            
+            // Update UI
+            document.getElementById('object-count').innerHTML = 
+                `<span class="minecraft-text">Blocks: ${blockCount} | Mobs: ${mobs.length}</span>`;
+            
+            renderer.render(scene, camera);
         }
     </script>
 </body>
