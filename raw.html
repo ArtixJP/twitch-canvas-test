@@ -65,6 +65,9 @@
             // Add a flying fish to the world!
             addGameObject(new FlyingFish());
             
+            // Add a shark prowling below!
+            addGameObject(new Shark());
+            
             // Create starry sky
             for (let i = 0; i < 100; i++) {
                 stars.push({
@@ -195,6 +198,92 @@
         }
         
         // Flying fish will be added in setup after p5.js initializes
+        
+        // Shark class - the apex predator!
+        class Shark {
+            constructor() {
+                this.x = random(width);
+                this.y = groundLevel - random(20, 50);
+                this.vx = random(1, 2) * (random() > 0.5 ? 1 : -1);
+                this.size = random(60, 90);
+                this.tailAngle = 0;
+                this.jawOpen = 0;
+            }
+            
+            draw() {
+                this.tailAngle = sin(frameCount * 0.15) * 0.3;
+                this.jawOpen = abs(sin(frameCount * 0.05)) * 0.1;
+                this.x += this.vx;
+                
+                // Wrap around screen
+                if (this.x > width + 100) this.x = -100;
+                if (this.x < -100) this.x = width + 100;
+                
+                push();
+                translate(this.x, this.y);
+                if (this.vx < 0) scale(-1, 1);
+                
+                // Tail
+                push();
+                translate(-this.size * 0.5, 0);
+                rotate(this.tailAngle);
+                fill(70, 80, 90);
+                noStroke();
+                triangle(
+                    0, 0,
+                    -this.size * 0.4, -this.size * 0.25,
+                    -this.size * 0.4, this.size * 0.25
+                );
+                pop();
+                
+                // Body
+                fill(85, 95, 110);
+                noStroke();
+                ellipse(0, 0, this.size, this.size * 0.4);
+                
+                // Dorsal fin
+                fill(70, 80, 90);
+                triangle(
+                    -this.size * 0.1, -this.size * 0.2,
+                    this.size * 0.1, -this.size * 0.2,
+                    0, -this.size * 0.45
+                );
+                
+                // Belly
+                fill(180, 180, 190);
+                ellipse(0, this.size * 0.1, this.size * 0.7, this.size * 0.15);
+                
+                // Jaw (animated)
+                push();
+                translate(this.size * 0.35, this.size * 0.05);
+                rotate(this.jawOpen);
+                fill(60, 20, 30);
+                arc(0, 0, this.size * 0.3, this.size * 0.15, 0, PI);
+                // Teeth
+                fill(255);
+                for (let i = 0; i < 5; i++) {
+                    let tx = map(i, 0, 4, -this.size * 0.12, this.size * 0.12);
+                    triangle(tx, 0, tx - 2, 6, tx + 2, 6);
+                }
+                pop();
+                
+                // Eye
+                fill(0);
+                ellipse(this.size * 0.25, -this.size * 0.05, this.size * 0.08);
+                fill(255, 50);
+                ellipse(this.size * 0.26, -this.size * 0.06, this.size * 0.03);
+                
+                // Gills
+                stroke(60, 70, 80);
+                strokeWeight(2);
+                for (let i = 0; i < 3; i++) {
+                    let gx = this.size * 0.1 + i * 5;
+                    line(gx, -this.size * 0.08, gx, this.size * 0.08);
+                }
+                
+                pop();
+            }
+        }
     </script>
 </body>
 </html>
