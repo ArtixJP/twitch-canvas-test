@@ -83,8 +83,8 @@
         // Astronaut character walking around Earth
         const astronautGroup = new THREE.Group();
         
-        // Body
-        const bodyGeo = new THREE.CapsuleGeometry(0.08, 0.15, 4, 8);
+        // Body (using CylinderGeometry as CapsuleGeometry not available in r128)
+        const bodyGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.2, 8);
         const suitMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
         const body = new THREE.Mesh(bodyGeo, suitMat);
         body.position.y = 0;
@@ -103,8 +103,8 @@
         pack.position.set(0, 0, -0.06);
         astronautGroup.add(pack);
         
-        // Legs
-        const legGeo = new THREE.CapsuleGeometry(0.025, 0.1, 4, 8);
+        // Legs (using CylinderGeometry as CapsuleGeometry not available in r128)
+        const legGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.12, 6);
         const leftLeg = new THREE.Mesh(legGeo, suitMat);
         leftLeg.position.set(-0.04, -0.15, 0);
         const rightLeg = new THREE.Mesh(legGeo, suitMat);
