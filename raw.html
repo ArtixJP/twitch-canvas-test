@@ -62,6 +62,9 @@
             canvas.parent('game-container');
             groundLevel = height - 80;
             
+            // Add a flying fish to the world!
+            addGameObject(new FlyingFish());
+            
             // Create starry sky
             for (let i = 0; i < 100; i++) {
                 stars.push({
@@ -191,8 +194,7 @@
             }
         }
         
-        // Add a flying fish to the world!
-        addGameObject(new FlyingFish());
+        // Flying fish will be added in setup after p5.js initializes
     </script>
 </body>
 </html>
