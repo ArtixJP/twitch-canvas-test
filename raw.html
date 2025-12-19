@@ -99,7 +99,7 @@
 </head>
 <body>
 <div id="game-container">
-<h1>⛏️ MINECRAFT WORLD BUILDER ⛏️</h1>
+<h1>⛏️ MINECRAFT OCEAN WORLD ⛏️</h1>
 <div id="object-count"><span class="minecraft-text">Blocks: 0 | Mobs: 0</span></div>
 <button class="mc-button" id="spawn-btn" onclick="spawnRandomBlock()">⛏️ SPAWN BLOCK ⛏️</button>
 <div id="controls">🖱️ Drag to rotate | Scroll to zoom</div>
@@ -207,14 +207,58 @@
                 }
             }
             
-            // Water pool
-            for (let x = -5; x <= 5; x++) {
-                for (let z = -5; z <= 5; z++) {
-                    if (x*x + z*z < 20) {
-                        const waterBlock = createBlock(x, 1, z, 0x3498db);
+            // THE GREAT SEA - Vast ocean surrounding the island
+            const seaBlocks = [];
+            for (let x = -30; x <= 30; x++) {
+                for (let z = -30; z <= 30; z++) {
+                    // Create sea around the island (leave center as land)
+                    const distFromCenter = Math.sqrt(x*x + z*z);
+                    if (distFromCenter > 12) {
+                        // Deep ocean - multiple layers
+                        for (let depth = 0; depth >= -4; depth--) {
+                            const waterBlock = createBlock(x, depth, z, depth === 0 ? 0x1E90FF : 0x0066CC);
+                            waterBlock.material.transparent = true;
+                            waterBlock.material.opacity = depth === 0 ? 0.6 : 0.8;
+                            waterBlock.userData = { isWater: true, baseY: depth, waveOffset: x * 0.5 + z * 0.3 };
+                            seaBlocks.push(waterBlock);
+                        }
+                        // Sandy ocean floor
+                        createBlock(x, -5, z, 0xC2B280);
+                    } else if (distFromCenter > 8) {
+                        // Shallow beach water
+                        const waterBlock = createBlock(x, 0, z, 0x40E0D0);
                         waterBlock.material.transparent = true;
-                        waterBlock.material.opacity = 0.7;
+                        waterBlock.material.opacity = 0.5;
+                        waterBlock.userData = { isWater: true, baseY: 0, waveOffset: x * 0.5 + z * 0.3 };
+                        seaBlocks.push(waterBlock);
                     }
+                }
+            }
+            
+            // Store sea blocks for wave animation
+            window.seaBlocks = seaBlocks;
+            
+            // Add coral and seaweed decorations
+            const coralColors = [0xFF6B6B, 0xFF69B4, 0xFFA500, 0x9370DB];
+            for (let i = 0; i < 15; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 15 + Math.random() * 10;
+                const cx = Math.cos(angle) * dist;
+                const cz = Math.sin(angle) * dist;
+                const coral = createBlock(cx, -4, cz, coralColors[Math.floor(Math.random() * coralColors.length)]);
+                coral.scale.set(0.5 + Math.random() * 0.5, 1 + Math.random() * 2, 0.5 + Math.random() * 0.5);
+            }
+            
+            // Seaweed patches
+            for (let i = 0; i < 20; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const dist = 14 + Math.random() * 12;
+                const sx = Math.cos(angle) * dist;
+                const sz = Math.sin(angle) * dist;
+                for (let h = 0; h < 3 + Math.floor(Math.random() * 3); h++) {
+                    const seaweed = createBlock(sx, -4 + h, sz, 0x228B22);
+                    seaweed.scale.set(0.3, 1, 0.3);
+                    seaweed.userData = { isSeaweed: true, swayOffset: i + h };
                 }
             }
         }
@@ -513,6 +557,23 @@
             );
             scene.background = skyColor;
             scene.fog.color = skyColor;
+            
+            // Animate ocean waves
+            if (window.seaBlocks) {
+                for (let waterBlock of window.seaBlocks) {
+                    if (waterBlock.userData && waterBlock.userData.isWater) {
+                        const waveHeight = Math.sin(time * 1.5 + waterBlock.userData.waveOffset) * 0.15;
+                        waterBlock.position.y = waterBlock.userData.baseY + waveHeight;
+                    }
+                }
+            }
+            
+            // Animate seaweed swaying
+            for (let block of blocks) {
+                if (block.userData && block.userData.isSeaweed) {
+                    block.rotation.z = Math.sin(time * 2 + block.userData.swayOffset) * 0.2;
+                }
+            }
             
             // Update UI
             document.getElementById('object-count').innerHTML = 
