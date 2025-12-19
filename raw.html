@@ -102,6 +102,7 @@
 <h1>⛏️ MINECRAFT OCEAN WORLD ⛏️</h1>
 <div id="object-count"><span class="minecraft-text">Blocks: 0 | Mobs: 0</span></div>
 <button class="mc-button" id="spawn-btn" onclick="spawnRandomBlock()">⛏️ SPAWN BLOCK ⛏️</button>
+<button class="mc-button" id="yellow-btn" onclick="spawnGoldBlock()" style="top: 110px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 50%, #B8860B 100%); border-color: #8B6914; border-top-color: #FFE55C; border-left-color: #FFE55C; color: #000; text-shadow: 1px 1px 0 #FFE55C;">🌟 GOLD BLOCK 🌟</button>
 <div id="controls">🖱️ Drag to rotate | Scroll to zoom</div>
 </div>
 <script>
@@ -580,6 +581,38 @@
                 `<span class="minecraft-text">Blocks: ${blockCount} | Mobs: ${mobs.length}</span>`;
             
             renderer.render(scene, camera);
+        }
+        
+        function spawnGoldBlock() {
+            const x = Math.floor(Math.random() * 20) - 10;
+            const z = Math.floor(Math.random() * 20) - 10;
+            const y = 5 + Math.floor(Math.random() * 10);
+            const newBlock = createBlock(x, y, z, 0xFFD700);
+            newBlock.userData = { falling: true, targetY: 3, isGold: true };
+            
+            // Add sparkle effect
+            const sparkleGeom = new THREE.BoxGeometry(0.2, 0.2, 0.2);
+            const sparkleMat = new THREE.MeshBasicMaterial({ color: 0xFFFF00 });
+            for (let i = 0; i < 4; i++) {
+                const sparkle = new THREE.Mesh(sparkleGeom, sparkleMat);
+                sparkle.position.set(
+                    x + (Math.random() - 0.5) * 2,
+                    y + (Math.random() - 0.5) * 2,
+                    z + (Math.random() - 0.5) * 2
+                );
+                scene.add(sparkle);
+                setTimeout(() => scene.remove(sparkle), 500);
+            }
+            
+            function dropBlock() {
+                if (newBlock.position.y > newBlock.userData.targetY) {
+                    newBlock.position.y -= 0.3;
+                    requestAnimationFrame(dropBlock);
+                } else {
+                    newBlock.position.y = newBlock.userData.targetY;
+                }
+            }
+            dropBlock();
         }
         
         function spawnRandomBlock() {
