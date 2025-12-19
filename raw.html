@@ -80,6 +80,46 @@
         const stars = new THREE.Points(starsGeometry, starsMaterial);
         scene.add(stars);
 
+        // Astronaut character walking around Earth
+        const astronautGroup = new THREE.Group();
+        
+        // Body
+        const bodyGeo = new THREE.CapsuleGeometry(0.08, 0.15, 4, 8);
+        const suitMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
+        const body = new THREE.Mesh(bodyGeo, suitMat);
+        body.position.y = 0;
+        astronautGroup.add(body);
+        
+        // Helmet
+        const helmetGeo = new THREE.SphereGeometry(0.07, 16, 16);
+        const helmetMat = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 });
+        const helmet = new THREE.Mesh(helmetGeo, helmetMat);
+        helmet.position.y = 0.15;
+        astronautGroup.add(helmet);
+        
+        // Backpack
+        const packGeo = new THREE.BoxGeometry(0.08, 0.12, 0.05);
+        const pack = new THREE.Mesh(packGeo, suitMat);
+        pack.position.set(0, 0, -0.06);
+        astronautGroup.add(pack);
+        
+        // Legs
+        const legGeo = new THREE.CapsuleGeometry(0.025, 0.1, 4, 8);
+        const leftLeg = new THREE.Mesh(legGeo, suitMat);
+        leftLeg.position.set(-0.04, -0.15, 0);
+        const rightLeg = new THREE.Mesh(legGeo, suitMat);
+        rightLeg.position.set(0.04, -0.15, 0);
+        astronautGroup.add(leftLeg, rightLeg);
+        
+        // Position astronaut on orbit path
+        const orbitRadius = 2.4;
+        astronautGroup.position.set(orbitRadius, 0, 0);
+        astronautGroup.scale.set(0.8, 0.8, 0.8);
+        scene.add(astronautGroup);
+        
+        let astronautAngle = 0;
+        let legSwing = 0;
+        
         // Lighting
         const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
         sunLight.position.set(5, 3, 5);
@@ -94,6 +134,18 @@
             earth.rotation.y += 0.003;
             atmosphere.rotation.y += 0.003;
             stars.rotation.y += 0.0002;
+            
+            // Animate astronaut walking around Earth
+            astronautAngle += 0.008;
+            legSwing += 0.15;
+            astronautGroup.position.x = Math.cos(astronautAngle) * orbitRadius;
+            astronautGroup.position.z = Math.sin(astronautAngle) * orbitRadius;
+            astronautGroup.position.y = Math.sin(astronautAngle * 2) * 0.3;
+            astronautGroup.rotation.y = -astronautAngle + Math.PI / 2;
+            
+            // Walking animation for legs
+            leftLeg.rotation.x = Math.sin(legSwing) * 0.5;
+            rightLeg.rotation.x = Math.sin(legSwing + Math.PI) * 0.5;
             renderer.render(scene, camera);
         }
         animate();
