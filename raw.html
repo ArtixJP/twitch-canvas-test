@@ -5,342 +5,122 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>Twitch Versus Code</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<title>Twitch World Builder</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
 <style>
         body { 
             font-family: system-ui, sans-serif; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            min-height: 100vh; 
             margin: 0;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            padding: 0;
+            overflow: hidden;
+            background: #1a1a2e;
             color: white;
         }
-        h1 { font-size: 3rem; text-align: center; position: relative; z-index: 10; text-shadow: 0 0 20px rgba(100, 200, 255, 0.8); }
-        #earth-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
-        body { overflow: hidden; }
+        h1 { 
+            font-size: 2rem; 
+            text-align: center; 
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            text-shadow: 0 0 10px #9b59b6, 0 0 20px #9b59b6;
+            margin: 0;
+            pointer-events: none;
+        }
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+        canvas {
+            display: block;
+        }
+        #object-count {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            z-index: 100;
+        }
     </style>
 </head>
 <body>
-<div id="earth-container"></div>
-<h1 class="cosmic-echo cosmic-fading">· · ·</h1>
-<div class="test-beacon">
-<span class="beacon-pulse">◉</span>
-<span class="beacon-text">☀ SUN ☾ MOON ORBITING</span>
+<div id="game-container">
+<h1>🎮 Twitch World Builder 🎮</h1>
+<div id="object-count">Objects: 0 | Chat to add more!</div>
 </div>
-<style>
-.test-beacon {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: monospace;
-  font-size: 12px;
-  color: #4fc3f7;
-  z-index: 100;
-  background: rgba(0,0,0,0.4);
-  padding: 8px 12px;
-  border-radius: 4px;
-  border: 1px solid rgba(79, 195, 247, 0.3);
-}
-.beacon-pulse {
-  animation: pulse 1.5s ease-in-out infinite;
-  color: #00ff88;
-}
-@keyframes pulse {
-  0%, 100% { opacity: 0.3; transform: scale(0.8); }
-  50% { opacity: 1; transform: scale(1.2); }
-}
-.beacon-text {
-  opacity: 0.8;
-  letter-spacing: 1px;
-}
-</style>
-<style>
-.cosmic-echo {
-  animation: fadeToStars 3s ease-in-out infinite alternate;
-  letter-spacing: 0.5em;
-  opacity: 0.6;
-}
-@keyframes fadeToStars {
-  0% { opacity: 0.05; transform: scale(0.8); filter: blur(2px); }
-  50% { opacity: 0.1; transform: scale(0.9); filter: blur(1px); }
-  100% { opacity: 0.05; transform: scale(0.85); filter: blur(2px); }
-}
-.cosmic-fading { font-size: 1rem; letter-spacing: 2em; color: rgba(255,255,255,0.1); }
-</style>
 <script>
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        document.getElementById('earth-container').appendChild(renderer.domElement);
-
-        // Earth
-        const earthGeometry = new THREE.SphereGeometry(2, 64, 64);
-        const earthTexture = new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/earth_atmos_2048.jpg');
-        const earthMaterial = new THREE.MeshPhongMaterial({
-            map: earthTexture,
-            bumpScale: 0.05,
-            specular: new THREE.Color(0x333333),
-            shininess: 5
-        });
-        const earth = new THREE.Mesh(earthGeometry, earthMaterial);
-        scene.add(earth);
-
-        // Atmosphere glow
-        const atmosphereGeometry = new THREE.SphereGeometry(2.1, 64, 64);
-        const atmosphereMaterial = new THREE.MeshBasicMaterial({
-            color: 0x4fc3f7,
-            transparent: true,
-            opacity: 0.15,
-            side: THREE.BackSide
-        });
-        const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-        scene.add(atmosphere);
-
-        // Stars
-        const starsGeometry = new THREE.BufferGeometry();
-        const starPositions = [];
-        for(let i = 0; i < 2000; i++) {
-            starPositions.push((Math.random() - 0.5) * 200);
-            starPositions.push((Math.random() - 0.5) * 200);
-            starPositions.push((Math.random() - 0.5) * 200);
+        // Game World State
+        let gameObjects = [];
+        let groundLevel;
+        let stars = [];
+        
+        function setup() {
+            let canvas = createCanvas(windowWidth, windowHeight);
+            canvas.parent('game-container');
+            groundLevel = height - 80;
+            
+            // Create starry sky
+            for (let i = 0; i < 100; i++) {
+                stars.push({
+                    x: random(width),
+                    y: random(groundLevel - 50),
+                    size: random(1, 3),
+                    twinkle: random(TWO_PI)
+                });
+            }
         }
-        starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starPositions, 3));
-        const starsMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
-        const stars = new THREE.Points(starsGeometry, starsMaterial);
-        scene.add(stars);
-
-        // Astronaut character walking around Earth
-        const astronautGroup = new THREE.Group();
         
-        // Body (using CylinderGeometry as CapsuleGeometry not available in r128)
-        const bodyGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.2, 8);
-        const suitMat = new THREE.MeshPhongMaterial({ color: 0xffffff });
-        const body = new THREE.Mesh(bodyGeo, suitMat);
-        body.position.y = 0;
-        astronautGroup.add(body);
-        
-        // Helmet
-        const helmetGeo = new THREE.SphereGeometry(0.07, 16, 16);
-        const helmetMat = new THREE.MeshPhongMaterial({ color: 0xffd700, shininess: 100 });
-        const helmet = new THREE.Mesh(helmetGeo, helmetMat);
-        helmet.position.y = 0.15;
-        astronautGroup.add(helmet);
-        
-        // Backpack
-        const packGeo = new THREE.BoxGeometry(0.08, 0.12, 0.05);
-        const pack = new THREE.Mesh(packGeo, suitMat);
-        pack.position.set(0, 0, -0.06);
-        astronautGroup.add(pack);
-        
-        // Legs (using CylinderGeometry as CapsuleGeometry not available in r128)
-        const legGeo = new THREE.CylinderGeometry(0.025, 0.025, 0.12, 6);
-        const leftLeg = new THREE.Mesh(legGeo, suitMat);
-        leftLeg.position.set(-0.04, -0.15, 0);
-        const rightLeg = new THREE.Mesh(legGeo, suitMat);
-        rightLeg.position.set(0.04, -0.15, 0);
-        astronautGroup.add(leftLeg, rightLeg);
-        
-        // Position astronaut on orbit path
-        const orbitRadius = 2.4;
-        astronautGroup.position.set(orbitRadius, 0, 0);
-        astronautGroup.scale.set(0.8, 0.8, 0.8);
-        scene.add(astronautGroup);
-        
-        let astronautAngle = 0;
-        let legSwing = 0;
-        
-        // Second astronaut (Red suit companion)
-        const astronaut2Group = new THREE.Group();
-        
-        const body2Geo = new THREE.CylinderGeometry(0.08, 0.08, 0.2, 8);
-        const suit2Mat = new THREE.MeshPhongMaterial({ color: 0xff4444 });
-        const body2 = new THREE.Mesh(body2Geo, suit2Mat);
-        body2.position.y = 0;
-        astronaut2Group.add(body2);
-        
-        const helmet2Geo = new THREE.SphereGeometry(0.07, 16, 16);
-        const helmet2Mat = new THREE.MeshPhongMaterial({ color: 0x44ff88, shininess: 100 });
-        const helmet2 = new THREE.Mesh(helmet2Geo, helmet2Mat);
-        helmet2.position.y = 0.15;
-        astronaut2Group.add(helmet2);
-        
-        const pack2Geo = new THREE.BoxGeometry(0.08, 0.12, 0.05);
-        const pack2 = new THREE.Mesh(pack2Geo, suit2Mat);
-        pack2.position.set(0, 0, -0.06);
-        astronaut2Group.add(pack2);
-        
-        const leg2Geo = new THREE.CylinderGeometry(0.025, 0.025, 0.12, 6);
-        const leftLeg2 = new THREE.Mesh(leg2Geo, suit2Mat);
-        leftLeg2.position.set(-0.04, -0.15, 0);
-        const rightLeg2 = new THREE.Mesh(leg2Geo, suit2Mat);
-        rightLeg2.position.set(0.04, -0.15, 0);
-        astronaut2Group.add(leftLeg2, rightLeg2);
-        
-        const orbit2Radius = 2.6;
-        astronaut2Group.position.set(orbit2Radius, 0, 0);
-        astronaut2Group.scale.set(0.7, 0.7, 0.7);
-        scene.add(astronaut2Group);
-        
-        let astronaut2Angle = Math.PI;
-        let sunOrbitAngle = 0;
-        
-        // The Moon - Earth's faithful companion
-        const moonGeometry = new THREE.SphereGeometry(0.5, 32, 32);
-        const moonTexture = new THREE.TextureLoader().load('https://raw.githubusercontent.com/mrdoob/three.js/dev/examples/textures/planets/moon_1024.jpg');
-        const moonMaterial = new THREE.MeshPhongMaterial({
-            map: moonTexture,
-            bumpScale: 0.02,
-            shininess: 2
-        });
-        const moon = new THREE.Mesh(moonGeometry, moonMaterial);
-        scene.add(moon);
-        
-        // Moon glow
-        const moonGlowGeometry = new THREE.SphereGeometry(0.55, 32, 32);
-        const moonGlowMaterial = new THREE.MeshBasicMaterial({
-            color: 0xaaaacc,
-            transparent: true,
-            opacity: 0.1,
-            side: THREE.BackSide
-        });
-        const moonGlow = new THREE.Mesh(moonGlowGeometry, moonGlowMaterial);
-        scene.add(moonGlow);
-        
-        let moonOrbitAngle = 0;
-        const moonOrbitRadius = 4;
-        
-        // The Sun - our star!
-        const sunGeometry = new THREE.SphereGeometry(1.5, 32, 32);
-        const sunMaterial = new THREE.MeshBasicMaterial({ 
-            color: 0xffdd44,
-            transparent: true,
-            opacity: 1
-        });
-        const sun = new THREE.Mesh(sunGeometry, sunMaterial);
-        sun.position.set(8, 3, -5);
-        scene.add(sun);
-        
-        // Sun corona glow
-        const coronaGeometry = new THREE.SphereGeometry(1.8, 32, 32);
-        const coronaMaterial = new THREE.MeshBasicMaterial({
-            color: 0xff8800,
-            transparent: true,
-            opacity: 0.3,
-            side: THREE.BackSide
-        });
-        const corona = new THREE.Mesh(coronaGeometry, coronaMaterial);
-        corona.position.copy(sun.position);
-        // Sun rays for visibility - stored in group for orbiting
-        const sunRaysGroup = new THREE.Group();
-        const rayCount = 12;
-        for(let i = 0; i < rayCount; i++) {
-            const rayGeo = new THREE.CylinderGeometry(0.02, 0.15, 3, 8);
-            const rayMat = new THREE.MeshBasicMaterial({ color: 0xffee88, transparent: true, opacity: 0.4 });
-            const ray = new THREE.Mesh(rayGeo, rayMat);
-            ray.rotation.z = (i / rayCount) * Math.PI * 2;
-            sunRaysGroup.add(ray);
+        function draw() {
+            // Sky gradient
+            for (let y = 0; y < groundLevel; y++) {
+                let inter = map(y, 0, groundLevel, 0, 1);
+                let c = lerpColor(color(26, 26, 46), color(22, 33, 62), inter);
+                stroke(c);
+                line(0, y, width, y);
+            }
+            
+            // Twinkling stars
+            noStroke();
+            for (let star of stars) {
+                let alpha = map(sin(frameCount * 0.05 + star.twinkle), -1, 1, 100, 255);
+                fill(255, 255, 255, alpha);
+                ellipse(star.x, star.y, star.size);
+            }
+            
+            // Ground
+            fill(34, 139, 34);
+            rect(0, groundLevel, width, height - groundLevel);
+            
+            // Grass details
+            stroke(50, 205, 50);
+            strokeWeight(2);
+            for (let x = 0; x < width; x += 15) {
+                let grassHeight = 5 + sin(x * 0.1 + frameCount * 0.02) * 3;
+                line(x, groundLevel, x + 3, groundLevel - grassHeight);
+            }
+            
+            // Draw all game objects
+            for (let obj of gameObjects) {
+                if (obj.draw) obj.draw();
+            }
+            
+            // Update object count
+            document.getElementById('object-count').textContent = 
+                `Objects: ${gameObjects.length} | Chat to add more!`;
         }
-        sunRaysGroup.position.copy(sun.position);
-        scene.add(sunRaysGroup);
-        scene.add(corona);
         
-        // Outer corona
-        const outerCoronaGeo = new THREE.SphereGeometry(2.2, 32, 32);
-        const outerCoronaMat = new THREE.MeshBasicMaterial({
-            color: 0xffaa00,
-            transparent: true,
-            opacity: 0.15,
-            side: THREE.BackSide
-        });
-        const outerCorona = new THREE.Mesh(outerCoronaGeo, outerCoronaMat);
-        outerCorona.position.copy(sun.position);
-        scene.add(outerCorona);
-        
-        // Sun point light (actual light source)
-        const sunPointLight = new THREE.PointLight(0xffffcc, 2, 100);
-        sunPointLight.position.copy(sun.position);
-        sunPointLight.intensity = 3;
-        scene.add(sunPointLight);
-        
-        // Lighting
-        const sunLight = new THREE.DirectionalLight(0xffffff, 1.2);
-        sunLight.position.set(8, 3, -5);
-        scene.add(sunLight);
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.5);
-        scene.add(ambientLight);
-
-        camera.position.z = 5;
-
-        function animate() {
-            requestAnimationFrame(animate);
-            earth.rotation.y += 0.003;
-            atmosphere.rotation.y += 0.003;
-            stars.rotation.y += 0.0002;
-            
-            // Animate sun corona pulsing
-            const sunPulse = Math.sin(Date.now() * 0.002) * 0.1 + 1;
-            corona.scale.set(sunPulse, sunPulse, sunPulse);
-            outerCorona.scale.set(sunPulse * 1.05, sunPulse * 1.05, sunPulse * 1.05);
-            
-            // Moon orbiting Earth
-            moonOrbitAngle += 0.012;
-            moon.position.x = Math.cos(moonOrbitAngle) * moonOrbitRadius;
-            moon.position.z = Math.sin(moonOrbitAngle) * moonOrbitRadius;
-            moon.position.y = Math.sin(moonOrbitAngle * 0.3) * 0.8;
-            moon.rotation.y += 0.002;
-            moonGlow.position.copy(moon.position);
-            
-            // Sun orbiting around Earth - day/night cycle!
-            sunOrbitAngle += 0.004;
-            const sunOrbitRadius = 10;
-            const sunHeight = 3;
-            sun.position.x = Math.cos(sunOrbitAngle) * sunOrbitRadius;
-            sun.position.z = Math.sin(sunOrbitAngle) * sunOrbitRadius;
-            sun.position.y = Math.sin(sunOrbitAngle * 0.5) * sunHeight;
-            corona.position.copy(sun.position);
-            outerCorona.position.copy(sun.position);
-            sunPointLight.position.copy(sun.position);
-            sunLight.position.copy(sun.position);
-            sunRaysGroup.position.copy(sun.position);
-            sunRaysGroup.rotation.z += 0.01; // Spin the rays for extra drama
-            
-            // Animate astronaut walking around Earth
-            astronautAngle += 0.008;
-            legSwing += 0.15;
-            astronautGroup.position.x = Math.cos(astronautAngle) * orbitRadius;
-            astronautGroup.position.z = Math.sin(astronautAngle) * orbitRadius;
-            astronautGroup.position.y = Math.sin(astronautAngle * 2) * 0.3;
-            astronautGroup.rotation.y = -astronautAngle + Math.PI / 2;
-            
-            // Walking animation for legs
-            leftLeg.rotation.x = Math.sin(legSwing) * 0.5;
-            rightLeg.rotation.x = Math.sin(legSwing + Math.PI) * 0.5;
-            
-            // Animate second astronaut (opposite direction, different orbit)
-            astronaut2Angle -= 0.006;
-            astronaut2Group.position.x = Math.cos(astronaut2Angle) * orbit2Radius;
-            astronaut2Group.position.z = Math.sin(astronaut2Angle) * orbit2Radius;
-            astronaut2Group.position.y = Math.cos(astronaut2Angle * 3) * 0.4;
-            astronaut2Group.rotation.y = astronaut2Angle + Math.PI / 2;
-            leftLeg2.rotation.x = Math.sin(legSwing * 0.8) * 0.4;
-            rightLeg2.rotation.x = Math.sin(legSwing * 0.8 + Math.PI) * 0.4;
-            
-            renderer.render(scene, camera);
+        function windowResized() {
+            resizeCanvas(windowWidth, windowHeight);
+            groundLevel = height - 80;
         }
-        animate();
-
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        
+        // Helper function to add objects (will be used by future requests)
+        function addGameObject(obj) {
+            gameObjects.push(obj);
+        }
     </script>
 </body>
 </html>
