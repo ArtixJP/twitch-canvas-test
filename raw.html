@@ -26,6 +26,40 @@
 <body>
 <div id="earth-container"></div>
 <h1 class="cosmic-echo">✧ ⋆ ˚ ✦ ˚ ⋆ ✧</h1>
+<div class="test-beacon">
+<span class="beacon-pulse">◉</span>
+<span class="beacon-text">SIGNAL TEST: OK</span>
+</div>
+<style>
+.test-beacon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+  font-size: 12px;
+  color: #4fc3f7;
+  z-index: 100;
+  background: rgba(0,0,0,0.4);
+  padding: 8px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(79, 195, 247, 0.3);
+}
+.beacon-pulse {
+  animation: pulse 1.5s ease-in-out infinite;
+  color: #00ff88;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.beacon-text {
+  opacity: 0.8;
+  letter-spacing: 1px;
+}
+</style>
 <style>
 .cosmic-echo {
   animation: fadeToStars 3s ease-in-out infinite alternate;
