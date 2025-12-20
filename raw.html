@@ -115,6 +115,13 @@
 <div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(0,255,0,0.2); border: 2px dashed #00FF00; padding: 5px 10px; font-size: 0.7rem; z-index: 100; animation: testPulse 1s infinite;">🧪 TEST SIGNAL RECEIVED</div>
 <div id="test-echo" style="position: absolute; top: 130px; right: 10px; background: rgba(0,255,255,0.15); border: 1px dotted #00FFFF; padding: 3px 8px; font-size: 0.6rem; z-index: 100; color: #00FFFF; animation: echoFade 2s infinite;">↪ echo: test confirmed ✓</div>
 <div id="sandwich-badge" style="position: absolute; top: 230px; right: 10px; background: rgba(210,105,30,0.6); border: 2px solid #D2691E; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFD700; font-weight: bold; animation: sandwichFloat 2s ease-in-out infinite;">🥪 LEGENDARY SANDWICH SPAWNED!</div>
+<div id="bonjour-badge" style="position: absolute; top: 270px; right: 10px; background: rgba(0,35,149,0.6); border: 2px solid #ED2939; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFFFFF; font-weight: bold; animation: bonjourWave 1.5s ease-in-out infinite;">🇫🇷 BONJOUR! 🥖</div>
+<style>
+@keyframes bonjourWave {
+  0%, 100% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+}
+</style>
 <style>
 @keyframes sandwichFloat {
   0%, 100% { transform: translateY(0); }
@@ -193,6 +200,9 @@
             
             // A LEGENDARY SANDWICH - Rare food drop!
             createVoxelSandwich(-5, 6, -8);
+            
+            // FRENCH FISH - Bonjour villager!
+            createVoxelFrenchFish(-12, 8, 10);
             
             // Add trees
             createTree(10, 0, 10);
@@ -715,6 +725,68 @@
             mobs.push(sandwich);
         }
         
+        function createVoxelFrenchFish(x, y, z) {
+            const frenchFish = new THREE.Group();
+            
+            // Body (blue like the French flag)
+            for (let i = 0; i < 4; i++) {
+                const block = createBlock(0, 0, 0, 0x0055A4);
+                block.position.set(i - 1.5, 0, 0);
+                frenchFish.add(block);
+            }
+            
+            // White stripe
+            const whiteStripe = createBlock(0, 0, 0, 0xFFFFFF);
+            whiteStripe.position.set(0, 0, 0.5);
+            whiteStripe.scale.set(1.5, 0.8, 0.1);
+            frenchFish.add(whiteStripe);
+            
+            // Red stripe
+            const redStripe = createBlock(0, 0, 0, 0xED2939);
+            redStripe.position.set(1.2, 0, 0.5);
+            redStripe.scale.set(0.8, 0.8, 0.1);
+            frenchFish.add(redStripe);
+            
+            // Beret (très français!)
+            const beret = createBlock(0, 0, 0, 0x1a1a1a);
+            beret.position.set(1.5, 0.8, 0);
+            beret.scale.set(1.2, 0.3, 1.2);
+            frenchFish.add(beret);
+            
+            const beretTop = createBlock(0, 0, 0, 0x1a1a1a);
+            beretTop.position.set(1.3, 1, 0);
+            beretTop.scale.set(0.8, 0.2, 0.8);
+            frenchFish.add(beretTop);
+            
+            // Tiny baguette
+            const baguette = createBlock(0, 0, 0, 0xD2691E);
+            baguette.position.set(-0.5, -0.5, 0.5);
+            baguette.scale.set(1.5, 0.2, 0.2);
+            frenchFish.add(baguette);
+            
+            // Mustache (oui oui!)
+            const mustache = createBlock(0, 0, 0, 0x2F2F2F);
+            mustache.position.set(1.8, -0.1, 0.6);
+            mustache.scale.set(0.6, 0.15, 0.1);
+            frenchFish.add(mustache);
+            
+            // Eye with charm
+            const eye = createBlock(0, 0, 0, 0xFFFFFF);
+            eye.position.set(1.8, 0.3, 0.5);
+            eye.scale.set(0.3, 0.3, 0.2);
+            frenchFish.add(eye);
+            
+            const pupil = createBlock(0, 0, 0, 0x000000);
+            pupil.position.set(1.9, 0.3, 0.6);
+            pupil.scale.set(0.15, 0.15, 0.1);
+            frenchFish.add(pupil);
+            
+            frenchFish.position.set(x, y, z);
+            frenchFish.userData = { type: 'frenchfish', vx: 0.03, baseY: y, bonjourTimer: 0 };
+            scene.add(frenchFish);
+            mobs.push(frenchFish);
+        }
+        
         function createVoxelGreeter(x, y, z) {
             const greeter = new THREE.Group();
             
@@ -860,6 +932,19 @@
                     mob.rotation.y += mob.userData.spinSpeed;
                     // Gentle tilt
                     mob.rotation.z = Math.sin(time * 1.5) * 0.1;
+                }
+                else if (mob.userData.type === 'frenchfish') {
+                    mob.position.x += mob.userData.vx;
+                    mob.position.y = mob.userData.baseY + Math.sin(time * 1.5) * 1;
+                    mob.rotation.y = mob.userData.vx > 0 ? 0 : Math.PI;
+                    if (mob.position.x > 20 || mob.position.x < -20) mob.userData.vx *= -1;
+                    // Occasional tip of the beret
+                    mob.userData.bonjourTimer += 0.016;
+                    if (Math.sin(mob.userData.bonjourTimer * 2) > 0.95) {
+                        mob.rotation.z = Math.sin(time * 10) * 0.2;
+                    } else {
+                        mob.rotation.z = 0;
+                    }
                 }
                 else if (mob.userData.type === 'greeter') {
                     mob.userData.wobble += 0.05;
