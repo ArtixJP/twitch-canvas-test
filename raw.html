@@ -105,6 +105,29 @@
             0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
             100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
         }
+        .mars {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #c1440e 0%, #8b2500 50%, #5c1a00 100%);
+            box-shadow: inset -6px -6px 15px rgba(0,0,0,0.5), 0 0 20px rgba(193, 68, 14, 0.4);
+            animation: orbit-mars 15s linear infinite;
+        }
+        .mars::after {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 6px;
+            width: 8px;
+            height: 6px;
+            background: rgba(139, 37, 0, 0.6);
+            border-radius: 50%;
+        }
+        @keyframes orbit-mars {
+            0% { transform: rotate(45deg) translateX(220px) rotate(-45deg); }
+            100% { transform: rotate(405deg) translateX(220px) rotate(-405deg); }
+        }
         #three-container {
             position: absolute;
             top: 0;
@@ -197,8 +220,9 @@
 <div class="planet"></div>
 <div class="moon"></div>
 <div class="kitty">🐱</div>
+<div class="mars" title="Mars - The Red Planet"></div>
 </div>
-<p style="margin-top: 2rem; opacity: 0.7;">A lonely planet floats in the void...</p>
+<p style="margin-top: 2rem; opacity: 0.7;">A lonely planet floats in the void... Mars watches from afar 🔴</p>
 </section>
 <section class="section" id="animals">
 <h1>🦁 Animal Kingdom</h1>
