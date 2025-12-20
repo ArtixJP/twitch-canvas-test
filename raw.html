@@ -104,6 +104,11 @@
 <button class="mc-button" id="spawn-btn" onclick="spawnRandomBlock()">⛏️ SPAWN BLOCK ⛏️</button>
 <button class="mc-button" id="yellow-btn" onclick="spawnGoldBlock()" style="top: 110px; background: linear-gradient(180deg, #FFD700 0%, #DAA520 50%, #B8860B 100%); border-color: #8B6914; border-top-color: #FFE55C; border-left-color: #FFE55C; color: #000; text-shadow: 1px 1px 0 #FFE55C;">🌟 GOLD BLOCK 🌟</button>
 <div id="controls">🖱️ Drag to rotate | Scroll to zoom</div>
+<div id="user-spaces-panel" style="position: absolute; top: 160px; left: 10px; background: rgba(0,0,0,0.8); border: 3px solid #5555FF; padding: 10px; font-size: 0.75rem; z-index: 100; max-height: 200px; overflow-y: auto; min-width: 150px;">
+<div style="color: #55FFFF; font-weight: bold; margin-bottom: 5px; border-bottom: 1px solid #5555FF; padding-bottom: 3px;">🏠 USER PLOTS 🏠</div>
+<div id="user-list" style="color: #AAFFAA;"></div>
+<button class="mc-button" onclick="claimPlot()" style="position: relative; top: 5px; left: 0; transform: none; font-size: 0.7rem; padding: 5px 10px;">🏗️ CLAIM PLOT</button>
+</div>
 <div id="mario-badge" style="position: absolute; top: 150px; right: 10px; background: rgba(100,100,100,0.5); border: 2px solid #666; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #AAA; font-weight: bold; text-decoration: line-through;">🪦 R.I.P. MARIO 🪦</div>
 <div id="bowser-badge" style="position: absolute; top: 190px; right: 10px; background: rgba(255,100,0,0.4); border: 2px solid #FF6600; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFD700; font-weight: bold; animation: bowserRoar 0.5s infinite;">🔥 BOWSER WINS! 🔥</div>
 <style>
@@ -204,6 +209,12 @@
         let mobs = [];
         let blockCount = 0;
         let time = 0;
+        
+        // USER PERSONAL SPACES SYSTEM
+        let userPlots = {};
+        let plotColors = [0xFF6B6B, 0x6BFF6B, 0x6B6BFF, 0xFFFF6B, 0xFF6BFF, 0x6BFFFF, 0xFFAA6B, 0xAA6BFF];
+        let nextPlotIndex = 0;
+        const userNames = ['StreamerPro', 'BlockMaster42', 'FishLover99', 'MinecraftFan', 'TwitchViewer1', 'CoolBuilder', 'OceanExplorer', 'VoxelKing'];
         
         // Mouse controls
         let isDragging = false;
@@ -1442,6 +1453,19 @@
                         }
                     });
                 }
+                else if (mob.userData.type === 'userplot') {
+                    // User plots gently float and their flags wave
+                    mob.userData.floatPhase += 0.02;
+                    mob.position.y = 8 + Math.sin(mob.userData.floatPhase) * 0.5;
+                    mob.rotation.y = Math.sin(mob.userData.floatPhase * 0.3) * 0.05;
+                    // Animate flags
+                    mob.children.forEach(child => {
+                        if (child.userData && child.userData.isUserFlag) {
+                            child.userData.wavePhase += 0.1;
+                            child.rotation.y = Math.sin(child.userData.wavePhase) * 0.2;
+                        }
+                    });
+                }
                 else if (mob.userData.type === 'greeter') {
                     mob.userData.wobble += 0.05;
                     mob.position.y += Math.sin(mob.userData.wobble) * 0.02;
@@ -1544,6 +1568,77 @@
                 }
             }
             dropBlock();
+        }
+        
+        function claimPlot() {
+            const userName = userNames[Math.floor(Math.random() * userNames.length)] + Math.floor(Math.random() * 1000);
+            if (Object.keys(userPlots).length >= 8) {
+                console.log('Max plots reached!');
+                return;
+            }
+            
+            const plotColor = plotColors[nextPlotIndex % plotColors.length];
+            nextPlotIndex++;
+            
+            // Calculate plot position in a circle around the island
+            const plotAngle = (Object.keys(userPlots).length / 8) * Math.PI * 2;
+            const plotDistance = 22;
+            const plotX = Math.cos(plotAngle) * plotDistance;
+            const plotZ = Math.sin(plotAngle) * plotDistance;
+            
+            // Create the user's personal floating island
+            const userIsland = new THREE.Group();
+            
+            // Platform base
+            for (let dx = -2; dx <= 2; dx++) {
+                for (let dz = -2; dz <= 2; dz++) {
+                    if (Math.abs(dx) + Math.abs(dz) <= 3) {
+                        const platformBlock = createBlock(dx, 0, dz, plotColor);
+                        userIsland.add(platformBlock);
+                        // Dirt underneath
+                        const dirtBlock = createBlock(dx, -1, dz, 0x8B4513);
+                        userIsland.add(dirtBlock);
+                    }
+                }
+            }
+            
+            // User's flag pole
+            for (let fy = 1; fy <= 4; fy++) {
+                const pole = createBlock(0, fy, 0, 0x4a3000);
+                pole.scale.set(0.2, 1, 0.2);
+                userIsland.add(pole);
+            }
+            
+            // Flag with user color
+            const flag = createBlock(0.5, 4, 0, plotColor);
+            flag.scale.set(1.5, 1, 0.1);
+            flag.userData = { isUserFlag: true, wavePhase: Math.random() * Math.PI * 2 };
+            userIsland.add(flag);
+            
+            // Name sign
+            const sign = createBlock(0, 1.5, 2, 0x8B4513);
+            sign.scale.set(2, 1, 0.2);
+            userIsland.add(sign);
+            
+            userIsland.position.set(plotX, 8, plotZ);
+            userIsland.userData = { type: 'userplot', owner: userName, floatPhase: Math.random() * Math.PI * 2 };
+            scene.add(userIsland);
+            mobs.push(userIsland);
+            
+            userPlots[userName] = { island: userIsland, color: plotColor, x: plotX, z: plotZ };
+            
+            // Update UI
+            updateUserList();
+        }
+        
+        function updateUserList() {
+            const listDiv = document.getElementById('user-list');
+            if (listDiv) {
+                listDiv.innerHTML = Object.keys(userPlots).map(name => {
+                    const color = '#' + userPlots[name].color.toString(16).padStart(6, '0');
+                    return `<div style="color: ${color}; margin: 2px 0;">🏝️ ${name}</div>`;
+                }).join('');
+            }
         }
         
         function spawnRandomBlock() {
