@@ -99,6 +99,7 @@
 <div class="planet"></div>
 <div class="test-probe">🛰️ TEST</div>
 <div class="chewing-gum">🫧</div>
+<div class="space-patate">🥔</div>
 <style>
 .test-probe {
     position: absolute;
@@ -136,6 +137,35 @@
 @keyframes gum-spin {
     from { rotate: 0deg; }
     to { rotate: 360deg; }
+}
+.space-patate {
+    position: absolute;
+    font-size: 2.5rem;
+    top: 30%;
+    left: 25%;
+    animation: potato-orbit 15s linear infinite, potato-tumble 3s ease-in-out infinite;
+    z-index: 4;
+    filter: drop-shadow(0 0 10px #c9a227) drop-shadow(0 0 20px #8b6914);
+}
+.space-patate::after {
+    content: '🌟';
+    position: absolute;
+    font-size: 0.8rem;
+    top: -10px;
+    right: -5px;
+    animation: sparkle 1.5s ease-in-out infinite;
+}
+@keyframes potato-orbit {
+    0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+    100% { transform: rotate(-360deg) translateX(120px) rotate(360deg); }
+}
+@keyframes potato-tumble {
+    0%, 100% { scale: 1; }
+    50% { scale: 1.15; }
+}
+@keyframes sparkle {
+    0%, 100% { opacity: 0.3; transform: scale(0.8); }
+    50% { opacity: 1; transform: scale(1.2); }
 }
 @keyframes stretch {
     0%, 100% { transform: scaleX(1); }
