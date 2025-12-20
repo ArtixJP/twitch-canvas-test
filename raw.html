@@ -225,5 +225,72 @@
 <span style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: #ff6347; color: white; font-size: 0.55rem; padding: 2px 6px; border-radius: 8px;">🇮🇹 Italian Twist!</span>
 </div>
 </div>
+<div class="virtual-bakery" style="width: 100%; max-width: 800px; margin: 40px auto; padding: 30px; background: linear-gradient(135deg, #fff8e7 0%, #f5deb3 100%); border-radius: 20px; box-shadow: 0 10px 40px rgba(139, 90, 43, 0.25); text-align: center; position: relative; overflow: hidden;">
+<div style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); background: #8b5a2b; color: #fff8e7; padding: 8px 25px; border-radius: 20px; font-family: 'Playfair Display', serif; font-size: 0.9rem;">🏪 Boulangerie Virtuelle 🏪</div>
+<h2 style="font-family: 'Playfair Display', serif; color: #5d4037; margin-top: 20px;">✨ Devenez Boulanger! ✨</h2>
+<p style="color: #8b5a2b; font-size: 0.9rem; margin-bottom: 20px;">Cliquez sur le four pour cuire votre croissant virtuel!</p>
+<div class="bakery-scene" style="display: flex; justify-content: center; align-items: center; gap: 30px; flex-wrap: wrap;">
+<div class="oven" id="virtual-oven" onclick="bakeCroissant()" style="width: 150px; height: 120px; background: linear-gradient(180deg, #4a3728 0%, #2d2015 100%); border-radius: 15px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 5px 20px rgba(0,0,0,0.3);">
+<div id="oven-window" style="width: 100px; height: 60px; background: linear-gradient(180deg, #ff6b35 0%, #ff4500 100%); border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 2rem; animation: flicker 0.5s ease-in-out infinite alternate;">🔥</div>
+<span style="color: #ffe4b5; font-size: 0.7rem; margin-top: 8px;">FOUR MAGIQUE</span>
+</div>
+<div class="baking-counter" style="background: #d4a574; padding: 20px 30px; border-radius: 15px; min-width: 200px;">
+<div id="baked-item" style="font-size: 3rem; margin-bottom: 10px;">🥐</div>
+<div style="font-family: 'Playfair Display', serif; color: #5d4037;">Croissants cuits:</div>
+<div id="croissant-count" style="font-size: 2rem; color: #8b5a2b; font-weight: bold;">0</div>
+</div>
+</div>
+<div class="ingredients-shelf" style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+<span style="background: white; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">🧈 Beurre</span>
+<span style="background: white; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">🌾 Farine</span>
+<span style="background: white; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">🥚 Œufs</span>
+<span style="background: white; padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">🧂 Sel</span>
+</div>
+</div>
+<style>
+@keyframes flicker {
+  0% { opacity: 0.8; }
+  100% { opacity: 1; transform: scale(1.02); }
+}
+@keyframes baking {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-10deg) scale(1.1); }
+  50% { transform: rotate(10deg) scale(1.2); }
+  75% { transform: rotate(-5deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+.oven:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 30px rgba(255, 107, 53, 0.4);
+}
+.oven:active {
+  transform: scale(0.98);
+}
+</style>
+<script>
+let croissantCount = 0;
+function bakeCroissant() {
+  const bakedItem = document.getElementById('baked-item');
+  const countDisplay = document.getElementById('croissant-count');
+  const oven = document.getElementById('virtual-oven');
+  
+  bakedItem.style.animation = 'baking 0.6s ease-in-out';
+  oven.style.boxShadow = '0 5px 30px rgba(255, 107, 53, 0.6)';
+  
+  setTimeout(() => {
+    croissantCount++;
+    countDisplay.textContent = croissantCount;
+    bakedItem.style.animation = '';
+    oven.style.boxShadow = '0 5px 20px rgba(0,0,0,0.3)';
+    
+    if (croissantCount >= 10) {
+      countDisplay.innerHTML = croissantCount + ' 👨‍🍳';
+    }
+    if (croissantCount >= 25) {
+      countDisplay.innerHTML = croissantCount + ' 🏆';
+    }
+  }, 600);
+}
+</script>
 </body>
 </html>
