@@ -30,11 +30,13 @@
         
         .header h1 {
             font-size: 2.5rem;
-            background: linear-gradient(90deg, #e94560, #0f3460, #e94560);
-            background-size: 200% auto;
+            background: linear-gradient(90deg, #e94560, #00ff88, #0f3460, #ff00ff, #e94560);
+            background-size: 400% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            animation: gradient-shift 3s linear infinite;
+            animation: gradient-shift 2s linear infinite;
+            text-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+            filter: drop-shadow(0 0 10px #e94560);
         }
         
         @keyframes gradient-shift {
@@ -66,6 +68,13 @@
             min-height: 300px;
             margin: 2rem 0;
             position: relative;
+            box-shadow: 0 0 40px rgba(233, 69, 96, 0.3), inset 0 0 60px rgba(0, 255, 136, 0.05);
+            animation: zone-pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes zone-pulse {
+            0%, 100% { box-shadow: 0 0 40px rgba(233, 69, 96, 0.3), inset 0 0 60px rgba(0, 255, 136, 0.05); }
+            50% { box-shadow: 0 0 80px rgba(233, 69, 96, 0.5), inset 0 0 100px rgba(0, 255, 136, 0.1); }
         }
         
         #chaos-zone::before {
@@ -126,10 +135,9 @@
 <span>⏱️ Démarré</span>
 </div>
 <div class="main-content">
-
 <div id="chaos-zone">
 <div class="chaos-content">
-<p>🧬 3D Cellular Automaton - Watch life emerge from chaos</p>
+<p style="font-size:1.4rem;text-shadow:0 0 20px #e94560;">🧬 3D Cellular Automaton - Watch life emerge from chaos ⚡</p>
 <div id="automaton-container" style="width:100%;height:400px;position:relative;border-radius:8px;overflow:hidden;"></div>
 <p style="margin-top:1rem;font-size:0.8rem;color:#e94560;">⚡ Generation: <span id="gen-counter">0</span> | Living cells: <span id="cell-counter">0</span></p>
 </div>
@@ -237,16 +245,54 @@
             const ambientLight = new THREE.AmbientLight(0x404040, 2);
             scene.add(ambientLight);
             
+            // Add cool point lights
+            const pointLight1 = new THREE.PointLight(0xe94560, 2, 50);
+            pointLight1.position.set(15, 15, 15);
+            scene.add(pointLight1);
+            
+            const pointLight2 = new THREE.PointLight(0x00ff88, 2, 50);
+            pointLight2.position.set(-15, -15, 15);
+            scene.add(pointLight2);
+            
+            // Starfield background
+            const starGeometry = new THREE.BufferGeometry();
+            const starVertices = [];
+            for(let i = 0; i < 500; i++) {
+                starVertices.push((Math.random() - 0.5) * 200);
+                starVertices.push((Math.random() - 0.5) * 200);
+                starVertices.push((Math.random() - 0.5) * 200);
+            }
+            starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+            const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 0.5, transparent: true, opacity: 0.8 });
+            const stars = new THREE.Points(starGeometry, starMaterial);
+            scene.add(stars);
+            
             initGrid();
             let generation = 0;
             let angle = 0;
             
             function animate() {
                 requestAnimationFrame(animate);
-                angle += 0.005;
+                angle += 0.008;
                 camera.position.x = Math.cos(angle) * 30;
                 camera.position.z = Math.sin(angle) * 30;
+                camera.position.y = Math.sin(angle * 0.5) * 10 + 15;
                 camera.lookAt(0, 0, 0);
+                
+                // Animate lights
+                if(typeof pointLight1 !== 'undefined') {
+                    pointLight1.position.x = Math.cos(angle * 2) * 20;
+                    pointLight1.position.z = Math.sin(angle * 2) * 20;
+                    pointLight2.position.x = Math.cos(angle * 2 + Math.PI) * 20;
+                    pointLight2.position.z = Math.sin(angle * 2 + Math.PI) * 20;
+                }
+                
+                // Rotate starfield slowly
+                if(typeof stars !== 'undefined') {
+                    stars.rotation.y += 0.0002;
+                    stars.rotation.x += 0.0001;
+                }
+                
                 renderer.render(scene, camera);
             }
             
@@ -267,7 +313,6 @@
             });
         })();
         </script>
-
 <div class="info-section">
 <h2>📋 Comment participer ?</h2>
 <p>
