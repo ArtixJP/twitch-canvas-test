@@ -218,10 +218,9 @@
 <p style="margin-top: 1rem; opacity: 0.7;">Use arrow keys or WASD to play!</p>
 </section>
 <div class="timer-bar"></div>
-<div class="music-controls">
-<span>🎵</span>
-<button id="music-toggle" onclick="toggleMusic()">⏸️</button>
-
+<div class="music-controls" style="opacity: 0.5; filter: grayscale(1);" title="The radio fell silent...">
+<span>📻</span>
+<span style="font-size: 0.8rem; color: #888;">~static~</span>
 </div>
 <script>
         // Section Management
@@ -361,20 +360,8 @@
             };
         });
 
-        // Music Controls
-        const bgMusic = document.getElementById('bg-music');
-        bgMusic.volume = 0.3;
-        
-        function toggleMusic() {
-            const btn = document.getElementById('music-toggle');
-            if (bgMusic.paused) {
-                bgMusic.play();
-                btn.textContent = '⏸️';
-            } else {
-                bgMusic.pause();
-                btn.textContent = '▶️';
-            }
-        }
+        // Music Controls - The radio fell silent, a relic of a bygone era
+        // Its frequencies now lost to the cosmic void...
 
         // Three.js Sun with lighting
         const threeContainer = document.getElementById('three-container');
