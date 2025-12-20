@@ -541,6 +541,14 @@
         .bidule .mystery-icon { animation-delay: 0s; }
         .truc .mystery-icon { animation-delay: 0.3s; }
         .lol .mystery-icon { animation-delay: 0.6s; }
+        .potato .mystery-icon { animation-delay: 0.9s; animation: potato-roll 1.5s ease-in-out infinite; }
+        
+        @keyframes potato-roll {
+            0%, 100% { transform: rotate(-15deg) translateY(0); }
+            25% { transform: rotate(15deg) translateY(-5px); }
+            50% { transform: rotate(-10deg) translateY(0); }
+            75% { transform: rotate(20deg) translateY(-3px); }
+        }
         
         @keyframes wobble {
             0%, 100% { transform: rotate(-10deg); }
@@ -626,6 +634,11 @@
 <span class="mystery-icon">😂</span>
 <span class="secret-name">Le LOL</span>
 <span class="secret-desc">Guaranteed giggles</span>
+</div>
+<div class="secret-item potato">
+<span class="mystery-icon">🥔</span>
+<span class="secret-name">La Patate</span>
+<span class="secret-desc">C'est... une patate?</span>
 </div>
 </div>
 </div>
