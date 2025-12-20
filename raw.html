@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="fr">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌀 Emergent Canvas</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>🌀 Emergent Canvas</title>
+<style>
         * {
             margin: 0;
             padding: 0;
@@ -115,39 +116,169 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>✨ Emergent Canvas ✨</h1>
-        <p>Une expérience de création collaborative</p>
-    </div>
-    
-    <div class="status-bar">
-        <span>🎭 Mode: Democracy</span>
-        <span>🔄 Cycles: 0</span>
-        <span>⏱️ Démarré</span>
-    </div>
-    
-    <div class="main-content">
-        <!-- LLM-EDIT-START -->
-        <div id="chaos-zone">
-            <div class="chaos-content">
-                <p>🎨 Cette zone attend vos idées créatives...</p>
-                <p>Proposez une idée dans le backlog !</p>
-            </div>
-        </div>
-        <!-- LLM-EDIT-END -->
-        
-        <div class="info-section">
-            <h2>📋 Comment participer ?</h2>
-            <p>
+<div class="header">
+<h1>✨ Emergent Canvas ✨</h1>
+<p>Une expérience de création collaborative</p>
+</div>
+<div class="status-bar">
+<span>🎭 Mode: Democracy</span>
+<span>🔄 Cycles: 0</span>
+<span>⏱️ Démarré</span>
+</div>
+<div class="main-content">
+
+<div id="chaos-zone">
+<div class="chaos-content">
+<p>🧬 3D Cellular Automaton - Watch life emerge from chaos</p>
+<div id="automaton-container" style="width:100%;height:400px;position:relative;border-radius:8px;overflow:hidden;"></div>
+<p style="margin-top:1rem;font-size:0.8rem;color:#e94560;">⚡ Generation: <span id="gen-counter">0</span> | Living cells: <span id="cell-counter">0</span></p>
+</div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+        (function() {
+            const container = document.getElementById('automaton-container');
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x0a0a15);
+            const camera = new THREE.PerspectiveCamera(60, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(25, 25, 25);
+            camera.lookAt(0, 0, 0);
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            const gridSize = 15;
+            let grid = [];
+            let meshes = [];
+            const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
+            const cellGroup = new THREE.Group();
+            scene.add(cellGroup);
+            
+            // Initialize random grid
+            function initGrid() {
+                grid = [];
+                for (let x = 0; x < gridSize; x++) {
+                    grid[x] = [];
+                    for (let y = 0; y < gridSize; y++) {
+                        grid[x][y] = [];
+                        for (let z = 0; z < gridSize; z++) {
+                            grid[x][y][z] = Math.random() < 0.2 ? 1 : 0;
+                        }
+                    }
+                }
+            }
+            
+            function countNeighbors(x, y, z) {
+                let count = 0;
+                for (let dx = -1; dx <= 1; dx++) {
+                    for (let dy = -1; dy <= 1; dy++) {
+                        for (let dz = -1; dz <= 1; dz++) {
+                            if (dx === 0 && dy === 0 && dz === 0) continue;
+                            const nx = (x + dx + gridSize) % gridSize;
+                            const ny = (y + dy + gridSize) % gridSize;
+                            const nz = (z + dz + gridSize) % gridSize;
+                            count += grid[nx][ny][nz];
+                        }
+                    }
+                }
+                return count;
+            }
+            
+            function updateGrid() {
+                const newGrid = [];
+                for (let x = 0; x < gridSize; x++) {
+                    newGrid[x] = [];
+                    for (let y = 0; y < gridSize; y++) {
+                        newGrid[x][y] = [];
+                        for (let z = 0; z < gridSize; z++) {
+                            const neighbors = countNeighbors(x, y, z);
+                            // 3D Game of Life rules (4-5 to survive, 5 to birth)
+                            if (grid[x][y][z]) {
+                                newGrid[x][y][z] = (neighbors >= 4 && neighbors <= 5) ? 1 : 0;
+                            } else {
+                                newGrid[x][y][z] = neighbors === 5 ? 1 : 0;
+                            }
+                        }
+                    }
+                }
+                grid = newGrid;
+            }
+            
+            function renderCells() {
+                while(cellGroup.children.length > 0) {
+                    cellGroup.remove(cellGroup.children[0]);
+                }
+                let cellCount = 0;
+                const offset = gridSize / 2;
+                for (let x = 0; x < gridSize; x++) {
+                    for (let y = 0; y < gridSize; y++) {
+                        for (let z = 0; z < gridSize; z++) {
+                            if (grid[x][y][z]) {
+                                const hue = (x + y + z) / (gridSize * 3);
+                                const material = new THREE.MeshBasicMaterial({ 
+                                    color: new THREE.Color().setHSL(hue * 0.3 + 0.9, 0.8, 0.5),
+                                    transparent: true,
+                                    opacity: 0.85
+                                });
+                                const cube = new THREE.Mesh(geometry, material);
+                                cube.position.set(x - offset, y - offset, z - offset);
+                                cellGroup.add(cube);
+                                cellCount++;
+                            }
+                        }
+                    }
+                }
+                document.getElementById('cell-counter').textContent = cellCount;
+                if (cellCount < 5) initGrid(); // Respawn if dying
+            }
+            
+            // Lighting
+            const ambientLight = new THREE.AmbientLight(0x404040, 2);
+            scene.add(ambientLight);
+            
+            initGrid();
+            let generation = 0;
+            let angle = 0;
+            
+            function animate() {
+                requestAnimationFrame(animate);
+                angle += 0.005;
+                camera.position.x = Math.cos(angle) * 30;
+                camera.position.z = Math.sin(angle) * 30;
+                camera.lookAt(0, 0, 0);
+                renderer.render(scene, camera);
+            }
+            
+            setInterval(() => {
+                updateGrid();
+                renderCells();
+                generation++;
+                document.getElementById('gen-counter').textContent = generation;
+            }, 500);
+            
+            renderCells();
+            animate();
+            
+            window.addEventListener('resize', () => {
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+        })();
+        </script>
+
+<div class="info-section">
+<h2>📋 Comment participer ?</h2>
+<p>
                 Visitez le <strong>/backlog</strong> pour proposer des idées.
                 Votez pour vos idées préférées.
                 L'IA modifiera cette page selon les demandes les plus populaires.
             </p>
-        </div>
-    </div>
-    
-    <div class="footer">
-        <p>Twitch Emergent Coding • Expérience d'intelligence collective</p>
-    </div>
+</div>
+</div>
+<div class="footer">
+<p>Twitch Emergent Coding • Expérience d'intelligence collective</p>
+</div>
 </body>
 </html>
