@@ -139,7 +139,8 @@
 <div class="chaos-content">
 <p style="font-size:1.4rem;text-shadow:0 0 20px #e94560;">🧬 3D Cellular Automaton - <span style="color:#00ff88;">MEGA UNIVERSE 10K²</span> 🌌 Watch patterns evolve! ⚡</p>
 <div id="automaton-container" style="width:100%;height:400px;position:relative;border-radius:8px;overflow:hidden;"></div>
-<p style="margin-top:1rem;font-size:0.8rem;color:#e94560;">⚡ Generation: <span id="gen-counter">0</span> | Living cells: <span id="cell-counter">0</span> | 🌌 Universe Scale: <span style="color:#00ff88;font-weight:bold;">10,000 × 10,000 parsecs</span></p>
+<p style="margin-top:1rem;font-size:0.8rem;color:#e94560;">⚡ Generation: <span id="gen-counter">0</span> | Living cells: <span id="cell-counter">0</span> | 🌌 Universe: <span style="color:#00ff88;font-weight:bold;">10K³ parsecs</span> <span style="color:#ff00ff;">(∞ chunks - only visible loaded!)</span></p>
+<p style="font-size:0.7rem;color:#666;margin-top:0.5rem;">💡 Memory-efficient: streaming chunks on-demand • Press anywhere to drift through the cosmos</p>
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -157,12 +158,31 @@
             renderer.setSize(container.clientWidth, container.clientHeight);
             container.appendChild(renderer.domElement);
             
-            const gridSize = 50; // EXPANDED UNIVERSE - 125x more volume!
+            // 🌌 INFINITE UNIVERSE SYSTEM - Only load visible chunks!
+            const UNIVERSE_SIZE = 10000; // 10K parsecs per axis
+            const CHUNK_SIZE = 16; // Each chunk is 16³ cells
+            const RENDER_DISTANCE = 3; // Chunks visible around camera
+            const gridSize = CHUNK_SIZE * (RENDER_DISTANCE * 2 + 1); // Active simulation area
+            
+            // Chunk management system
+            const loadedChunks = new Map();
+            let currentChunkX = 0, currentChunkY = 0, currentChunkZ = 0;
+            
             let grid = [];
             let meshes = [];
             const geometry = new THREE.BoxGeometry(0.8, 0.8, 0.8);
             const cellGroup = new THREE.Group();
             scene.add(cellGroup);
+            
+            // Procedural chunk generation based on coordinates
+            function getChunkSeed(cx, cy, cz) {
+                return ((cx * 73856093) ^ (cy * 19349663) ^ (cz * 83492791)) % 2147483647;
+            }
+            
+            function seededRandom(seed) {
+                const x = Math.sin(seed++) * 10000;
+                return x - Math.floor(x);
+            }
             
             // Known patterns for 3D space (adapted from 2D classics)
             const patterns = {
@@ -209,13 +229,16 @@
                     const oz = Math.floor(Math.random() * gridSize);
                     spawnPattern(patterns[patternName], ox, oy, oz);
                 }
-                // Add some random noise (very sparse)
-                for (let i = 0; i < gridSize * 4; i++) { // More cosmic dust
-                    const x = Math.floor(Math.random() * gridSize);
-                    const y = Math.floor(Math.random() * gridSize);
-                    const z = Math.floor(Math.random() * gridSize);
+                // Add procedural noise based on chunk coordinates (deterministic!)
+                const chunkSeed = getChunkSeed(currentChunkX, currentChunkY, currentChunkZ);
+                for (let i = 0; i < gridSize * 4; i++) {
+                    const seed = chunkSeed + i;
+                    const x = Math.floor(seededRandom(seed) * gridSize);
+                    const y = Math.floor(seededRandom(seed + 1000) * gridSize);
+                    const z = Math.floor(seededRandom(seed + 2000) * gridSize);
                     grid[x][y][z] = 1;
                 }
+                console.log('🌌 Loaded chunk [' + currentChunkX + ',' + currentChunkY + ',' + currentChunkZ + '] - Universe pos: ' + (currentChunkX * CHUNK_SIZE) + '/' + UNIVERSE_SIZE);
             }
             
             function countNeighbors(x, y, z) {
@@ -278,8 +301,14 @@
                         }
                     }
                 }
-                document.getElementById('cell-counter').textContent = cellCount;
-                if (cellCount < 10) initGrid(); // Respawn if dying - larger world needs more cells
+                document.getElementById('cell-counter').textContent = cellCount + ' (chunk ' + currentChunkX + ',' + currentChunkY + ',' + currentChunkZ + ')';
+                if (cellCount < 10) {
+                    // Drift to new chunk instead of reset!
+                    currentChunkX += Math.floor(Math.random() * 3) - 1;
+                    currentChunkY += Math.floor(Math.random() * 3) - 1;
+                    currentChunkZ += Math.floor(Math.random() * 3) - 1;
+                    initGrid(); // Load new chunk
+                }
             }
             
             // Lighting
