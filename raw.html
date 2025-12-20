@@ -92,6 +92,40 @@
             font-size: 1.1rem;
             line-height: 1.6;
         }
+        
+        .flying-croissant {
+            position: fixed;
+            font-size: 3rem;
+            z-index: 1000;
+            pointer-events: none;
+            animation: flyAcross 8s linear infinite;
+            filter: drop-shadow(2px 4px 6px rgba(139, 90, 43, 0.3));
+        }
+        
+        @keyframes flyAcross {
+            0% {
+                left: -100px;
+                top: 20%;
+                transform: rotate(0deg);
+            }
+            25% {
+                top: 35%;
+                transform: rotate(15deg);
+            }
+            50% {
+                top: 25%;
+                transform: rotate(-10deg);
+            }
+            75% {
+                top: 40%;
+                transform: rotate(20deg);
+            }
+            100% {
+                left: 110vw;
+                top: 30%;
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -99,6 +133,7 @@
 <h1>🥖 Sweet Dreams Bakery 🥐</h1>
 <p class="tagline">Baked with love since 2024</p>
 </header>
+<div class="flying-croissant">🥐✨</div>
 <p class="welcome-text">Welcome to our cozy corner of freshly baked happiness! Every morning, our ovens fill the air with the irresistible aroma of artisan breads and pastries.</p>
 <div class="products">
 <div class="product-card">
