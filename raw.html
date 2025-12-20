@@ -423,6 +423,67 @@
             50% { transform: translateX(5px); }
         }
         
+        .customer-louis {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(145deg, #e8f4f8, #d4e9f0);
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-top: 10px;
+            margin-left: 10px;
+            font-size: 0.75rem;
+            color: #2c3e50;
+            border: 2px solid #3498db;
+            animation: louis-bounce 2s ease-in-out infinite;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.2);
+        }
+        
+        .louis-avatar {
+            font-size: 1.5rem;
+            animation: wave-hello 1s ease-in-out infinite;
+        }
+        
+        .louis-speech {
+            background: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            position: relative;
+            font-style: italic;
+            color: #34495e;
+        }
+        
+        .louis-speech::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 5px solid transparent;
+            border-right-color: white;
+        }
+        
+        .louis-rating {
+            font-size: 0.6rem;
+            animation: sparkle-rating 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes louis-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+        
+        @keyframes wave-hello {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        
+        @keyframes sparkle-rating {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
         @keyframes sniff {
             0%, 100% { transform: rotate(-5deg); }
             50% { transform: rotate(5deg); }
@@ -572,6 +633,11 @@
 <span class="inspector-mouse">🐭</span>
 <span class="clipboard">📋</span>
 <span class="inspector-label">Quality Test ✓</span>
+</div>
+<div class="customer-louis" title="Louis - Test Customer">
+<span class="louis-avatar">🧑‍💼</span>
+<span class="louis-speech">"Bonjour! Testing the croissants!"</span>
+<span class="louis-rating">⭐⭐⭐⭐⭐</span>
 </div>
 <div class="pizzaiolo-corner">
 <h3 class="pizzaiolo-title">🍕 Le Voisin Italien 🇮🇹</h3>
