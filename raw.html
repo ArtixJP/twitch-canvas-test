@@ -178,6 +178,82 @@
             animation: glow 1.5s ease-in-out infinite alternate;
         }
         
+        .pizzaiolo-corner {
+            background: linear-gradient(145deg, #2d5016, #1a3009);
+            border-radius: 15px;
+            padding: 12px;
+            margin-top: 15px;
+            border: 4px solid #4a7c23;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .pizzaiolo-title {
+            font-family: 'Playfair Display', serif;
+            color: #ffd700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+        
+        .pizzaiolo-scene {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 10px;
+        }
+        
+        .pizzaiolo-chef {
+            position: relative;
+            font-size: 2.5rem;
+            animation: chef-work 1s ease-in-out infinite;
+        }
+        
+        .chef-body {
+            display: inline-block;
+        }
+        
+        .pizza-toss {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            animation: toss-pizza 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes chef-work {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        
+        @keyframes toss-pizza {
+            0%, 100% { 
+                transform: translateX(-50%) translateY(0) rotate(0deg); 
+                opacity: 1;
+            }
+            50% { 
+                transform: translateX(-50%) translateY(-25px) rotate(360deg); 
+            }
+        }
+        
+        .pizza-oven {
+            font-size: 2rem;
+            animation: oven-glow 0.5s ease-in-out infinite alternate;
+        }
+        
+        @keyframes oven-glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.3); }
+        }
+        
+        .pizzaiolo-quote {
+            color: #98fb98;
+            font-size: 0.75rem;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
         .battle-arena {
             background: linear-gradient(145deg, #1a0a0a, #2d1515);
             border-radius: 15px;
@@ -361,6 +437,17 @@
 </div>
 </div>
 <div class="open-sign">🌟 OPEN NOW 🌟</div>
+<div class="pizzaiolo-corner">
+<h3 class="pizzaiolo-title">🍕 Le Voisin Italien 🇮🇹</h3>
+<div class="pizzaiolo-scene">
+<div class="pizzaiolo-chef">
+<span class="chef-body">👨‍🍳</span>
+<span class="pizza-toss">🍕</span>
+</div>
+<div class="pizza-oven">🔥</div>
+</div>
+<p class="pizzaiolo-quote">"Mamma mia! Fresh pizza!"</p>
+</div>
 <div class="battle-arena">
 <h2 class="battle-title">⚔️ LA GRANDE BATAILLE ⚔️</h2>
 <p class="battle-subtitle">Pain au Chocolat vs Chocolatine</p>
