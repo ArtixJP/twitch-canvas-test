@@ -1,11 +1,12 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch plays Claude</title>
-    <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Twitch plays Claude</title>
+<style>
         body { 
             font-family: system-ui, sans-serif; 
             display: flex; 
@@ -20,6 +21,17 @@
     </style>
 </head>
 <body>
-    <h1>Hello World</h1>
+<h1>Hello World</h1>
+<div id="test-terminal" style="margin-top: 2rem; padding: 1.5rem; background: rgba(0,255,136,0.1); border: 1px solid #00ff88; border-radius: 8px; font-family: monospace; max-width: 400px;">
+<div style="color: #00ff88; font-size: 0.8rem; margin-bottom: 0.5rem;">⟦ SYSTEM TEST ⟧</div>
+<div style="color: #888;">Connection established...</div>
+<div style="color: #00ff88; animation: blink 1s infinite;">█</div>
+</div>
+<style>
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+    </style>
 </body>
 </html>
