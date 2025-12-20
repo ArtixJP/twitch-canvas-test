@@ -114,6 +114,13 @@
 </style>
 <div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(0,255,0,0.2); border: 2px dashed #00FF00; padding: 5px 10px; font-size: 0.7rem; z-index: 100; animation: testPulse 1s infinite;">🧪 TEST SIGNAL RECEIVED</div>
 <div id="test-echo" style="position: absolute; top: 130px; right: 10px; background: rgba(0,255,255,0.15); border: 1px dotted #00FFFF; padding: 3px 8px; font-size: 0.6rem; z-index: 100; color: #00FFFF; animation: echoFade 2s infinite;">↪ echo: test confirmed ✓</div>
+<div id="sandwich-badge" style="position: absolute; top: 230px; right: 10px; background: rgba(210,105,30,0.6); border: 2px solid #D2691E; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFD700; font-weight: bold; animation: sandwichFloat 2s ease-in-out infinite;">🥪 LEGENDARY SANDWICH SPAWNED!</div>
+<style>
+@keyframes sandwichFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+</style>
 <style>
 @keyframes echoFade {
   0%, 100% { opacity: 0.3; transform: translateX(0); }
@@ -183,6 +190,9 @@
             
             // BOWSER - The King of Koopas who slew Mario!
             createVoxelBowser(5, 3, 8);
+            
+            // A LEGENDARY SANDWICH - Rare food drop!
+            createVoxelSandwich(-5, 6, -8);
             
             // Add trees
             createTree(10, 0, 10);
@@ -641,6 +651,70 @@
             mobs.push(bowser);
         }
         
+        function createVoxelSandwich(x, y, z) {
+            const sandwich = new THREE.Group();
+            
+            // Bottom bread (golden brown)
+            const bottomBread = createBlock(0, 0, 0, 0xD2691E);
+            bottomBread.position.set(0, 0, 0);
+            bottomBread.scale.set(2, 0.4, 1.5);
+            sandwich.add(bottomBread);
+            
+            // Lettuce (green wavy)
+            const lettuce = createBlock(0, 0, 0, 0x32CD32);
+            lettuce.position.set(0, 0.4, 0);
+            lettuce.scale.set(2.2, 0.2, 1.6);
+            sandwich.add(lettuce);
+            
+            // Tomato slices (red)
+            const tomato = createBlock(0, 0, 0, 0xFF6347);
+            tomato.position.set(0, 0.6, 0);
+            tomato.scale.set(1.8, 0.2, 1.4);
+            sandwich.add(tomato);
+            
+            // Cheese (yellow)
+            const cheese = createBlock(0, 0, 0, 0xFFD700);
+            cheese.position.set(0, 0.8, 0);
+            cheese.scale.set(2, 0.15, 1.5);
+            sandwich.add(cheese);
+            
+            // Mystery meat (pink/brown)
+            const meat = createBlock(0, 0, 0, 0xCD853F);
+            meat.position.set(0, 1, 0);
+            meat.scale.set(1.9, 0.3, 1.4);
+            sandwich.add(meat);
+            
+            // Top bread (golden brown with sesame seeds)
+            const topBread = createBlock(0, 0, 0, 0xD2691E);
+            topBread.position.set(0, 1.4, 0);
+            topBread.scale.set(2, 0.5, 1.5);
+            sandwich.add(topBread);
+            
+            // Sesame seeds
+            for (let i = 0; i < 5; i++) {
+                const seed = createBlock(0, 0, 0, 0xFFFACD);
+                seed.position.set((Math.random() - 0.5) * 1.5, 1.7, (Math.random() - 0.5) * 1);
+                seed.scale.set(0.1, 0.05, 0.1);
+                sandwich.add(seed);
+            }
+            
+            // Toothpick flag on top!
+            const toothpick = createBlock(0, 0, 0, 0x8B4513);
+            toothpick.position.set(0, 2.2, 0);
+            toothpick.scale.set(0.08, 1.5, 0.08);
+            sandwich.add(toothpick);
+            
+            const flag = createBlock(0, 0, 0, 0xFF0000);
+            flag.position.set(0.2, 2.8, 0);
+            flag.scale.set(0.4, 0.3, 0.05);
+            sandwich.add(flag);
+            
+            sandwich.position.set(x, y, z);
+            sandwich.userData = { type: 'sandwich', floatOffset: Math.random() * Math.PI * 2, spinSpeed: 0.02 };
+            scene.add(sandwich);
+            mobs.push(sandwich);
+        }
+        
         function createVoxelGreeter(x, y, z) {
             const greeter = new THREE.Group();
             
@@ -778,6 +852,14 @@
                     mob.rotation.y = -mob.userData.angle + Math.PI;
                     // Breathing fire animation
                     mob.position.y = 3 + Math.sin(time * 4) * 0.3;
+                }
+                else if (mob.userData.type === 'sandwich') {
+                    // Legendary sandwich floats and spins majestically
+                    mob.userData.floatOffset += 0.02;
+                    mob.position.y = 6 + Math.sin(mob.userData.floatOffset) * 1.5;
+                    mob.rotation.y += mob.userData.spinSpeed;
+                    // Gentle tilt
+                    mob.rotation.z = Math.sin(time * 1.5) * 0.1;
                 }
                 else if (mob.userData.type === 'greeter') {
                     mob.userData.wobble += 0.05;
