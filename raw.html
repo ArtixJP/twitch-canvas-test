@@ -141,6 +141,10 @@
 <div class="quality-stamp" style="position: fixed; bottom: 20px; left: 20px; background: rgba(139, 90, 43, 0.1); border: 2px dashed #8b5a2b; color: #8b5a2b; padding: 8px 15px; border-radius: 50%; font-family: 'Playfair Display', serif; font-size: 0.7rem; transform: rotate(-15deg); opacity: 0.7; z-index: 100;">✓ TEST<br/>Quality<br/>Approved</div>
 <div class="test1-badge" style="position: fixed; top: 100px; left: 20px; background: linear-gradient(135deg, #f0e68c 0%, #daa520 100%); color: #5d4037; padding: 6px 12px; border-radius: 8px; font-family: 'Playfair Display', serif; font-size: 0.65rem; transform: rotate(-5deg); box-shadow: 0 3px 10px rgba(139, 90, 43, 0.3); z-index: 100; animation: pulse 2s ease-in-out infinite;">⟦test1⟧ was here 🧪</div>
 <style>
+@keyframes glow {
+  0%, 100% { box-shadow: 0 8px 25px rgba(255, 215, 0, 0.3); }
+  50% { box-shadow: 0 8px 35px rgba(255, 215, 0, 0.6); }
+}
 @keyframes pulse {
   0%, 100% { opacity: 0.8; transform: rotate(-5deg) scale(1); }
   50% { opacity: 1; transform: rotate(-5deg) scale(1.05); }
@@ -201,6 +205,24 @@
 <div class="product-name">Tarte aux Pommes</div>
 <div class="product-price">$5.75</div>
 <span style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: #8bc34a; color: white; font-size: 0.55rem; padding: 2px 8px; border-radius: 8px;">🍃 Fresh Apples!</span>
+</div>
+<div class="product-card" style="background: linear-gradient(135deg, #fffacd 0%, #ffefd5 100%); position: relative; border: 2px solid #daa520; animation: glow 3s ease-in-out infinite;">
+<div class="product-emoji">🥐✨</div>
+<div class="product-name">Croissant Doré</div>
+<div class="product-price">$4.25</div>
+<span style="position: absolute; top: -8px; right: -8px; background: #ffd700; color: #5d4037; font-size: 0.55rem; padding: 2px 6px; border-radius: 8px;">⭐ Golden!</span>
+</div>
+<div class="product-card" style="background: linear-gradient(135deg, #f5deb3 0%, #d2b48c 100%); position: relative;">
+<div class="product-emoji">🍞🌾</div>
+<div class="product-name">Pain de Campagne</div>
+<div class="product-price">$5.50</div>
+<span style="position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%); background: #8b4513; color: white; font-size: 0.55rem; padding: 2px 8px; border-radius: 8px;">🌾 Rustic!</span>
+</div>
+<div class="product-card" style="background: linear-gradient(135deg, #ffe4e1 0%, #ffc0cb 100%); position: relative; border: 2px solid #ff6347;">
+<div class="product-emoji">🍕🌿</div>
+<div class="product-name">Focaccia Margarita</div>
+<div class="product-price">$6.25</div>
+<span style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); background: #ff6347; color: white; font-size: 0.55rem; padding: 2px 6px; border-radius: 8px;">🇮🇹 Italian Twist!</span>
 </div>
 </div>
 </body>
