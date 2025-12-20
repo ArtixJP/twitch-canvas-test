@@ -134,6 +134,13 @@
 <div id="banana-badge" style="position: absolute; top: 350px; right: 10px; background: rgba(255,225,0,0.6); border: 2px solid #FFD700; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #4a3000; font-weight: bold; animation: bananaWiggle 0.4s ease-in-out infinite;">🍌 BANANAS ADDED! 🍌</div>
 <div id="grandma-badge" style="position: absolute; top: 390px; right: 10px; background: rgba(255,182,193,0.6); border: 2px solid #DDA0DD; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #8B4513; font-weight: bold; animation: grandmaRock 2s ease-in-out infinite;">👵 GRANDMA SAYS HI! 🧶</div>
 <div id="rouge-badge" style="position: absolute; top: 430px; right: 10px; background: rgba(255,0,0,0.5); border: 2px solid #CC0000; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; animation: rougePulse 1s ease-in-out infinite;">🟥 BLOC ROUGE AJOUTÉ! 🟥</div>
+<div id="bloc-badge" style="position: absolute; top: 470px; right: 10px; background: linear-gradient(90deg, rgba(255,0,0,0.4), rgba(255,165,0,0.4), rgba(255,255,0,0.4), rgba(0,255,0,0.4), rgba(0,191,255,0.4)); border: 2px solid #FFF; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; text-shadow: 1px 1px 2px #000; animation: blocShimmer 2s ease-in-out infinite;">🧱 BLOC MONUMENT ERECTED! 🧱</div>
+<style>
+@keyframes blocShimmer {
+  0%, 100% { filter: hue-rotate(0deg); }
+  50% { filter: hue-rotate(30deg); }
+}
+</style>
 <style>
 @keyframes rougePulse {
   0%, 100% { transform: scale(1); box-shadow: 0 0 5px #FF0000; }
@@ -259,6 +266,9 @@
             
             // BLOC ROUGE - A mysterious red block from the French request!
             const blocRouge = createBlock(7, 8, -5, 0xFF0000);
+            
+            // THE BLOC MONUMENT - A tower of colorful blocks!
+            createBlocMonument(-15, 3, -15);
             blocRouge.userData = { isBlocRouge: true, floatPhase: 0 };
             blocRouge.scale.set(1.2, 1.2, 1.2);
             
@@ -1038,6 +1048,39 @@
             mobs.push(grandma);
         }
         
+        function createBlocMonument(x, y, z) {
+            const monument = new THREE.Group();
+            const blocColors = [0xFF0000, 0xFF6600, 0xFFFF00, 0x00FF00, 0x00BFFF, 0x8A2BE2, 0xFF69B4];
+            
+            // Build a spiraling tower of blocks
+            for (let layer = 0; layer < 8; layer++) {
+                for (let i = 0; i < 4; i++) {
+                    const angle = (i / 4) * Math.PI * 2 + layer * 0.3;
+                    const radius = 2 - layer * 0.15;
+                    const block = createBlock(0, 0, 0, blocColors[layer % blocColors.length]);
+                    block.position.set(
+                        Math.cos(angle) * radius,
+                        layer * 1.2,
+                        Math.sin(angle) * radius
+                    );
+                    block.userData = { isMonumentBlock: true, layer: layer, index: i };
+                    monument.add(block);
+                }
+            }
+            
+            // Crown block at top
+            const crown = createBlock(0, 0, 0, 0xFFD700);
+            crown.position.set(0, 10, 0);
+            crown.scale.set(1.5, 1.5, 1.5);
+            crown.userData = { isCrown: true };
+            monument.add(crown);
+            
+            monument.position.set(x, y, z);
+            monument.userData = { type: 'blocmonument', rotationSpeed: 0.01 };
+            scene.add(monument);
+            mobs.push(monument);
+        }
+        
         function createVoxelGreeter(x, y, z) {
             const greeter = new THREE.Group();
             
@@ -1232,6 +1275,19 @@
                     if (Math.sin(time * 0.5) > 0.9) {
                         mob.rotation.y = Math.sin(time * 8) * 0.2;
                     }
+                }
+                else if (mob.userData.type === 'blocmonument') {
+                    // The monument slowly rotates and pulses
+                    mob.rotation.y += mob.userData.rotationSpeed;
+                    mob.children.forEach((child, idx) => {
+                        if (child.userData && child.userData.isMonumentBlock) {
+                            child.position.y = child.userData.layer * 1.2 + Math.sin(time * 2 + child.userData.layer * 0.5) * 0.2;
+                        }
+                        if (child.userData && child.userData.isCrown) {
+                            child.rotation.y += 0.03;
+                            child.position.y = 10 + Math.sin(time * 3) * 0.5;
+                        }
+                    });
                 }
                 else if (mob.userData.type === 'greeter') {
                     mob.userData.wobble += 0.05;
