@@ -118,6 +118,13 @@
 <div id="bonjour-badge" style="position: absolute; top: 270px; right: 10px; background: rgba(0,35,149,0.6); border: 2px solid #ED2939; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFFFFF; font-weight: bold; animation: bonjourWave 1.5s ease-in-out infinite;">🇫🇷 BONJOUR! 🥖</div>
 <div id="lol-badge" style="position: absolute; top: 310px; right: 10px; background: rgba(255,255,0,0.5); border: 2px solid #FFD700; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #000; font-weight: bold; animation: lolBounce 0.3s ease-in-out infinite;">😂 LOL FISH SPAWNED! 😂</div>
 <div id="banana-badge" style="position: absolute; top: 350px; right: 10px; background: rgba(255,225,0,0.6); border: 2px solid #FFD700; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #4a3000; font-weight: bold; animation: bananaWiggle 0.4s ease-in-out infinite;">🍌 BANANAS ADDED! 🍌</div>
+<div id="grandma-badge" style="position: absolute; top: 390px; right: 10px; background: rgba(255,182,193,0.6); border: 2px solid #DDA0DD; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #8B4513; font-weight: bold; animation: grandmaRock 2s ease-in-out infinite;">👵 GRANDMA SAYS HI! 🧶</div>
+<style>
+@keyframes grandmaRock {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+</style>
 <style>
 @keyframes bananaWiggle {
   0%, 100% { transform: rotate(-5deg); }
@@ -225,6 +232,9 @@
             createVoxelBanana(10, 5, 12);
             createVoxelBanana(-8, 7, -12);
             createVoxelBanana(0, 9, 15);
+            
+            // GRANDMA - The wise village elder!
+            createVoxelGrandma(-5, 2, 3);
             
             // Add trees
             createTree(10, 0, 10);
@@ -908,6 +918,95 @@
             mobs.push(banana);
         }
         
+        function createVoxelGrandma(x, y, z) {
+            const grandma = new THREE.Group();
+            
+            // Rocking chair base (brown wood)
+            const chairBase = createBlock(0, 0, 0, 0x8B4513);
+            chairBase.position.set(0, -0.5, 0);
+            chairBase.scale.set(1.5, 0.3, 1.5);
+            grandma.add(chairBase);
+            
+            // Chair back
+            const chairBack = createBlock(0, 0, 0, 0x8B4513);
+            chairBack.position.set(0, 0.5, -0.6);
+            chairBack.scale.set(1.3, 1.5, 0.2);
+            grandma.add(chairBack);
+            
+            // Grandma's body (lavender dress)
+            const body = createBlock(0, 0, 0, 0xE6E6FA);
+            body.position.set(0, 0.3, 0);
+            body.scale.set(1, 1.2, 0.8);
+            grandma.add(body);
+            
+            // Head (warm skin tone)
+            const head = createBlock(0, 0, 0, 0xFFDFC4);
+            head.position.set(0, 1.3, 0);
+            head.scale.set(0.7, 0.7, 0.7);
+            grandma.add(head);
+            
+            // Gray hair bun
+            const hair = createBlock(0, 0, 0, 0xC0C0C0);
+            hair.position.set(0, 1.7, -0.1);
+            hair.scale.set(0.6, 0.4, 0.5);
+            grandma.add(hair);
+            
+            // Glasses (tiny gold frames)
+            const glasses1 = createBlock(0, 0, 0, 0xFFD700);
+            glasses1.position.set(0.2, 1.35, 0.35);
+            glasses1.scale.set(0.25, 0.15, 0.05);
+            grandma.add(glasses1);
+            const glasses2 = createBlock(0, 0, 0, 0xFFD700);
+            glasses2.position.set(-0.2, 1.35, 0.35);
+            glasses2.scale.set(0.25, 0.15, 0.05);
+            grandma.add(glasses2);
+            
+            // Kind eyes
+            const eye1 = createBlock(0, 0, 0, 0x4169E1);
+            eye1.position.set(0.2, 1.35, 0.4);
+            eye1.scale.set(0.1, 0.1, 0.05);
+            grandma.add(eye1);
+            const eye2 = createBlock(0, 0, 0, 0x4169E1);
+            eye2.position.set(-0.2, 1.35, 0.4);
+            eye2.scale.set(0.1, 0.1, 0.05);
+            grandma.add(eye2);
+            
+            // Warm smile
+            const smile = createBlock(0, 0, 0, 0xFFB6C1);
+            smile.position.set(0, 1.15, 0.4);
+            smile.scale.set(0.3, 0.1, 0.05);
+            grandma.add(smile);
+            
+            // Knitting needles
+            const needle1 = createBlock(0, 0, 0, 0xC0C0C0);
+            needle1.position.set(0.5, 0.5, 0.4);
+            needle1.scale.set(0.05, 0.8, 0.05);
+            needle1.rotation.z = 0.3;
+            grandma.add(needle1);
+            const needle2 = createBlock(0, 0, 0, 0xC0C0C0);
+            needle2.position.set(-0.3, 0.5, 0.4);
+            needle2.scale.set(0.05, 0.8, 0.05);
+            needle2.rotation.z = -0.3;
+            grandma.add(needle2);
+            
+            // Ball of yarn (pink)
+            const yarn = createBlock(0, 0, 0, 0xFF69B4);
+            yarn.position.set(0.6, -0.2, 0.3);
+            yarn.scale.set(0.4, 0.4, 0.4);
+            grandma.add(yarn);
+            
+            // Cozy shawl (purple)
+            const shawl = createBlock(0, 0, 0, 0xDDA0DD);
+            shawl.position.set(0, 0.8, -0.2);
+            shawl.scale.set(1.2, 0.4, 0.6);
+            grandma.add(shawl);
+            
+            grandma.position.set(x, y, z);
+            grandma.userData = { type: 'grandma', rockTimer: 0 };
+            scene.add(grandma);
+            mobs.push(grandma);
+        }
+        
         function createVoxelGreeter(x, y, z) {
             const greeter = new THREE.Group();
             
@@ -1084,6 +1183,16 @@
                     mob.position.y = mob.userData.baseY || mob.position.y + Math.sin(mob.userData.floatOffset) * 0.02;
                     mob.rotation.z = Math.sin(mob.userData.wobble) * 0.3;
                     mob.rotation.y += 0.01;
+                }
+                else if (mob.userData.type === 'grandma') {
+                    // Grandma rocks gently in her chair and waves
+                    mob.userData.rockTimer += 0.02;
+                    mob.rotation.z = Math.sin(mob.userData.rockTimer) * 0.1;
+                    mob.position.y = 2 + Math.sin(mob.userData.rockTimer * 0.5) * 0.1;
+                    // Occasional wave
+                    if (Math.sin(time * 0.5) > 0.9) {
+                        mob.rotation.y = Math.sin(time * 8) * 0.2;
+                    }
                 }
                 else if (mob.userData.type === 'greeter') {
                     mob.userData.wobble += 0.05;
