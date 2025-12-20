@@ -112,9 +112,9 @@
   50% { transform: scale(1.1); }
 }
 </style>
-<div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(0,255,0,0.2); border: 2px dashed #00FF00; padding: 5px 10px; font-size: 0.7rem; z-index: 100; animation: testPulse 1s infinite;">🧪 TEST SIGNAL RECEIVED</div>
-<div id="test-echo" style="position: absolute; top: 130px; right: 10px; background: rgba(0,255,255,0.15); border: 1px dotted #00FFFF; padding: 3px 8px; font-size: 0.6rem; z-index: 100; color: #00FFFF; animation: echoFade 2s infinite;">↪ echo: test confirmed ✓✓</div>
-<div id="test-ping" style="position: absolute; top: 155px; right: 10px; background: rgba(128,255,128,0.1); border: 1px dotted #88FF88; padding: 2px 6px; font-size: 0.5rem; z-index: 100; color: #88FF88; animation: pingBlink 0.8s infinite;">📡 ping received</div>
+<div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(100,100,100,0.3); border: 2px solid #666; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #888; text-decoration: line-through; opacity: 0.6;">🧪 TEST ERA CONCLUDED 🪦</div>
+<div id="test-echo" style="position: absolute; top: 130px; right: 10px; background: rgba(80,80,80,0.2); border: 1px dotted #555; padding: 3px 8px; font-size: 0.6rem; z-index: 100; color: #777; opacity: 0.5;">↪ echo: tests retired... 💤</div>
+<div id="test-ping" style="position: absolute; top: 155px; right: 10px; background: rgba(139,69,19,0.3); border: 1px solid #8B4513; padding: 2px 6px; font-size: 0.5rem; z-index: 100; color: #D2691E;">⚰️ testing complete</div>
 <style>
 @keyframes pingBlink {
   0%, 100% { opacity: 0.4; }
@@ -287,20 +287,23 @@
             // Add trees
             createTree(10, 0, 10);
             
-            // TEST BLOCK - A mysterious floating test cube
-            const testBlock = createBlock(0, 15, 0, 0x00FF00);
-            testBlock.userData = { isTestBlock: true, floatOffset: 0 };
-            testBlock.scale.set(1.5, 1.5, 1.5);
+            // RETIRED TEST MONUMENT - The testing era has ended!
+            const testTombstone = createBlock(0, 15, 0, 0x808080);
+            testTombstone.userData = { isTombstone: true, restPhase: 0 };
+            testTombstone.scale.set(1.5, 2, 0.5);
             
-            // TEST ECHO BLOCK - Orbiting satellite confirming the signal
-            const testEcho = createBlock(3, 15, 0, 0x00FFFF);
-            testEcho.userData = { isTestEcho: true, orbitAngle: 0 };
-            testEcho.scale.set(0.5, 0.5, 0.5);
+            // MEMORIAL FLOWERS - In honor of all the tests
+            const flower1 = createBlock(-1, 14, 0.5, 0xFF69B4);
+            flower1.userData = { isFlower: true };
+            flower1.scale.set(0.3, 0.3, 0.3);
+            const flower2 = createBlock(1, 14, 0.5, 0xFFFF00);
+            flower2.userData = { isFlower: true };
+            flower2.scale.set(0.3, 0.3, 0.3);
             
-            // MICRO TEST SATELLITE - The tiniest acknowledgment
-            const testMicro = createBlock(1.5, 16, 1.5, 0x88FF88);
-            testMicro.userData = { isMicroTest: true, microOrbit: Math.PI };
-            testMicro.scale.set(0.25, 0.25, 0.25);
+            // PEACE DOVE - Testing is finally at rest
+            const dove = createBlock(0, 17, 0, 0xFFFFFF);
+            dove.userData = { isDove: true, flyPhase: 0 };
+            dove.scale.set(0.6, 0.4, 0.8);
             createTree(-12, 0, 8);
             createTree(5, 0, -15);
             createTree(-8, 0, -10);
@@ -1479,28 +1482,21 @@
                 if (block.userData && block.userData.isSeaweed) {
                     block.rotation.z = Math.sin(time * 2 + block.userData.swayOffset) * 0.2;
                 }
-                // Animate the test block
-                if (block.userData && block.userData.isTestBlock) {
-                    block.rotation.x += 0.02;
-                    block.rotation.y += 0.03;
-                    block.position.y = 15 + Math.sin(time * 2) * 2;
+                // Animate the tombstone - gentle rest
+                if (block.userData && block.userData.isTombstone) {
+                    block.userData.restPhase += 0.01;
+                    block.position.y = 15 + Math.sin(block.userData.restPhase) * 0.1;
                 }
-                // Animate the test echo orbiting the main test block
-                if (block.userData && block.userData.isTestEcho) {
-                    block.userData.orbitAngle += 0.05;
-                    block.position.x = Math.cos(block.userData.orbitAngle) * 3;
-                    block.position.z = Math.sin(block.userData.orbitAngle) * 3;
-                    block.position.y = 15 + Math.sin(time * 3) * 1;
-                    block.rotation.x += 0.05;
-                    block.rotation.z += 0.05;
+                // Animate memorial flowers - gentle sway
+                if (block.userData && block.userData.isFlower) {
+                    block.rotation.z = Math.sin(time * 1.5) * 0.1;
                 }
-                // Animate micro test satellite - faster orbit, opposite direction
-                if (block.userData && block.userData.isMicroTest) {
-                    block.userData.microOrbit += 0.08;
-                    block.position.x = Math.cos(block.userData.microOrbit) * 1.8;
-                    block.position.z = Math.sin(block.userData.microOrbit) * 1.8;
-                    block.position.y = 16 + Math.sin(time * 5) * 0.5;
-                    block.rotation.y += 0.1;
+                // Animate peace dove - gentle floating
+                if (block.userData && block.userData.isDove) {
+                    block.userData.flyPhase += 0.02;
+                    block.position.y = 17 + Math.sin(block.userData.flyPhase) * 0.5;
+                    block.position.x = Math.sin(block.userData.flyPhase * 0.5) * 2;
+                    block.rotation.y = Math.sin(block.userData.flyPhase) * 0.2;
                 }
                 // Animate the Bloc Rouge - pulsing red glow
                 if (block.userData && block.userData.isBlocRouge) {
