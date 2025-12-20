@@ -97,6 +97,23 @@
 <div class="stars" id="stars"></div>
 <h1>Hello World</h1>
 <div class="planet"></div>
+<div class="test-probe">🛰️ TEST</div>
+<style>
+.test-probe {
+    position: absolute;
+    font-size: 0.8rem;
+    color: #00ff88;
+    text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+    animation: orbit 8s linear infinite;
+    z-index: 5;
+    letter-spacing: 2px;
+    font-family: monospace;
+}
+@keyframes orbit {
+    0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+    100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+}
+</style>
 <script>
         const starsContainer = document.getElementById('stars');
         for(let i = 0; i < 100; i++) {
