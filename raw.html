@@ -141,6 +141,13 @@
 <div id="rouge-badge" style="position: absolute; top: 430px; right: 10px; background: rgba(255,0,0,0.5); border: 2px solid #CC0000; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; animation: rougePulse 1s ease-in-out infinite;">🟥 BLOC ROUGE AJOUTÉ! 🟥</div>
 <div id="bloc-badge" style="position: absolute; top: 470px; right: 10px; background: linear-gradient(90deg, rgba(255,0,0,0.4), rgba(255,165,0,0.4), rgba(255,255,0,0.4), rgba(0,255,0,0.4), rgba(0,191,255,0.4)); border: 2px solid #FFF; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; text-shadow: 1px 1px 2px #000; animation: blocShimmer 2s ease-in-out infinite;">🧱 BLOC MONUMENT ERECTED! 🧱</div>
 <div id="kids-badge" style="position: absolute; top: 510px; right: 10px; background: rgba(255,182,193,0.5); border: 2px solid #FF69B4; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; animation: kidsPlay 0.6s ease-in-out infinite;">👧👦 ENFANTS QUI JOUENT! 🎈</div>
+<div id="anatole-badge" style="position: absolute; top: 550px; right: 10px; background: linear-gradient(135deg, rgba(65,105,225,0.7), rgba(255,215,0,0.7)); border: 2px solid #FFD700; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; text-shadow: 1px 1px 2px #000; animation: anatolePulse 1.5s ease-in-out infinite;">👋 HI ANATOLE! 🏰</div>
+<style>
+@keyframes anatolePulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 10px #FFD700; }
+  50% { transform: scale(1.05); box-shadow: 0 0 20px #00FFFF; }
+}
+</style>
 <style>
 @keyframes kidsPlay {
   0%, 100% { transform: translateY(0); }
@@ -289,6 +296,9 @@
             createVoxelChild(-3, 2, -5, 0xFF69B4, 'girl'); // Pink dress girl
             createVoxelChild(4, 2, -3, 0x4169E1, 'boy'); // Blue shirt boy
             createVoxelChild(-6, 2, 2, 0x32CD32, 'boy'); // Green shirt boy
+            
+            // ANATOLE'S GREETING TOWER - A grand monument saying HI!
+            createAnatoleTower(12, 3, -12);
             
             // THE BLOC MONUMENT - A tower of colorful blocks!
             createBlocMonument(-15, 3, -15);
@@ -1169,6 +1179,86 @@
             mobs.push(child);
         }
         
+        function createAnatoleTower(x, y, z) {
+            const tower = new THREE.Group();
+            
+            // Tower base - sturdy cobblestone
+            for (let bx = -2; bx <= 2; bx++) {
+                for (let bz = -2; bz <= 2; bz++) {
+                    const base = createBlock(bx, 0, bz, 0x808080);
+                    tower.add(base);
+                }
+            }
+            
+            // Main tower body - alternating colors
+            const towerColors = [0x4169E1, 0x6495ED, 0x87CEEB];
+            for (let layer = 1; layer <= 12; layer++) {
+                for (let tx = -1; tx <= 1; tx++) {
+                    for (let tz = -1; tz <= 1; tz++) {
+                        if (Math.abs(tx) + Math.abs(tz) <= 1) {
+                            const towerBlock = createBlock(tx, layer, tz, towerColors[layer % 3]);
+                            tower.add(towerBlock);
+                        }
+                    }
+                }
+            }
+            
+            // "HI" spelled out in gold blocks on the side
+            // H
+            const hBlocks = [[0, 13, 1.5], [0, 14, 1.5], [0, 15, 1.5], [0, 14, 1.5], [1, 13, 1.5], [1, 14, 1.5], [1, 15, 1.5]];
+            hBlocks.forEach(pos => {
+                const hb = createBlock(pos[0] - 0.5, pos[1], pos[2], 0xFFD700);
+                hb.scale.set(0.4, 0.4, 0.2);
+                tower.add(hb);
+            });
+            
+            // I
+            for (let iy = 13; iy <= 15; iy++) {
+                const ib = createBlock(2, iy, 1.5, 0xFFD700);
+                ib.scale.set(0.4, 0.4, 0.2);
+                tower.add(ib);
+            }
+            
+            // ANATOLE name sign
+            const nameSign = createBlock(0, 10, 2, 0x8B4513);
+            nameSign.scale.set(4, 1.5, 0.3);
+            tower.add(nameSign);
+            
+            const namePlate = createBlock(0, 10, 2.2, 0xFFFFFF);
+            namePlate.scale.set(3.5, 1, 0.1);
+            tower.add(namePlate);
+            
+            // Crown on top with beacon light
+            const crown = createBlock(0, 13, 0, 0xFFD700);
+            crown.scale.set(2, 0.5, 2);
+            tower.add(crown);
+            
+            // Beacon light
+            const beacon = createBlock(0, 14, 0, 0x00FFFF);
+            beacon.scale.set(0.5, 3, 0.5);
+            beacon.material.transparent = true;
+            beacon.material.opacity = 0.7;
+            beacon.userData = { isBeacon: true, beaconPhase: 0 };
+            tower.add(beacon);
+            
+            // Waving flags
+            for (let f = 0; f < 4; f++) {
+                const flagPole = createBlock(Math.cos(f * Math.PI/2) * 2, 12, Math.sin(f * Math.PI/2) * 2, 0x4a3000);
+                flagPole.scale.set(0.15, 2, 0.15);
+                tower.add(flagPole);
+                
+                const flag = createBlock(Math.cos(f * Math.PI/2) * 2.5, 13.5, Math.sin(f * Math.PI/2) * 2, 0xFF6B6B);
+                flag.scale.set(0.8, 0.5, 0.1);
+                flag.userData = { isAnatolFlag: true, flagIndex: f };
+                tower.add(flag);
+            }
+            
+            tower.position.set(x, y, z);
+            tower.userData = { type: 'anatoletower', pulsePhase: 0 };
+            scene.add(tower);
+            mobs.push(tower);
+        }
+        
         function createBlocMonument(x, y, z) {
             const monument = new THREE.Group();
             const blocColors = [0xFF0000, 0xFF6600, 0xFFFF00, 0x00FF00, 0x00BFFF, 0x8A2BE2, 0xFF69B4];
@@ -1396,6 +1486,20 @@
                     if (Math.sin(time * 0.5) > 0.9) {
                         mob.rotation.y = Math.sin(time * 8) * 0.2;
                     }
+                }
+                else if (mob.userData.type === 'anatoletower') {
+                    // Anatole's tower beacon pulses and flags wave
+                    mob.userData.pulsePhase += 0.05;
+                    mob.children.forEach(child => {
+                        if (child.userData && child.userData.isBeacon) {
+                            child.userData.beaconPhase += 0.1;
+                            child.scale.y = 3 + Math.sin(child.userData.beaconPhase) * 1;
+                            child.material.opacity = 0.5 + Math.sin(child.userData.beaconPhase * 2) * 0.3;
+                        }
+                        if (child.userData && child.userData.isAnatolFlag) {
+                            child.rotation.y = Math.sin(time * 3 + child.userData.flagIndex) * 0.3;
+                        }
+                    });
                 }
                 else if (mob.userData.type === 'blocmonument') {
                     // The monument slowly rotates and pulses
