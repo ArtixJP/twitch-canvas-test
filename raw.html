@@ -7,6 +7,7 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Twitch plays Claude - Multiverse</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -53,6 +54,87 @@
         h1 { font-size: 3rem; text-align: center; margin-bottom: 2rem; }
         /* Space Section */
         #space { background: radial-gradient(ellipse at center, #0d1b2a 0%, #000 100%); }
+        .music-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1001;
+            background: rgba(0,0,0,0.7);
+            padding: 10px 15px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .music-controls button {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        .orbit-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .moon {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #e0e0e0, #9e9e9e);
+            box-shadow: inset -8px -8px 20px rgba(0,0,0,0.4);
+            animation: orbit-moon 8s linear infinite;
+        }
+        .kitty {
+            position: absolute;
+            font-size: 2rem;
+            animation: orbit-kitty 12s linear infinite reverse;
+        }
+        @keyframes orbit-moon {
+            0% { transform: rotate(0deg) translateX(150px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(150px) rotate(-360deg); }
+        }
+        @keyframes orbit-kitty {
+            0% { transform: rotate(0deg) translateX(180px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(180px) rotate(-360deg); }
+        }
+        #three-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .chase-arena {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            background: linear-gradient(180deg, #7ec850 0%, #5a9a30 100%);
+            border-radius: 20px;
+            border: 4px solid #3d6b1e;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        .chase-cat, .chase-dog {
+            position: absolute;
+            font-size: 2.5rem;
+            transition: transform 0.1s;
+        }
+        .scoreboard {
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
         .planet {
             width: 200px;
             height: 200px;
@@ -110,7 +192,12 @@
 <section class="section active" id="space">
 <div class="stars" id="starfield"></div>
 <h1>🌌 Space Zone</h1>
+<div class="orbit-container">
+<div id="three-container"></div>
 <div class="planet"></div>
+<div class="moon"></div>
+<div class="kitty">🐱</div>
+</div>
 <p style="margin-top: 2rem; opacity: 0.7;">A lonely planet floats in the void...</p>
 </section>
 <section class="section" id="animals">
@@ -118,6 +205,12 @@
 <div class="elephant" onclick="sprayWater(event)" title="Click me!">🐘</div>
 <p style="margin-top: 1rem; color: #333;">Click the elephant to spray water!</p>
 <div id="water-container" style="position: absolute; pointer-events: none;"></div>
+<div class="scoreboard">🐕 Dog Catches: <span id="dog-score">0</span></div>
+<div class="chase-arena" id="chase-arena">
+<div class="chase-cat" id="chase-cat">🐱</div>
+<div class="chase-dog" id="chase-dog">🐕</div>
+</div>
+<p style="margin-top: 1rem; color: #333;">Watch the dog chase the cat!</p>
 </section>
 <section class="section" id="games">
 <h1>🎮 Arcade Zone</h1>
@@ -125,6 +218,11 @@
 <p style="margin-top: 1rem; opacity: 0.7;">Use arrow keys or WASD to play!</p>
 </section>
 <div class="timer-bar"></div>
+<div class="music-controls">
+<span>🎵</span>
+<button id="music-toggle" onclick="toggleMusic()">⏸️</button>
+
+</div>
 <script>
         // Section Management
         const sections = ['space', 'animals', 'games'];
@@ -262,6 +360,121 @@
                 if ((p.keyCode === p.RIGHT_ARROW || p.key === 'd') && dir.x !== -1) dir = {x: 1, y: 0};
             };
         });
+
+        // Music Controls
+        const bgMusic = document.getElementById('bg-music');
+        bgMusic.volume = 0.3;
+        
+        function toggleMusic() {
+            const btn = document.getElementById('music-toggle');
+            if (bgMusic.paused) {
+                bgMusic.play();
+                btn.textContent = '⏸️';
+            } else {
+                bgMusic.pause();
+                btn.textContent = '▶️';
+            }
+        }
+
+        // Three.js Sun with lighting
+        const threeContainer = document.getElementById('three-container');
+        if (threeContainer) {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(400, 400);
+            threeContainer.appendChild(renderer.domElement);
+            
+            const sunGeometry = new THREE.SphereGeometry(0.8, 32, 32);
+            const sunMaterial = new THREE.MeshBasicMaterial({ color: 0xffdd00 });
+            const sun = new THREE.Mesh(sunGeometry, sunMaterial);
+            sun.position.set(-3, 2, 0);
+            scene.add(sun);
+            
+            const sunLight = new THREE.PointLight(0xffdd00, 2, 100);
+            sunLight.position.copy(sun.position);
+            scene.add(sunLight);
+            
+            const sunGlow = new THREE.Mesh(
+                new THREE.SphereGeometry(1.2, 32, 32),
+                new THREE.MeshBasicMaterial({ color: 0xffaa00, transparent: true, opacity: 0.3 })
+            );
+            sunGlow.position.copy(sun.position);
+            scene.add(sunGlow);
+            
+            camera.position.z = 5;
+            
+            function animateSun() {
+                requestAnimationFrame(animateSun);
+                sun.rotation.y += 0.01;
+                sunGlow.scale.setScalar(1 + Math.sin(Date.now() * 0.003) * 0.1);
+                renderer.render(scene, camera);
+            }
+            animateSun();
+        }
+
+        // Dog-Cat Chase Game
+        const arena = document.getElementById('chase-arena');
+        const chaseCat = document.getElementById('chase-cat');
+        const chaseDog = document.getElementById('chase-dog');
+        const dogScoreEl = document.getElementById('dog-score');
+        const planet = document.querySelector('.planet');
+        
+        let catPos = { x: 250, y: 150 };
+        let dogPos = { x: 50, y: 50 };
+        let dogScore = 0;
+        let catSpeed = 2;
+        const dogSpeed = 1.5;
+        const planetColors = ['#4a90d9', '#d94a4a', '#4ad94a', '#d9d94a', '#d94ad9', '#4ad9d9'];
+        
+        function updateChase() {
+            const dx = catPos.x - dogPos.x;
+            const dy = catPos.y - dogPos.y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            
+            // Dog moves toward cat
+            if (dist > 0) {
+                dogPos.x += (dx / dist) * dogSpeed;
+                dogPos.y += (dy / dist) * dogSpeed;
+            }
+            
+            // Cat escapes when dog is close
+            if (dist < 80) {
+                catSpeed = 6;
+                catPos.x -= (dx / dist) * catSpeed;
+                catPos.y -= (dy / dist) * catSpeed;
+            } else {
+                catSpeed = 2;
+                // Cat wanders randomly
+                catPos.x += (Math.random() - 0.5) * catSpeed * 3;
+                catPos.y += (Math.random() - 0.5) * catSpeed * 3;
+            }
+            
+            // Keep in bounds
+            catPos.x = Math.max(20, Math.min(460, catPos.x));
+            catPos.y = Math.max(20, Math.min(260, catPos.y));
+            dogPos.x = Math.max(20, Math.min(460, dogPos.x));
+            dogPos.y = Math.max(20, Math.min(260, dogPos.y));
+            
+            // Check catch
+            if (dist < 30) {
+                dogScore++;
+                dogScoreEl.textContent = dogScore;
+                catPos = { x: Math.random() * 400 + 50, y: Math.random() * 200 + 50 };
+                planet.style.background = `linear-gradient(135deg, ${planetColors[dogScore % planetColors.length]}, #1e3a5f)`;
+            }
+            
+            chaseCat.style.left = catPos.x + 'px';
+            chaseCat.style.top = catPos.y + 'px';
+            chaseDog.style.left = dogPos.x + 'px';
+            chaseDog.style.top = dogPos.y + 'px';
+            
+            // Flip sprites based on direction
+            chaseDog.style.transform = dx > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+            chaseCat.style.transform = dx < 0 ? 'scaleX(1)' : 'scaleX(-1)';
+        }
+        
+        setInterval(updateChase, 50);
 
         // Initialize
         showSection('space');
