@@ -428,6 +428,79 @@
             50% { transform: rotate(5deg); }
         }
         
+        .secret-menu {
+            background: linear-gradient(145deg, #1a1a2e, #16213e);
+            border-radius: 12px;
+            padding: 10px;
+            margin-top: 12px;
+            border: 3px dashed #e94560;
+            position: relative;
+            animation: secret-pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes secret-pulse {
+            0%, 100% { border-color: #e94560; box-shadow: 0 0 10px rgba(233, 69, 96, 0.3); }
+            50% { border-color: #ff6b9d; box-shadow: 0 0 20px rgba(233, 69, 96, 0.6); }
+        }
+        
+        .secret-title {
+            font-family: 'Playfair Display', serif;
+            color: #e94560;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            letter-spacing: 2px;
+        }
+        
+        .secret-items {
+            display: flex;
+            justify-content: space-around;
+            gap: 8px;
+        }
+        
+        .secret-item {
+            background: rgba(255,255,255,0.05);
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .secret-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.1) rotate(3deg);
+        }
+        
+        .mystery-icon {
+            font-size: 1.5rem;
+            display: block;
+            animation: wobble 1s ease-in-out infinite;
+        }
+        
+        .bidule .mystery-icon { animation-delay: 0s; }
+        .truc .mystery-icon { animation-delay: 0.3s; }
+        .lol .mystery-icon { animation-delay: 0.6s; }
+        
+        @keyframes wobble {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(10deg); }
+        }
+        
+        .secret-name {
+            color: #ffd700;
+            font-size: 0.7rem;
+            font-weight: 600;
+            display: block;
+            margin-top: 3px;
+        }
+        
+        .secret-desc {
+            color: #888;
+            font-size: 0.55rem;
+            font-style: italic;
+            display: block;
+        }
+        
         @keyframes glow {
             from { box-shadow: 0 0 10px #27ae60; }
             to { box-shadow: 0 0 25px #27ae60, 0 0 40px #27ae60; }
@@ -475,6 +548,26 @@
 </div>
 </div>
 <div class="open-sign">🌟 OPEN NOW 🌟</div>
+<div class="secret-menu" title="Psst... you found the secret menu!">
+<h3 class="secret-title">🤫 Menu Secret 🤫</h3>
+<div class="secret-items">
+<div class="secret-item bidule">
+<span class="mystery-icon">❓</span>
+<span class="secret-name">Le Bidule</span>
+<span class="secret-desc">???</span>
+</div>
+<div class="secret-item truc">
+<span class="mystery-icon">🔮</span>
+<span class="secret-name">Le Truc</span>
+<span class="secret-desc">Chose mystérieuse</span>
+</div>
+<div class="secret-item lol">
+<span class="mystery-icon">😂</span>
+<span class="secret-name">Le LOL</span>
+<span class="secret-desc">Guaranteed giggles</span>
+</div>
+</div>
+</div>
 <div class="quality-inspector" title="Quality Inspector on duty!">
 <span class="inspector-mouse">🐭</span>
 <span class="clipboard">📋</span>
