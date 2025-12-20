@@ -254,6 +254,83 @@
             margin-top: 5px;
         }
         
+        .burger-joint {
+            background: linear-gradient(145deg, #8B0000, #4a1c1c);
+            border-radius: 15px;
+            padding: 12px;
+            margin-top: 15px;
+            border: 4px solid #FFD700;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .burger-title {
+            font-family: 'Playfair Display', serif;
+            color: #FFD700;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .burger-scene {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+        }
+        
+        .burger-chef {
+            position: relative;
+            font-size: 2.5rem;
+            animation: chef-work 1s ease-in-out infinite;
+        }
+        
+        .burger-flip {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.6rem;
+            animation: flip-burger 1.2s ease-in-out infinite;
+        }
+        
+        @keyframes flip-burger {
+            0%, 100% { 
+                transform: translateX(-50%) translateY(0) rotateY(0deg); 
+            }
+            50% { 
+                transform: translateX(-50%) translateY(-20px) rotateY(180deg); 
+            }
+        }
+        
+        .grill-fire {
+            font-size: 1.8rem;
+            animation: grill-sizzle 0.3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes grill-sizzle {
+            from { transform: scale(1); filter: brightness(1); }
+            to { transform: scale(1.1); filter: brightness(1.4); }
+        }
+        
+        .fries-stack {
+            font-size: 1.8rem;
+            animation: fries-shake 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes fries-shake {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+        
+        .burger-quote {
+            color: #FFA500;
+            font-size: 0.75rem;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
         .battle-arena {
             background: linear-gradient(145deg, #1a0a0a, #2d1515);
             border-radius: 15px;
@@ -662,6 +739,18 @@
 <div class="pizza-oven">🔥</div>
 </div>
 <p class="pizzaiolo-quote">"Mamma mia! Fresh pizza!"</p>
+</div>
+<div class="burger-joint">
+<h3 class="burger-title">🍔 Le Voisin Américain 🇺🇸</h3>
+<div class="burger-scene">
+<div class="burger-chef">
+<span class="chef-body">👨‍🍳</span>
+<span class="burger-flip">🍔</span>
+</div>
+<div class="grill-fire">🔥</div>
+<div class="fries-stack">🍟</div>
+</div>
+<p class="burger-quote">"Best burgers in town, buddy!"</p>
 </div>
 <div class="battle-arena">
 <h2 class="battle-title">⚔️ LA GRANDE BATAILLE ⚔️</h2>
