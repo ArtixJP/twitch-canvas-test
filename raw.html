@@ -113,6 +113,13 @@
 }
 </style>
 <div id="test-badge" style="position: absolute; top: 100px; right: 10px; background: rgba(0,255,0,0.2); border: 2px dashed #00FF00; padding: 5px 10px; font-size: 0.7rem; z-index: 100; animation: testPulse 1s infinite;">🧪 TEST SIGNAL RECEIVED</div>
+<div id="test-echo" style="position: absolute; top: 130px; right: 10px; background: rgba(0,255,255,0.15); border: 1px dotted #00FFFF; padding: 3px 8px; font-size: 0.6rem; z-index: 100; color: #00FFFF; animation: echoFade 2s infinite;">↪ echo: test confirmed ✓</div>
+<style>
+@keyframes echoFade {
+  0%, 100% { opacity: 0.3; transform: translateX(0); }
+  50% { opacity: 0.8; transform: translateX(-3px); }
+}
+</style>
 <style>
 @keyframes testPulse {
   0%, 100% { opacity: 0.5; }
@@ -184,6 +191,11 @@
             const testBlock = createBlock(0, 15, 0, 0x00FF00);
             testBlock.userData = { isTestBlock: true, floatOffset: 0 };
             testBlock.scale.set(1.5, 1.5, 1.5);
+            
+            // TEST ECHO BLOCK - Orbiting satellite confirming the signal
+            const testEcho = createBlock(3, 15, 0, 0x00FFFF);
+            testEcho.userData = { isTestEcho: true, orbitAngle: 0 };
+            testEcho.scale.set(0.5, 0.5, 0.5);
             createTree(-12, 0, 8);
             createTree(5, 0, -15);
             createTree(-8, 0, -10);
@@ -812,6 +824,15 @@
                     block.rotation.x += 0.02;
                     block.rotation.y += 0.03;
                     block.position.y = 15 + Math.sin(time * 2) * 2;
+                }
+                // Animate the test echo orbiting the main test block
+                if (block.userData && block.userData.isTestEcho) {
+                    block.userData.orbitAngle += 0.05;
+                    block.position.x = Math.cos(block.userData.orbitAngle) * 3;
+                    block.position.z = Math.sin(block.userData.orbitAngle) * 3;
+                    block.position.y = 15 + Math.sin(time * 3) * 1;
+                    block.rotation.x += 0.05;
+                    block.rotation.z += 0.05;
                 }
             }
             
