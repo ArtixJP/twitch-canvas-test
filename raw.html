@@ -135,6 +135,13 @@
 <div id="grandma-badge" style="position: absolute; top: 390px; right: 10px; background: rgba(255,182,193,0.6); border: 2px solid #DDA0DD; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #8B4513; font-weight: bold; animation: grandmaRock 2s ease-in-out infinite;">👵 GRANDMA SAYS HI! 🧶</div>
 <div id="rouge-badge" style="position: absolute; top: 430px; right: 10px; background: rgba(255,0,0,0.5); border: 2px solid #CC0000; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; animation: rougePulse 1s ease-in-out infinite;">🟥 BLOC ROUGE AJOUTÉ! 🟥</div>
 <div id="bloc-badge" style="position: absolute; top: 470px; right: 10px; background: linear-gradient(90deg, rgba(255,0,0,0.4), rgba(255,165,0,0.4), rgba(255,255,0,0.4), rgba(0,255,0,0.4), rgba(0,191,255,0.4)); border: 2px solid #FFF; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; text-shadow: 1px 1px 2px #000; animation: blocShimmer 2s ease-in-out infinite;">🧱 BLOC MONUMENT ERECTED! 🧱</div>
+<div id="kids-badge" style="position: absolute; top: 510px; right: 10px; background: rgba(255,182,193,0.5); border: 2px solid #FF69B4; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFF; font-weight: bold; animation: kidsPlay 0.6s ease-in-out infinite;">👧👦 ENFANTS QUI JOUENT! 🎈</div>
+<style>
+@keyframes kidsPlay {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+</style>
 <style>
 @keyframes blocShimmer {
   0%, 100% { filter: hue-rotate(0deg); }
@@ -266,6 +273,11 @@
             
             // BLOC ROUGE - A mysterious red block from the French request!
             const blocRouge = createBlock(7, 8, -5, 0xFF0000);
+            
+            // ENFANTS QUI JOUENT - Playful children running around!
+            createVoxelChild(-3, 2, -5, 0xFF69B4, 'girl'); // Pink dress girl
+            createVoxelChild(4, 2, -3, 0x4169E1, 'boy'); // Blue shirt boy
+            createVoxelChild(-6, 2, 2, 0x32CD32, 'boy'); // Green shirt boy
             
             // THE BLOC MONUMENT - A tower of colorful blocks!
             createBlocMonument(-15, 3, -15);
@@ -1048,6 +1060,101 @@
             mobs.push(grandma);
         }
         
+        function createVoxelChild(x, y, z, shirtColor, type) {
+            const child = new THREE.Group();
+            
+            // Head (cute round face)
+            const head = createBlock(0, 0, 0, 0xFFDFC4);
+            head.position.set(0, 1.8, 0);
+            head.scale.set(0.6, 0.6, 0.6);
+            child.add(head);
+            
+            // Hair
+            const hairColor = type === 'girl' ? 0x8B4513 : 0x2F2F2F;
+            const hair = createBlock(0, 0, 0, hairColor);
+            hair.position.set(0, 2.1, 0);
+            hair.scale.set(0.65, 0.3, 0.65);
+            child.add(hair);
+            
+            // Cute pigtails for girl
+            if (type === 'girl') {
+                const pigtail1 = createBlock(0, 0, 0, hairColor);
+                pigtail1.position.set(0.35, 1.9, 0);
+                pigtail1.scale.set(0.2, 0.4, 0.2);
+                child.add(pigtail1);
+                const pigtail2 = createBlock(0, 0, 0, hairColor);
+                pigtail2.position.set(-0.35, 1.9, 0);
+                pigtail2.scale.set(0.2, 0.4, 0.2);
+                child.add(pigtail2);
+            }
+            
+            // Happy eyes
+            const eye1 = createBlock(0, 0, 0, 0x000000);
+            eye1.position.set(0.15, 1.85, 0.3);
+            eye1.scale.set(0.1, 0.1, 0.05);
+            child.add(eye1);
+            const eye2 = createBlock(0, 0, 0, 0x000000);
+            eye2.position.set(-0.15, 1.85, 0.3);
+            eye2.scale.set(0.1, 0.1, 0.05);
+            child.add(eye2);
+            
+            // Big smile
+            const smile = createBlock(0, 0, 0, 0xFF6B6B);
+            smile.position.set(0, 1.7, 0.3);
+            smile.scale.set(0.2, 0.08, 0.05);
+            child.add(smile);
+            
+            // Body (shirt)
+            const body = createBlock(0, 0, 0, shirtColor);
+            body.position.set(0, 1.1, 0);
+            body.scale.set(0.5, 0.6, 0.4);
+            child.add(body);
+            
+            // Shorts/skirt
+            const bottomColor = type === 'girl' ? shirtColor : 0x4a4a4a;
+            const bottom = createBlock(0, 0, 0, bottomColor);
+            bottom.position.set(0, 0.6, 0);
+            bottom.scale.set(0.5, 0.4, 0.4);
+            child.add(bottom);
+            
+            // Little legs
+            const leg1 = createBlock(0, 0, 0, 0xFFDFC4);
+            leg1.position.set(0.15, 0.2, 0);
+            leg1.scale.set(0.15, 0.4, 0.15);
+            child.add(leg1);
+            const leg2 = createBlock(0, 0, 0, 0xFFDFC4);
+            leg2.position.set(-0.15, 0.2, 0);
+            leg2.scale.set(0.15, 0.4, 0.15);
+            child.add(leg2);
+            
+            // Little arms
+            const arm1 = createBlock(0, 0, 0, 0xFFDFC4);
+            arm1.position.set(0.35, 1.1, 0);
+            arm1.scale.set(0.15, 0.4, 0.15);
+            child.add(arm1);
+            const arm2 = createBlock(0, 0, 0, 0xFFDFC4);
+            arm2.position.set(-0.35, 1.1, 0);
+            arm2.scale.set(0.15, 0.4, 0.15);
+            child.add(arm2);
+            
+            // Balloon for one child!
+            if (type === 'girl') {
+                const string = createBlock(0, 0, 0, 0xFFFFFF);
+                string.position.set(0.4, 2.5, 0);
+                string.scale.set(0.02, 1, 0.02);
+                child.add(string);
+                const balloon = createBlock(0, 0, 0, 0xFF0000);
+                balloon.position.set(0.4, 3.2, 0);
+                balloon.scale.set(0.4, 0.5, 0.4);
+                child.add(balloon);
+            }
+            
+            child.position.set(x, y, z);
+            child.userData = { type: 'child', vx: (Math.random() - 0.5) * 0.08, vz: (Math.random() - 0.5) * 0.08, playTimer: Math.random() * Math.PI * 2, jumpCooldown: 0 };
+            scene.add(child);
+            mobs.push(child);
+        }
+        
         function createBlocMonument(x, y, z) {
             const monument = new THREE.Group();
             const blocColors = [0xFF0000, 0xFF6600, 0xFFFF00, 0x00FF00, 0x00BFFF, 0x8A2BE2, 0xFF69B4];
@@ -1286,6 +1393,49 @@
                         if (child.userData && child.userData.isCrown) {
                             child.rotation.y += 0.03;
                             child.position.y = 10 + Math.sin(time * 3) * 0.5;
+                        }
+                    });
+                }
+                else if (mob.userData.type === 'child') {
+                    // Children run around and play!
+                    mob.userData.playTimer += 0.05;
+                    mob.userData.jumpCooldown -= 0.016;
+                    
+                    // Running movement
+                    mob.position.x += mob.userData.vx;
+                    mob.position.z += mob.userData.vz;
+                    
+                    // Bounce in direction of movement
+                    mob.rotation.y = Math.atan2(mob.userData.vx, mob.userData.vz);
+                    
+                    // Running bounce animation
+                    mob.position.y = 2 + Math.abs(Math.sin(mob.userData.playTimer * 3)) * 0.3;
+                    
+                    // Keep them on the island
+                    const distFromCenter = Math.sqrt(mob.position.x * mob.position.x + mob.position.z * mob.position.z);
+                    if (distFromCenter > 8) {
+                        mob.userData.vx *= -0.8;
+                        mob.userData.vz *= -0.8;
+                        mob.position.x *= 0.95;
+                        mob.position.z *= 0.95;
+                    }
+                    
+                    // Random direction changes (playing!)
+                    if (Math.random() < 0.01) {
+                        mob.userData.vx = (Math.random() - 0.5) * 0.1;
+                        mob.userData.vz = (Math.random() - 0.5) * 0.1;
+                    }
+                    
+                    // Occasional big jump!
+                    if (Math.random() < 0.005 && mob.userData.jumpCooldown <= 0) {
+                        mob.position.y += 1.5;
+                        mob.userData.jumpCooldown = 2;
+                    }
+                    
+                    // Arm swing while running
+                    mob.children.forEach((child, idx) => {
+                        if (idx >= 10 && idx <= 11) { // Arms
+                            child.rotation.x = Math.sin(mob.userData.playTimer * 6) * 0.5;
                         }
                     });
                 }
