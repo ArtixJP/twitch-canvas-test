@@ -137,10 +137,13 @@
 <div class="main-content">
 <div id="chaos-zone">
 <div class="chaos-content">
-<p style="font-size:1.4rem;text-shadow:0 0 20px #e94560;">🧬 3D Cellular Automaton - <span style="color:#00ff88;">MEGA UNIVERSE 10K²</span> 🌌 Watch patterns evolve! ⚡</p>
+<p style="font-size:1.4rem;text-shadow:0 0 20px #e94560;">🧬 3D Cellular Automaton - <span style="color:#00ff88;">MEGA UNIVERSE 10K³</span> 🌌 Watch patterns evolve! ⚡</p>
+<div style="display:inline-block;background:linear-gradient(90deg,#00ff88,#00ccff);padding:4px 12px;border-radius:20px;font-size:0.7rem;font-weight:bold;color:#000;margin-top:8px;animation:pulse-badge 1.5s ease-in-out infinite;">🌊 INFINITE STREAMING MODE - Only visible chunks loaded!</div>
+<style>@keyframes pulse-badge{0%,100%{transform:scale(1);box-shadow:0 0 10px #00ff88;}50%{transform:scale(1.05);box-shadow:0 0 20px #00ccff;}}</style>
 <div id="automaton-container" style="width:100%;height:400px;position:relative;border-radius:8px;overflow:hidden;"></div>
-<p style="margin-top:1rem;font-size:0.8rem;color:#e94560;">⚡ Generation: <span id="gen-counter">0</span> | Living cells: <span id="cell-counter">0</span> | 🌌 Universe: <span style="color:#00ff88;font-weight:bold;">10K³ parsecs</span> <span style="color:#ff00ff;">(∞ chunks - only visible loaded!)</span></p>
-<p style="font-size:0.7rem;color:#666;margin-top:0.5rem;">💡 Memory-efficient: streaming chunks on-demand • Press anywhere to drift through the cosmos</p>
+<p style="margin-top:1rem;font-size:0.8rem;color:#e94560;">⚡ Generation: <span id="gen-counter">0</span> | Living cells: <span id="cell-counter">0</span> | 🌌 Universe: <span style="color:#00ff88;font-weight:bold;">10K³ parsecs</span></p>
+<p style="font-size:0.75rem;color:#00ccff;margin-top:0.3rem;">💾 Memory: <span id="mem-display" style="color:#00ff88;">~2MB</span> / <span style="color:#ff6666;">10TB theoretical</span> | <span style="color:#ff00ff;">Chunks loaded: <span id="chunks-loaded">1</span>/∞</span></p>
+<p style="font-size:0.7rem;color:#666;margin-top:0.5rem;">💡 <span style="color:#00ff88;">NEVER loads full grid!</span> Streaming chunks on-demand • Only <span style="color:#00ccff;">~112³ cells</span> active at once • Click to warp through infinite space</p>
 </div>
 </div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -239,6 +242,8 @@
                     grid[x][y][z] = 1;
                 }
                 console.log('🌌 Loaded chunk [' + currentChunkX + ',' + currentChunkY + ',' + currentChunkZ + '] - Universe pos: ' + (currentChunkX * CHUNK_SIZE) + '/' + UNIVERSE_SIZE);
+                if(document.getElementById('chunks-loaded')) document.getElementById('chunks-loaded').textContent = loadedChunks.size + 1;
+                if(document.getElementById('mem-display')) document.getElementById('mem-display').textContent = '~' + Math.round((gridSize * gridSize * gridSize * 4) / 1024 / 1024 * 10) / 10 + 'MB';
             }
             
             function countNeighbors(x, y, z) {
