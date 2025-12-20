@@ -117,6 +117,13 @@
 <div id="sandwich-badge" style="position: absolute; top: 230px; right: 10px; background: rgba(210,105,30,0.6); border: 2px solid #D2691E; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFD700; font-weight: bold; animation: sandwichFloat 2s ease-in-out infinite;">🥪 LEGENDARY SANDWICH SPAWNED!</div>
 <div id="bonjour-badge" style="position: absolute; top: 270px; right: 10px; background: rgba(0,35,149,0.6); border: 2px solid #ED2939; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #FFFFFF; font-weight: bold; animation: bonjourWave 1.5s ease-in-out infinite;">🇫🇷 BONJOUR! 🥖</div>
 <div id="lol-badge" style="position: absolute; top: 310px; right: 10px; background: rgba(255,255,0,0.5); border: 2px solid #FFD700; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #000; font-weight: bold; animation: lolBounce 0.3s ease-in-out infinite;">😂 LOL FISH SPAWNED! 😂</div>
+<div id="lol-echo" style="position: absolute; top: 340px; right: 10px; background: rgba(255,255,0,0.3); border: 1px dashed #FFD700; padding: 3px 8px; font-size: 0.6rem; z-index: 100; color: #665500; animation: lolEcho 0.5s ease-in-out infinite;">↪ chat says: lol 🤣</div>
+<style>
+@keyframes lolEcho {
+  0%, 100% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+</style>
 <div id="banana-badge" style="position: absolute; top: 350px; right: 10px; background: rgba(255,225,0,0.6); border: 2px solid #FFD700; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #4a3000; font-weight: bold; animation: bananaWiggle 0.4s ease-in-out infinite;">🍌 BANANAS ADDED! 🍌</div>
 <div id="grandma-badge" style="position: absolute; top: 390px; right: 10px; background: rgba(255,182,193,0.6); border: 2px solid #DDA0DD; padding: 5px 10px; font-size: 0.7rem; z-index: 100; color: #8B4513; font-weight: bold; animation: grandmaRock 2s ease-in-out infinite;">👵 GRANDMA SAYS HI! 🧶</div>
 <style>
@@ -1171,10 +1178,18 @@
                     mob.position.y = mob.userData.baseY + Math.sin(time * 3) * 0.8;
                     mob.rotation.y = mob.userData.vx > 0 ? 0 : Math.PI;
                     if (mob.position.x > 22 || mob.position.x < -22) mob.userData.vx *= -1;
-                    // Constant giggling shake
-                    mob.userData.laughTimer += 0.1;
-                    mob.rotation.z = Math.sin(mob.userData.laughTimer * 15) * 0.15;
-                    mob.position.y += Math.sin(mob.userData.laughTimer * 8) * 0.1;
+                    // Constant giggling shake - EXTRA LOL ENERGY!
+                    mob.userData.laughTimer += 0.12;
+                    mob.rotation.z = Math.sin(mob.userData.laughTimer * 18) * 0.2;
+                    mob.position.y += Math.sin(mob.userData.laughTimer * 10) * 0.15;
+                    // Occasional LOL burst
+                    if (Math.random() < 0.002) {
+                        for (let i = 0; i < 3; i++) {
+                            const lolParticle = createBlock(mob.position.x + (Math.random()-0.5)*2, mob.position.y + 1, mob.position.z + (Math.random()-0.5)*2, 0xFFFF00);
+                            lolParticle.scale.set(0.2, 0.2, 0.2);
+                            setTimeout(() => scene.remove(lolParticle), 800);
+                        }
+                    }
                 }
                 else if (mob.userData.type === 'banana') {
                     // Bananas float and wobble tropically
