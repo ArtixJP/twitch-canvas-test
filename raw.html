@@ -186,6 +186,13 @@
 <button class="action-btn" id="btn-down" title="Descend">↓</button>
 </div>
 <div id="camera-hint">🖱️ Click &amp; drag on the 3D view to look around!</div>
+<div id="mario-badge" style="position:fixed;top:100px;right:20px;background:linear-gradient(135deg,#E52521,#049CD8);padding:8px 15px;border-radius:20px;color:white;font-weight:bold;font-size:12px;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.3);animation:marioFloat 2s ease-in-out infinite;">🍄 Mario is here!</div>
+<style>
+        @keyframes marioFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
 <div id="ui">Type <code style="background: rgba(145, 71, 255, 0.3); padding: 2px 6px; border-radius: 3px;">!idea</code> in Twitch chat to modify this world!</div>
 <script>
         const CHUNK_SIZE = 16;
@@ -230,8 +237,87 @@
             scene.add(directionalLight);
 
             generateTerrain();
+            createMario();
             setupControls();
             animate();
+        }
+
+        // Mario NPC made of voxels
+        let marioGroup;
+        let marioY = 12;
+        let marioBounce = 0;
+        let marioDirection = 1;
+        let marioX = 8;
+        let marioZ = 8;
+
+        function createMario() {
+            marioGroup = new THREE.Group();
+            
+            // Mario colors
+            const red = 0xE52521;
+            const blue = 0x049CD8;
+            const skin = 0xFBB382;
+            const brown = 0x6B3E08;
+            const black = 0x1C1C1C;
+            
+            // Simple 3D pixel Mario (8x12x3 voxels)
+            const marioVoxels = [
+                // Hat (red)
+                {x:0,y:11,z:0,c:red},{x:1,y:11,z:0,c:red},{x:2,y:11,z:0,c:red},{x:3,y:11,z:0,c:red},{x:4,y:11,z:0,c:red},
+                {x:-1,y:10,z:0,c:red},{x:0,y:10,z:0,c:red},{x:1,y:10,z:0,c:red},{x:2,y:10,z:0,c:red},{x:3,y:10,z:0,c:red},{x:4,y:10,z:0,c:red},{x:5,y:10,z:0,c:red},
+                // Face (skin)
+                {x:0,y:9,z:0,c:skin},{x:1,y:9,z:0,c:skin},{x:2,y:9,z:0,c:skin},{x:3,y:9,z:0,c:skin},{x:4,y:9,z:0,c:skin},
+                {x:0,y:8,z:0,c:skin},{x:1,y:8,z:0,c:black},{x:2,y:8,z:0,c:skin},{x:3,y:8,z:0,c:black},{x:4,y:8,z:0,c:skin},
+                {x:0,y:7,z:0,c:skin},{x:1,y:7,z:0,c:skin},{x:2,y:7,z:0,c:brown},{x:3,y:7,z:0,c:skin},{x:4,y:7,z:0,c:skin},
+                // Body (red shirt)
+                {x:0,y:6,z:0,c:red},{x:1,y:6,z:0,c:red},{x:2,y:6,z:0,c:red},{x:3,y:6,z:0,c:red},{x:4,y:6,z:0,c:red},
+                {x:-1,y:5,z:0,c:skin},{x:0,y:5,z:0,c:red},{x:1,y:5,z:0,c:red},{x:2,y:5,z:0,c:red},{x:3,y:5,z:0,c:red},{x:4,y:5,z:0,c:red},{x:5,y:5,z:0,c:skin},
+                {x:0,y:4,z:0,c:red},{x:1,y:4,z:0,c:red},{x:2,y:4,z:0,c:red},{x:3,y:4,z:0,c:red},{x:4,y:4,z:0,c:red},
+                // Overalls (blue)
+                {x:0,y:3,z:0,c:blue},{x:1,y:3,z:0,c:blue},{x:2,y:3,z:0,c:blue},{x:3,y:3,z:0,c:blue},{x:4,y:3,z:0,c:blue},
+                {x:0,y:2,z:0,c:blue},{x:1,y:2,z:0,c:blue},{x:2,y:2,z:0,c:blue},{x:3,y:2,z:0,c:blue},{x:4,y:2,z:0,c:blue},
+                // Legs (blue)
+                {x:0,y:1,z:0,c:blue},{x:1,y:1,z:0,c:blue},{x:3,y:1,z:0,c:blue},{x:4,y:1,z:0,c:blue},
+                // Shoes (brown)
+                {x:0,y:0,z:0,c:brown},{x:1,y:0,z:0,c:brown},{x:3,y:0,z:0,c:brown},{x:4,y:0,z:0,c:brown},
+            ];
+            
+            const scale = 0.15;
+            marioVoxels.forEach(v => {
+                const geo = new THREE.BoxGeometry(scale, scale, scale);
+                const mat = new THREE.MeshLambertMaterial({ color: v.c });
+                const cube = new THREE.Mesh(geo, mat);
+                cube.position.set(v.x * scale, v.y * scale, v.z * scale);
+                marioGroup.add(cube);
+            });
+            
+            marioGroup.position.set(marioX, marioY, marioZ);
+            scene.add(marioGroup);
+        }
+
+        function updateMario() {
+            if (!marioGroup) return;
+            
+            // Bouncing animation
+            marioBounce += 0.1;
+            const bounceHeight = Math.abs(Math.sin(marioBounce)) * 0.5;
+            
+            // Walking
+            marioX += 0.02 * marioDirection;
+            if (marioX > 14 || marioX < 2) marioDirection *= -1;
+            
+            // Find ground height
+            let groundY = 0;
+            for (let y = 20; y >= 0; y--) {
+                const key = `${Math.floor(marioX)},${y},${Math.floor(marioZ)}`;
+                if (blocks.has(key)) {
+                    groundY = y + 1;
+                    break;
+                }
+            }
+            
+            marioGroup.position.set(marioX, groundY + bounceHeight + 0.5, marioZ);
+            marioGroup.rotation.y = marioDirection > 0 ? 0 : Math.PI;
         }
 
         function generateTerrain() {
@@ -455,6 +541,7 @@
                 camera.rotation.x = pitch;
             }
 
+            updateMario();
             renderer.render(scene, camera);
         }
 
