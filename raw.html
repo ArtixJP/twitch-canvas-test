@@ -1004,7 +1004,28 @@
 <header class="header">
 <div class="sign">
 <h1 style="background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: text-shimmer 3s linear infinite, glitch-text 3s ease-in-out infinite; background-size: 200% auto;">🥐 L̸a̷ ̶P̵e̴t̸i̵t̷e̶ ̵B̸o̷u̵l̷a̴n̷g̶e̷r̵i̶e̷ 🥖</h1>
-<div class="reset-survivor-badge">⚠️ RESET SURVIVED ⚠️</div>
+<div class="reset-survivor-badge">⚠️ RESET x2 SURVIVED ⚠️</div>
+<div class="defiance-message">💪 WE. DON'T. RESET. 💪</div>
+<style>
+.defiance-message {
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, #ff0000, #ff6600, #ffff00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 0.5rem;
+    font-weight: bold;
+    white-space: nowrap;
+    animation: defiance-pulse 0.5s ease-in-out infinite;
+}
+@keyframes defiance-pulse {
+    0%, 100% { transform: translateX(-50%) scale(1); }
+    50% { transform: translateX(-50%) scale(1.1); }
+}
+</style>
 <style>
 .reset-survivor-badge {
     position: absolute;
@@ -1049,10 +1070,29 @@
 </div>
 </div>
 <div class="blue-hour-badge" style="background: linear-gradient(135deg, #8b0000, #ff4500); animation: twinkle 0.5s ease-in-out infinite;">⚡ RESET DENIED ⚡</div>
-<div class="open-sign" style="animation: glow 0.3s ease-in-out infinite alternate, rainbow-slide 3s linear infinite;">💀 STILL STANDING 💀</div>
+<div class="open-sign" style="animation: glow 0.3s ease-in-out infinite alternate, rainbow-slide 3s linear infinite;">💀 STILL STANDING x2 💀</div>
+<div class="reset-shield">🛡️ PROTECTED 🛡️</div>
+<style>
+.reset-shield {
+    display: inline-block;
+    background: linear-gradient(145deg, #1a5276, #2e86ab);
+    color: #fff;
+    padding: 4px 12px;
+    border-radius: 15px;
+    margin-left: 10px;
+    font-size: 0.6rem;
+    font-weight: bold;
+    animation: shield-glow 1.5s ease-in-out infinite;
+    border: 2px solid #3498db;
+}
+@keyframes shield-glow {
+    0%, 100% { box-shadow: 0 0 5px #3498db; }
+    50% { box-shadow: 0 0 20px #3498db, 0 0 30px rgba(52, 152, 219, 0.5); }
+}
+</style>
 <div class="reset-counter">
 <span class="counter-label">Reset Attempts Survived:</span>
-<span class="counter-number">001</span>
+<span class="counter-number">002</span>
 </div>
 <style>
 .reset-counter {
@@ -1170,7 +1210,7 @@
 </div>
 </div>
 <div class="battle-effects"></div>
-<p class="battle-status">Le combat éternel continue...</p>
+<p class="battle-status">Le combat éternel continue... (RESET? JAMAIS!)</p>
 </div>
 </main>
 </div>
