@@ -869,6 +869,50 @@
         
         .bidule .mystery-icon { animation-delay: 0s; }
         .truc .mystery-icon { animation-delay: 0.3s; }
+        
+        .truc-orb {
+            animation: truc-swirl 2s ease-in-out infinite, orb-glow 1.5s ease-in-out infinite alternate !important;
+            filter: drop-shadow(0 0 10px rgba(138, 43, 226, 0.8));
+        }
+        
+        @keyframes truc-swirl {
+            0%, 100% { transform: rotate(-10deg) scale(1); }
+            25% { transform: rotate(5deg) scale(1.1); }
+            50% { transform: rotate(10deg) scale(1.05); }
+            75% { transform: rotate(-5deg) scale(1.15); }
+        }
+        
+        @keyframes orb-glow {
+            0% { filter: drop-shadow(0 0 8px rgba(138, 43, 226, 0.6)) hue-rotate(0deg); }
+            100% { filter: drop-shadow(0 0 15px rgba(255, 0, 255, 0.8)) hue-rotate(30deg); }
+        }
+        
+        .truc-whisper {
+            display: block;
+            font-size: 0.5rem;
+            color: #9b59b6;
+            opacity: 0;
+            transform: translateY(5px);
+            transition: all 0.3s ease;
+            font-style: italic;
+            text-shadow: 0 0 5px rgba(155, 89, 182, 0.5);
+        }
+        
+        .truc:hover .truc-whisper {
+            opacity: 1;
+            transform: translateY(0);
+            animation: whisper-fade 2s ease-in-out infinite;
+        }
+        
+        @keyframes whisper-fade {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+        
+        .truc:hover {
+            background: rgba(138, 43, 226, 0.2) !important;
+            box-shadow: 0 0 20px rgba(138, 43, 226, 0.4);
+        }
         .lol .mystery-icon { animation-delay: 0.6s; }
         .potato .mystery-icon { animation-delay: 0.9s; animation: ghost-fade 3s ease-in-out infinite; }
         
@@ -974,10 +1018,11 @@
 <span class="secret-name">Le Bidule</span>
 <span class="secret-desc">???</span>
 </div>
-<div class="secret-item truc">
-<span class="mystery-icon">🔮</span>
+<div class="secret-item truc" title="You dare seek Le Truc?">
+<span class="mystery-icon truc-orb">🔮</span>
 <span class="secret-name">Le Truc</span>
 <span class="secret-desc">Chose mystérieuse</span>
+<span class="truc-whisper">"It knows your secrets..."</span>
 </div>
 <div class="secret-item lol">
 <span class="mystery-icon">😂</span>
