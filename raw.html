@@ -1100,22 +1100,29 @@
     50% { transform: translateY(-5px); }
 }
 </style>
-<div class="flying-mushroom" title="Magical Mushroom Fairy with Pain au Chocolat Rider!">
-<span class="mushroom-rider">🥐</span>🍄🧚
+<div class="mushroom-memory" title="The mushroom fairy has returned to the forest...">
+<span class="fading-spore">✨</span>
+<span class="fading-spore" style="animation-delay: 0.5s;">🌸</span>
+<span class="fading-spore" style="animation-delay: 1s;">✨</span>
 </div>
 <style>
-.mushroom-rider {
-    position: absolute;
-    top: -15px;
-    left: 5px;
-    font-size: 1.2rem;
-    animation: rider-bounce 0.6s ease-in-out infinite;
-    filter: drop-shadow(0 0 8px rgba(139, 69, 19, 0.6));
-    transform-origin: center bottom;
+.mushroom-memory {
+    position: fixed;
+    top: 40%;
+    right: 15%;
+    display: flex;
+    gap: 10px;
+    z-index: 50;
+    opacity: 0.4;
+    pointer-events: none;
 }
-@keyframes rider-bounce {
-    0%, 100% { transform: translateY(0) rotate(-5deg); }
-    50% { transform: translateY(-8px) rotate(5deg); }
+.fading-spore {
+    font-size: 0.8rem;
+    animation: spore-fade 4s ease-in-out infinite;
+}
+@keyframes spore-fade {
+    0%, 100% { opacity: 0.2; transform: translateY(0) scale(0.8); }
+    50% { opacity: 0.5; transform: translateY(-10px) scale(1); }
 }
 </style>
 <script>
