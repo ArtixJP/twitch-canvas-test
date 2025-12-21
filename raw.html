@@ -58,6 +58,61 @@
             z-index: 100;
             text-align: center;
         }
+        #virtual-joystick {
+            position: fixed;
+            bottom: 100px;
+            left: 30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.4);
+            z-index: 150;
+        }
+        #joystick-knob {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            cursor: grab;
+        }
+        #action-buttons {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 150;
+        }
+        .action-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.5);
+            background: rgba(0,0,0,0.4);
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 18px;
+        }
+        .action-btn:hover { background: rgba(100,100,100,0.6); }
+        #camera-hint {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            padding: 8px 15px;
+            border-radius: 5px;
+            color: #4ade80;
+            font-size: 12px;
+            z-index: 100;
+        }
         #instructions {
             position: fixed;
             top: 10px;
@@ -111,9 +166,9 @@
 <div id="crosshair"></div>
 <div id="instructions">
 <strong>🎮 Minecraft Clone</strong><br/>
-        WASD to move | SPACE to jump | SHIFT to descend<br/>
-        Left Click: Break block | Right Click: Place block<br/>
-        1-5: Select block type | Mouse: Look around<br/>
+        🕹️ Use joystick (left) to move | Buttons (right) for actions<br/>
+        Right-click drag OR Shift+click drag to look around<br/>
+        1-5 keys: Select block type<br/>
 <button id="start-btn">Click to Play!</button>
 </div>
 <div id="hotbar">
@@ -123,6 +178,14 @@
 <div class="hotbar-slot" style="background: linear-gradient(#DEB887, #8B7355);">Wood</div>
 <div class="hotbar-slot" style="background: linear-gradient(#87CEEB, #4169E1);">Glass</div>
 </div>
+<div id="virtual-joystick"><div id="joystick-knob"></div></div>
+<div id="action-buttons">
+<button class="action-btn" id="btn-up" title="Jump">↑</button>
+<button class="action-btn" id="btn-break" title="Break Block">⛏</button>
+<button class="action-btn" id="btn-place" title="Place Block">🧱</button>
+<button class="action-btn" id="btn-down" title="Descend">↓</button>
+</div>
+<div id="camera-hint">🖱️ Click &amp; drag on the 3D view to look around!</div>
 <div id="ui">Type <code style="background: rgba(145, 71, 255, 0.3); padding: 2px 6px; border-radius: 3px;">!idea</code> in Twitch chat to modify this world!</div>
 <script>
         const CHUNK_SIZE = 16;
@@ -213,20 +276,47 @@
         }
 
         function setupControls() {
+            // Start game without pointer lock
             document.getElementById('start-btn').addEventListener('click', () => {
-                document.body.requestPointerLock();
+                isLocked = true;
+                document.getElementById('instructions').classList.add('hidden');
             });
 
-            document.addEventListener('pointerlockchange', () => {
-                isLocked = document.pointerLockElement === document.body;
-                document.getElementById('instructions').classList.toggle('hidden', isLocked);
+            // Click-and-drag camera control (works in sandboxed iframes)
+            let isDragging = false;
+            let lastMouseX = 0, lastMouseY = 0;
+
+            renderer.domElement.addEventListener('mousedown', (e) => {
+                if (e.button === 1 || (e.button === 0 && e.shiftKey)) { // Middle click or Shift+Left
+                    isDragging = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
             });
 
             document.addEventListener('mousemove', (e) => {
-                if (!isLocked) return;
-                yaw -= e.movementX * 0.002;
-                pitch -= e.movementY * 0.002;
+                if (!isDragging) return;
+                const deltaX = e.clientX - lastMouseX;
+                const deltaY = e.clientY - lastMouseY;
+                yaw -= deltaX * 0.005;
+                pitch -= deltaY * 0.005;
                 pitch = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, pitch));
+                lastMouseX = e.clientX;
+                lastMouseY = e.clientY;
+            });
+
+            // Also allow right-click drag for camera
+            renderer.domElement.addEventListener('contextmenu', (e) => e.preventDefault());
+            renderer.domElement.addEventListener('mousedown', (e) => {
+                if (e.button === 2) {
+                    isDragging = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                }
             });
 
             document.addEventListener('keydown', (e) => {
@@ -273,7 +363,66 @@
                 }
             });
 
-            document.addEventListener('contextmenu', (e) => e.preventDefault());
+            // Virtual joystick controls
+            const joystick = document.getElementById('virtual-joystick');
+            const knob = document.getElementById('joystick-knob');
+            let joystickActive = false;
+            let joystickCenter = { x: 0, y: 0 };
+
+            joystick.addEventListener('mousedown', (e) => {
+                joystickActive = true;
+                const rect = joystick.getBoundingClientRect();
+                joystickCenter = { x: rect.left + 50, y: rect.top + 50 };
+            });
+
+            document.addEventListener('mouseup', () => {
+                joystickActive = false;
+                knob.style.transform = 'translate(-50%, -50%)';
+                moveForward = moveBackward = moveLeft = moveRight = false;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!joystickActive) return;
+                let dx = e.clientX - joystickCenter.x;
+                let dy = e.clientY - joystickCenter.y;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                const maxDist = 40;
+                if (dist > maxDist) {
+                    dx = dx / dist * maxDist;
+                    dy = dy / dist * maxDist;
+                }
+                knob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+                moveForward = dy < -10;
+                moveBackward = dy > 10;
+                moveLeft = dx < -10;
+                moveRight = dx > 10;
+            });
+
+            // Action buttons
+            document.getElementById('btn-up').addEventListener('mousedown', () => velocity.y = 0.15);
+            document.getElementById('btn-down').addEventListener('mousedown', () => velocity.y = -0.1);
+            document.getElementById('btn-break').addEventListener('click', () => {
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+                const meshes = Array.from(blocks.values()).map(b => b.mesh);
+                const intersects = raycaster.intersectObjects(meshes);
+                if (intersects.length > 0) {
+                    const pos = intersects[0].object.position;
+                    removeBlock(pos.x, pos.y, pos.z);
+                }
+            });
+            document.getElementById('btn-place').addEventListener('click', () => {
+                const raycaster = new THREE.Raycaster();
+                raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
+                const meshes = Array.from(blocks.values()).map(b => b.mesh);
+                const intersects = raycaster.intersectObjects(meshes);
+                if (intersects.length > 0) {
+                    const hit = intersects[0];
+                    const normal = hit.face.normal;
+                    const newPos = hit.object.position.clone().add(normal);
+                    addBlock(newPos.x, newPos.y, newPos.z, BLOCK_TYPES[blockNames[selectedBlock]]);
+                }
+            });
         }
 
         function updateHotbar() {
