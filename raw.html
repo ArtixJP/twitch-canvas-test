@@ -1058,10 +1058,48 @@
 </div>
 </main>
 </div>
-<div class="flying-pain-au-chocolat" title="Super Pain au Chocolat!">
-<span class="hero-cape">🦸</span>
-<span class="flying-pastry">🥐</span>
+<div class="fallen-hero-monument" title="Here rests the Flying Pain au Chocolat - A true hero">
+<span class="monument-base">🪦</span>
+<span class="hero-memory">🥐</span>
+<span class="hero-halo">👼</span>
 </div>
+<style>
+.fallen-hero-monument {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.5rem;
+    z-index: 50;
+    animation: monument-glow 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+.monument-base {
+    font-size: 2rem;
+}
+.hero-memory {
+    position: absolute;
+    top: -10px;
+    font-size: 1.2rem;
+    opacity: 0.8;
+}
+.hero-halo {
+    position: absolute;
+    top: -25px;
+    font-size: 0.8rem;
+    animation: halo-float 2s ease-in-out infinite;
+}
+@keyframes monument-glow {
+    0%, 100% { filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3)); }
+    50% { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.7)); }
+}
+@keyframes halo-float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+}
+</style>
 <div class="flying-mushroom" title="Magical Mushroom Fairy!">
 🍄🧚
 </div>
