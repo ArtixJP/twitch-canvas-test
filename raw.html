@@ -1100,6 +1100,71 @@
     50% { transform: translateY(-5px); }
 }
 </style>
+<div class="flying-jambon-beurre" title="Le Sandwich Héros!">
+<span class="sandwich-cape">🧣</span>
+<span class="flying-sandwich">🥖</span>
+<span class="jambon-slice">🥓</span>
+</div>
+<style>
+.flying-jambon-beurre {
+    position: fixed;
+    font-size: 2.2rem;
+    z-index: 98;
+    pointer-events: none;
+    animation: sandwich-fly 10s linear infinite;
+    filter: drop-shadow(0 0 12px rgba(255, 200, 100, 0.6));
+    display: flex;
+    align-items: center;
+}
+
+.flying-sandwich {
+    position: relative;
+    z-index: 2;
+    animation: sandwich-spin 2s ease-in-out infinite;
+}
+
+.sandwich-cape {
+    position: absolute;
+    font-size: 1.5rem;
+    left: -12px;
+    top: 8px;
+    z-index: 1;
+    animation: scarf-flutter 0.4s ease-in-out infinite;
+    filter: drop-shadow(0 0 5px rgba(200, 50, 50, 0.5));
+}
+
+.jambon-slice {
+    position: absolute;
+    font-size: 0.9rem;
+    right: -5px;
+    top: -8px;
+    animation: jambon-wiggle 0.6s ease-in-out infinite;
+}
+
+@keyframes sandwich-fly {
+    0% { top: 50%; right: 90%; transform: rotate(-10deg); }
+    20% { top: 25%; right: 70%; transform: rotate(15deg); }
+    40% { top: 40%; right: 45%; transform: rotate(-5deg); }
+    60% { top: 20%; right: 25%; transform: rotate(20deg); }
+    80% { top: 55%; right: 10%; transform: rotate(-15deg); }
+    100% { top: 50%; right: 90%; transform: rotate(-10deg); }
+}
+
+@keyframes sandwich-spin {
+    0%, 100% { transform: rotateY(0deg); }
+    50% { transform: rotateY(15deg); }
+}
+
+@keyframes scarf-flutter {
+    0%, 100% { transform: rotate(-10deg) scaleX(-1); }
+    50% { transform: rotate(10deg) scaleX(-1); }
+}
+
+@keyframes jambon-wiggle {
+    0%, 100% { transform: rotate(-5deg); opacity: 0.9; }
+    50% { transform: rotate(5deg); opacity: 1; }
+}
+</style>
 <div class="mushroom-memory" title="The mushroom fairy has returned to the forest...">
 <span class="fading-spore">✨</span>
 <span class="fading-spore" style="animation-delay: 0.5s;">🌸</span>
