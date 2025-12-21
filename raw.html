@@ -187,6 +187,13 @@
 </div>
 <div id="camera-hint">🖱️ Click &amp; drag on the 3D view to look around!</div>
 <div id="mario-badge" style="position:fixed;top:100px;right:20px;background:linear-gradient(135deg,#E52521,#049CD8);padding:8px 15px;border-radius:20px;color:white;font-weight:bold;font-size:12px;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.3);animation:marioFloat 2s ease-in-out infinite;">🍄 Mario is here!</div>
+<div id="balloon-badge" style="position:fixed;top:100px;left:20px;background:linear-gradient(135deg,#FF6B6B,#FFE66D);padding:8px 15px;border-radius:20px;color:#333;font-weight:bold;font-size:12px;z-index:100;box-shadow:0 2px 10px rgba(0,0,0,0.3);animation:balloonFloat 3s ease-in-out infinite;">🎈 Balloon floating!</div>
+<style>
+@keyframes balloonFloat {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+}
+</style>
 <style>
         @keyframes marioFloat {
             0%, 100% { transform: translateY(0); }
@@ -238,6 +245,7 @@
 
             generateTerrain();
             createMario();
+            createBalloon();
             setupControls();
             animate();
         }
@@ -249,6 +257,12 @@
         let marioDirection = 1;
         let marioX = 8;
         let marioZ = 8;
+
+        // Flying balloon
+        let balloonGroup;
+        let balloonTime = 0;
+        let balloonBaseX = 10;
+        let balloonBaseZ = 10;
 
         function createMario() {
             marioGroup = new THREE.Group();
@@ -293,6 +307,78 @@
             
             marioGroup.position.set(marioX, marioY, marioZ);
             scene.add(marioGroup);
+        }
+
+        function createBalloon() {
+            balloonGroup = new THREE.Group();
+            
+            // Balloon colors - vibrant hot air balloon
+            const red = 0xFF6B6B;
+            const yellow = 0xFFE66D;
+            const orange = 0xFFA94D;
+            const basket = 0x8B4513;
+            const rope = 0x654321;
+            
+            const scale = 0.2;
+            
+            // Balloon envelope (the round part) - layered colors
+            const balloonVoxels = [
+                // Top of balloon (red)
+                {x:1,y:12,z:0,c:red},{x:2,y:12,z:0,c:red},
+                {x:0,y:11,z:0,c:red},{x:1,y:11,z:0,c:red},{x:2,y:11,z:0,c:red},{x:3,y:11,z:0,c:red},
+                // Upper middle (orange)
+                {x:-1,y:10,z:0,c:orange},{x:0,y:10,z:0,c:orange},{x:1,y:10,z:0,c:orange},{x:2,y:10,z:0,c:orange},{x:3,y:10,z:0,c:orange},{x:4,y:10,z:0,c:orange},
+                {x:-1,y:9,z:0,c:orange},{x:0,y:9,z:0,c:yellow},{x:1,y:9,z:0,c:yellow},{x:2,y:9,z:0,c:yellow},{x:3,y:9,z:0,c:yellow},{x:4,y:9,z:0,c:orange},
+                // Middle (yellow)
+                {x:-1,y:8,z:0,c:yellow},{x:0,y:8,z:0,c:yellow},{x:1,y:8,z:0,c:yellow},{x:2,y:8,z:0,c:yellow},{x:3,y:8,z:0,c:yellow},{x:4,y:8,z:0,c:yellow},
+                {x:0,y:7,z:0,c:orange},{x:1,y:7,z:0,c:orange},{x:2,y:7,z:0,c:orange},{x:3,y:7,z:0,c:orange},
+                // Bottom of envelope
+                {x:1,y:6,z:0,c:red},{x:2,y:6,z:0,c:red},
+                // Ropes
+                {x:1,y:5,z:0,c:rope},{x:2,y:5,z:0,c:rope},
+                {x:1,y:4,z:0,c:rope},{x:2,y:4,z:0,c:rope},
+                // Basket
+                {x:0,y:3,z:0,c:basket},{x:1,y:3,z:0,c:basket},{x:2,y:3,z:0,c:basket},{x:3,y:3,z:0,c:basket},
+                {x:0,y:2,z:0,c:basket},{x:1,y:2,z:0,c:basket},{x:2,y:2,z:0,c:basket},{x:3,y:2,z:0,c:basket},
+                // Depth layer
+                {x:1,y:11,z:1,c:red},{x:2,y:11,z:1,c:red},
+                {x:0,y:10,z:1,c:orange},{x:1,y:10,z:1,c:orange},{x:2,y:10,z:1,c:orange},{x:3,y:10,z:1,c:orange},
+                {x:0,y:9,z:1,c:yellow},{x:1,y:9,z:1,c:yellow},{x:2,y:9,z:1,c:yellow},{x:3,y:9,z:1,c:yellow},
+                {x:0,y:8,z:1,c:yellow},{x:1,y:8,z:1,c:yellow},{x:2,y:8,z:1,c:yellow},{x:3,y:8,z:1,c:yellow},
+            ];
+            
+            balloonVoxels.forEach(v => {
+                const geo = new THREE.BoxGeometry(scale, scale, scale);
+                const mat = new THREE.MeshLambertMaterial({ color: v.c });
+                const cube = new THREE.Mesh(geo, mat);
+                cube.position.set(v.x * scale, v.y * scale, v.z * scale);
+                cube.castShadow = true;
+                balloonGroup.add(cube);
+            });
+            
+            balloonGroup.position.set(balloonBaseX, 18, balloonBaseZ);
+            scene.add(balloonGroup);
+        }
+
+        function updateBalloon() {
+            if (!balloonGroup) return;
+            
+            balloonTime += 0.02;
+            
+            // Gentle floating motion
+            const floatY = Math.sin(balloonTime) * 1.5;
+            const driftX = Math.sin(balloonTime * 0.3) * 3;
+            const driftZ = Math.cos(balloonTime * 0.4) * 3;
+            
+            // Float in front of camera direction but at a distance
+            balloonGroup.position.set(
+                balloonBaseX + driftX,
+                18 + floatY,
+                balloonBaseZ + driftZ
+            );
+            
+            // Gentle rotation
+            balloonGroup.rotation.y = Math.sin(balloonTime * 0.5) * 0.2;
         }
 
         function updateMario() {
@@ -542,6 +628,7 @@
             }
 
             updateMario();
+            updateBalloon();
             renderer.render(scene, camera);
         }
 
