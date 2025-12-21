@@ -13,8 +13,16 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             min-height: 100vh; 
-            background: linear-gradient(180deg, #fef3e2 0%, #ffecd2 50%, #fcb69f 100%);
+            background: linear-gradient(180deg, #fef3e2 0%, #ffecd2 30%, #fcb69f 60%, #ff9a9e 80%, #fad0c4 100%);
             overflow-x: hidden;
+            animation: bg-shift 10s ease-in-out infinite;
+        }
+        
+        @keyframes bg-shift {
+            0%, 100% { background: linear-gradient(180deg, #fef3e2 0%, #ffecd2 30%, #fcb69f 60%, #ff9a9e 80%, #fad0c4 100%); }
+            25% { background: linear-gradient(180deg, #a8edea 0%, #fed6e3 30%, #ffecd2 60%, #fcb69f 80%, #ff9a9e 100%); }
+            50% { background: linear-gradient(180deg, #d299c2 0%, #fef9d7 30%, #a8edea 60%, #fed6e3 80%, #ffecd2 100%); }
+            75% { background: linear-gradient(180deg, #ffecd2 0%, #fcb69f 30%, #ff9a9e 60%, #a8edea 80%, #fed6e3 100%); }
         }
         
         .bakery-container {
@@ -76,30 +84,62 @@
             height: 30px;
             background: repeating-linear-gradient(
                 90deg,
-                #e74c3c 0px,
-                #e74c3c 30px,
-                #fff 30px,
-                #fff 60px
+                #ff6b6b 0px,
+                #ff6b6b 20px,
+                #feca57 20px,
+                #feca57 40px,
+                #48dbfb 40px,
+                #48dbfb 60px,
+                #ff9ff3 60px,
+                #ff9ff3 80px
             );
             border-radius: 20px 20px 0 0;
-            border: 3px solid #c0392b;
+            border: 3px solid #ff6b6b;
+            animation: awning-colors 5s linear infinite;
+            background-size: 160px 100%;
+        }
+        
+        @keyframes awning-colors {
+            0% { background-position: 0 0; }
+            100% { background-position: 160px 0; }
         }
         
         .display-case {
-            background: rgba(255,255,255,0.9);
+            background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,240,245,0.95) 25%, rgba(240,255,250,0.95) 50%, rgba(255,250,240,0.95) 75%, rgba(250,240,255,0.95) 100%);
             border-radius: 15px;
             padding: 20px;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             gap: 15px;
-            box-shadow: inset 0 0 20px rgba(139,69,19,0.2);
+            box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 30px rgba(255,105,180,0.3);
+            animation: rainbow-border 3s linear infinite;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+        }
+        
+        @keyframes rainbow-border {
+            0% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(255,0,0,0.3); }
+            16% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(255,165,0,0.3); }
+            33% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(255,255,0,0.3); }
+            50% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(0,255,0,0.3); }
+            66% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(0,0,255,0.3); }
+            83% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(148,0,211,0.3); }
+            100% { box-shadow: inset 0 0 20px rgba(139,69,19,0.2), 0 0 20px rgba(255,0,0,0.3); }
         }
         
         .pastry {
             font-size: 2.5rem;
             cursor: pointer;
             transition: transform 0.3s, filter 0.3s;
-            animation: float 2s ease-in-out infinite;
+            animation: float 2s ease-in-out infinite, color-pop 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 8px rgba(255,105,180,0.4));
+        }
+        
+        @keyframes color-pop {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(255,105,180,0.4)); }
+            25% { filter: drop-shadow(0 0 12px rgba(255,215,0,0.6)); }
+            50% { filter: drop-shadow(0 0 10px rgba(0,255,127,0.5)); }
+            75% { filter: drop-shadow(0 0 12px rgba(138,43,226,0.5)); }
         }
         
         .pastry:nth-child(2) { animation-delay: 0.3s; }
@@ -169,13 +209,20 @@
         
         .open-sign {
             display: inline-block;
-            background: #27ae60;
+            background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3, #54a0ff, #5f27cd);
+            background-size: 300% 100%;
             color: white;
             padding: 8px 20px;
             border-radius: 25px;
             margin-top: 15px;
             font-weight: 600;
-            animation: glow 1.5s ease-in-out infinite alternate;
+            animation: glow 1.5s ease-in-out infinite alternate, rainbow-slide 3s linear infinite;
+            text-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        @keyframes rainbow-slide {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
         
         .pizzaiolo-corner {
@@ -657,6 +704,20 @@
             to { box-shadow: 0 0 25px #27ae60, 0 0 40px #27ae60; }
         }
         
+        @keyframes text-shimmer {
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        .menu-board h2 {
+            background: linear-gradient(90deg, #ffd700, #ff6b6b, #48dbfb, #ff9ff3, #ffd700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            background-size: 200% auto;
+            animation: text-shimmer 2s linear infinite;
+        }
+        
         .sparkle {
             position: fixed;
             pointer-events: none;
@@ -674,7 +735,7 @@
 <div class="bakery-container">
 <header class="header">
 <div class="sign">
-<h1>🥐 La Petite Boulangerie 🥖</h1>
+<h1 style="background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: text-shimmer 3s linear infinite; background-size: 200% auto;">🥐 La Petite Boulangerie 🥖</h1>
 <p class="tagline">Fresh from the oven since 2024</p>
 </div>
 </header>
