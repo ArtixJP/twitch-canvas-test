@@ -13,16 +13,16 @@
         body { 
             font-family: 'Poppins', sans-serif; 
             min-height: 100vh; 
-            background: linear-gradient(180deg, #fef3e2 0%, #ffecd2 30%, #fcb69f 60%, #ff9a9e 80%, #fad0c4 100%);
+            background: linear-gradient(180deg, #1a1a4e 0%, #2d3a8c 30%, #4a69bd 60%, #6a89cc 80%, #a8c0ff 100%);
             overflow-x: hidden;
             animation: bg-shift 10s ease-in-out infinite;
         }
         
         @keyframes bg-shift {
-            0%, 100% { background: linear-gradient(180deg, #fef3e2 0%, #ffecd2 30%, #fcb69f 60%, #ff9a9e 80%, #fad0c4 100%); }
-            25% { background: linear-gradient(180deg, #a8edea 0%, #fed6e3 30%, #ffecd2 60%, #fcb69f 80%, #ff9a9e 100%); }
-            50% { background: linear-gradient(180deg, #d299c2 0%, #fef9d7 30%, #a8edea 60%, #fed6e3 80%, #ffecd2 100%); }
-            75% { background: linear-gradient(180deg, #ffecd2 0%, #fcb69f 30%, #ff9a9e 60%, #a8edea 80%, #fed6e3 100%); }
+            0%, 100% { background: linear-gradient(180deg, #1a1a4e 0%, #2d3a8c 30%, #4a69bd 60%, #6a89cc 80%, #a8c0ff 100%); }
+            25% { background: linear-gradient(180deg, #0c1445 0%, #3d5a9e 30%, #5b8ac9 60%, #7eb8da 80%, #b8d4e8 100%); }
+            50% { background: linear-gradient(180deg, #1e3a5f 0%, #3a6ea5 30%, #6bb3d9 60%, #87ceeb 80%, #c9e4f6 100%); }
+            75% { background: linear-gradient(180deg, #0f2744 0%, #2c5282 30%, #4299e1 60%, #63b3ed 80%, #90cdf4 100%); }
         }
         
         .bakery-container {
@@ -205,6 +205,23 @@
         @keyframes rise {
             0% { transform: translateY(0) scale(1); opacity: 0.6; }
             100% { transform: translateY(-40px) scale(1.5); opacity: 0; }
+        }
+        
+        .blue-hour-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #1e3a5f, #4a69bd);
+            color: #fff;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.8; box-shadow: 0 0 5px #4a69bd; }
+            50% { opacity: 1; box-shadow: 0 0 15px #6a89cc; }
         }
         
         .open-sign {
@@ -736,7 +753,7 @@
 <header class="header">
 <div class="sign">
 <h1 style="background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: text-shimmer 3s linear infinite; background-size: 200% auto;">🥐 La Petite Boulangerie 🥖</h1>
-<p class="tagline">Fresh from the oven since 2024</p>
+<p class="tagline">Fresh from the oven since 2024 🌙</p>
 </div>
 </header>
 <main class="storefront">
@@ -759,6 +776,7 @@
 <div class="menu-item">Macaron Box <span class="price">$12.00</span></div>
 </div>
 </div>
+<div class="blue-hour-badge">🌙 Blue Hour Edition</div>
 <div class="open-sign">🌟 OPEN NOW 🌟</div>
 <div class="secret-menu" title="Psst... you found the secret menu!">
 <h3 class="secret-title">🤫 Menu Secret 🤫</h3>
