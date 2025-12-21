@@ -648,6 +648,53 @@
             animation: trail-sparkle 0.5s ease-out infinite;
         }
         
+        .flying-mushroom {
+            position: fixed;
+            font-size: 2rem;
+            z-index: 99;
+            pointer-events: none;
+            animation: mushroom-fly 12s linear infinite;
+            filter: drop-shadow(0 0 15px rgba(148, 0, 211, 0.6));
+        }
+        
+        .flying-mushroom::before {
+            content: '✨';
+            position: absolute;
+            font-size: 0.6rem;
+            left: -10px;
+            animation: spore-trail 0.8s ease-out infinite;
+        }
+        
+        .flying-mushroom::after {
+            content: '🌟';
+            position: absolute;
+            font-size: 0.5rem;
+            right: -8px;
+            top: -5px;
+            animation: fairy-dust 0.6s ease-out infinite alternate;
+        }
+        
+        @keyframes mushroom-fly {
+            0% { top: 60%; right: 5%; transform: rotate(0deg) scale(1); }
+            15% { top: 45%; right: 25%; transform: rotate(-20deg) scale(1.1); }
+            30% { top: 20%; right: 50%; transform: rotate(15deg) scale(0.9); }
+            45% { top: 35%; right: 75%; transform: rotate(-10deg) scale(1.15); }
+            60% { top: 55%; right: 85%; transform: rotate(25deg) scale(1); }
+            75% { top: 70%; right: 55%; transform: rotate(-15deg) scale(1.1); }
+            90% { top: 50%; right: 20%; transform: rotate(10deg) scale(0.95); }
+            100% { top: 60%; right: 5%; transform: rotate(0deg) scale(1); }
+        }
+        
+        @keyframes spore-trail {
+            0% { opacity: 1; transform: translateX(0) scale(1); }
+            100% { opacity: 0; transform: translateX(-20px) scale(0.3); }
+        }
+        
+        @keyframes fairy-dust {
+            0% { opacity: 0.5; transform: translateY(0); }
+            100% { opacity: 1; transform: translateY(-5px); }
+        }
+        
         @keyframes fly-around {
             0% { top: 30%; left: 10%; transform: rotate(0deg) scale(1); }
             15% { top: 15%; left: 40%; transform: rotate(45deg) scale(1.1); }
@@ -1014,6 +1061,9 @@
 <div class="flying-pain-au-chocolat" title="Super Pain au Chocolat!">
 <span class="hero-cape">🦸</span>
 <span class="flying-pastry">🥐</span>
+</div>
+<div class="flying-mushroom" title="Magical Mushroom Fairy!">
+🍄🧚
 </div>
 <script>
         // Add sparkles on pastry click
