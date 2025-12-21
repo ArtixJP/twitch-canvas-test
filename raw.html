@@ -532,6 +532,33 @@
             filter: drop-shadow(0 0 15px rgba(139, 69, 19, 0.6));
         }
         
+        .flying-pain-au-chocolat {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        
+        .flying-pastry {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-cape {
+            position: absolute;
+            font-size: 2rem;
+            left: -15px;
+            top: 5px;
+            z-index: 1;
+            transform: scaleX(-1);
+            animation: cape-flutter 0.5s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 0, 0, 0.5));
+        }
+        
+        @keyframes cape-flutter {
+            0%, 100% { transform: scaleX(-1) rotate(-5deg); }
+            50% { transform: scaleX(-1) rotate(5deg); }
+        }
+        
         .flying-pain-au-chocolat::after {
             content: '✨';
             position: absolute;
@@ -889,7 +916,10 @@
 </div>
 </main>
 </div>
-<div class="flying-pain-au-chocolat" title="Pain au Chocolat Volant!">🥐</div>
+<div class="flying-pain-au-chocolat" title="Super Pain au Chocolat!">
+<span class="hero-cape">🦸</span>
+<span class="flying-pastry">🥐</span>
+</div>
 <script>
         // Add sparkles on pastry click
         document.querySelectorAll('.pastry').forEach(pastry => {
