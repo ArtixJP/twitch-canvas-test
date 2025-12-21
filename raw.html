@@ -1100,9 +1100,24 @@
     50% { transform: translateY(-5px); }
 }
 </style>
-<div class="flying-mushroom" title="Magical Mushroom Fairy!">
-🍄🧚
+<div class="flying-mushroom" title="Magical Mushroom Fairy with Pain au Chocolat Rider!">
+<span class="mushroom-rider">🥐</span>🍄🧚
 </div>
+<style>
+.mushroom-rider {
+    position: absolute;
+    top: -15px;
+    left: 5px;
+    font-size: 1.2rem;
+    animation: rider-bounce 0.6s ease-in-out infinite;
+    filter: drop-shadow(0 0 8px rgba(139, 69, 19, 0.6));
+    transform-origin: center bottom;
+}
+@keyframes rider-bounce {
+    0%, 100% { transform: translateY(0) rotate(-5deg); }
+    50% { transform: translateY(-8px) rotate(5deg); }
+}
+</style>
 <script>
         // Add sparkles on pastry click
         document.querySelectorAll('.pastry').forEach(pastry => {
