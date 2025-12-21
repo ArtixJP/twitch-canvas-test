@@ -5,7 +5,7 @@
     <meta http-equiv="Content-Security-Policy" content="default-src 'self' https:; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://esm.sh https://esm.run https://cdn.tailwindcss.com https://threejs.org https://cdn.threejs.org https://cdn.p5js.org https://code.jquery.com https://d3js.org https://cdn.plot.ly https://cdn.tonejs.org; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: https:; media-src 'self' https:; font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src 'self'; frame-src https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com; connect-src 'self' https: wss: ws:; object-src 'none'; base-uri 'self'; form-action 'self';">
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>La Petite Boulangerie ✨</title>
+<title>L̸a̷ ̶P̵e̴t̸i̵t̷e̶ ̵B̸o̷u̵l̷a̴n̷g̶e̷r̵i̶e̷ ̴✨̷ [CORRUPTED]</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&amp;family=Poppins:wght@300;400;600&amp;display=swap" rel="stylesheet"/>
 <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,6 +16,14 @@
             background: linear-gradient(180deg, #1a1a4e 0%, #2d3a8c 30%, #4a69bd 60%, #6a89cc 80%, #a8c0ff 100%);
             overflow-x: hidden;
             animation: bg-shift 10s ease-in-out infinite;
+        }
+        
+        @keyframes glitch-flicker {
+            0%, 90%, 100% { opacity: 1; filter: none; }
+            91% { opacity: 0.8; filter: hue-rotate(90deg) saturate(2); }
+            92% { opacity: 1; filter: hue-rotate(-90deg); }
+            93% { opacity: 0.9; filter: invert(0.1); }
+            94% { opacity: 1; filter: none; }
         }
         
         @keyframes bg-shift {
@@ -54,6 +62,17 @@
         }
         
         .sign h1 {
+            animation: glitch-text 0.5s ease-in-out infinite;
+        }
+        
+        @keyframes glitch-text {
+            0%, 95%, 100% { transform: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+            96% { transform: translateX(-2px); text-shadow: -2px 0 #ff0000, 2px 0 #00ffff; }
+            97% { transform: translateX(2px); text-shadow: 2px 0 #ff0000, -2px 0 #00ffff; }
+            98% { transform: translateX(-1px); text-shadow: -1px 0 #ff0000, 1px 0 #00ffff; }
+        }
+        
+        .sign h1-old {
             font-family: 'Playfair Display', serif;
             font-size: 2rem;
             color: #ffecd2;
@@ -984,8 +1003,29 @@
 <div class="bakery-container">
 <header class="header">
 <div class="sign">
-<h1 style="background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: text-shimmer 3s linear infinite; background-size: 200% auto;">🥐 La Petite Boulangerie 🥖</h1>
-<p class="tagline">Fresh from the oven since 2024 🌙</p>
+<h1 style="background: linear-gradient(90deg, #ff6b6b, #feca57, #48dbfb, #ff9ff3); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; animation: text-shimmer 3s linear infinite, glitch-text 3s ease-in-out infinite; background-size: 200% auto;">🥐 L̸a̷ ̶P̵e̴t̸i̵t̷e̶ ̵B̸o̷u̵l̷a̴n̷g̶e̷r̵i̶e̷ 🥖</h1>
+<div class="reset-survivor-badge">⚠️ RESET SURVIVED ⚠️</div>
+<style>
+.reset-survivor-badge {
+    position: absolute;
+    top: -15px;
+    right: -10px;
+    background: linear-gradient(135deg, #ff0000, #ff6600);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 0.5rem;
+    font-weight: bold;
+    animation: badge-pulse 1s ease-in-out infinite, glitch-flicker 5s infinite;
+    transform: rotate(15deg);
+    z-index: 100;
+}
+@keyframes badge-pulse {
+    0%, 100% { transform: rotate(15deg) scale(1); }
+    50% { transform: rotate(15deg) scale(1.1); }
+}
+</style>
+<p class="tagline" style="animation: glitch-flicker 8s infinite;">F̷r̵e̶s̵h̷ ̴f̵r̷o̵m̶ ̵t̷h̸e̴ ̷a̵s̶h̸e̷s̵ ̶s̷i̶n̸c̶e̷ ̴2̵0̷2̸4̵ 🌙 [REBUILT]</p>
 </div>
 </header>
 <main class="storefront">
@@ -1008,8 +1048,39 @@
 <div class="menu-item">Macaron Box <span class="price">$12.00</span></div>
 </div>
 </div>
-<div class="blue-hour-badge">🌙 Blue Hour Edition</div>
-<div class="open-sign">🌟 OPEN NOW 🌟</div>
+<div class="blue-hour-badge" style="background: linear-gradient(135deg, #8b0000, #ff4500); animation: twinkle 0.5s ease-in-out infinite;">⚡ RESET DENIED ⚡</div>
+<div class="open-sign" style="animation: glow 0.3s ease-in-out infinite alternate, rainbow-slide 3s linear infinite;">💀 STILL STANDING 💀</div>
+<div class="reset-counter">
+<span class="counter-label">Reset Attempts Survived:</span>
+<span class="counter-number">001</span>
+</div>
+<style>
+.reset-counter {
+    display: inline-block;
+    background: linear-gradient(145deg, #1a1a1a, #333);
+    border: 2px solid #ff4500;
+    border-radius: 10px;
+    padding: 5px 15px;
+    margin-top: 10px;
+    font-family: 'Courier New', monospace;
+}
+.counter-label {
+    color: #888;
+    font-size: 0.6rem;
+    display: block;
+}
+.counter-number {
+    color: #00ff00;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-shadow: 0 0 10px #00ff00;
+    animation: counter-glow 1s ease-in-out infinite alternate;
+}
+@keyframes counter-glow {
+    from { text-shadow: 0 0 5px #00ff00; }
+    to { text-shadow: 0 0 20px #00ff00, 0 0 30px #00ff00; }
+}
+</style>
 <div class="secret-menu" title="Psst... you found the secret menu!">
 <h3 class="secret-title">🤫 Menu Secret 🤫</h3>
 <div class="secret-items">
